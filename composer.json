@@ -2,6 +2,7 @@
   "name": "neoground/charm",
   "description": "Charm Framework",
   "homepage": "https://neoground.com",
+  "license": "MIT",
   "authors": [
     {
       "name": "Sven Reifschneider",
