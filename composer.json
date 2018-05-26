@@ -33,7 +33,5 @@
     "psr-4": {
       "Charm\\": "src/"
     }
-  },
-  "minimum-stability": "dev",
-  "prefer-stable" : true
+  }
 }
