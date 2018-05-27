@@ -92,11 +92,6 @@ class View implements OutputInterface
         // Add extensions
         $twig->addExtension(new \Twig_Extension_StringLoader());
 
-        // Add kint extension in debug mode
-        if($debug_mode) {
-            $twig->addExtension(new \Kint_TwigExtension());
-        }
-
         // Add charm global
         $twig->addGlobal('charm', Charm::getInstance());
 
