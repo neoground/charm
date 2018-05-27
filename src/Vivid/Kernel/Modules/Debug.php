@@ -40,9 +40,15 @@ class Debug implements ModuleInterface
 
     /**
      * Init whoops error page
+     *
+     * @return bool
      */
     private function initWhoops()
     {
+        if(!class_exists("Whoops\\Run")) {
+            return false;
+        }
+
         $whoops = new Run;
         $handle = new PrettyPageHandler;
 
@@ -56,6 +62,7 @@ class Debug implements ModuleInterface
         }
 
         $whoops->register();
+        return true;
     }
 
     /**
@@ -65,8 +72,10 @@ class Debug implements ModuleInterface
      */
     private function initDebugBar()
     {
-        // No debug bar if disabled
-        if(!Charm::Config()->get('main:debug.show_debugbar', false)) {
+        // No debug bar if disabled or not installed
+        if(!Charm::Config()->get('main:debug.show_debugbar', false)
+            || !class_exists("DebugBar\\StandardDebugBar")
+        ) {
             return false;
         }
 

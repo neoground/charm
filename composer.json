@@ -21,9 +21,7 @@
     "symfony/yaml": "^3.4",
     "dragonmantank/cron-expression": "^2.0",
     "phpmailer/phpmailer": "^6.0",
-    "league/flysystem": "^1.0"
-  },
-  "require-dev": {
+    "league/flysystem": "^1.0",
     "filp/whoops": "^2.1",
     "maximebf/debugbar": "^1.15",
     "kint-php/kint": "^2.2",
