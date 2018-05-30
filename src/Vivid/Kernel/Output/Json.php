@@ -24,6 +24,9 @@ class Json implements OutputInterface
     /** @var int status code */
     protected $statuscode;
 
+    /** @var array  output settings */
+    protected $settings = [];
+
     /**
      * Output factory
      *
@@ -38,7 +41,53 @@ class Json implements OutputInterface
         $x->data = $val;
         $x->statuscode = $statuscode;
 
+        // Default settings
+        $x->settings = [
+            'status_on_body' => false
+        ];
+
         return $x;
+    }
+
+    /**
+     * Create an error message to return
+     *
+     * @param string  $message     the error message
+     * @param int     $statuscode  (opt.) the status code (default: 500)
+     *
+     * @return self
+     */
+    public static function makeErrorMessage($message, $statuscode = 500)
+    {
+        return self::make([
+            "message" => $message
+        ], $statuscode)
+            ->withStatusOnBody();
+    }
+
+    /**
+     * Return status code on body when rendering
+     *
+     * @return $this
+     */
+    public function withStatusOnBody()
+    {
+        $this->settings['status_on_body'] = true;
+        return $this;
+    }
+
+    /**
+     * Add an value to the return data array
+     *
+     * @param string  $key    the key
+     * @param string  $value  the value
+     *
+     * @return $this
+     */
+    public function add($key, $value)
+    {
+        $this->data[$key] = $value;
+        return $this;
     }
 
     /**
@@ -50,6 +99,11 @@ class Json implements OutputInterface
     {
         // Set content type
         header('Content-type: application/json');
+
+        // Status on body?
+        if(isset($this->settings['status_on_body']) && $this->settings['status_on_body']) {
+            $this->data = ["status" => $this->statuscode] + $this->data;
+        }
 
         // Pretty output?
         if (Charm::Config()->get('main:output.json.pretty', true)) {
