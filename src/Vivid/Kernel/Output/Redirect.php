@@ -42,7 +42,11 @@ class Redirect implements OutputInterface
     public static function make($val = null, $args = [])
     {
         $x = new self;
-        $x->withDestination($val, $args);
+
+        if(!empty($val)) {
+            $x->withDestination($val, $args);
+        }
+
         return $x;
     }
 
