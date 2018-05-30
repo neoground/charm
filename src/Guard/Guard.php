@@ -84,7 +84,7 @@ class Guard extends Module implements ModuleInterface
         ) {
             $a = $this->user_class::find($_SESSION['user']);
             if (is_object($a) && $a->enabled) {
-                if (!self::isExpired()) {
+                if (!$this->isExpired()) {
                     $_SESSION['last_activity'] = Carbon::now()->toDateTimeString();
                     return true;
                 }
@@ -163,8 +163,8 @@ class Guard extends Module implements ModuleInterface
      */
     public function login($username, $password, $rememberme = false)
     {
-        if (self::checkPassword($username, $password)) {
-            $u = $this->user_class::where($this->username_field, $username)->first();
+        if ($this->checkPassword($username, $password)) {
+            $u = $this->findUserByUsername($username);
 
             if (is_object($u)) {
                 return $this->handleLogin($u, $rememberme);
@@ -241,6 +241,18 @@ class Guard extends Module implements ModuleInterface
     {
         $salt = Charm::App()->getConfig('auth_salt', '1ip#xH,gM)7dh-BL');
         return md5($salt . "+" . $u->id . "+" . substr($u->{$this->username_field}, 0, 5));
+    }
+
+    /**
+     * Find a user by it's username
+     *
+     * @param string  $username  the username
+     *
+     * @return object  the user object
+     */
+    public function findUserByUsername($username)
+    {
+        return $this->user_class::where($this->username_field, $username)->first();
     }
 
 

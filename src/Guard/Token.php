@@ -127,5 +127,24 @@ class Token
         return is_object($this->user_class::where('api_token', $this->token)->first());
     }
 
+    /**
+     * Generate a token
+     *
+     * @param int  $bytes  bytes length, default 16
+     *
+     * @return string
+     */
+    public function createToken($bytes = 16)
+    {
+        $token = bin2hex(openssl_random_pseudo_bytes($bytes));
+
+        // Check if token in database. If so, generate new one!
+        while ($this->user_class::where('api_token', $token)->count() > 0) {
+            $token = bin2hex(openssl_random_pseudo_bytes($bytes));
+        }
+
+        return $token;
+    }
+
 
 }
