@@ -135,4 +135,21 @@ class Formatter implements ModuleInterface
         return sprintf("%.{$precision}f", $bytes / pow(1024, $factor)) . " " . @$size[$factor];
     }
 
+    /**
+     * Sanitize an e-mail
+     *
+     * @param string  $input  the e-mail
+     *
+     * @return string
+     */
+    public function sanitizeEmail($input)
+    {
+        $input = filter_var($input, \FILTER_SANITIZE_EMAIL);
+
+        // Famous gmail fix
+        $input = str_replace("@googlemail.", "@gmail.", $input);
+
+        return strtolower($input);
+    }
+
 }

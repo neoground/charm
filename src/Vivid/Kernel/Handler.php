@@ -56,9 +56,9 @@ class Handler
             'Session',
             'Database',
             'Request',
+            'Formatter',
             'Router' => '\\Charm\\Vivid\\Router\\Router',
             'Guard' => '\\Charm\\Guard\\Guard',
-            'Formatter',
             'Mailman',
             //'Cache'
         ];

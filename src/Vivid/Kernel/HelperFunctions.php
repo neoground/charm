@@ -128,3 +128,17 @@ if(!function_exists('from_string')) {
     }
 
 }
+
+if(!function_exists('is_cli')) {
+
+    /**
+     * Check if script is executed on console (cli)
+     *
+     * @return bool
+     */
+    function is_cli()
+    {
+        return php_sapi_name() == 'cli';
+    }
+
+}
