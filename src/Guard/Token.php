@@ -50,7 +50,7 @@ class Token
         $auth_header = Charm::Request()->getHeader('Authorization');
 
         $matches = [];
-        preg_match('/Token token="(.*)"/', $auth_header, $matches);
+        preg_match('/usertoken="(.*?)"/', $auth_header, $matches);
         if(isset($matches[1])){
             $token = $matches[1];
             $this->token = $token;
@@ -80,7 +80,7 @@ class Token
         $auth_header = Charm::Request()->getHeader('Authorization');
 
         $matches = [];
-        preg_match('/apptoken="(.*)"/', $auth_header, $matches);
+        preg_match('/apptoken="(.*?)"/', $auth_header, $matches);
         if(isset($matches[1])){
             $token = $matches[1];
             $this->app_token = $token;

@@ -44,8 +44,8 @@ class Guard extends Module implements ModuleInterface
      */
     public function getUser()
     {
-        // Return default user if access via CLI or no login at all
-        if (is_cli() || !array_key_exists('user', $_SESSION)) {
+        // Return default user if access via CLI
+        if (is_cli()) {
             return $this->user_class::where('email', 'system')->first();
         }
 
@@ -53,6 +53,11 @@ class Guard extends Module implements ModuleInterface
         $token = Token::getInstance();
         if ($token->hasToken()) {
             return $token->getUser();
+        }
+
+        // Not logged in?
+        if(!array_key_exists('user', $_SESSION)) {
+            return $this->user_class::where('email', 'system')->first();
         }
 
         // Return session user
