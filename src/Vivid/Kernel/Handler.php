@@ -5,6 +5,7 @@
 
 namespace Charm\Vivid\Kernel;
 
+use Charm\Bob\Commands\CronRunCommand;
 use Charm\Vivid\Charm;
 use Charm\Vivid\Exceptions\ModuleNotFoundException;
 use Charm\Vivid\Exceptions\OutputException;
@@ -121,8 +122,16 @@ class Handler
         $app = new Application('Bob from Charm', '1.0');
 
         // Add base commands from bob
-        // TODO: Dynamize path / make it better accessable (e.g. when in vendor dir etc.)
-        $this->addConsoleCommands($app, cPath('/lib/Bob/Commands'), "\\Charm\\Bob\\Commands");
+
+        // Get path by a console command
+        try {
+            $rc = new \ReflectionClass(CronRunCommand::class);
+            $dir = dirname($rc->getFileName());
+            $this->addConsoleCommands($app, $dir, "\\Charm\\Bob\\Commands");
+        } catch (\Exception $e) {
+            // Console command not existing? Then we don't have any charm commands at all!
+            // Just continue...
+        }
 
         // Add console commands from app
         $dir = PathFinder::getAppPath() . DIRECTORY_SEPARATOR . 'Jobs' . DIRECTORY_SEPARATOR . 'Console';

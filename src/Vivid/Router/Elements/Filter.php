@@ -7,6 +7,7 @@ namespace Charm\Vivid\Router\Elements;
 
 use Charm\Vivid\Charm;
 use Charm\Vivid\Router\RouterElement;
+use SuperClosure\Serializer;
 
 /**
  * Class Filter
@@ -56,6 +57,28 @@ class Filter implements RouterElement
     {
         $router->filter($this->name, $this->callback);
         return true;
+    }
+
+    /**
+     * Sleep method
+     *
+     * Serialize closure
+     */
+    public function __sleep()
+    {
+        $s = new Serializer();
+        $this->callback = $s->serialize($this->callback);
+    }
+
+    /**
+     * Wakeup method
+     *
+     * Unserialize closure
+     */
+    public function __wakeup()
+    {
+        $s = new Serializer();
+        $this->callback = $s->unserialize($this->callback);
     }
 
 }
