@@ -22,8 +22,8 @@ class Token
     /** @var string  the token */
     protected $token;
 
-    /** @var string  the app token */
-    protected $app_token;
+    /** @var string  the client token */
+    protected $client_token;
 
     /** @var string  the user class */
     protected $user_class;
@@ -71,19 +71,19 @@ class Token
     }
 
     /**
-     * Get the app token
+     * Get the client token
      *
      * @return bool|string  the token / false if no token is found
      */
-    public function getAppToken()
+    public function getClientToken()
     {
         $auth_header = Charm::Request()->getHeader('Authorization');
 
         $matches = [];
-        preg_match('/apptoken="(.*?)"/', $auth_header, $matches);
+        preg_match('/client="(.*?)"/', $auth_header, $matches);
         if(isset($matches[1])){
             $token = $matches[1];
-            $this->app_token = $token;
+            $this->client_token = $token;
             return $token;
         }
 
@@ -95,9 +95,9 @@ class Token
      *
      * @return bool
      */
-    public function hasAppToken()
+    public function hasClientToken()
     {
-        return !empty($this->app_token);
+        return !empty($this->client_token);
     }
 
     /**
