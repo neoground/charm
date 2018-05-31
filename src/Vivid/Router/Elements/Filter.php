@@ -16,7 +16,7 @@ use SuperClosure\Serializer;
  *
  * @package Charm\Vivid\Router\Elements
  */
-class Filter implements RouterElement
+class Filter implements RouterElement, \Serializable
 {
     protected $name;
 
@@ -64,21 +64,45 @@ class Filter implements RouterElement
      *
      * Serialize closure
      */
-    public function __sleep()
+    public function serialize()
     {
-        $s = new Serializer();
-        $this->callback = $s->serialize($this->callback);
+        $cb = $this->callback;
+
+        if($cb instanceof \Closure) {
+            $s = new Serializer();
+            $cb = $s->serialize($cb);
+        }
+
+        return serialize([
+            'name' => $this->name,
+            'callback' => $cb
+        ]);
     }
 
     /**
      * Wakeup method
      *
      * Unserialize closure
+     *
+     * @param mixed  $data
      */
-    public function __wakeup()
+    public function unserialize($data)
     {
         $s = new Serializer();
-        $this->callback = $s->unserialize($this->callback);
+        $us = unserialize($data);
+
+        $this->name = $us['name'];
+
+        if(!is_serialized($us['callback'])) {
+            $this->callback = $us['callback'];
+        } else {
+            try {
+                $this->callback = $s->unserialize($us['callback']);
+            } catch (\Exception $e) {
+                // Normal unserialize because super closure threw an error!
+                $this->callback = unserialize($us['callback']);
+            }
+        }
     }
 
 }
