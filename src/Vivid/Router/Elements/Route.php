@@ -106,6 +106,7 @@ class Route implements RouterElement
      * Set call controller / method
      *
      * @param mixed $call
+     *
      * @return Route
      */
     public function call($call)
@@ -118,20 +119,26 @@ class Route implements RouterElement
      * Set before filters
      *
      * @param array|string $filters array with filter names or single filter name
+     *
+     * @return Route
      */
     public function beforeFilters($filters)
     {
         $this->filters['before'] = $filters;
+        return $this;
     }
 
     /**
      * Set after filters
      *
      * @param array|string $filters array with filter names or single filter name
+     *
+     * @return Route
      */
     public function afterFilters($filters)
     {
         $this->filters['after'] = $filters;
+        return $this;
     }
 
     /**

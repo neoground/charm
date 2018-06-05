@@ -328,18 +328,17 @@ class Handler
      */
     private function outputError($msg, $statuscode = 500)
     {
+        $error_style = $this->getModule('Config')->get('main:output.error_style', 'default');
+
         // Show whoops in debug mode
-        if($this->getModule('Config')->get('main:debug.debugmode', false)) {
+        if($this->getModule('Config')->get('main:debug.debugmode', false) || $error_style == 'exception') {
             throw new OutputException($msg);
         }
 
         // Output JSON for API
         $http_accept = $this->getModule('Request')->get('HTTP_ACCEPT');
-        if(in_string('json', $http_accept)) {
-            $output = Json::make([
-                'type' => 'error',
-                'error_message' => $msg
-            ], $statuscode);
+        if(in_string('json', $http_accept) || $error_style == 'json') {
+            $output = Json::makeErrorMessage($msg, $statuscode);
             echo $output->render();
 
             return false;

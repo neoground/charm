@@ -137,20 +137,26 @@ class Group implements RouterElement
      * Set before filters
      *
      * @param array|string $filters array with filter names or single filter name
+     *
+     * @return Group
      */
     public function beforeFilters($filters)
     {
         $this->filters['before'] = $filters;
+        return $this;
     }
 
     /**
      * Set after filters
      *
      * @param array|string $filters array with filter names or single filter name
+     *
+     * @return Group
      */
     public function afterFilters($filters)
     {
         $this->filters['after'] = $filters;
+        return $this;
     }
 
     /**

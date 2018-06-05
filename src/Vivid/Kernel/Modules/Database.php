@@ -76,7 +76,8 @@ class Database implements ModuleInterface
         $debugbar = Charm::Debug()->getDebugBar();
 
         // Add Eloquent data if we got a database connection
-        if (Charm::Config()->get('main:debug.show_debugbar', false)) {
+        if (Charm::Config()->get('main:debug.debugmode', false)
+            && Charm::Config()->get('main:debug.show_debugbar', false)) {
             // Init and add debug bar collector
             $debugbar->addCollector(new EloquentDebugbar());
         }

@@ -69,6 +69,11 @@ class DebugBar extends Module implements ModuleInterface
      */
     public function getRenderHead()
     {
+        // Only in debug mode!
+        if(!Charm::Config()->get('main:debug.debugmode', false)) {
+            return '';
+        }
+
         $r = $this->getRenderer();
         return $r->renderHead();
     }
@@ -80,6 +85,11 @@ class DebugBar extends Module implements ModuleInterface
      */
     public function getRenderBar()
     {
+        // Only in debug mode!
+        if(!Charm::Config()->get('main:debug.debugmode', false)) {
+            return '';
+        }
+
         $r = $this->getRenderer();
         return $r->render();
     }
