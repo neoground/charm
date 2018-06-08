@@ -99,7 +99,10 @@ class View implements OutputInterface
         new ViewFunctions($twig);
 
         // Add own / custom twig functions
-        // TODO
+        $class = "\\App\\System\\ViewFunctions";
+        if(class_exists($class)) {
+            new $class($twig);
+        }
 
         return $twig;
     }
