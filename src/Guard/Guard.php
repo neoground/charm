@@ -57,7 +57,7 @@ class Guard extends Module implements ModuleInterface
 
         // Not logged in?
         if(!array_key_exists('user', $_SESSION)) {
-            return $this->user_class::where('email', 'system')->first();
+            return $this->user_class::getDefaultUser();
         }
 
         // Return session user
