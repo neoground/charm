@@ -48,13 +48,14 @@ class DebugBar extends Module implements ModuleInterface
     }
 
     /**
-     * Get debug bar javascript renderer
+     * Get debug bar javascript renderer if debug bar is enabled
      *
      * @return JavascriptRenderer
      */
     public function getRenderer()
     {
-        if(!is_object($this->debugBarRenderer)) {
+        if(!is_object($this->debugBarRenderer)
+            && Charm::Config()->get('main:debug.show_debugbar', false)) {
             $this->debugBarRenderer = $this->debugBar->getJavascriptRenderer();
             $this->debugBarRenderer->setBaseUrl(cBaseUrl() . '/vendor/maximebf/debugbar/src/DebugBar/Resources');
         }
