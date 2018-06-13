@@ -138,6 +138,8 @@ class View implements OutputInterface
     {
         // Add twig extensions from modules
         $modules = Handler::getInstance()->getModuleClasses();
+
+        $loaded_extenders = [];
         foreach($modules as $module) {
 
             // Build class name (replace last part after namespace)
@@ -148,8 +150,10 @@ class View implements OutputInterface
             // Replace last part with ViewExtender class
             $view_extender_classname = implode("\\", $view_extender_classname_tmp1) . "\\ViewExtender";
 
-            if(class_exists($view_extender_classname)) {
+            // Load view extender if existing and not loaded yet
+            if(class_exists($view_extender_classname) && !in_array($view_extender_classname, $loaded_extenders)) {
                 // Init this class so twig can be extended
+                $loaded_extenders[] = $view_extender_classname;
 
                 /** @var ViewExtenderInterface $ve */
                 $ve = new $view_extender_classname();

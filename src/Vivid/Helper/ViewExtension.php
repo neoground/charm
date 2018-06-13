@@ -93,14 +93,6 @@ class ViewExtension extends \Twig_Extension
     }
 
     /**
-     * Get the currently logged in user
-     */
-    public function getCurrentUser()
-    {
-        return Charm::Guard()->getUser();
-    }
-
-    /**
      * Get config value
      *
      * @param string     $key     the key
