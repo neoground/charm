@@ -7,6 +7,7 @@ namespace Charm\Vivid\Kernel\Output;
 
 use Charm\Vivid\Charm;
 use Charm\Vivid\Helper\ViewExtension;
+use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\OutputInterface;
 use Charm\Vivid\Kernel\Interfaces\ViewExtenderInterface;
 use Charm\Vivid\PathFinder;
@@ -135,8 +136,8 @@ class View implements OutputInterface
      */
     private function addExtensionsFromModules()
     {
-        // Add twig extensinos from modules
-        $modules = Charm::Config()->get('modules:modules');
+        // Add twig extensions from modules
+        $modules = Handler::getInstance()->getModuleClasses();
         foreach($modules as $module) {
 
             // Build class name (replace last part after namespace)

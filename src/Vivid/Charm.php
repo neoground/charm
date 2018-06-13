@@ -7,6 +7,7 @@ namespace Charm\Vivid;
 
 use App\Engine;
 use Charm\Guard\Guard;
+use Charm\Guard\Token;
 use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 
@@ -27,6 +28,7 @@ use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
  * @method static Kernel\Modules\Session Session
  * @method static Router\Router Router
  * @method static Guard Guard
+ * @method static Token Token
  * @method static Engine App
  *
  * @package Charm\Vivid

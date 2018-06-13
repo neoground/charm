@@ -35,6 +35,11 @@ class Handler
      */
     protected $modules = [];
 
+    /**
+     * @var array All module class names for easy access
+     */
+    protected $module_classes = [];
+
     /** @var array All modules which should be loaded */
     protected $modules_to_load;
 
@@ -257,6 +262,7 @@ class Handler
 
             // Save module instance
             $this->modules[$name] = $mod;
+            $this->module_classes[$name] = $class;
         }
     }
 
@@ -276,6 +282,16 @@ class Handler
         }
 
         return $this->modules[$name];
+    }
+
+    /**
+     * Get class names of all loaded modules as array
+     *
+     * @return array
+     */
+    public function getModuleClasses()
+    {
+        return $this->module_classes;
     }
 
     /**
