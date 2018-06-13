@@ -140,7 +140,7 @@ class Router extends Module implements ModuleInterface
     }
 
     /**
-     * Get base url
+     * Get base url without leading slash
      *
      * @return string
      */
@@ -148,6 +148,16 @@ class Router extends Module implements ModuleInterface
     {
         $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
         return rtrim($protocol . $_SERVER['HTTP_HOST'] . $this->getRelativeUrl(), '/');
+    }
+
+    /**
+     * Get assets url without leading slash
+     *
+     * @return string
+     */
+    public function getAssetsUrl()
+    {
+        return $this->getBaseUrl() . '/assets';
     }
 
     /**

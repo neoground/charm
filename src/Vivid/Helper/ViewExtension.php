@@ -54,9 +54,9 @@ class ViewExtension extends \Twig_Extension
      *
      * @return string
      */
-    public function getAssetUrl()
+    public function getAssetsUrl()
     {
-        return Charm::Router()->getBaseUrl() . '/assets';
+        return Charm::Router()->getAssetsUrl();
     }
 
     /**
@@ -98,6 +98,19 @@ class ViewExtension extends \Twig_Extension
     public function getCurrentUser()
     {
         return Charm::Guard()->getUser();
+    }
+
+    /**
+     * Get config value
+     *
+     * @param string     $key     the key
+     * @param null|mixed $default (optional) default value to return. Default: null
+     *
+     * @return mixed
+     */
+    public function getConfig($key, $default = null)
+    {
+        return Charm::Config()->get($key, $default);
     }
 
     /**

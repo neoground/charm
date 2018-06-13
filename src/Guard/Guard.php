@@ -64,6 +64,19 @@ class Guard extends Module implements ModuleInterface
     }
 
     /**
+     * Get user id
+     *
+     * This is more performant than getUser() because the id is stored in the session.
+     * No database query needed.
+     *
+     * @return bool
+     */
+    public function getUserId()
+    {
+        return (empty($_SESSION['user'])) ? false : $_SESSION['user'];
+    }
+
+    /**
      * Check if user is logged in
      *
      * @return bool
@@ -81,7 +94,7 @@ class Guard extends Module implements ModuleInterface
             && $_SESSION['loggedin']
         ) {
             $a = $this->user_class::find($_SESSION['user']);
-            if (is_object($a) && $a->enabled) {
+            if (is_object($a) && $a->enabled && $a->id !== $this->user_class::getDefaultUser()->id) {
                 if (!$this->isExpired()) {
                     $_SESSION['last_activity'] = Carbon::now()->toDateTimeString();
                     return true;
