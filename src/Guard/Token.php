@@ -8,7 +8,6 @@ namespace Charm\Guard;
 use Charm\Vivid\Base\Module;
 use Charm\Vivid\Charm;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
-use Charm\Vivid\Kernel\Traits\SingletonTrait;
 
 /**
  * Class Token
@@ -19,8 +18,6 @@ use Charm\Vivid\Kernel\Traits\SingletonTrait;
  */
 class Token extends Module implements ModuleInterface
 {
-    use SingletonTrait;
-
     /** @var string  the token */
     protected $token;
 
