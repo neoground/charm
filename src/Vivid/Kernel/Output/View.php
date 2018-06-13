@@ -99,9 +99,9 @@ class View implements OutputInterface
         $twig->addExtension(new ViewExtension());
 
         // Add own / custom twig functions
-        $class = "\\App\\System\\ViewFunctions";
+        $class = "\\App\\System\\ViewExtension";
         if(class_exists($class)) {
-            new $class($twig);
+            $twig->addExtension(new $class);
         }
 
         return $twig;
