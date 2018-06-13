@@ -59,6 +59,7 @@ class Handler
             'Request',
             'Formatter',
             'Router' => '\\Charm\\Vivid\\Router\\Router',
+            'Token' => '\\Charm\\Guard\\Token',
             'Guard' => '\\Charm\\Guard\\Guard',
             'Mailman',
             //'Cache'

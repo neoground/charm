@@ -11,7 +11,7 @@ use Charm\Vivid\Charm;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 
 /**
- * Class Module
+ * Class Guard
  *
  * Module binding to Charm kernel
  *
@@ -46,13 +46,12 @@ class Guard extends Module implements ModuleInterface
     {
         // Return default user if access via CLI
         if (is_cli()) {
-            return $this->user_class::where('email', 'system')->first();
+            return $this->user_class::getDefaultUser();
         }
 
         // API
-        $token = Token::getInstance();
-        if ($token->hasToken()) {
-            return $token->getUser();
+        if (Charm::Token()->hasToken()) {
+            return Charm::Token()->getUser();
         }
 
         // Not logged in?
@@ -72,9 +71,8 @@ class Guard extends Module implements ModuleInterface
     public function isLoggedIn()
     {
         // API
-        $token = Token::getInstance();
-        if ($token->hasToken()) {
-            return $token->isLoggedIn();
+        if (Charm::Token()->hasToken()) {
+            return Charm::Token()->isLoggedIn();
         }
 
         // Session variables set?

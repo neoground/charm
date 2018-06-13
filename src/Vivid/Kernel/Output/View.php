@@ -6,7 +6,7 @@
 namespace Charm\Vivid\Kernel\Output;
 
 use Charm\Vivid\Charm;
-use Charm\Vivid\Helper\ViewFunctions;
+use Charm\Vivid\Helper\ViewExtension;
 use Charm\Vivid\Kernel\Interfaces\OutputInterface;
 use Charm\Vivid\Kernel\Interfaces\ViewExtenderInterface;
 use Charm\Vivid\PathFinder;
@@ -95,8 +95,8 @@ class View implements OutputInterface
         // Add charm global
         $twig->addGlobal('charm', Charm::getInstance());
 
-        // Add charm twig functions
-        new ViewFunctions($twig);
+        // Add charm twig extension
+        $twig->addExtension(new ViewExtension());
 
         // Add own / custom twig functions
         $class = "\\App\\System\\ViewFunctions";

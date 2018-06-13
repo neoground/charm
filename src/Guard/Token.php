@@ -5,17 +5,19 @@
 
 namespace Charm\Guard;
 
+use Charm\Vivid\Base\Module;
 use Charm\Vivid\Charm;
+use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Charm\Vivid\Kernel\Traits\SingletonTrait;
 
 /**
- * Class Module
+ * Class Token
  *
  * Module binding to Charm kernel
  *
  * @package Charm\Guard
  */
-class Token
+class Token extends Module implements ModuleInterface
 {
     use SingletonTrait;
 
@@ -29,9 +31,11 @@ class Token
     protected $user_class;
 
     /**
-     * Token init function
+     * Load the module
+     *
+     * This method is executed when the module is loaded to the kernel
      */
-    protected function init()
+    public function loadModule()
     {
         // Get user class
         $this->user_class = Charm::App()->getConfig('user_class');
@@ -124,11 +128,14 @@ class Token
      */
     public function isLoggedIn()
     {
-        return is_object($this->user_class::where('api_token', $this->token)->first());
+        return !empty($this->token) && $this->user_class::where('api_token', $this->token)->count() > 0;
     }
 
     /**
      * Generate a token
+     *
+     * The random bytes will be base64 encoded (without special characters).
+     * So a 48 byte long input will create a 63 characters token.
      *
      * @param int  $bytes  bytes length, default 16
      *
@@ -136,11 +143,13 @@ class Token
      */
     public function createToken($bytes = 16)
     {
-        $token = bin2hex(openssl_random_pseudo_bytes($bytes));
+        $token = base64_encode(openssl_random_pseudo_bytes($bytes));
+        $token = str_replace(['+', '/', '='], "", $token);
 
         // Check if token in database. If so, generate new one!
         while ($this->user_class::where('api_token', $token)->count() > 0) {
-            $token = bin2hex(openssl_random_pseudo_bytes($bytes));
+            $token = base64_encode(openssl_random_pseudo_bytes($bytes));
+            $token = str_replace(['+', '/', '='], "", $token);
         }
 
         return $token;
