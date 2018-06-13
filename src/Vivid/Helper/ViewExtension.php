@@ -213,4 +213,14 @@ class ViewExtension extends \Twig_Extension
         return str_replace($search, $replace, $input);
     }
 
+    /**
+     * Is debug mode enabled?
+     *
+     * @return mixed
+     */
+    public function isDebug()
+    {
+        return Charm::Config()->get('main:debug.debugmode', false);
+    }
+
 }
