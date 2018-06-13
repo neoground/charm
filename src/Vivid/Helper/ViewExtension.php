@@ -186,4 +186,18 @@ class ViewExtension extends \Twig_Extension
         return Carbon::parse($data);
     }
 
+    /**
+     * String replacement for twig views
+     *
+     * @param mixed $search
+     * @param mixed $replace
+     * @param string $input  the input string
+     *
+     * @return string
+     */
+    public function str_replace($search, $replace, $input)
+    {
+        return str_replace($search, $replace, $input);
+    }
+
 }
