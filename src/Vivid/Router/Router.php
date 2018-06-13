@@ -151,6 +151,17 @@ class Router extends Module implements ModuleInterface
     }
 
     /**
+     * Get the current full url
+     *
+     * @return string
+     */
+    public function getCurrentUrl()
+    {
+        $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
+        return $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+    }
+
+    /**
      * Dispatch and call method
      *
      * @return OutputInterface the response

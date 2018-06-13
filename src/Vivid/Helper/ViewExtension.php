@@ -83,6 +83,16 @@ class ViewExtension extends \Twig_Extension
     }
 
     /**
+     * Get the current full url
+     *
+     * @return string
+     */
+    public function getCurrentUrl()
+    {
+        return Charm::Router()->getCurrentUrl();
+    }
+
+    /**
      * Get the currently logged in user
      */
     public function getCurrentUser()
