@@ -205,6 +205,12 @@ class Guard extends Module implements ModuleInterface
             setcookie("chrem", null, -1, '/');
         }
         session_destroy();
+
+        // Set session name + start a clean session
+        // So messages etc. work as expected
+        session_name(Charm::Config()->get('main:session.name', 'charm'));
+        session_start();
+
     }
 
     /**
@@ -265,6 +271,68 @@ class Guard extends Module implements ModuleInterface
     public function findUserByUsername($username)
     {
         return $this->user_class::where($this->username_field, $username)->first();
+    }
+
+    /**
+     * Get amount of wrong login attempts for current IP
+     *
+     * Note: Make sure that you remove that hash every day or so.
+     *       Login attempts don't expire itself!
+     *
+     * @return int
+     */
+    public function getWrongLoginAttempts()
+    {
+        $hashkey = Charm::Config()->get('main:session.name', 'charm');
+
+        // Get redis connection
+        $r = Charm::Database()->getRedisClient();
+
+        // Get ip
+        $ip = Charm::Request()->getIpAddress();
+
+        if ($ip) {
+            $iphash = md5($ip);
+
+            $counter = $r->hget($hashkey . ':loginattempts', $iphash);
+            if (!$counter) {
+                $counter = 0;
+            }
+
+            return $counter;
+        }
+
+        return 0;
+    }
+
+    /**
+     * Save wrong login attempt of current IP in redis
+     *
+     * Note: Make sure that you remove that hash every day or so.
+     *       Login attempts don't expire itself!
+     */
+    public function saveWrongLoginAttempt()
+    {
+        $hashkey = Charm::Config()->get('main:session.name', 'charm');
+
+        // Get redis connection
+        $r = Charm::Database()->getRedisClient();
+
+        // Get ip
+        $ip = Charm::Request()->getIpAddress();
+
+        if ($ip) {
+            $iphash = md5($ip);
+
+            $counter = $r->hget($hashkey . ':loginattempts', $iphash);
+            if (!$counter) {
+                $counter = 0;
+            }
+
+            $counter++;
+
+            $r->hset('loginattempts', $iphash, $counter);
+        }
     }
 
 
