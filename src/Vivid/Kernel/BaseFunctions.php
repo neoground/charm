@@ -30,7 +30,7 @@ if(!function_exists('cPath')) {
         }
 
         // Append sub directory
-        $path .= $subdir;
+        $path .= '/' . ltrim($subdir, '/');
 
         return rtrim($path, '/');
     }
