@@ -73,6 +73,7 @@ class Guard extends Module implements ModuleInterface
      */
     public function getUserId()
     {
+        // TODO: Add function for API user (by token) + is_cli, like getUser() but with performance!
         return (empty($_SESSION['user'])) ? false : $_SESSION['user'];
     }
 

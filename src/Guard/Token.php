@@ -134,19 +134,22 @@ class Token extends Module implements ModuleInterface
      * The random bytes will be base64 encoded (without special characters).
      * So a 48 byte long input will create a 63 characters token.
      *
-     * @param int  $bytes  bytes length, default 16
+     * @param int  $bytes    bytes length, default 16
+     * @param bool $apitoken (opt.) is it an api token which must be unique in api_token column? Default: false
      *
      * @return string
      */
-    public function createToken($bytes = 16)
+    public function createToken($bytes = 16, $apitoken = false)
     {
         $token = base64_encode(openssl_random_pseudo_bytes($bytes));
         $token = str_replace(['+', '/', '='], "", $token);
 
         // Check if token in database. If so, generate new one!
-        while ($this->user_class::where('api_token', $token)->count() > 0) {
-            $token = base64_encode(openssl_random_pseudo_bytes($bytes));
-            $token = str_replace(['+', '/', '='], "", $token);
+        if($apitoken) {
+            while ($this->user_class::where('api_token', $token)->count() > 0) {
+                $token = base64_encode(openssl_random_pseudo_bytes($bytes));
+                $token = str_replace(['+', '/', '='], "", $token);
+            }
         }
 
         return $token;

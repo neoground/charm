@@ -305,12 +305,13 @@ class Mailman implements ModuleInterface
     /**
      * Set HTML content by template
      *
-     * @param string  $name  name of template directory
-     * @param array   $data  (opt.) array of data to pass to template
+     * @param string  $name     name of template directory
+     * @param array   $data     (opt.) array of data to pass to template
+     * @param bool    $combined (opt.) use html + text templates automatically?
      *
      * @return $this
      */
-    public function setTemplate($name, $data = [])
+    public function setTemplate($name, $data = [], $combined = false)
     {
         // Init twig
         $this->initTwig();
@@ -320,8 +321,21 @@ class Mailman implements ModuleInterface
 
         // Render template
         try {
+            $file = 'email.twig';
+
+            if($combined) {
+                $file = 'email_html.twig';
+            }
+
             $this->mail->isHTML(true);
-            $this->mail->Body = $this->twig->render($name . DIRECTORY_SEPARATOR . 'email.twig', $data);
+            $this->mail->Body = $this->twig->render($name . DIRECTORY_SEPARATOR . $file, $data);
+
+            if($combined) {
+                // Also add text version
+                $file = 'email_text.twig';
+                $this->mail->AltBody = $this->twig->render($name . DIRECTORY_SEPARATOR . $file, $data);
+            }
+
         } catch (\Exception $e) {
             Charm::Logging()->error('Could not render e-mail template', [$name, $e->getMessage()]);
         }
@@ -339,7 +353,7 @@ class Mailman implements ModuleInterface
         try {
             $this->mail->send();
         } catch(Exception $e) {
-            Charm::Logging()->error('Could not send e-mail', [$e->getMessage(), $this->mail->ErrorInfo]);
+            Charm::Logging()->error('Could not send email', [$e->getMessage(), $this->mail->ErrorInfo]);
         }
 
         // Clear all recipients to prevent errors with multiple recipients on mass mails
