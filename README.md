@@ -15,3 +15,6 @@ The hassle-free php environment for the real world.
 
 - PSR16 Caching engine: https://www.php-fig.org/psr/psr-16/
   Redis cache failover (if redis not present -> just get data manually)
+
+- Option to renew remember me cookie on every page visit for
+  another time period

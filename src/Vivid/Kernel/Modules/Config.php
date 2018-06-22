@@ -110,6 +110,16 @@ class Config implements ModuleInterface
     }
 
     /**
+     * Check if debug mode is enabled
+     *
+     * @return bool
+     */
+    public function inDebugMode()
+    {
+        return $this->get('main:debug.debugmode') == true;
+    }
+
+    /**
      * Set a config value
      *
      * @param string $key   the key
@@ -119,7 +129,7 @@ class Config implements ModuleInterface
      */
     public function set($key, $value)
     {
-
+        // TODO Implement.
     }
 
     /**
@@ -132,7 +142,7 @@ class Config implements ModuleInterface
      */
     public function add($key, $value)
     {
-
+        // TODO Implement.
     }
 
     /**
@@ -144,7 +154,7 @@ class Config implements ModuleInterface
      */
     public function delete($key)
     {
-
+        // TODO Implement.
     }
 
     /**

@@ -5,9 +5,8 @@
 
 namespace Charm\Vivid\Kernel\Modules;
 
-use App\Models\User;
 use Charm\Vivid\Charm;
-use Charm\Vivid\Helper\ViewFunctions;
+use Charm\Vivid\Helper\ViewExtension;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Charm\Vivid\PathFinder;
 use PHPMailer\PHPMailer\Exception;
@@ -58,8 +57,14 @@ class Mailman implements ModuleInterface
         // Add charm global
         $twig->addGlobal('charm', Charm::getInstance());
 
-        // Add charm twig functions
-        new ViewFunctions($twig);
+        // Add charm twig extension
+        $twig->addExtension(new ViewExtension());
+
+        // Add own / custom twig functions
+        $class = "\\App\\System\\ViewExtension";
+        if(class_exists($class)) {
+            $twig->addExtension(new $class);
+        }
 
         // Add string loader
         $twig->addExtension(new \Twig_Extension_StringLoader());
@@ -198,7 +203,7 @@ class Mailman implements ModuleInterface
     /**
      * Add a user as recipient
      *
-     * @param User $user
+     * @param object $user the user object
      *
      * @return $this
      */
