@@ -142,3 +142,18 @@ if(!function_exists('is_cli')) {
     }
 
 }
+
+if (!function_exists('is_countable')) {
+
+    /**
+     * Check if a value is countable
+     *
+     * @param mixed $c the value
+     *
+     * @return bool
+     */
+    function is_countable($c)
+    {
+        return is_array($c) || $c instanceof \Countable;
+    }
+}
