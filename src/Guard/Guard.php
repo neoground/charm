@@ -69,12 +69,20 @@ class Guard extends Module implements ModuleInterface
      * This is more performant than getUser() because the id is stored in the session.
      * No database query needed.
      *
-     * @return bool
+     * @return int
      */
     public function getUserId()
     {
-        // TODO: Add function for API user (by token) + is_cli, like getUser() but with performance!
-        return (empty($_SESSION['user'])) ? false : $_SESSION['user'];
+        if(empty($_SESSION['user'])) {
+            // No user set yet. Get from database, save it for better performance the next time
+            $u = $this->getUser();
+            if(!empty($u->id) && $u->id !== $this->user_class::getDefaultUser()) {
+                $_SESSION['user'] = $u->id;
+                return $u->id;
+            }
+        }
+
+        return $_SESSION['user'];
     }
 
     /**
