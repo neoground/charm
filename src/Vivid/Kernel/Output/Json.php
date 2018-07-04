@@ -66,6 +66,56 @@ class Json implements OutputInterface
     }
 
     /**
+     * Add pagination to JSON output
+     *
+     * This will move every content provided as $data to a 'data' key in the
+     * returned JSON.
+     *
+     * @param int $total    total entities
+     * @param int $per_page entities per page
+     *
+     * @return $this
+     */
+    public function withPagination($total, $per_page)
+    {
+        $get = $_GET;
+        $page = Charm::Request()->get('page', 1);
+
+        $total_pages = ceil($total / $per_page);
+
+        $prev_page_url = null;
+        $next_page_url = null;
+
+        $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
+
+        if($page > 1) {
+            // We have prev page!
+            $get['page'] = $page - 1;
+            $prev_page_url = $protocol . $_SERVER['HTTP_HOST'] . strtok($_SERVER['REQUEST_URI'],'?') . '?' . http_build_query($get);
+        }
+
+        if($page < $total_pages) {
+            // We have next page!
+            $get['page'] = $page + 1;
+            $next_page_url = $protocol . $_SERVER['HTTP_HOST'] . strtok($_SERVER['REQUEST_URI'],'?') . '?' . http_build_query($get);
+        }
+
+        $arr = [
+            'total' => $total,
+            'per-page' => $per_page,
+            'current-page' => $page,
+            'last-page' => $total_pages,
+            'next-page-url' => $next_page_url,
+            'prev-page-url' => $prev_page_url,
+            'data' => $this->data
+        ];
+
+        $this->data = $arr;
+
+        return $this;
+    }
+
+    /**
      * Return status code on body when rendering
      *
      * @return $this
