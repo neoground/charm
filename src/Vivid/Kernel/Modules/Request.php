@@ -43,11 +43,13 @@ class Request implements ModuleInterface
             $data_json = json_decode($postdata, true);
 
             if (is_array($data_json)) {
-                foreach ($data_json as $k => $v) {
-                    $this->vars[$k] = $v;
-                }
+                $this->vars = array_merge($this->vars, $data_json);
             }
         }
+
+        // Data from put requests and so on?
+        parse_str(file_get_contents("php://input"), $putdata);
+        $this->vars = array_merge($this->vars, (array) $putdata);
     }
 
     /**
