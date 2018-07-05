@@ -119,4 +119,43 @@ class Arrays implements ModuleInterface
         return $merged;
     }
 
+    /**
+     * Sort an array by two sub-array values
+     *
+     * The first one is more important (e.g. priority) than the second (e.g. date, count, ...)
+     * The array $arr must consist of sub-arrays. Every sub-array must have at least the 2 keys
+     *
+     * This sort function is case-insensitive!
+     *
+     * Idea from: http://stackoverflow.com/a/16832208
+     *
+     * Example input array, $key1 = 'foo', $key2 = 'bar'
+     * $arr = [
+     *     ['foo' => 1, 'bar' => 2],
+     *     ['foo' => 5, 'bar' => 3, 'baz' => 1]
+     * ]
+     *
+     * @param array  $arr   the input array
+     * @param string $key1  priority key
+     * @param string $key2  second key
+     * @param string $order (opt.) sort direction (desc / asc). Default: desc
+     */
+    public function sortByTwoKeys(&$arr, $key1, $key2, $order = 'desc')
+    {
+        uasort($arr, function ($a, $b) use ($key1, $key2, $order) {
+
+            if ($order == 'asc') {
+                $a_tmp = $a;
+                $a = $b;
+                $b = $a_tmp;
+            }
+
+            if ($a[$key1] == $b[$key1]) {
+                return strtolower($a[$key2]) < strtolower($b[$key2]) ? 1 : -1;
+            }
+
+            return strtolower($a[$key1]) < strtolower($b[$key1]) ? 1 : -1;
+        });
+    }
+
 }
