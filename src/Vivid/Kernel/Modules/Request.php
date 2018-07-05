@@ -117,7 +117,11 @@ class Request implements ModuleInterface
      */
     public function getHeader($key, $default = null)
     {
-        return Charm::Arrays()->get(apache_request_headers(), $key, $default);
+        // Make header keys + wanted key lowercase to prevent problems
+        $headers = array_change_key_case(apache_request_headers());
+        $key = strtolower($key);
+
+        return Charm::Arrays()->get($headers, $key, $default);
     }
 
     /**

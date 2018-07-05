@@ -48,7 +48,7 @@ class Token extends Module implements ModuleInterface
      */
     public function getToken()
     {
-        $auth_header = Charm::Request()->getHeader('Authorization');
+        $auth_header = Charm::Request()->getHeader('authorization');
 
         $matches = [];
         preg_match('/usertoken="(.*?)"/', $auth_header, $matches);
@@ -78,7 +78,7 @@ class Token extends Module implements ModuleInterface
      */
     public function getClientToken()
     {
-        $auth_header = Charm::Request()->getHeader('Authorization');
+        $auth_header = Charm::Request()->getHeader('authorization');
 
         $matches = [];
         preg_match('/client="(.*?)"/', $auth_header, $matches);
