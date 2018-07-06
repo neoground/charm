@@ -150,6 +150,9 @@ class Json implements OutputInterface
         // Set content type
         header('Content-type: application/json');
 
+        // Set status code
+        http_response_code($this->statuscode);
+
         // Status on body?
         if(isset($this->settings['status_on_body']) && $this->settings['status_on_body']) {
             $this->data = ["status" => $this->statuscode] + $this->data;

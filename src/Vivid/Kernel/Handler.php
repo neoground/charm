@@ -87,7 +87,12 @@ class Handler
 
         // Blacklist modules that aren't needed in cli
         if (defined('CLI_PATH')) {
-            $this->modules_blacklist = ['Session', 'Request'];
+            $this->modules_blacklist = [
+                'Session',
+                'Request',
+                '\\Charm\\Guard\\Token',
+                '\\Charm\\Guard\\Guard'
+            ];
         }
 
         $h->loadModules();

@@ -296,6 +296,9 @@ class DataTable implements OutputInterface
      */
     public function render()
     {
+        // Set status code
+        http_response_code($this->statuscode);
+
         // Build data
         $this->buildResponse();
 
