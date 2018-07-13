@@ -73,6 +73,12 @@ class Guard extends Module implements ModuleInterface
      */
     public function getUserId()
     {
+        // API calls (with token) can have a different user on each request
+        // So always get the user by token to prevent problems
+        if (Charm::Token()->hasToken()) {
+            return Charm::Token()->getUser()->id;
+        }
+
         if(empty($_SESSION['user'])) {
             // No user set yet. Get from database, save it for better performance the next time
             $u = $this->getUser();
