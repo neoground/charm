@@ -8,6 +8,7 @@ namespace Charm\Vivid\Kernel\Output;
 use Charm\Vivid\Charm;
 use Charm\Vivid\Helper\ViewExtension;
 use Charm\Vivid\Kernel\Handler;
+use Charm\Vivid\Kernel\Interfaces\HttpCodes;
 use Charm\Vivid\Kernel\Interfaces\OutputInterface;
 use Charm\Vivid\Kernel\Interfaces\ViewExtenderInterface;
 use Charm\Vivid\PathFinder;
@@ -19,7 +20,7 @@ use Charm\Vivid\PathFinder;
  *
  * @package Charm\Vivid\Kernel\Output
  */
-class View implements OutputInterface
+class View implements OutputInterface, HttpCodes
 {
     /** @var array content array */
     protected $content = [];

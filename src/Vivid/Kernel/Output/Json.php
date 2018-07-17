@@ -6,6 +6,7 @@
 namespace Charm\Vivid\Kernel\Output;
 
 use Charm\Vivid\Charm;
+use Charm\Vivid\Kernel\Interfaces\HttpCodes;
 use Charm\Vivid\Kernel\Interfaces\OutputInterface;
 
 /**
@@ -15,7 +16,7 @@ use Charm\Vivid\Kernel\Interfaces\OutputInterface;
  *
  * @package Charm\Vivid\Kernel\Output
  */
-class Json implements OutputInterface
+class Json implements OutputInterface, HttpCodes
 {
 
     /** @var array data to output as json */
