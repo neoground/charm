@@ -31,8 +31,8 @@ class Json implements OutputInterface, HttpCodes
     /**
      * Output factory
      *
-     * @param array  $val         content to output as json
-     * @param int    $statuscode  (opt.) http status code (default: 200)
+     * @param array $val content to output as json
+     * @param int $statuscode (opt.) http status code (default: 200)
      *
      * @return self
      */
@@ -53,8 +53,8 @@ class Json implements OutputInterface, HttpCodes
     /**
      * Create an error message to return
      *
-     * @param string  $message     the error message
-     * @param int     $statuscode  (opt.) the status code (default: 500)
+     * @param string $message the error message
+     * @param int $statuscode (opt.) the status code (default: 500)
      *
      * @return self
      */
@@ -72,12 +72,13 @@ class Json implements OutputInterface, HttpCodes
      * This will move every content provided as $data to a 'data' key in the
      * returned JSON.
      *
-     * @param int $total    total entities
+     * @param int $total total entities
      * @param int $per_page entities per page
+     * @param array $custom_data (opt.) custom data to add to pagination array
      *
      * @return $this
      */
-    public function withPagination($total, $per_page)
+    public function withPagination($total, $per_page, $custom_data = [])
     {
         $get = $_GET;
         $page = Charm::Request()->get('page', 1);
@@ -89,27 +90,31 @@ class Json implements OutputInterface, HttpCodes
 
         $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
 
-        if($page > 1) {
+        if ($page > 1) {
             // We have prev page!
             $get['page'] = $page - 1;
-            $prev_page_url = $protocol . $_SERVER['HTTP_HOST'] . strtok($_SERVER['REQUEST_URI'],'?') . '?' . http_build_query($get);
+            $prev_page_url = $protocol . $_SERVER['HTTP_HOST'] . strtok($_SERVER['REQUEST_URI'], '?') . '?' . http_build_query($get);
         }
 
-        if($page < $total_pages) {
+        if ($page < $total_pages) {
             // We have next page!
             $get['page'] = $page + 1;
-            $next_page_url = $protocol . $_SERVER['HTTP_HOST'] . strtok($_SERVER['REQUEST_URI'],'?') . '?' . http_build_query($get);
+            $next_page_url = $protocol . $_SERVER['HTTP_HOST'] . strtok($_SERVER['REQUEST_URI'], '?') . '?' . http_build_query($get);
         }
 
         $arr = [
             'total' => $total,
-            'per-page' => $per_page,
-            'current-page' => $page,
-            'last-page' => $total_pages,
-            'next-page-url' => $next_page_url,
-            'prev-page-url' => $prev_page_url,
+            'per_page' => $per_page,
+            'current_page' => $page,
+            'last_page' => $total_pages,
+            'next_page_url' => $next_page_url,
+            'prev_page_url' => $prev_page_url,
             'data' => $this->data
         ];
+
+        if(!empty($custom_data)) {
+            $arr['custom_data'] = $custom_data;
+        }
 
         $this->data = $arr;
 
@@ -130,8 +135,8 @@ class Json implements OutputInterface, HttpCodes
     /**
      * Add an value to the return data array
      *
-     * @param string  $key    the key
-     * @param string  $value  the value
+     * @param string $key the key
+     * @param string $value the value
      *
      * @return $this
      */
@@ -155,7 +160,7 @@ class Json implements OutputInterface, HttpCodes
         http_response_code($this->statuscode);
 
         // Status on body?
-        if(isset($this->settings['status_on_body']) && $this->settings['status_on_body']) {
+        if (isset($this->settings['status_on_body']) && $this->settings['status_on_body']) {
             $this->data = ["status" => $this->statuscode] + $this->data;
         }
 
