@@ -5,7 +5,6 @@
 
 namespace Charm\Vivid\Kernel;
 
-use Charm\Bob\Commands\CronRunCommand;
 use Charm\Vivid\Charm;
 use Charm\Vivid\Exceptions\ModuleNotFoundException;
 use Charm\Vivid\Exceptions\OutputException;
@@ -14,7 +13,6 @@ use Charm\Vivid\Kernel\Interfaces\OutputInterface;
 use Charm\Vivid\Kernel\Output\Json;
 use Charm\Vivid\Kernel\Output\View;
 use Charm\Vivid\Kernel\Traits\SingletonTrait;
-use Charm\Vivid\PathFinder;
 use Phroute\Phroute\Exception\HttpMethodNotAllowedException;
 use Phroute\Phroute\Exception\HttpRouteNotFoundException;
 use Symfony\Component\Console\Application;
