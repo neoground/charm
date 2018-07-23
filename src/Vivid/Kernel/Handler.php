@@ -66,6 +66,7 @@ class Handler
             'Router' => '\\Charm\\Vivid\\Router\\Router',
             'Token' => '\\Charm\\Guard\\Token',
             'Guard' => '\\Charm\\Guard\\Guard',
+            'Bob' => '\\Charm\\Bob\\Bob',
             'CharmCreator' => '\\Charm\\CharmCreator\\CharmCreator',
             'Mailman',
             //'Cache'
@@ -133,27 +134,23 @@ class Handler
         // TODO: Dynamize version string
         $app = new Application('Bob from Charm', '1.0');
 
-        // Add commands from all modules
+        // Add commands from all modules (including the app itself)
         foreach($this->getModuleClasses() as $name => $module) {
             try {
-            $mod = $this->getModule($name);
-            if(is_object($mod)) {
-                $dir = dirname($mod->getBaseDirectory()) . '/Commands';
-                $namespace = $mod->getReflectionClass()->getNamespaceName() . "\\Commands";
+                $mod = $this->getModule($name);
+                if(is_object($mod) && method_exists($mod, 'getReflectionClass')) {
+                    $dir = $mod->getBaseDirectory() . DIRECTORY_SEPARATOR . 'Jobs' . DIRECTORY_SEPARATOR . 'Console';
+                    $namespace = $mod->getReflectionClass()->getNamespaceName() . "\\Jobs\\Console";
 
-                if(file_exists($dir)) {
-                    $this->addConsoleCommands($app, $dir, $namespace);
+                    if(file_exists($dir)) {
+                        $this->addConsoleCommands($app, $dir, $namespace);
+                    }
                 }
-            }
             } catch (\Exception $e) {
                 // Console command not existing?
                 // Just continue...
             }
         }
-
-        // Add console commands from app
-        $dir = PathFinder::getAppPath() . DIRECTORY_SEPARATOR . 'Jobs' . DIRECTORY_SEPARATOR . 'Console';
-        $this->addConsoleCommands($app, $dir, "\\App\\Jobs\\Console");
 
         // Start the console
         try {

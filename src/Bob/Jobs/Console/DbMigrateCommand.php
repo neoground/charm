@@ -3,7 +3,7 @@
  * This file contains the console command for database migration.
  */
 
-namespace Charm\Bob\Commands;
+namespace Charm\Bob\Jobs\Console;
 
 use Charm\Vivid\Charm;
 use Symfony\Component\Console\Command\Command;
