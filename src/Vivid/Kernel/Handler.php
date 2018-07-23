@@ -66,6 +66,7 @@ class Handler
             'Router' => '\\Charm\\Vivid\\Router\\Router',
             'Token' => '\\Charm\\Guard\\Token',
             'Guard' => '\\Charm\\Guard\\Guard',
+            'CharmCreator' => '\\Charm\\CharmCreator\\CharmCreator',
             'Mailman',
             //'Cache'
         ];
@@ -132,16 +133,22 @@ class Handler
         // TODO: Dynamize version string
         $app = new Application('Bob from Charm', '1.0');
 
-        // Add base commands from bob
+        // Add commands from all modules
+        foreach($this->getModuleClasses() as $name => $module) {
+            try {
+            $mod = $this->getModule($name);
+            if(is_object($mod)) {
+                $dir = dirname($mod->getBaseDirectory()) . '/Commands';
+                $namespace = $mod->getReflectionClass()->getNamespaceName() . "\\Commands";
 
-        // Get path by a console command
-        try {
-            $rc = new \ReflectionClass(CronRunCommand::class);
-            $dir = dirname($rc->getFileName());
-            $this->addConsoleCommands($app, $dir, "\\Charm\\Bob\\Commands");
-        } catch (\Exception $e) {
-            // Console command not existing? Then we don't have any charm commands at all!
-            // Just continue...
+                if(file_exists($dir)) {
+                    $this->addConsoleCommands($app, $dir, $namespace);
+                }
+            }
+            } catch (\Exception $e) {
+                // Console command not existing?
+                // Just continue...
+            }
         }
 
         // Add console commands from app
