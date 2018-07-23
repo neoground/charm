@@ -160,6 +160,19 @@ class Group implements RouterElement
     }
 
     /**
+     * Set the full filters array (before / after)
+     *
+     * @param array $filters the filters array
+     *
+     * @return $this
+     */
+    public function setFilters($filters)
+    {
+        $this->filters = $filters;
+        return $this;
+    }
+
+    /**
      * Route constructor.
      *
      * @param null $name
@@ -195,10 +208,13 @@ class Group implements RouterElement
      * Add element to router
      *
      * @param \Phroute\Phroute\RouteCollector $router
+     * @param array $routes data of all routes
      *
      * @return bool
+     *
+     * @throws \Exception
      */
-    public function addToRouter($router)
+    public function addToRouter($router, &$routes)
     {
         // Groups won't be added to the router itself.
         // Only routes and routes of sub-groups.
@@ -207,14 +223,16 @@ class Group implements RouterElement
         foreach($this->routes as $route) {
             $route->prependUrl($this->url);
             $route->prependName($this->name);
-            $route->addToRouter($router);
+            $route->setFilters($this->filters);
+            $route->addToRouter($router, $routes);
         }
 
         // Go through all sub-groups, prepend name + url, add them
         foreach($this->groups as $group) {
             $group->prependUrl($this->url);
             $group->prependName($this->name);
-            $group->addToRouter($router);
+            $group->setFilters($this->filters);
+            $group->addToRouter($router, $routes);
         }
 
         return true;

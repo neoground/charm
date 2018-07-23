@@ -44,8 +44,11 @@ class Router extends Module implements ModuleInterface
     private function init()
     {
         // Get router instance from cache
-        if(Charm::AppStorage()->has('Routes', 'RouteCollector')) {
+        if(Charm::AppStorage()->has('Routes', 'RouteCollector')
+            && Charm::AppStorage()->has('Routes', 'RoutesData')
+        ) {
             $this->route = Charm::AppStorage()->get('Routes', 'RouteCollector');
+            $this->routes = Charm::AppStorage()->get('Routes', 'RoutesData');
             return true;
         }
 
@@ -61,17 +64,20 @@ class Router extends Module implements ModuleInterface
             Charm::AppStorage()->get('Routes', 'Groups')
         ];
 
+        $routes = [];
+
         foreach($elements as $element) {
             // Go through all elements and add them (if existing)
             if(is_array($element)) {
                 foreach ($element as $el) {
-                    $el->addToRouter($router);
+                    $el->addToRouter($router, $routes);
                 }
             }
         }
 
-        // Cache RouteCollector instance
+        // Cache RouteCollector instance + routes array
         Charm::AppStorage()->set('Routes', 'RouteCollector', $router);
+        Charm::AppStorage()->set('Routes', 'RoutesData', $routes);
 
         // Set for whole class
         $this->route = $router;
@@ -200,6 +206,16 @@ class Router extends Module implements ModuleInterface
             $_SERVER['REQUEST_METHOD'],
             $relative_url
         );
+    }
+
+    /**
+     * Get routes data array
+     *
+     * @return bool|array
+     */
+    public function getRoutesData()
+    {
+        return Charm::AppStorage()->get('Routes', 'RoutesData');
     }
 
 }

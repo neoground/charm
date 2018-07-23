@@ -50,10 +50,11 @@ class Filter implements RouterElement, \Serializable
      * Add element to router
      *
      * @param \Phroute\Phroute\RouteCollector $router
+     * @param array $routes data of all routes
      *
      * @return bool
      */
-    public function addToRouter($router)
+    public function addToRouter($router, &$routes)
     {
         $router->filter($this->name, $this->callback);
         return true;

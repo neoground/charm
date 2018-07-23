@@ -142,6 +142,19 @@ class Route implements RouterElement
     }
 
     /**
+     * Set the full filters array (before / after)
+     *
+     * @param array $filters the filters array
+     *
+     * @return $this
+     */
+    public function setFilters($filters)
+    {
+        $this->filters = $filters;
+        return $this;
+    }
+
+    /**
      * Group constructor.
      *
      * @param null $name (optional) group name
@@ -288,12 +301,13 @@ class Route implements RouterElement
      * Add element to router
      *
      * @param \Phroute\Phroute\RouteCollector $router
+     * @param array $routes data of all routes
      *
      * @return bool
      *
      * @throws LogicException
      */
-    public function addToRouter($router)
+    public function addToRouter($router, &$routes)
     {
         // Call: Controller.method
         $call_parts = explode(".", $this->call);
@@ -309,6 +323,16 @@ class Route implements RouterElement
 
         $method = $this->method;
         $router->{$method}([$this->url, $this->name], $call_parts, $this->filters);
+
+        // Add to routes array
+        $routes[] = [
+            'method' => $method,
+            'url' => "/" . trim($this->url, "/"),
+            'name' => $this->name,
+            'call_class' => $call_parts[0],
+            'call_method' => $call_parts[1],
+            'filters' => $this->filters
+        ];
 
         return true;
     }
