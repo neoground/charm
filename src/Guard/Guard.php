@@ -213,7 +213,7 @@ class Guard extends Module implements ModuleInterface
     public function logout($auto_logout = false)
     {
         $_SESSION = [];
-        $session = Charm::Config()->get('session:name');
+        $session = Charm::Config()->get('main:session.name');
         if (!$auto_logout) {
             if (array_key_exists($session . 'chusr', $_COOKIE)) {
                 unset($_COOKIE[$session . 'chusr']);
@@ -261,7 +261,7 @@ class Guard extends Module implements ModuleInterface
             // Set remember me cookies (token + uid)
             // Expiration in 90 days
             $expire = time() + 3600 * 24 * 90;
-            $session = Charm::Config()->get('session:name');
+            $session = Charm::Config()->get('main:session.name');
             setcookie(
                 $session . "chusr", base64_encode($u->id), $expire, '/'
             );
