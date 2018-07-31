@@ -101,6 +101,7 @@ class View implements OutputInterface, HttpCodes
         $twig->addExtension(new ViewExtension());
 
         // Add own / custom twig functions
+        // TODO: Add view extensions from all modules like we already do on console commands
         $class = "\\App\\System\\ViewExtension";
         if(class_exists($class)) {
             $twig->addExtension(new $class);

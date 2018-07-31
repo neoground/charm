@@ -104,9 +104,9 @@ class Guard extends Module implements ModuleInterface
         }
 
         // Session variables set?
-        if (isset($_SESSION['loggedin'])
+        if (isset($_SESSION['logged_in'])
             && isset($_SESSION['user'])
-            && $_SESSION['loggedin']
+            && $_SESSION['logged_in']
         ) {
             $a = $this->user_class::find($_SESSION['user']);
             if (is_object($a) && $a->enabled && $a->id !== $this->user_class::getDefaultUser()->id) {
