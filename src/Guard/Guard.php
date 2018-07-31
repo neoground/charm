@@ -35,6 +35,9 @@ class Guard extends Module implements ModuleInterface
         // Get user class
         $this->user_class = Charm::App()->getConfig('user_class');
         $this->username_field = Charm::App()->getConfig('username_field', 'username');
+
+        // Auto login user if cookies are present
+        $this->doAutoLogin();
     }
 
     /**
@@ -116,6 +119,8 @@ class Guard extends Module implements ModuleInterface
                 }
             }
         }
+
+        // Remember me cookie
 
         return false;
     }
@@ -208,15 +213,16 @@ class Guard extends Module implements ModuleInterface
     public function logout($auto_logout = false)
     {
         $_SESSION = [];
+        $session = Charm::Config()->get('session:name');
         if (!$auto_logout) {
-            if (array_key_exists('chusr', $_COOKIE)) {
-                unset($_COOKIE['chusr']);
+            if (array_key_exists($session . 'chusr', $_COOKIE)) {
+                unset($_COOKIE[$session . 'chusr']);
             }
-            if (array_key_exists('chrem', $_COOKIE)) {
-                unset($_COOKIE['chrem']);
+            if (array_key_exists($session . 'chrem', $_COOKIE)) {
+                unset($_COOKIE[$session . 'chrem']);
             }
-            setcookie("chusr", null, -1, '/');
-            setcookie("chrem", null, -1, '/');
+            setcookie($session . "chusr", null, -1, '/');
+            setcookie($session . "chrem", null, -1, '/');
         }
         session_destroy();
 
@@ -255,11 +261,42 @@ class Guard extends Module implements ModuleInterface
             // Set remember me cookies (token + uid)
             // Expiration in 90 days
             $expire = time() + 3600 * 24 * 90;
-            setcookie("chusr", base64_encode($u->id), $expire, '/');
-            setcookie("chrem", $this->buildRememberMeToken($u), $expire, '/');
+            $session = Charm::Config()->get('session:name');
+            setcookie(
+                $session . "chusr", base64_encode($u->id), $expire, '/'
+            );
+            setcookie(
+                $session . "chrem", $this->buildRememberMeToken($u), $expire, '/'
+            );
         }
 
         return true;
+    }
+
+    /**
+     * Automatically log in user
+     *
+     * If user sets "remember me" a cookie is set for a period of time.
+     * If we find the cookie with valid data, the user gets logged in.
+     */
+    public function doAutoLogin()
+    {
+        $session = Charm::Config()->get('session:name');
+
+        if (!$this->isLoggedIn()) {
+            if (array_key_exists($session . 'chrem', $_COOKIE) && array_key_exists($session . 'chusr', $_COOKIE)) {
+                // Find user by id
+                $uid = base64_decode($session . 'chusr');
+                $u = $this->user_class::findWithCache($uid);
+                if (is_object($u)) {
+                    // Check token (cookie password)
+                    if ($this->buildRememberMeToken($u) == $_COOKIE[$session . 'chrem']) {
+                        // Token is valid -> do the login
+                        $this->handleLogin($u, true);
+                    }
+                }
+            }
+        }
     }
 
     /**
