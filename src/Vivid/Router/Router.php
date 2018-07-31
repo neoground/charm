@@ -103,13 +103,20 @@ class Router extends Module implements ModuleInterface
     /**
      * Build URL based on route
      *
-     * @param string         $name  name of route
+     * If you pass an absolute URL the URL will be returned.
+     *
+     * @param string         $name  name of route or absolute url
      * @param array|string   $args  (optional) array with values for all variables in route
      *
      * @return string
      */
     public function buildUrl($name, $args = [])
     {
+        // Got URL?
+        if(in_string('://', $name)) {
+            return $name;
+        }
+
         // Allow non array args if only one parameter
         if(!is_array($args)) {
             $args = [$args];
