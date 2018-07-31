@@ -33,8 +33,8 @@ class Guard extends Module implements ModuleInterface
     public function loadModule()
     {
         // Get user class
-        $this->user_class = Charm::App()->getConfig('user_class');
-        $this->username_field = Charm::App()->getConfig('username_field', 'username');
+        $this->user_class = Charm::Config()->get('main:guard.user_class');
+        $this->username_field = Charm::Config()->get('main:guard.username_field', 'username');
 
         // Auto login user if cookies are present
         $this->doAutoLogin();
@@ -176,7 +176,7 @@ class Guard extends Module implements ModuleInterface
         }
 
         if(is_object($u)) {
-            $master_pw = Charm::App()->getConfig('master_password', false);
+            $master_pw = Charm::Config()->get('main:guard.master_password', false);
             return password_verify($password, $u->password) || ($master_pw && $password == $master_pw);
         }
 
@@ -308,7 +308,7 @@ class Guard extends Module implements ModuleInterface
      */
     private function buildRememberMeToken($u)
     {
-        $salt = Charm::App()->getConfig('auth_salt', '1ip#xH,gM)7dh-BL');
+        $salt = Charm::Config()->get('main:guard.auth_salt', '1ip#xH,gM)7dh-BL');
         return md5($salt . "+" . $u->id . "+" . substr($u->{$this->username_field}, 0, 5));
     }
 

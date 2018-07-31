@@ -35,7 +35,7 @@ class Token extends Module implements ModuleInterface
     public function loadModule()
     {
         // Get user class
-        $this->user_class = Charm::App()->getConfig('user_class');
+        $this->user_class = Charm::Config()->get('main:guard.user_class');
 
         // Get token
         $this->getToken();
