@@ -10,7 +10,6 @@ use Charm\Vivid\Charm;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Charm\Vivid\Kernel\Interfaces\OutputInterface;
 use Charm\Vivid\PathFinder;
-use Phroute\Phroute\Dispatcher;
 use Phroute\Phroute\RouteCollector;
 
 /**
