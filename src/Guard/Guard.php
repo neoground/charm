@@ -281,7 +281,7 @@ class Guard extends Module implements ModuleInterface
      */
     public function doAutoLogin()
     {
-        $session = Charm::Config()->get('session:name');
+        $session = Charm::Config()->get('main:session.name');
 
         if (!$this->isLoggedIn()) {
             if (array_key_exists($session . 'chrem', $_COOKIE) && array_key_exists($session . 'chusr', $_COOKIE)) {
