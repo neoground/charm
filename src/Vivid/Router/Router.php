@@ -43,7 +43,7 @@ class Router extends Module implements ModuleInterface
     private function init()
     {
         // Get router instance from cache
-        if(Charm::AppStorage()->has('Routes', 'RouteCollector')
+        if (Charm::AppStorage()->has('Routes', 'RouteCollector')
             && Charm::AppStorage()->has('Routes', 'RoutesData')
         ) {
             $this->route = Charm::AppStorage()->get('Routes', 'RouteCollector');
@@ -65,9 +65,9 @@ class Router extends Module implements ModuleInterface
 
         $routes = [];
 
-        foreach($elements as $element) {
+        foreach ($elements as $element) {
             // Go through all elements and add them (if existing)
-            if(is_array($element)) {
+            if (is_array($element)) {
                 foreach ($element as $el) {
                     $el->addToRouter($router, $routes);
                 }
@@ -94,7 +94,7 @@ class Router extends Module implements ModuleInterface
         $files = array_slice(scandir($dir), 2);
 
         // And require them to collect routes, filters and groups defined in them
-        foreach($files as $file) {
+        foreach ($files as $file) {
             require_once($dir . DIRECTORY_SEPARATOR . $file);
         }
     }
@@ -104,20 +104,20 @@ class Router extends Module implements ModuleInterface
      *
      * If you pass an absolute URL the URL will be returned.
      *
-     * @param string         $name  name of route or absolute url
-     * @param array|string   $args  (optional) array with values for all variables in route
+     * @param string $name name of route or absolute url
+     * @param array|string $args (optional) array with values for all variables in route
      *
      * @return string
      */
     public function buildUrl($name, $args = [])
     {
         // Got URL?
-        if(in_string('://', $name)) {
+        if (in_string('://', $name)) {
             return $name;
         }
 
         // Allow non array args if only one parameter
-        if(!is_array($args)) {
+        if (!is_array($args)) {
             $args = [$args];
         }
 
@@ -128,7 +128,7 @@ class Router extends Module implements ModuleInterface
     /**
      * Check if a route exists
      *
-     * @param string  $name  name of route
+     * @param string $name name of route
      *
      * @return bool
      */
@@ -184,6 +184,24 @@ class Router extends Module implements ModuleInterface
     }
 
     /**
+     * Get data of current route
+     *
+     * Return array includes these keys:
+     *
+     * name:    name of route
+     * class:   called class
+     * method:  called method
+     * vars:    provided variables for method
+     * filters: array with before and after filters
+     *
+     * @return array
+     */
+    public function getCurrentRouteData()
+    {
+        return Charm::AppStorage()->get('Routes', 'CurrentRoute');
+    }
+
+    /**
      * Dispatch and call method
      *
      * @return OutputInterface the response
@@ -198,7 +216,7 @@ class Router extends Module implements ModuleInterface
         );
 
         // Get route data from cache
-        if(Charm::AppStorage()->has('Routes', 'RouteData')) {
+        if (Charm::AppStorage()->has('Routes', 'RouteData')) {
             $data = Charm::AppStorage()->get('Routes', 'RouteData');
         } else {
             // Get data and cache it
