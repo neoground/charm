@@ -7,6 +7,7 @@ namespace Charm\Vivid\Kernel;
 
 use Charm\Vivid\Base\Module;
 use Charm\Vivid\Charm;
+use Charm\Vivid\PathFinder;
 
 /**
  * Class EngineManager
@@ -20,6 +21,9 @@ class EngineManager extends Module
 
     /** @var array  the config */
     protected $config;
+
+    /** @var bool switch if env is set via app.env file */
+    protected $set_via_file = false;
 
     /**
      * Set the environment
@@ -38,6 +42,13 @@ class EngineManager extends Module
      */
     public function getEnvironment()
     {
+        // Use manually set environment from the app.env file
+        $appenv = PathFinder::getAppPath() . DIRECTORY_SEPARATOR . 'app.env';
+        if(file_exists($appenv) && !$this->set_via_file) {
+            $this->environment = file_get_contents($appenv);
+            $this->set_via_file = true;
+        }
+
         return $this->environment;
     }
 
