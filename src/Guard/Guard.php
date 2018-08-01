@@ -286,7 +286,7 @@ class Guard extends Module implements ModuleInterface
         if (!$this->isLoggedIn()) {
             if (array_key_exists($session . 'chrem', $_COOKIE) && array_key_exists($session . 'chusr', $_COOKIE)) {
                 // Find user by id
-                $uid = base64_decode($session . 'chusr');
+                $uid = base64_decode($_SESSION[$session . 'chusr']);
                 $u = $this->user_class::findWithCache($uid);
                 if (is_object($u)) {
                     // Check token (cookie password)

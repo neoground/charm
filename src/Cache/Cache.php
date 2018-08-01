@@ -153,12 +153,16 @@ class Cache implements ModuleInterface
     /**
      * Check if a cache key exists
      *
-     * @param string $key the key
+     * @param string $key the key (prefix will be prepended if not existing)
      *
      * @return bool
      */
     public function has($key) {
-        return (bool) $this->redis->exists($this->prefix . ':' . $key);
+        if(!in_string($this->prefix, $key)) {
+            $key = $this->prefix . ':' . $key;
+        }
+
+        return (bool) $this->redis->exists($key);
     }
 
     /**
