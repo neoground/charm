@@ -61,6 +61,7 @@ class Handler
             'Database',
             'Request',
             'Formatter',
+            'Cache' => '\\Charm\\Cache\\Cache',
             'Router' => '\\Charm\\Vivid\\Router\\Router',
             'Token' => '\\Charm\\Guard\\Token',
             'Guard' => '\\Charm\\Guard\\Guard',
