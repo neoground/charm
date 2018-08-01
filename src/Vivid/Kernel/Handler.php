@@ -303,6 +303,18 @@ class Handler
     }
 
     /**
+     * Check if a module is loaded
+     *
+     * @param string $name name of moduile or full class name
+     *
+     * @return bool
+     */
+    public function hasModule($name)
+    {
+        return in_array($name, $this->module_classes) || in_array($name, array_keys($this->module_classes));
+    }
+
+    /**
      * Call wanted method and output the response to the browser
      *
      * @return bool

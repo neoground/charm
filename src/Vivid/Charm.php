@@ -6,6 +6,7 @@
 namespace Charm\Vivid;
 
 use App\Engine;
+use Charm\Cache\Cache;
 use Charm\Guard\Guard;
 use Charm\Guard\Token;
 use Charm\Vivid\Kernel\Handler;
@@ -29,6 +30,7 @@ use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
  * @method static Router\Router Router
  * @method static Guard Guard
  * @method static Token Token
+ * @method static Cache Cache
  * @method static Engine App
  *
  * @package Charm\Vivid
@@ -46,6 +48,19 @@ class Charm
     {
         $handler = Handler::getInstance();
         return $handler->getModule($name);
+    }
+
+    /**
+     * Check if a module is loaded
+     *
+     * @param string $name name of moduile or full class name
+     *
+     * @return bool
+     */
+    public static function has($name)
+    {
+        $handler = Handler::getInstance();
+        return $handler->hasModule($name);
     }
 
     /**

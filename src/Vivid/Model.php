@@ -1,9 +1,12 @@
 <?php
 /**
- * This file contains the model class
+ * This file contains the Model class
  */
 
 namespace Charm\Vivid;
+
+use Charm\Cache\CacheEntry;
+use Illuminate\Database\Capsule\Manager as Capsule;
 
 /**
  * Class Model
@@ -14,6 +17,67 @@ namespace Charm\Vivid;
  */
 class Model extends \Illuminate\Database\Eloquent\Model
 {
+    /**
+     * Override boot function
+     */
+    public static function boot()
+    {
+        parent::boot();
+
+        // Add created_by / updated_by only if guard is enabled
+        if(Charm::has('Guard')) {
+            // Called on each create
+            static::creating(function ($entity) {
+                // Add created by
+                if (Capsule::schema()->hasColumn($entity->table, 'created_by')) {
+                    $entity->created_by = Charm::Guard()->getUserId();
+                }
+                // Add updated by
+                if (Capsule::schema()->hasColumn($entity->table, 'updated_by')) {
+                    $entity->updated_by = Charm::Guard()->getUserId();
+                }
+            });
+
+            // Call on each update
+            static::updating(function ($entity) {
+                // Add updated by
+                if (Capsule::schema()->hasColumn($entity->table, 'updated_by')) {
+                    $entity->updated_by = Charm::Guard()->getUserId();
+                }
+
+                // Update this instance. Flush cache
+                $classname = str_replace("\\", ":", get_called_class());
+                $key = "Model:" . $classname . ':' . $entity->id;
+                Charm::Cache()->remove($key);
+            });
+        }
+    }
+
+    /**
+     * Normal self::find($id) function, but with integrated cache!
+     *
+     * @param int  $id       id of entity
+     * @param int  $minutes  minutes after cache expires
+     *
+     * @return mixed
+     */
+    public static function findWithCache($id, $minutes = 720)
+    {
+        $classname = str_replace("\\", ":", get_called_class());
+        $key = "Model:" . $classname . ':' . $id;
+
+        if(Charm::has('Cache')) {
+            $entry = new CacheEntry($key);
+            $entry->setValue(self::find($id));
+            $entry->setTags(['Models', 'Models:' . $classname]);
+            Charm::Cache()->setEntry($entry, $minutes);
+
+            return $entry->getValue();
+        }
+
+        return self::find($id);
+    }
+
     /**
      * Handle saving of model
      *
