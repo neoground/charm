@@ -116,13 +116,22 @@ class Router extends Module implements ModuleInterface
             return $name;
         }
 
+        // Query string
+        $query_string = '';
+        if (in_string('?', $name)) {
+            $parts = explode('?', $name);
+
+            $name = array_shift($parts);
+            $query_string = '?' . implode('?', $parts);
+        }
+
         // Allow non array args if only one parameter
         if (!is_array($args)) {
             $args = [$args];
         }
 
         $route = $this->route->route($name, $args);
-        return $this->getBaseUrl() . '/' . $route;
+        return $this->getBaseUrl() . '/' . $route . $query_string;
     }
 
     /**
