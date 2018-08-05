@@ -215,4 +215,17 @@ class ViewExtension extends \Twig_Extension
         return Charm::Config()->get('main:debug.debugmode', false);
     }
 
+    /**
+     * In string method
+     *
+     * @param string $needle   what we look for
+     * @param string $haystack what we have
+     *
+     * @return bool
+     */
+    public function in_string($needle, $haystack)
+    {
+        return in_string($needle, $haystack);
+    }
+
 }
