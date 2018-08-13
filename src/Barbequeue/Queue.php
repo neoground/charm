@@ -1,6 +1,6 @@
 <?php
 /**
- * This file contains the Barbequeue class
+ * This file contains the Queue class
  */
 
 namespace Charm\Barbequeue;
@@ -10,13 +10,13 @@ use Charm\Vivid\Charm;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 
 /**
- * Class Barbequeue
+ * Class Queue
  *
  * Module binding to Charm kernel
  *
  * @package Charm\Barbequeue
  */
-class Barbequeue extends Module implements ModuleInterface
+class Queue extends Module implements ModuleInterface
 {
     /**
      * Load the module
