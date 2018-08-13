@@ -344,6 +344,26 @@ class Mailman implements ModuleInterface
     }
 
     /**
+     * Get body
+     *
+     * @return string
+     */
+    public function getBody()
+    {
+        return $this->mail->Body;
+    }
+
+    /**
+     * Get text body (alt body)
+     *
+     * @return string
+     */
+    public function getTextBody()
+    {
+        return $this->mail->AltBody;
+    }
+
+    /**
      * Send the e-mail
      *
      * @return $this
