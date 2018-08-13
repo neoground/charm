@@ -117,6 +117,39 @@ class Redis implements ModuleInterface
     }
 
     /**
+     * Adds the string values to the tail (right) of the list. Creates the list if the key didn't exist.
+     * If the key exists and is not a list, FALSE is returned.
+     *
+     * @param string $key
+     * @param string|array $value
+     *
+     * @return int|bool     The new length of the list in case of success, FALSE in case of Failure.
+     */
+    public function rpush($key, $value)
+    {
+        if(class_exists("\\Redis") && $this->redis_client instanceof \Redis) {
+            // phpredis
+
+            if(is_array($value)) {
+                $ret = 0;
+                foreach($value as $val) {
+                    $ret = $this->redis_client->rpush($key, $val);
+                }
+                return $ret;
+            }
+
+            return $this->redis_client->rpush($key, $value);
+        }
+
+        if(!is_array($value)) {
+            $value = [$value];
+        }
+
+        // predis
+        return $this->redis_client->rpush($key, $value);
+    }
+
+    /**
      * Magic call method
      *
      * Providing an easy interface to the redis instance.

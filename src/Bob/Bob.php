@@ -13,7 +13,7 @@ use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
  *
  * Module binding to Charm kernel
  *
- * @package Charm\DataExporter
+ * @package Charm\Bob
  */
 class Bob extends Module implements ModuleInterface
 {
