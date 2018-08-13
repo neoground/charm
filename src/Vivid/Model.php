@@ -79,6 +79,20 @@ class Model extends \Illuminate\Database\Eloquent\Model
     }
 
     /**
+     * Get class name without namespace
+     *
+     * @return string
+     *
+     * @throws \ReflectionException
+     */
+    public static function getClassName()
+    {
+        $x = new self;
+        $reflect = new \ReflectionClass($x);
+        return $reflect->getShortName();
+    }
+
+    /**
      * Handle saving of model
      *
      * @param array $options options for saving
