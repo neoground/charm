@@ -109,7 +109,14 @@ class Redirect implements OutputInterface
      */
     public function back()
     {
-        // TODO: Implement
+        if (array_key_exists('HTTP_REFERER', $_SERVER)) {
+            $back = $_SERVER['HTTP_REFERER'];
+        } else {
+            // Fallback if referer is not set
+            $back = Charm::Router()->getBaseUrl();
+        }
+
+        return self::make($back);
     }
 
     /**

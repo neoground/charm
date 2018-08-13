@@ -14,9 +14,9 @@ use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 
 /**
- * Class Logging
+ * Class Mailman
  *
- * Logging module
+ * Mailman module
  *
  * @package Charm\Vivid\Kernel\Modules
  */
@@ -47,6 +47,11 @@ class Mailman implements ModuleInterface
     private function initTwig()
     {
         $tpl_path = PathFinder::getAssetsPath() . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'email';
+
+        // Can be overridden by setting
+        if(Charm::AppStorage()->has('Mailman', 'template_path')) {
+            $tpl_path = Charm::AppStorage()->get('Mailman', 'template_path');
+        }
 
         $loader = new \Twig_Loader_Filesystem($tpl_path);
 
