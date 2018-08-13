@@ -75,6 +75,20 @@ class View implements OutputInterface, HttpCodes
     }
 
     /**
+     * Make a new error view response
+     *
+     * @param string $message the error message
+     * @param int $statuscode (opt.) the status code, default: 500
+     *
+     * @return View
+     */
+    public static function makeError($message, $statuscode = 500)
+    {
+        $x = new self(Charm::Config()->get('main:output.error_view', '_base.error'), $statuscode);
+        return $x->with(['error_message' => $message, 'statuscode' => $statuscode]);
+    }
+
+    /**
      * Init the twig instance
      *
      * @return \Twig_Environment
