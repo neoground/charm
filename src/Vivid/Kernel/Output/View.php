@@ -114,11 +114,20 @@ class View implements OutputInterface, HttpCodes
         // Add charm twig extension
         $twig->addExtension(new ViewExtension());
 
-        // Add own / custom twig functions
-        // TODO: Add view extensions from all modules like we already do on console commands
-        $class = "\\App\\System\\ViewExtension";
-        if(class_exists($class)) {
-            $twig->addExtension(new $class);
+        // Add own / custom twig functions (including app's ViewExtension)
+        foreach(Handler::getInstance()->getModuleClasses() as $name => $module) {
+            try {
+                $mod = Handler::getInstance()->getModule($name);
+                if(is_object($mod) && method_exists($mod, 'getReflectionClass')) {
+                    $class = $mod->getReflectionClass()->getNamespaceName() . "\\System\\ViewExtension";
+
+                    if(class_exists($class)) {
+                        $twig->addExtension(new $class);
+                    }
+                }
+            } catch (\Exception $e) {
+                 // Not existing? Just continue
+            }
         }
 
         return $twig;

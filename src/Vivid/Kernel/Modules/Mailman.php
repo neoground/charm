@@ -7,6 +7,7 @@ namespace Charm\Vivid\Kernel\Modules;
 
 use Charm\Vivid\Charm;
 use Charm\Vivid\Helper\ViewExtension;
+use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Charm\Vivid\PathFinder;
 use PHPMailer\PHPMailer\Exception;
@@ -60,10 +61,20 @@ class Mailman implements ModuleInterface
         // Add charm twig extension
         $twig->addExtension(new ViewExtension());
 
-        // Add own / custom twig functions
-        $class = "\\App\\System\\ViewExtension";
-        if(class_exists($class)) {
-            $twig->addExtension(new $class);
+        // Add own / custom twig functions (including app's ViewExtension)
+        foreach(Handler::getInstance()->getModuleClasses() as $name => $module) {
+            try {
+                $mod = Handler::getInstance()->getModule($name);
+                if(is_object($mod) && method_exists($mod, 'getReflectionClass')) {
+                    $class = $mod->getReflectionClass()->getNamespaceName() . "\\System\\ViewExtension";
+
+                    if(class_exists($class)) {
+                        $twig->addExtension(new $class);
+                    }
+                }
+            } catch (\Exception $e) {
+                // Not existing? Just continue
+            }
         }
 
         // Add string loader
