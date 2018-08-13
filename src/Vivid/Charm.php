@@ -25,6 +25,7 @@ use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
  * @method static Kernel\Modules\Formatter Formatter
  * @method static Kernel\Modules\Logging Logging
  * @method static Kernel\Modules\Mailman Mailman
+ * @method static Kernel\Modules\Redis Redis
  * @method static Kernel\Modules\Request Request
  * @method static Kernel\Modules\Session Session
  * @method static Router\Router Router
@@ -61,24 +62,6 @@ class Charm
     {
         $handler = Handler::getInstance();
         return $handler->hasModule($name);
-    }
-
-    /**
-     * Get database connection
-     *
-     * @return \Illuminate\Database\Connection
-     */
-    public static function db()
-    {
-        return self::Database()->getDatabaseConnection();
-    }
-
-    /**
-     * Get the redis client
-     */
-    public static function redis()
-    {
-        return self::Database()->getRedisClient();
     }
 
     /**

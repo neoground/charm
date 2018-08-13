@@ -10,7 +10,6 @@ use Charm\Vivid\Helper\EloquentDebugbar;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Charm\Vivid\PathFinder;
 use Illuminate\Database\Capsule\Manager;
-use Predis\Client;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -25,26 +24,12 @@ class Database implements ModuleInterface
     /** @var \Illuminate\Database\Connection the eloquent database connection */
     protected $eloquent_instance;
 
-    /** @var Client|\Redis redis client */
-    protected $redis_client;
-
     /**
      * Module init
      */
     public function loadModule()
     {
         // Init Eloquent
-        $this->loadEloquent();
-
-        // Init Redis
-        $this->loadRedis();
-    }
-
-    /**
-     * Init Eloquent
-     */
-    private function loadEloquent()
-    {
         $capsule = new Manager;
 
         $config = Charm::Config()->get('connections:database');
@@ -65,7 +50,6 @@ class Database implements ModuleInterface
             // Add to debug bar
             $this->addEloquentToDebugBar();
         }
-
     }
 
     /**
@@ -84,68 +68,6 @@ class Database implements ModuleInterface
     }
 
     /**
-     * Init Redis
-     *
-     * @return bool
-     */
-    private function loadRedis()
-    {
-        if (Charm::Config()->get('connections:redis.enabled', true)) {
-            $host = Charm::Config()->get('connections:redis.host', '127.0.0.1');
-            $port = Charm::Config()->get('connections:redis.port', 6379);
-            $pw = Charm::Config()->get('connections:redis.password');
-            $persistent = Charm::Config()->get('connections:redis.persistent', false);
-
-            if(class_exists("\\Redis")) {
-                // Use native redis driver
-                $redis = new \Redis();
-
-                if($persistent) {
-                    $redis->pconnect($host, $port);
-                } else {
-                    $redis->connect($host, $port);
-                }
-
-                if(!empty($pw)) {
-                    $redis->auth($pw);
-                }
-
-                // Auto serialize
-                $redis->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP);
-
-                // Set prefix
-                $redis->setOption(\Redis::OPT_PREFIX, Charm::Config()->get('connections:redis.prefix'));
-
-                $this->redis_client = $redis;
-                return true;
-            }
-
-            // Use Predis
-            $options = [];
-
-            // Set prefix
-            $options['prefix'] = Charm::Config()->get('connections:redis.prefix');
-
-            // Set redis password
-            if (!empty($pw)) {
-                $options['parameters'] = [
-                    'password' => $pw
-                ];
-            }
-
-            // Create client
-            $this->redis_client = new Client([
-                'scheme' => 'tcp',
-                'host' => $host,
-                'port' => $port,
-                'persistent' => $persistent
-            ], $options);
-
-            return true;
-        }
-    }
-
-    /**
      * Get the database connection
      *
      * @return \Illuminate\Database\Connection
@@ -158,11 +80,13 @@ class Database implements ModuleInterface
     /**
      * Get the redis client
      *
-     * @return Client
+     * @deprecated use redis module instead.
+     *
+     * @return \Predis\Client
      */
     public function getRedisClient()
     {
-        return $this->redis_client;
+        return Charm::Redis()->getClient();
     }
 
     /**

@@ -58,6 +58,7 @@ class Handler
             'Logging',
             'Debug',
             'Session',
+            'Redis',
             'Database',
             'Request',
             'Formatter',
