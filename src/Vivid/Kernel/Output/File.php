@@ -25,6 +25,9 @@ class File implements OutputInterface
     /** @var string the content type */
     protected $contenttype;
 
+    /** @var string the body content */
+    protected $content;
+
     /**
      * Output factory
      *
@@ -60,6 +63,12 @@ class File implements OutputInterface
         }
         header("Content-Disposition: attachment; filename=" . $this->filename);
 
+        // Return content if set
+        if(!empty($this->content)) {
+            return $this->content;
+        }
+
+        // Return file content
         return file_get_contents($this->path);
     }
 
@@ -99,9 +108,29 @@ class File implements OutputInterface
         return $this;
     }
 
+    /**
+     * Add file name
+     *
+     * @param string $val the file name
+     *
+     * @return self
+     */
     public function withFileName($val)
     {
         $this->filename = $val;
+        return $this;
+    }
+
+    /**
+     * Add response body content
+     *
+     * @param string $content
+     *
+     * @return self
+     */
+    public function withContent($content)
+    {
+        $this->content = $content;
         return $this;
     }
 
