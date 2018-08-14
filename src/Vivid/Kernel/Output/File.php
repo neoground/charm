@@ -80,15 +80,10 @@ class File implements OutputInterface
     public function autoContentType() {
         $ct = 'application/octet-stream';
 
-        $file = $this->path;
-        $extension_raw = explode(".", $file);
-        $file_extension = strtolower(array_pop($extension_raw));
-
-        // TODO: Add more!
-        switch($file_extension) {
-            case 'png':
-                $ct = 'image/png';
-                break;
+        // Find mime type
+        $mime_type = mime_content_type($this->path);
+        if($mime_type !== false) {
+            $ct = $mime_type;
         }
 
         $this->contenttype = $ct;

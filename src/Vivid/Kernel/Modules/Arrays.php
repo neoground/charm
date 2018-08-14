@@ -158,4 +158,18 @@ class Arrays implements ModuleInterface
         });
     }
 
+    /**
+     * Check if an array has duplicates
+     *
+     * Idea: http://stackoverflow.com/a/3145647
+     *
+     * @param $array
+     *
+     * @return bool
+     */
+    public function hasDuplicates($array)
+    {
+        return count($array) !== count(array_unique($array));
+    }
+
 }
