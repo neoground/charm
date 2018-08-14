@@ -31,7 +31,8 @@ class QueueEntry
      */
     public function __construct()
     {
-
+        // Default value for queue name
+        $this->queue_name = 'default';
     }
 
     /**
