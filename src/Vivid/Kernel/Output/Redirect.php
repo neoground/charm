@@ -106,8 +106,9 @@ class Redirect implements OutputInterface
     /**
      * Redirect to last page
      *
+     * @return self
      */
-    public function back()
+    public static function back()
     {
         if (array_key_exists('HTTP_REFERER', $_SERVER)) {
             $back = $_SERVER['HTTP_REFERER'];
