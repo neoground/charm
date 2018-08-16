@@ -86,7 +86,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
     public static function getClassName()
     {
         try {
-            $x = new self;
+            $x = static::class;
             $reflect = new \ReflectionClass($x);
             return $reflect->getShortName();
         } catch (\ReflectionException $e) {
