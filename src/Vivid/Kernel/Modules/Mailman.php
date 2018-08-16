@@ -10,6 +10,7 @@ use Charm\Vivid\Helper\ViewExtension;
 use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Charm\Vivid\PathFinder;
+use DoctrineTest\InstantiatorTestAsset\XMLReaderAsset;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 
@@ -321,7 +322,7 @@ class Mailman implements ModuleInterface
     /**
      * Set HTML content by template
      *
-     * @param string  $name     name of template directory
+     * @param string  $name     name of template directory or single twig file (with .twig extension)
      * @param array   $data     (opt.) array of data to pass to template
      * @param bool    $combined (opt.) use html + text templates automatically?
      *
@@ -337,19 +338,27 @@ class Mailman implements ModuleInterface
 
         // Render template
         try {
-            $file = 'email.twig';
+            // Default case: single file
+            $view = $name;
 
-            if($combined) {
-                $file = 'email_html.twig';
+            // Got normal name -> directory?
+            if(!in_string('.twig', $name)) {
+                $file = 'email.twig';
+
+                if($combined) {
+                    $file = 'email_html.twig';
+                }
+
+                $view = $name . DIRECTORY_SEPARATOR . $file;
             }
 
             $this->mail->isHTML(true);
-            $this->mail->Body = $this->twig->render($name . DIRECTORY_SEPARATOR . $file, $data);
+            $this->mail->Body = $this->twig->render($view, $data);
 
             if($combined) {
                 // Also add text version
-                $file = 'email_text.twig';
-                $this->mail->AltBody = $this->twig->render($name . DIRECTORY_SEPARATOR . $file, $data);
+                $view = str_replace('_html', '_text', $view);
+                $this->mail->AltBody = $this->twig->render($view, $data);
             }
 
         } catch (\Exception $e) {
