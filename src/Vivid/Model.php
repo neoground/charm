@@ -67,6 +67,12 @@ class Model extends \Illuminate\Database\Eloquent\Model
         $key = "Model:" . $classname . ':' . $id;
 
         if(Charm::has('Cache')) {
+            // Get from cache
+            if(Charm::Cache()->has($key)) {
+                return Charm::Cache()->get($key);
+            }
+
+            // Not existing -> save it
             $entry = new CacheEntry($key);
             $entry->setValue(self::find($id));
             $entry->setTags(['Models', 'Models:' . $classname]);
