@@ -18,3 +18,6 @@ The hassle-free php environment for the real world.
 
 - Option to renew remember me cookie on every page visit for
   another time period
+
+- Cache: When removing entries, remove the associated tags as well,
+  if existing

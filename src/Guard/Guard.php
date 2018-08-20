@@ -63,7 +63,7 @@ class Guard extends Module implements ModuleInterface
         }
 
         // Return session user
-        return $this->user_class::find($_SESSION['user']);
+        return $this->user_class::findWithCache($_SESSION['user']);
     }
 
     /**
@@ -111,7 +111,7 @@ class Guard extends Module implements ModuleInterface
             && isset($_SESSION['user'])
             && $_SESSION['logged_in']
         ) {
-            $a = $this->user_class::find($_SESSION['user']);
+            $a = $this->user_class::findWithCache($_SESSION['user']);
             if (is_object($a) && $a->enabled && $a->id !== $this->user_class::getDefaultUser()->id) {
                 if (!$this->isExpired()) {
                     $_SESSION['last_activity'] = Carbon::now()->toDateTimeString();

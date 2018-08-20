@@ -100,7 +100,7 @@ class Cache implements ModuleInterface
         if(!empty($tags)) {
             // Go through all tags and add them
             foreach($tags as $tag) {
-                if($this->redis instanceof \Redis) {
+                if(extension_loaded('redis') && $this->redis instanceof \Redis) {
                     $this->redis->sAdd($this->prefix . '_tags:' . $tag, $key);
                 } else {
                     $this->redis->sadd($this->prefix . '_tags:' . $tag, [$key]);
@@ -174,7 +174,7 @@ class Cache implements ModuleInterface
     {
         $key = $this->prefix . ':' . $key;
 
-        if($this->redis instanceof \Redis) {
+        if(extension_loaded('redis') && $this->redis instanceof \Redis) {
             // Phpredis
             $this->redis->del($key);
         } else {

@@ -106,7 +106,7 @@ class Redis implements ModuleInterface
             $keys = [$keys];
         }
 
-        if(class_exists("\\Redis") && $this->redis_client instanceof \Redis) {
+        if(extension_loaded('redis') && $this->redis_client instanceof \Redis) {
             // phpredis
             return $this->redis_client->delete($keys);
         }
@@ -127,7 +127,7 @@ class Redis implements ModuleInterface
      */
     public function rpush($key, $value)
     {
-        if(class_exists("\\Redis") && $this->redis_client instanceof \Redis) {
+        if(extension_loaded('redis') && $this->redis_client instanceof \Redis) {
             // phpredis
 
             if(is_array($value)) {
