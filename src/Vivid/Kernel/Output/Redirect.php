@@ -57,6 +57,9 @@ class Redirect implements OutputInterface
      */
     public function render()
     {
+        // Set current page as last for easier redirecting
+        Charm::Session()->set('charm_last_page', Charm::Router()->getCurrentUrl());
+
         // Optinally set message / custom value
         if (!empty($this->message)) {
             Charm::Session()->set('charm_message', $this->message);
