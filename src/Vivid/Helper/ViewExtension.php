@@ -83,6 +83,21 @@ class ViewExtension extends \Twig_Extension
     }
 
     /**
+     * Build URL based on route
+     *
+     * Providing the same method name for easier usage.
+     *
+     * @param string         $name  name of route
+     * @param array|string   $args  (optional) array with values for all variables in route
+     *
+     * @return string
+     */
+    public function buildUrl($name, $args = [])
+    {
+        return $this->getUrl($name, $args);
+    }
+
+    /**
      * Get the current full url
      *
      * @return string

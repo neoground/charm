@@ -116,6 +116,9 @@ class Router extends Module implements ModuleInterface
             return $name;
         }
 
+        // Remove whitespace
+        $name = trim($name);
+
         // Query string
         $query_string = '';
         if (in_string('?', $name)) {
