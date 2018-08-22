@@ -3,7 +3,7 @@
  * This file contains a console command.
  */
 
-namespace Charm\Bob\Jobs\Console;
+namespace Charm\Barbequeue\Jobs\Console;
 
 use Charm\Crown\Crown;
 use Charm\Vivid\Charm;
