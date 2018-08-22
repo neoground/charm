@@ -17,6 +17,20 @@ use Illuminate\Database\Capsule\Manager as Capsule;
  */
 class Model extends \Illuminate\Database\Eloquent\Model
 {
+    /** @var bool set created_by / updated_by? */
+    protected $set_by = true;
+
+    /**
+     * Disable population of created_by / updated_by fields for an entry
+     *
+     * @return $this
+     */
+    public function disableByFields()
+    {
+        $this->set_by = false;
+        return $this;
+    }
+
     /**
      * Override boot function
      */
@@ -24,33 +38,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
     {
         parent::boot();
 
-        // Add created_by / updated_by only if guard is enabled
-        if(Charm::has('Guard')) {
-            // Called on each create
-            static::creating(function ($entity) {
-                // Add created by
-                if (Capsule::schema()->hasColumn($entity->table, 'created_by')) {
-                    $entity->created_by = Charm::Guard()->getUserId();
-                }
-                // Add updated by
-                if (Capsule::schema()->hasColumn($entity->table, 'updated_by')) {
-                    $entity->updated_by = Charm::Guard()->getUserId();
-                }
-            });
 
-            // Call on each update
-            static::updating(function ($entity) {
-                // Add updated by
-                if (Capsule::schema()->hasColumn($entity->table, 'updated_by')) {
-                    $entity->updated_by = Charm::Guard()->getUserId();
-                }
-
-                // Update this instance. Flush cache
-                $classname = str_replace("\\", ":", get_called_class());
-                $key = "Model:" . $classname . ':' . $entity->id;
-                Charm::Cache()->remove($key);
-            });
-        }
     }
 
     /**
@@ -112,14 +100,51 @@ class Model extends \Illuminate\Database\Eloquent\Model
         // Before save
         $this->beforeSave();
 
+        // Update by fields
+        $this->setByFields();
+
         // Save
         $ret = parent::save($options);
 
         // After save
         $this->afterSave();
 
+        // Update this instance. Flush cache
+        if(Charm::has('Cache')) {
+            $classname = str_replace("\\", ":", get_called_class());
+            $key = "Model:" . $classname . ':' . $this->id;
+            Charm::Cache()->remove($key);
+        }
+
         // Return
         return $ret;
+    }
+
+    /**
+     * Set created_by / updated_by fields with current user
+     */
+    private function setByFields()
+    {
+        // Add created_by / updated_by only if guard is enabled
+        if(Charm::has('Guard') && $this->set_by) {
+
+            if($this->exists) {
+                // Updating
+                if (Capsule::schema()->hasColumn($this->table, 'updated_by')) {
+                    $this->updated_by = Charm::Guard()->getUserId();
+                }
+
+            } else {
+                // Creating
+                if (Capsule::schema()->hasColumn($this->table, 'created_by')) {
+                    $this->created_by = Charm::Guard()->getUserId();
+                }
+                // Add updated by
+                if (Capsule::schema()->hasColumn($this->table, 'updated_by')) {
+                    $this->updated_by = Charm::Guard()->getUserId();
+                }
+            }
+        }
     }
 
     /**
