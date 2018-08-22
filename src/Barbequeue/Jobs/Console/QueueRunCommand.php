@@ -28,7 +28,7 @@ class QueueRunCommand extends Command
     protected function configure()
     {
         $this->setName("queue:run")
-            ->setDescription("Running the cron jobs. Should be called every minute")
+            ->setDescription("Running the queue. Should be called every 5 or 10 minutes")
             ->setDefinition([
                 new InputOption('name', 'qn', InputOption::VALUE_REQUIRED,
                     'Name of queue to run', ''),
