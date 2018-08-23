@@ -47,6 +47,7 @@ class CacheClearCommand extends Command
         // Clear views cache
         $dir = PathFinder::getCachePath() . DIRECTORY_SEPARATOR . 'views';
         if(file_exists($dir)) {
+            $output->writeln('Removing Views cache');
             $this->removeDirectoryContent($dir);
         }
 
