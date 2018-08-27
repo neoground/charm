@@ -170,10 +170,6 @@ class Config implements ModuleInterface
      */
     private function getConfigFile($key, $env = false, $module = 'App')
     {
-        if(!Charm::has($module)) {
-            throw new LogicException("Cannot load config. Module '" . $module . "' is not loaded. Requested key: " . $key);
-        }
-
         // Default case: app config
         $path = PathFinder::getModulePath($module) . DIRECTORY_SEPARATOR . 'Config';
 

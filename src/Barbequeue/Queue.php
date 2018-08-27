@@ -111,6 +111,10 @@ class Queue extends Module implements ModuleInterface
         Charm::Logging()->debug('[BBQ] [Worker ' . $worker_id . '] Running: ' . $job);
 
         // Get the job data
+        if(is_serialized($job)) {
+            $job = unserialize($job);
+        }
+
         $job_data = json_decode($job, true);
 
         // Execute!
