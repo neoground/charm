@@ -84,13 +84,13 @@ class Queue extends Module implements ModuleInterface
             // Get queue name
             $queue = strtolower($name) . '-p' . $priority;
 
-            $count = Charm::Redis()->llen($queue);
+            $count = Charm::Redis()->getClient()->llen($queue);
             Charm::Logging()->info('[BBQ] Starting queue ' . $queue . ' - Got ' . $count . ' jobs');
 
             // Work as long as there are elements left in this queue
-            while (Charm::Redis()->llen($queue) > 0) {
+            while (Charm::Redis()->getClient()->llen($queue) > 0) {
                 // Get first element. This is our job!
-                $job = Charm::Redis()->lpop($queue);
+                $job = Charm::Redis()->getClient()->lpop($queue);
 
                 // And execute the job!
                 $this->executeJob($job, $worker_id);
