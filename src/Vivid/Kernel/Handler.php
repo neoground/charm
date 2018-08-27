@@ -69,7 +69,6 @@ class Handler
             'Bob' => '\\Charm\\Bob\\Bob',
             'CharmCreator' => '\\Charm\\CharmCreator\\CharmCreator',
             'Mailman',
-            //'Cache'
         ];
 
         $this->modules_blacklist = [];
