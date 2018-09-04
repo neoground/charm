@@ -31,7 +31,7 @@ class Cache implements ModuleInterface
      */
     public function loadModule()
     {
-        $this->redis = Charm::Database()->getRedisClient();
+        $this->redis = Charm::Redis()->getClient();
     }
 
     /**
