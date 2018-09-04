@@ -178,7 +178,10 @@ class Cache implements ModuleInterface
      */
     public function remove($key)
     {
-        $key = $this->prefix . ':' . $key;
+        // If prefix is provided, no need to add it again
+        if(!in_string($this->prefix, $key)) {
+            $key = $this->prefix . ':' . $key;
+        }
 
         if(extension_loaded('redis') && $this->redis instanceof \Redis) {
             // Phpredis
