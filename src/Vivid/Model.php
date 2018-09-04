@@ -114,6 +114,9 @@ class Model extends \Illuminate\Database\Eloquent\Model
             $classname = str_replace("\\", ":", get_called_class());
             $key = "Model:" . $classname . ':' . $this->id;
             Charm::Cache()->remove($key);
+
+            // Remove all with class specific tag
+            Charm::Cache()->removeByTag('Model:' . $classname);
         }
 
         // Return

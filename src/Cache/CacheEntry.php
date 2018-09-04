@@ -73,7 +73,7 @@ class CacheEntry
             $tags = [$tags];
         }
 
-        array_merge($this->tags, $tags);
+        $this->tags = array_merge($this->tags, $tags);
         return $this;
     }
 
