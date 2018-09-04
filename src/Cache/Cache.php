@@ -200,6 +200,9 @@ class Cache implements ModuleInterface
         foreach($keys as $key) {
             $this->remove($key);
         }
+
+        // Also remove tag because we removed everything in it!
+        $this->remove($this->prefix . '_tags:' . $tag);
     }
 
 }
