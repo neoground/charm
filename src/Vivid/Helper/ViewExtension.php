@@ -108,6 +108,16 @@ class ViewExtension extends \Twig_Extension
     }
 
     /**
+     * Get relative URL
+     *
+     * @return string
+     */
+    public function getRelativeUrl()
+    {
+        return Charm::Router()->getRelativeUrl();
+    }
+
+    /**
      * Get config value
      *
      * @param string     $key     the key
