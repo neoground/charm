@@ -108,7 +108,7 @@ class ViewExtension extends \Twig_Extension
     }
 
     /**
-     * Get relative URL
+     * Get base url relative to base directory
      *
      * @return string
      */

@@ -21,3 +21,24 @@ The hassle-free php environment for the real world.
 
 - Cache: When removing entries, remove the associated tags as well,
   if existing
+
+- Validator:
+  Validator for Charm. Validate request fields by data type (like
+  php built-in validator or packages), with good error handling
+
+  ```php
+
+  $val = Charm::Validator()->validate([
+  	'name' => 'string',
+  	'age' => 'numeric'
+  ]);
+
+  if(!$val->isValid()) {
+  	return Json::make([
+  		'type' => 'error',
+  		'errors' => $val->getErrors()
+  	]);
+  }
+
+  getErrors() : array ['request_key' => 'value', 'age' => 'wrongFormat', 'name' => 'empty']
+  ```

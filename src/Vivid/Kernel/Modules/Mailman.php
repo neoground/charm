@@ -226,7 +226,7 @@ class Mailman implements ModuleInterface
      */
     public function addUser($user)
     {
-        $this->mail->addAddress($user->email, $user->getName());
+        $this->mail->addAddress($user->email, $user->getDisplayName());
         return $this;
     }
 
