@@ -33,6 +33,9 @@ class Redis implements ModuleInterface
             $pw = Charm::Config()->get('connections:redis.password');
             $persistent = Charm::Config()->get('connections:redis.persistent', false);
 
+            // Prevent socket timeout
+            ini_set("default_socket_timeout", -1);
+
             if(class_exists("\\Redis")) {
                 // Use native redis driver
                 $redis = new \Redis();
@@ -52,6 +55,9 @@ class Redis implements ModuleInterface
 
                 // Set prefix
                 $redis->setOption(\Redis::OPT_PREFIX, Charm::Config()->get('connections:redis.prefix'));
+
+                // Set timeout
+                $redis->setOption(\Redis::OPT_READ_TIMEOUT, -1);
 
                 $this->redis_client = $redis;
                 return true;
