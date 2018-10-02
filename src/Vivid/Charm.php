@@ -28,6 +28,7 @@ use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
  * @method static Kernel\Modules\Mailman Mailman
  * @method static Kernel\Modules\Redis Redis
  * @method static Kernel\Modules\Request Request
+ * @method static Kernel\Modules\Server Server
  * @method static Kernel\Modules\Session Session
  * @method static Router\Router Router
  * @method static Guard Guard

@@ -5,6 +5,7 @@
 
 namespace Charm\Cache;
 
+use Charm\Vivid\Base\Module;
 use Charm\Vivid\Charm;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Predis\Client;
@@ -18,7 +19,7 @@ use Predis\Client;
  *
  * @package Charm\Cache
  */
-class Cache implements ModuleInterface
+class Cache extends Module implements ModuleInterface
 {
     /** @var string The global cache prefix */
     protected $prefix = 'ccache';

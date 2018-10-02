@@ -104,7 +104,7 @@ class Database implements ModuleInterface
         }
 
         // Get needed data from module
-        $mod = $this->getModule($module);
+        $mod = Charm::get($module);
 
         // Defaults
         $path = PathFinder::getAppPath()

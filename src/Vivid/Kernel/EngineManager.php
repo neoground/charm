@@ -12,6 +12,8 @@ use Charm\Vivid\PathFinder;
 /**
  * Class EngineManager
  *
+ * Providing a base class for all app modules
+ *
  * @package Charm\Vivid\Kernel
  */
 class EngineManager extends Module
@@ -76,6 +78,24 @@ class EngineManager extends Module
     public function getConfig($key, $default = null)
     {
         return Charm::Arrays()->get($this->config, $key, $default);
+    }
+
+    /**
+     * Enable handling of preflight requests for CORS
+     *
+     * This will automatically handle the "OPTIONS" request and return an empty
+     * body which is needed for most APIs with CORS.
+     *
+     * Explanation: https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request
+     */
+    public function enablePreflightHandling()
+    {
+        if(Charm::Server()->get('REQUEST_METHOD') == "OPTIONS") {
+            // Basic headers are provided by nginx. No Access-Control needed again...
+            header("Content-Length: 0");
+            header("Content-Type: text/plain");
+            exit(0);
+        }
     }
 
 }
