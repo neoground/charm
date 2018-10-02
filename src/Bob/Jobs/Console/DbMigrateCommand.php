@@ -30,7 +30,8 @@ class DbMigrateCommand extends Command
             ->setDescription("Migrate the database tables (parameters: --action=up / --action=down)")
             ->setDefinition([
                 new InputOption('action', 'do', InputOption::VALUE_REQUIRED, 'Action to take: up / down', 'up'),
-                new InputOption('file', 'f', InputOption::VALUE_OPTIONAL, 'Optional single file to migrate', '')
+                new InputOption('file', 'f', InputOption::VALUE_OPTIONAL, 'Optional single file to migrate', ''),
+                new InputOption('module', 'm', InputOption::VALUE_OPTIONAL, 'Optional module name', 'App')
             ]);
     }
 
@@ -46,6 +47,7 @@ class DbMigrateCommand extends Command
     {
         $action = $input->getOption('action');
         $file = $input->getOption('file');
+        $module = $input->getOption('module');
 
         if (!empty($file)) {
             // Single migration
@@ -57,9 +59,9 @@ class DbMigrateCommand extends Command
         }
 
         if ($action == 'up') {
-            Charm::Database()->runMigrations('up', $file, $output);
+            Charm::Database()->runMigrations('up', $file, $module, $output);
         } elseif ($action == 'down') {
-            Charm::Database()->runMigrations('down', $file, $output);
+            Charm::Database()->runMigrations('down', $file, $module, $output);
         }
 
         $output->writeln('<info>Done!</info>');

@@ -94,17 +94,39 @@ class Database implements ModuleInterface
      *
      * @param string           $method  method to call (up / down)
      * @param string           $file    optional filename (part) for single migration
+     * @param string           $module  optional module name where migrations should run
      * @param OutputInterface  $output  optional console output interface
      */
-    public function runMigrations($method, $file = null, $output = null)
+    public function runMigrations($method, $file = null, $module = "App", $output = null)
     {
         if ($output) {
             $output->writeln('<info>Running ' . $method . ' migrations</info>');
         }
 
-        // Get all migration files
+        // Get needed data from module
+        $mod = $this->getModule($module);
 
-        $path = PathFinder::getAppPath() . DIRECTORY_SEPARATOR . 'System' . DIRECTORY_SEPARATOR . 'Migrations';
+        // Defaults
+        $path = PathFinder::getAppPath()
+            . DIRECTORY_SEPARATOR . 'System'
+            . DIRECTORY_SEPARATOR . 'Migrations';
+        $namespace = "\\App\\System\\Migrations";
+
+        // Module specific
+        if(is_object($mod) && method_exists($mod, 'getReflectionClass')) {
+            $path = Charm::get($module)->getBaseDirectory()
+                . DIRECTORY_SEPARATOR . 'System'
+                . DIRECTORY_SEPARATOR . 'Migrations';
+
+            $namespace = $mod->getReflectionClass()->getNamespaceName() . "\\System\\Migrations";
+        }
+
+        // Get all migration files
+        if(!file_exists($path)) {
+            if($output) {
+                $output->writeln('<error>No migrations found for module ' . $module . '</error>');
+            }
+        }
 
         $files = glob($path . DIRECTORY_SEPARATOR . '*.php');
 
@@ -142,7 +164,7 @@ class Database implements ModuleInterface
             }
 
             // Create class name with namespace
-            $class = "\\App\\System\\Migrations\\" .  ucfirst(implode($class_parts, "_"));
+            $class = $namespace . "\\" . ucfirst(implode($class_parts, "_"));
 
             $migration = new $class;
 
