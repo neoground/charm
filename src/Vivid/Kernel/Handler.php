@@ -61,6 +61,7 @@ class Handler
             'Redis',
             'Database',
             'Request',
+            'Server',
             'Formatter',
             'Cache' => '\\Charm\\Cache\\Cache',
             'Router' => '\\Charm\\Vivid\\Router\\Router',
