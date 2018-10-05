@@ -53,7 +53,6 @@ class Handler
         $this->modules_to_load = [
             'Arrays',
             'AppStorage',
-            'App' => '\\App\\Engine',
             'Config',
             'Logging',
             'Debug',
@@ -70,6 +69,7 @@ class Handler
             'Bob' => '\\Charm\\Bob\\Bob',
             'CharmCreator' => '\\Charm\\CharmCreator\\CharmCreator',
             'Mailman',
+            'App' => '\\App\\Engine',
         ];
 
         $this->modules_blacklist = [];
