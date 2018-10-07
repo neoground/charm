@@ -3,21 +3,22 @@
  * This file contains a console command.
  */
 
-namespace Charm\Bob\Jobs\Console;
+namespace Charm\CharmCreator\Jobs\Console;
 
+use Charm\Crown\Crown;
 use Charm\Vivid\Charm;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class AppstorageGenerateCommand
+ * Class RoutesToControllerCommand
  *
- * Handling app storage cache generation
+ * Creating controller methods and files out of routes
  *
- * @package Charm\Bob\Jobs\Console
+ * @package Charm\CharmCreator\Jobs\Console
  */
-class AppstorageGenerateCommand extends Command
+class RoutesToControllerCommand extends Command
 {
 
     /**
@@ -25,8 +26,8 @@ class AppstorageGenerateCommand extends Command
      */
     protected function configure()
     {
-        $this->setName("appstorage:generate")
-            ->setDescription("Generate and replace the AppStorage cache");
+        $this->setName("cc:route2ctrl")
+            ->setDescription("Creating controller methods and files out of app routes");
     }
 
     /**
@@ -39,15 +40,7 @@ class AppstorageGenerateCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln('<info>Generating AppStorage cache file...</info>');
-        Charm::AppStorage()->generateCache();
-
-        // Also clear opcache
-        if(function_exists('opcache_reset')) {
-            opcache_reset();
-        }
-
-        $output->writeln('Done!');
+        Charm::CharmCreator()->routesToControllerMethods();
         return true;
     }
 }

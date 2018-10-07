@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * Handling cron job running
  *
- * @package Charm\Bob\Commands
+ * @package Charm\Bob\Jobs\Console
  */
 class CronRunCommand extends Command
 {

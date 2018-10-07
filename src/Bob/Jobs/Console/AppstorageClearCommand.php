@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * Handling app storage cache clearing
  *
- * @package Charm\Bob\Commands
+ * @package Charm\Bob\Jobs\Console
  */
 class AppstorageClearCommand extends Command
 {

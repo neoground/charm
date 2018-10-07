@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * Handling general cache clearing
  *
- * @package Charm\Bob\Commands
+ * @package Charm\Bob\Jobs\Console
  */
 class CacheClearCommand extends Command
 {

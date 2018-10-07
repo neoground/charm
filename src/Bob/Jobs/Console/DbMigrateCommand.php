@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * Handling database migrations
  *
- * @package Charm\Bob\Commands
+ * @package Charm\Bob\Jobs\Console
  */
 class DbMigrateCommand extends Command
 {
