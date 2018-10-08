@@ -95,13 +95,13 @@ class View implements OutputInterface, HttpCodes
      */
     private function initTwig()
     {
-        $loader = new \Twig_Loader_Filesystem(PathFinder::getAppPath() . DIRECTORY_SEPARATOR . 'Views');
+        $loader = new \Twig_Loader_Filesystem(PathFinder::getAppPath() . DS . 'Views');
 
         $debug_mode = Charm::Config()->get('main:debug.debugmode', false);
 
         // Init environment
         $twig = new \Twig_Environment($loader, [
-            'cache' => PathFinder::getCachePath() . DIRECTORY_SEPARATOR . 'views',
+            'cache' => PathFinder::getCachePath() . DS . 'views',
             'debug' => $debug_mode
         ]);
 
@@ -223,7 +223,7 @@ class View implements OutputInterface, HttpCodes
         }
 
         return $this->twig->render(
-            str_replace('.', DIRECTORY_SEPARATOR, $this->tpl) . '.twig',
+            str_replace('.', DS, $this->tpl) . '.twig',
             $this->content
         );
     }

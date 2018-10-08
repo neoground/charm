@@ -54,12 +54,12 @@ class Crown extends Module implements ModuleInterface
     public function run()
     {
         // Get app jobs
-        $dir = PathFinder::getAppPath() . DIRECTORY_SEPARATOR . 'Jobs' . DIRECTORY_SEPARATOR . 'Cron';
+        $dir = PathFinder::getAppPath() . DS . 'Jobs' . DS . 'Cron';
         $files = array_diff(scandir($dir), ['..', '.']);
 
         // Go through all cron jobs
         foreach ($files as $file) {
-            $fullpath = $dir . DIRECTORY_SEPARATOR . $file;
+            $fullpath = $dir . DS . $file;
             $pathinfo = pathinfo($fullpath);
             require_once($fullpath);
 

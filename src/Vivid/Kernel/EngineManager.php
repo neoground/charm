@@ -45,7 +45,7 @@ class EngineManager extends Module
     public function getEnvironment()
     {
         // Use manually set environment from the app.env file
-        $appenv = PathFinder::getAppPath() . DIRECTORY_SEPARATOR . 'app.env';
+        $appenv = PathFinder::getAppPath() . DS . 'app.env';
         if(file_exists($appenv) && !$this->set_via_file) {
             $this->environment = trim(file_get_contents($appenv));
             $this->set_via_file = true;

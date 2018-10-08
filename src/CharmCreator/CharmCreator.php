@@ -37,7 +37,7 @@ class CharmCreator extends Module implements ModuleInterface
         $routes = Charm::Router()->getRoutesData();
         $namespace = '\\App\\Controllers\\';
 
-        $basepath = PathFinder::getAppPath() . DIRECTORY_SEPARATOR . 'Controllers';
+        $basepath = PathFinder::getAppPath() . DS . 'Controllers';
 
         foreach($routes as $route) {
             if(in_string($namespace, $route['call_class'])) {
@@ -48,10 +48,10 @@ class CharmCreator extends Module implements ModuleInterface
                     // Got sub namespace
                     $cparts = explode("\\", $class);
                     $class_name = array_pop($cparts);
-                    $subdirs = implode(DIRECTORY_SEPARATOR, $cparts);
+                    $subdirs = implode(DS, $cparts);
 
                     $class = $class_name;
-                    $dir = $basepath . DIRECTORY_SEPARATOR . $subdirs;
+                    $dir = $basepath . DS . $subdirs;
                 }
 
                 // Create dir(s) if not existing
@@ -60,7 +60,7 @@ class CharmCreator extends Module implements ModuleInterface
                 }
 
                 // Create controller file by template if not existing
-                $class_path = $dir . DIRECTORY_SEPARATOR . $class . '.php';
+                $class_path = $dir . DS . $class . '.php';
                 if(!file_exists($class_path)) {
                     $this->createController($class_path, [
                         'CLASSNAME' => $class,
@@ -199,8 +199,7 @@ class CharmCreator extends Module implements ModuleInterface
     public function getControllerTemplate($name = 'Default')
     {
         try {
-            $path = self::getBaseDirectory() . DIRECTORY_SEPARATOR . 'Templates' .
-                DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR . $name . '.php';
+            $path = self::getBaseDirectory() . DS . 'Templates' . DS . 'Controllers' . DS . $name . '.php';
         } catch (\ReflectionException $e) {
             return false;
         }

@@ -107,16 +107,12 @@ class Database implements ModuleInterface
         $mod = Charm::get($module);
 
         // Defaults
-        $path = PathFinder::getAppPath()
-            . DIRECTORY_SEPARATOR . 'System'
-            . DIRECTORY_SEPARATOR . 'Migrations';
+        $path = PathFinder::getAppPath() . DS . 'System' . DS . 'Migrations';
         $namespace = "\\App\\System\\Migrations";
 
         // Module specific
         if(is_object($mod) && method_exists($mod, 'getReflectionClass')) {
-            $path = Charm::get($module)->getBaseDirectory()
-                . DIRECTORY_SEPARATOR . 'System'
-                . DIRECTORY_SEPARATOR . 'Migrations';
+            $path = Charm::get($module)->getBaseDirectory() . DS . 'System' . DS . 'Migrations';
 
             $namespace = $mod->getReflectionClass()->getNamespaceName() . "\\System\\Migrations";
         }
@@ -128,7 +124,7 @@ class Database implements ModuleInterface
             }
         }
 
-        $files = glob($path . DIRECTORY_SEPARATOR . '*.php');
+        $files = glob($path . DS . '*.php');
 
         // Descending order for down
         if ($method == 'down') {

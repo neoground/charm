@@ -47,7 +47,7 @@ class Mailman implements ModuleInterface
      */
     private function initTwig()
     {
-        $tpl_path = PathFinder::getAssetsPath() . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'email';
+        $tpl_path = PathFinder::getAssetsPath() . DS . 'templates' . DS . 'email';
 
         // Can be overridden by setting
         if(Charm::AppStorage()->has('Mailman', 'template_path')) {
@@ -349,7 +349,7 @@ class Mailman implements ModuleInterface
                     $file = 'email_html.twig';
                 }
 
-                $view = $name . DIRECTORY_SEPARATOR . $file;
+                $view = $name . DS . $file;
             }
 
             $this->mail->isHTML(true);

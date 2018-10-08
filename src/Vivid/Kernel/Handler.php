@@ -81,8 +81,9 @@ class Handler
     private function initSystem()
     {
         // Include functions
-        require_once __DIR__ . DIRECTORY_SEPARATOR . 'BaseFunctions.php';
-        require_once __DIR__ . DIRECTORY_SEPARATOR . 'HelperFunctions.php';
+        require_once __DIR__ . DIRECTORY_SEPARATOR . 'Globals.php';
+        require_once __DIR__ . DS . 'BaseFunctions.php';
+        require_once __DIR__ . DS . 'HelperFunctions.php';
 
         // Let's init the base system
         $h = Handler::getInstance();
@@ -139,7 +140,7 @@ class Handler
             try {
                 $mod = $this->getModule($name);
                 if(is_object($mod) && method_exists($mod, 'getReflectionClass')) {
-                    $dir = $mod->getBaseDirectory() . DIRECTORY_SEPARATOR . 'Jobs' . DIRECTORY_SEPARATOR . 'Console';
+                    $dir = $mod->getBaseDirectory() . DS . 'Jobs' . DS . 'Console';
                     $namespace = $mod->getReflectionClass()->getNamespaceName() . "\\Jobs\\Console";
 
                     if(file_exists($dir)) {
@@ -176,7 +177,7 @@ class Handler
 
         // Go through all files
         foreach ($files as $file) {
-            $fullpath = $dir . DIRECTORY_SEPARATOR . $file;
+            $fullpath = $dir . DS . $file;
             $pathinfo = pathinfo($fullpath);
             require_once($fullpath);
 

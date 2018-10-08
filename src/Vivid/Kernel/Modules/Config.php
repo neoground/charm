@@ -171,7 +171,7 @@ class Config implements ModuleInterface
     private function getConfigFile($key, $env = false, $module = 'App')
     {
         // Default case: app config
-        $path = PathFinder::getModulePath($module) . DIRECTORY_SEPARATOR . 'Config';
+        $path = PathFinder::getModulePath($module) . DS . 'Config';
 
         // Get filename
         if(!in_string($this->file_delimiter, $key)) {
@@ -183,10 +183,10 @@ class Config implements ModuleInterface
 
         // Local path?
         if($env) {
-            $path .= DIRECTORY_SEPARATOR . 'Environments' . DIRECTORY_SEPARATOR . Charm::App()->getEnvironment();
+            $path .= DS . 'Environments' . DS . Charm::App()->getEnvironment();
         }
 
-        return $path . DIRECTORY_SEPARATOR . $filename . '.yaml';
+        return $path . DS . $filename . '.yaml';
     }
 
 }

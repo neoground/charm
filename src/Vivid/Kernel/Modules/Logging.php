@@ -42,7 +42,7 @@ class Logging implements ModuleInterface, LoggerInterface
         }
 
         // Build file path
-        $path = PathFinder::getLogPath() . DIRECTORY_SEPARATOR . date("Y-m-d") . ".log";
+        $path = PathFinder::getLogPath() . DS . date("Y-m-d") . ".log";
 
         // Get log level
         $loglevel_name = Charm::Config()->get('main:loglevel', 'info');

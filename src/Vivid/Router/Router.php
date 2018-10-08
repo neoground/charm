@@ -88,14 +88,14 @@ class Router extends Module implements ModuleInterface
      */
     private function collectAllRoutes()
     {
-        $dir = PathFinder::getAppPath() . DIRECTORY_SEPARATOR . 'Routes';
+        $dir = PathFinder::getAppPath() . DS . 'Routes';
 
         // Get all files without dotfiles
         $files = array_slice(scandir($dir), 2);
 
         // And require them to collect routes, filters and groups defined in them
         foreach ($files as $file) {
-            require_once($dir . DIRECTORY_SEPARATOR . $file);
+            require_once($dir . DS . $file);
         }
     }
 

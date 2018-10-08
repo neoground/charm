@@ -38,7 +38,7 @@ class AppStorage implements ModuleInterface
         ];
 
         // Set path to cache file
-        $this->cache_file = PathFinder::getCachePath() . DIRECTORY_SEPARATOR . 'charm_appstorage.cache';
+        $this->cache_file = PathFinder::getCachePath() . DS . 'charm_appstorage.cache';
 
         // Load stored init array from cache for better performance
         $this->loadInitStorage();
