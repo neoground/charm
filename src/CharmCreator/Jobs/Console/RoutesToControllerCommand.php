@@ -40,7 +40,7 @@ class RoutesToControllerCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        Charm::CharmCreator()->routesToControllerMethods();
+        Charm::CharmCreator()->routesToControllerMethods($output);
         return true;
     }
 }

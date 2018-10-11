@@ -9,6 +9,9 @@ use Charm\Vivid\Base\Module;
 use Charm\Vivid\Charm;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Charm\Vivid\PathFinder;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * Class CharmCreator
@@ -31,9 +34,17 @@ class CharmCreator extends Module implements ModuleInterface
 
     /**
      * Add all defined routes to controllers and methods as defined in all routes files
+     *
+     * @param null|OutputInterface $output optional console output interface
      */
-    public function routesToControllerMethods()
+    public function routesToControllerMethods($output = null)
     {
+        if(is_object($output)) {
+            $output->writeln('<info>Converting routes to controller methods</info>');
+            $output->writeln('<info>=======================================</info>');
+            $output->writeln(' ');
+        }
+
         $routes = Charm::Router()->getRoutesData();
         $namespace = '\\App\\Controllers\\';
 
@@ -62,6 +73,13 @@ class CharmCreator extends Module implements ModuleInterface
                 // Create controller file by template if not existing
                 $class_path = $dir . DS . $class . '.php';
                 if(!file_exists($class_path)) {
+
+                    if(is_object($output)) {
+                        $output->writeln(' ');
+                        $output->writeln('<info>Creating controller file: ' . $class . '</info>');
+                        $output->writeln(' ');
+                    }
+
                     $this->createController($class_path, [
                         'CLASSNAME' => $class,
                     ]);
@@ -104,7 +122,7 @@ class CharmCreator extends Module implements ModuleInterface
                     'METHOD_ROUTE' => $route['name'],
                     '     * METHOD_ARGS' => $margs,
                     '$METHOD_ARGS' => implode(", ", $method_args_v)
-                ]);
+                ], $output);
 
             }
         }
@@ -117,10 +135,11 @@ class CharmCreator extends Module implements ModuleInterface
      * @param string $path absolute path to the controller file (including file extension)
      * @param array $data the data for replacing placeholders (keys are the placeholder names)
      * @param string $tplname (opt.) name of controller template
+     * @param null|OutputInterface optional output interface
      *
      * @return bool|int false if template / controller is not found, return of file_put_contents on success
      */
-    public function addMethodToController($path, $data = [], $tplname = 'Default')
+    public function addMethodToController($path, $data = [], $tplname = 'Default', $output = null)
     {
         $tpl = $this->getControllerTemplate($tplname);
 
@@ -132,7 +151,14 @@ class CharmCreator extends Module implements ModuleInterface
         // Stop if method already exists in controller
         $controller = file_get_contents($path);
         if(in_string($data['METHOD_NAME'], $controller)) {
+            if(is_object($output)) {
+                $output->writeln('[IGNORE] Method exists: ' . $data['METHOD_NAME']);
+            }
             return false;
+        }
+
+        if(is_object($output)) {
+            $output->writeln('[ADDING] Method: ' . $data['METHOD_NAME']);
         }
 
         // Get method template
