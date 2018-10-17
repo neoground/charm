@@ -29,6 +29,15 @@ class Mailman implements ModuleInterface
     /** @var \Twig_Environment Twig instance */
     protected $twig;
 
+    /** @var string from data */
+    protected $from;
+
+    /** @var bool sent success */
+    protected $success;
+
+    /** @var string|null the error message */
+    protected $error_msg;
+
     /**
      * Load the module
      */
@@ -149,6 +158,8 @@ class Mailman implements ModuleInterface
                 Charm::Config()->get($configspace . '.frommail'),
                 Charm::Config()->get($configspace . '.fromname')
             );
+            $this->from = Charm::Config()->get($configspace . '.fromname')
+                . ' <' .  Charm::Config()->get($configspace . '.frommail') . '>';
 
             // Debug mode
             if(Charm::Config()->get('main:debug.debugmode', false)) {
@@ -389,6 +400,36 @@ class Mailman implements ModuleInterface
     }
 
     /**
+     * Get from string
+     *
+     * @return string
+     */
+    public function getFrom()
+    {
+        return $this->from;
+    }
+
+    /**
+     * Successfully sent email?
+     *
+     * @return bool
+     */
+    public function isSuccess()
+    {
+        return $this->success;
+    }
+
+    /**
+     * Get error message
+     *
+     * @return null|string
+     */
+    public function getErrorMessage()
+    {
+        return $this->error_msg;
+    }
+
+    /**
      * Send the e-mail
      *
      * @return $this
@@ -396,9 +437,16 @@ class Mailman implements ModuleInterface
     public function send()
     {
         try {
-            $this->mail->send();
+            $ret = $this->mail->send();
+            $this->success = true;
         } catch(Exception $e) {
             Charm::Logging()->error('Could not send email', [$e->getMessage(), $this->mail->ErrorInfo]);
+            $this->success = false;
+            $this->error_msg = $e->getMessage();
+        }
+
+        if($ret === false) {
+            $this->success = false;
         }
 
         // Clear all recipients to prevent errors with multiple recipients on mass mails
