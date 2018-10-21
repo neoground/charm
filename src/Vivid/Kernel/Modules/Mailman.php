@@ -345,7 +345,7 @@ class Mailman implements ModuleInterface
         $this->initTwig();
 
         // Add mail data to twig data
-        $data['email'] = $this->mail;
+        $data['mailman'] = $this->mail;
 
         // Render template
         try {
@@ -436,6 +436,8 @@ class Mailman implements ModuleInterface
      */
     public function send()
     {
+        $ret = false;
+
         try {
             $ret = $this->mail->send();
             $this->success = true;
