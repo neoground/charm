@@ -115,6 +115,9 @@ class Handler
         // Init the whole system
         $this->initSystem();
 
+        // App's post init hook
+        $this->getModule('App')->postInit();
+
         // Route + Output!
         $this->output();
 
