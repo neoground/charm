@@ -23,6 +23,7 @@ use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
  * @method static Kernel\Modules\Config Config
  * @method static Kernel\Modules\Database Database
  * @method static Kernel\Modules\Debug Debug
+ * @method static Kernel\Modules\Events Events
  * @method static Kernel\Modules\Formatter Formatter
  * @method static Kernel\Modules\Logging Logging
  * @method static Kernel\Modules\Mailman Mailman
