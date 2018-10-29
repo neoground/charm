@@ -78,6 +78,23 @@ class Request implements ModuleInterface
     }
 
     /**
+     * Set a request value
+     *
+     * This can be used for custom overriding or
+     * for internal calling of other controller methods and so on.
+     *
+     * @param string $key
+     * @param mixed $value
+     *
+     * @return true
+     */
+    public function set($key, $value)
+    {
+        $this->vars[$key] = $value;
+        return true;
+    }
+
+    /**
      * Get all passed values as array
      *
      * @return array
