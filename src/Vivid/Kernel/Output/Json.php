@@ -172,4 +172,14 @@ class Json implements OutputInterface, HttpCodes
         return json_encode($this->data);
     }
 
+    /**
+     * Get the content array
+     *
+     * @return array
+     */
+    public function getContent()
+    {
+        return $this->data;
+    }
+
 }
