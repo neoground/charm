@@ -54,6 +54,7 @@ class Handler
             'Arrays',
             'AppStorage',
             'Server',
+            'Events',
             'App' => '\\App\\Engine',
             'Config',
             'Logging',
