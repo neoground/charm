@@ -115,9 +115,17 @@ class Dispatcher {
     {
         while($filter = array_shift($filters))
         {
-            $handler = $this->handlerResolver->resolve($filter);
+            // Find optional parameters
+            $parts = explode(":", $filter);
+            $param = $response;
+            if(count($parts) > 1) {
+                $filter = array_shift($parts);
+                $param = implode(":", $parts);
+            }
 
-            if(($filteredResponse = call_user_func($handler, $response)) !== null)
+            // Get and call handler
+            $handler = $this->handlerResolver->resolve($filter);
+            if(($filteredResponse = call_user_func($handler, $param)) !== null)
             {
                 return $filteredResponse;
             }
