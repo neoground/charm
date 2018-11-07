@@ -42,8 +42,8 @@ class EventProvider extends Module implements ModuleInterface
                 if(is_object($mod) && method_exists($mod, 'getReflectionClass')) {
 
                     // Check if events exist for this module
-                    $dir = $mod->getBaseDirectory() . DS . 'System' . DS . 'Events';
-                    $namespace = $mod->getReflectionClass()->getNamespaceName() . "\\System\\Events";
+                    $dir = $mod->getBaseDirectory() . DS . 'System' . DS . 'EventListener';
+                    $namespace = $mod->getReflectionClass()->getNamespaceName() . "\\System\\EventListener";
 
                     if(file_exists($dir)) {
                         // Add all events in this directory
@@ -58,7 +58,7 @@ class EventProvider extends Module implements ModuleInterface
                             $class = $namespace . "\\" . $pathinfo['filename'];
 
                             if (class_exists($class)) {
-                                /** @var Event $instance */
+                                /** @var EventListener $instance */
                                 $instance = new $class;
                                 $instance->addEvent();
                             }

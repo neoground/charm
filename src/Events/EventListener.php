@@ -10,13 +10,13 @@ use Charm\Vivid\Exceptions\LogicException;
 use Charm\Vivid\Exceptions\ModuleNotFoundException;
 
 /**
- * Class Event
+ * Class EventListener
  *
- * The base event which should be extended by all events.
+ * The base event listener which should be extended by all listeners.
  *
  * @package Charm\Events
  */
-class Event
+class EventListener
 {
     /** @var string name of according module */
     protected $module;
