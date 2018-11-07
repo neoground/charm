@@ -5,8 +5,8 @@
 
 namespace Charm\Vivid;
 
-use App\Engine;
 use Charm\Cache\Cache;
+use Charm\Events\EventProvider;
 use Charm\Guard\Guard;
 use Charm\Guard\Token;
 use Charm\Vivid\Kernel\EngineManager;
@@ -23,7 +23,6 @@ use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
  * @method static Kernel\Modules\Config Config
  * @method static Kernel\Modules\Database Database
  * @method static Kernel\Modules\Debug Debug
- * @method static Kernel\Modules\Events Events
  * @method static Kernel\Modules\Formatter Formatter
  * @method static Kernel\Modules\Logging Logging
  * @method static Kernel\Modules\Mailman Mailman
@@ -36,6 +35,7 @@ use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
  * @method static Token Token
  * @method static Cache Cache
  * @method static EngineManager App
+ * @method static EventProvider Events
  *
  * @package Charm\Vivid
  */

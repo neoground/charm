@@ -98,15 +98,4 @@ class EngineManager extends Module
         }
     }
 
-    /**
-     * Actions after charm initialization
-     *
-     * This method is called after the init sequence of charm is completed
-     * and before the routing system starts.
-     */
-    public function postInit()
-    {
-
-    }
-
 }

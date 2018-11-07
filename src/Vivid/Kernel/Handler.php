@@ -54,7 +54,7 @@ class Handler
             'Arrays',
             'AppStorage',
             'Server',
-            'Events',
+            'Event' => '\\Charm\\Events\\EventProvider',
             'App' => '\\App\\Engine',
             'Config',
             'Logging',
@@ -116,14 +116,31 @@ class Handler
         // Init the whole system
         $this->initSystem();
 
-        // App's post init hook
-        $this->getModule('App')->postInit();
+        // Post init hooks
+        $this->callPostInitHooks();
 
         // Route + Output!
         $this->output();
 
         // Finally shutdown
         $this->shutdown();
+    }
+
+    /**
+     * Execute post init hooks of all modules
+     */
+    private function callPostInitHooks()
+    {
+        foreach($this->getModuleClasses() as $name => $class) {
+            try {
+                $mod = $this->getModule($name);
+                if (is_object($mod) && method_exists($mod, 'postInit')) {
+                    $mod->postInit();
+                }
+            } catch(ModuleNotFoundException $e) {
+                // Module not found -> ignore.
+            }
+        }
     }
 
     /**
