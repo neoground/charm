@@ -449,6 +449,14 @@ class Mailman implements ModuleInterface
 
         if($ret === false) {
             $this->success = false;
+
+            if(Charm::has('Events')) {
+                Charm::Events()->fire('Mailman', 'sentSuccess');
+            }
+        } else {
+            if(Charm::has('Events')) {
+                Charm::Events()->fire('Mailman', 'sentError');
+            }
         }
 
         // Clear all recipients to prevent errors with multiple recipients on mass mails

@@ -57,6 +57,10 @@ class Crown extends Module implements ModuleInterface
         $dir = PathFinder::getAppPath() . DS . 'Jobs' . DS . 'Cron';
         $files = array_diff(scandir($dir), ['..', '.']);
 
+        if(Charm::has('Events')) {
+            Charm::Events()->fire('Crown', 'run');
+        }
+
         // Go through all cron jobs
         foreach ($files as $file) {
             $fullpath = $dir . DS . $file;

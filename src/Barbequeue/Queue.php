@@ -50,6 +50,10 @@ class Queue extends Module implements ModuleInterface
             Charm::Logging()->info('[BBQ] Pushing job to queue: ' . $entry->getMethod());
         }
 
+        if(Charm::has('Events')) {
+            Charm::Events()->fire('Queue', 'push');
+        }
+
         // Add it to the queue in redis
         return Charm::Redis()->rpush($queue_name, json_encode($job_content));
     }
@@ -66,6 +70,10 @@ class Queue extends Module implements ModuleInterface
     {
         if (empty($worker_id) || !is_numeric($worker_id)) {
             $worker_id = 1;
+        }
+
+        if(Charm::has('Events')) {
+            Charm::Events()->fire('Queue', 'run');
         }
 
         $this->doWork($name, $worker_id);
@@ -95,6 +103,10 @@ class Queue extends Module implements ModuleInterface
                 // And execute the job!
                 $this->executeJob($job, $worker_id);
             }
+        }
+
+        if(Charm::has('Events')) {
+            Charm::Events()->fire('Queue', 'done');
         }
 
         Charm::Logging()->debug('Worker ' . $worker_id . ' done! Terminating.');
