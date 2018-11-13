@@ -160,7 +160,21 @@ class Database implements ModuleInterface
             }
 
             // Create class name with namespace
-            $class = $namespace . "\\" . ucfirst(implode($class_parts, "_"));
+            $class = $namespace . "\\" . implode("_",  array_map("ucfirst", $class_parts));
+
+            if(!class_exists($class)) {
+
+                // Append table suffix. Some people like that.
+                $class = $class . 'Table';
+
+                if(!class_exists($class)) {
+                    // Still not found. Ignore.
+                    if($output) {
+                        $output->writeln('<error>Invalid class: ' . $class_raw . '</error>');
+                    }
+                    continue;
+                }
+            }
 
             $migration = new $class;
 
