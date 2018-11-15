@@ -123,6 +123,34 @@ class Redis implements ModuleInterface
     }
 
     /**
+     * Remove specified keys from a hash
+     *
+     * @param string $key    the hash key
+     * @param array  $values an array of values
+     *
+     * @return int Number of keys deleted
+     */
+    public function hdel($key, $values)
+    {
+        if(!is_array($values)) {
+            $values = [$values];
+        }
+
+        if(extension_loaded('redis') && $this->redis_client instanceof \Redis) {
+            // phpredis
+            $ret = true;
+            foreach($values as $val) {
+                $ret &= $this->redis_client->hDel($key, $val);
+            }
+            return $ret;
+        }
+
+        // predis
+        return $this->redis_client->hdel($key, $values);
+
+    }
+
+    /**
      * Adds the string values to the tail (right) of the list. Creates the list if the key didn't exist.
      * If the key exists and is not a list, FALSE is returned.
      *
