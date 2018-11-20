@@ -116,11 +116,11 @@ class Dispatcher {
         while($filter = array_shift($filters))
         {
             // Find optional parameters
-            $parts = explode(":", $filter);
+            $parts = explode(";", $filter);
             $param = $response;
             if(count($parts) > 1) {
                 $filter = array_shift($parts);
-                $param = implode(":", $parts);
+                $param = implode(";", $parts);
             }
 
             // Get and call handler
