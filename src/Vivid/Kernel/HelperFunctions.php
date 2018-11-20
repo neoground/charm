@@ -36,6 +36,10 @@ if(!function_exists('is_json')) {
      */
     function is_json($string)
     {
+        if(is_array($string)) {
+            return false;
+        }
+
         json_decode($string);
         return (json_last_error() == JSON_ERROR_NONE);
     }
