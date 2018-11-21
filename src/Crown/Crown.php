@@ -55,6 +55,10 @@ class Crown extends Module implements ModuleInterface
             Charm::Events()->fire('Crown', 'run');
         }
 
+        if($this->output) {
+            $this->output->writeln('<info>Runninig cron jobs</info>');
+        }
+
         // Go through all modules
         $handler = Handler::getInstance();
         foreach ($handler->getModuleClasses() as $name => $module) {
