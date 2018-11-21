@@ -9,8 +9,8 @@ use Carbon\Carbon;
 use Charm\Crown\Exceptions\InvalidCronjobException;
 use Charm\Vivid\Base\Module;
 use Charm\Vivid\Charm;
+use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
-use Charm\Vivid\PathFinder;
 use Cron\CronExpression;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -48,18 +48,44 @@ class Crown extends Module implements ModuleInterface
 
     /**
      * Run all due jobs
-     *
-     * @throws InvalidCronjobException
      */
     public function run()
     {
-        // Get app jobs
-        $dir = PathFinder::getAppPath() . DS . 'Jobs' . DS . 'Cron';
-        $files = array_diff(scandir($dir), ['..', '.']);
-
-        if(Charm::has('Events')) {
+        if (Charm::has('Events')) {
             Charm::Events()->fire('Crown', 'run');
         }
+
+        // Go through all modules
+        $handler = Handler::getInstance();
+        foreach ($handler->getModuleClasses() as $name => $module) {
+            try {
+                $mod = $handler->getModule($name);
+                if (is_object($mod) && method_exists($mod, 'getReflectionClass')) {
+                    $dir = $mod->getBaseDirectory() . DS . 'Jobs' . DS . 'Cron';
+                    $namespace = $mod->getReflectionClass()->getNamespaceName() . "\\Jobs\\Cron";
+
+                    if (file_exists($dir)) {
+                        $this->checkCronJobs($dir, $namespace);
+                    }
+                }
+            } catch (\Exception $e) {
+                // Cron job error?
+                // Just continue, it's logged...
+            }
+        }
+    }
+
+    /**
+     * Check cron jobs of a module and execute them
+     *
+     * @param string $dir the directory where cron jobs are found
+     * @param string $namespace the namespace of the cron jobs
+     *
+     * @throws InvalidCronjobException
+     */
+    private function checkCronJobs($dir, $namespace)
+    {
+        $files = array_diff(scandir($dir), ['..', '.']);
 
         // Go through all cron jobs
         foreach ($files as $file) {
@@ -67,13 +93,13 @@ class Crown extends Module implements ModuleInterface
             $pathinfo = pathinfo($fullpath);
             require_once($fullpath);
 
-            $class = "\\App\\Jobs\\Cron\\" . $pathinfo['filename'];
+            $class = $namespace . "\\" . $pathinfo['filename'];
 
             // Job existing?
-            if(!class_exists($class)) {
+            if (!class_exists($class)) {
                 // Job (class) not existing!
                 Charm::Logging()->notice('[CROWN] Got invalid job. Class not existing: ' . $class);
-                if($this->output) {
+                if ($this->output) {
                     $this->output->writeln('<error>Got invalid job. Class not existing: ' . $class . '</error>');
                 }
 
@@ -84,42 +110,50 @@ class Crown extends Module implements ModuleInterface
             $job = new $class;
 
             // Job must extend Cronjob
-            if(!is_subclass_of($job, Cronjob::class)) {
+            if (!is_subclass_of($job, Cronjob::class)) {
                 throw new InvalidCronjobException("Job must extend the Cronjob class");
             }
 
             // Is job due in this minute?
             $cron = CronExpression::factory($job->getExpression());
-            if($cron->isDue()) {
+            if ($cron->isDue()) {
                 // Yup. Run it!
-                Charm::Logging()->info('[CROWN] Running job: ' . $job->getName());
+                $this->executeCronJob($job);
+            }
+        }
+    }
 
-                if($this->output) {
-                    $this->output->writeln('[' . Carbon::now()->toDateTimeString() . '] Running: ' . $job->getName());
-                }
+    /**
+     * Execute a due cron job
+     *
+     * @param Cronjob $job
+     */
+    private function executeCronJob($job)
+    {
+        Charm::Logging()->info('[CROWN] Running job: ' . $job->getName());
 
-                try {
-                    $ret = $job->run();
+        if ($this->output) {
+            $this->output->writeln('[' . Carbon::now()->toDateTimeString() . '] Running: ' . $job->getName());
+        }
 
-                    if(!$ret) {
-                        // Job didn't run successful
-                        Charm::Logging()->warning('[CROWN] Job exited with false: ' . $job->getName());
-                        if($this->output) {
-                            $this->output->writeln('<error>Job exited with false: ' . $job->getName() . '</error>');
-                        }
-                    }
+        try {
+            $ret = $job->run();
 
-                } catch(\Exception $e) {
-                    // Log exception
-                    Charm::Logging()->error('[CROWN] Exception', [$e->getMessage()]);
-                    if($this->output) {
-                        $this->output->writeln('<error> Exception: ' . $e->getMessage() . '</error>');
-                    }
+            if (!$ret) {
+                // Job didn't run successful
+                Charm::Logging()->warning('[CROWN] Job exited with false: ' . $job->getName());
+                if ($this->output) {
+                    $this->output->writeln('<error>Job exited with false: ' . $job->getName() . '</error>');
                 }
             }
 
+        } catch (\Exception $e) {
+            // Log exception
+            Charm::Logging()->error('[CROWN] Exception', [$e->getMessage()]);
+            if ($this->output) {
+                $this->output->writeln('<error> Exception: ' . $e->getMessage() . '</error>');
+            }
         }
-
     }
 
 }
