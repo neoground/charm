@@ -337,7 +337,7 @@ class Guard extends Module implements ModuleInterface
         $hashkey = Charm::Config()->get('main:session.name', 'charm');
 
         // Get redis connection
-        $r = Charm::Database()->getRedisClient();
+        $r = Charm::Redis()->getClient();
 
         // Get ip
         $ip = Charm::Request()->getIpAddress();
@@ -367,7 +367,7 @@ class Guard extends Module implements ModuleInterface
         $hashkey = Charm::Config()->get('main:session.name', 'charm');
 
         // Get redis connection
-        $r = Charm::Database()->getRedisClient();
+        $r = Charm::Redis()->getClient();
 
         // Get ip
         $ip = Charm::Request()->getIpAddress();
@@ -376,7 +376,7 @@ class Guard extends Module implements ModuleInterface
             $iphash = md5($ip);
 
             $counter = $r->hget($hashkey . ':loginattempts', $iphash);
-            if (!$counter) {
+            if (!$counter || !is_numeric($counter)) {
                 $counter = 0;
             }
 
