@@ -160,7 +160,7 @@ class Database implements ModuleInterface
             }
 
             // Create class name with namespace
-            $class = $namespace . "\\" . implode("_",  array_map("ucfirst", $class_parts));
+            $class = $namespace . "\\" . implode("",  array_map("ucfirst", $class_parts));
 
             if(!class_exists($class)) {
 
