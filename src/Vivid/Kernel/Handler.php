@@ -144,6 +144,20 @@ class Handler
     }
 
     /**
+     * Let there be light in the testing environment.
+     *
+     * This method starts the system for unit testing.
+     */
+    public function startTesting()
+    {
+        // Init the whole system
+        $this->initSystem();
+
+        // Post init hooks
+        $this->callPostInitHooks();
+    }
+
+    /**
      * Let there be light in the console.
      *
      * This method starts the whole console system.
