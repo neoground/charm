@@ -150,6 +150,11 @@ class Handler
      */
     public function startTesting()
     {
+        // Blacklist non-needed modules for testing
+        $this->modules_blacklist = [
+            'Session',
+        ];
+
         // Init the whole system
         $this->initSystem();
 
