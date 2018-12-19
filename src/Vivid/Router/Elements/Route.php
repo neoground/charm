@@ -124,7 +124,11 @@ class Route implements RouterElement
      */
     public function beforeFilters($filters)
     {
-        $this->filters['before'] = $filters;
+        if(!is_array($filters)) {
+            $filters = [$filters];
+        }
+
+        $this->filters['before'] = array_unique(array_merge($this->filters['before'], $filters), SORT_REGULAR);
         return $this;
     }
 
@@ -137,7 +141,11 @@ class Route implements RouterElement
      */
     public function afterFilters($filters)
     {
-        $this->filters['after'] = $filters;
+        if(!is_array($filters)) {
+            $filters = [$filters];
+        }
+
+        $this->filters['after'] = array_unique(array_merge($this->filters['after'], $filters), SORT_REGULAR);
         return $this;
     }
 
@@ -150,7 +158,7 @@ class Route implements RouterElement
      */
     public function setFilters($filters)
     {
-        $this->filters = $filters;
+        $this->filters = Charm::Arrays()->array_merge_recursive($this->filters, $filters);
         return $this;
     }
 
@@ -163,7 +171,7 @@ class Route implements RouterElement
     public function __construct($name = null, $inside_group = false)
     {
         $this->name = $name;
-        $this->filters = [];
+        $this->filters = ['before' => [], 'after' => []];
 
         if(!$inside_group) {
             Charm::AppStorage()->append('Routes', 'Routes', $this);

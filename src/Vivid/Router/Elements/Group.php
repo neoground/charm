@@ -142,6 +142,10 @@ class Group implements RouterElement
      */
     public function beforeFilters($filters)
     {
+        if(!is_array($filters)) {
+            $filters = [$filters];
+        }
+
         $this->filters['before'] = $filters;
         return $this;
     }
@@ -155,6 +159,10 @@ class Group implements RouterElement
      */
     public function afterFilters($filters)
     {
+        if(!is_array($filters)) {
+            $filters = [$filters];
+        }
+
         $this->filters['after'] = $filters;
         return $this;
     }
