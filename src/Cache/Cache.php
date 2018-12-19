@@ -200,13 +200,19 @@ class Cache extends Module implements ModuleInterface
      */
     public function removeByTag($tag)
     {
-        $keys = $this->getByTag($tag);
-        foreach($keys as $key) {
-            $this->remove($key);
+        if(!is_array($tag)) {
+            $tag = [$tag];
         }
 
-        // Also remove tag because we removed everything in it!
-        $this->remove($this->prefix . '_tags:' . $tag);
+        foreach($tag as $t) {
+            $keys = $this->getByTag($t);
+            foreach($keys as $key) {
+                $this->remove($key);
+            }
+
+            // Also remove tag because we removed everything in it!
+            $this->remove($this->prefix . '_tags:' . $t);
+        }
     }
 
 }
