@@ -54,6 +54,11 @@ class Logging implements ModuleInterface, LoggerInterface
         // Save instance
         $this->logger = $logger;
 
+        // Also redirect stderr to custom log file?
+        if(Charm::Config()->get('main:logging.errors', true)) {
+            ini_set('error_log', PathFinder::getLogPath() . DS . date("Y-m-d") . "-errors.log");
+        }
+
         return true;
     }
 
