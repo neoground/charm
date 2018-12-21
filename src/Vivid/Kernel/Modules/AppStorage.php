@@ -246,8 +246,9 @@ class AppStorage implements ModuleInterface
                     if (file_exists($dir)) {
                         // Load all files inside the Config dir except directories
                         $files = array_diff(scandir($dir), ['..', '.']);
+
                         foreach($files as $file) {
-                            if(!is_dir($file)) {
+                            if(in_string('.yaml', $file)) {
                                 $conf_name = str_replace('.yaml', '', $file);
 
                                 // Get something from config file so it gets stored in the appstorage
