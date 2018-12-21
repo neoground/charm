@@ -6,6 +6,7 @@
 namespace Charm\Vivid\Kernel\Modules;
 
 use Charm\Vivid\Charm;
+use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Charm\Vivid\PathFinder;
 
@@ -199,8 +200,6 @@ class AppStorage implements ModuleInterface
 
     /**
      * Clear the cache
-     *
-     * TODO: Allow storage in redis somehow
      */
     public function clearCache()
     {
@@ -211,23 +210,56 @@ class AppStorage implements ModuleInterface
 
     /**
      * Generate the cache and replace it
-     *
-     * TODO: Allow storage in redis somehow
      */
     public function generateCache()
     {
+        // Get all config files so they are stored in the appstorage as well
+        $this->addAllConfigFiles();
+
+        // Generate cache, override file
         file_put_contents($this->cache_file, serialize($this->storage));
     }
 
     /**
      * Load the cache into app storage
-     *
-     * TODO: Allow storage in redis somehow
      */
     public function loadInitStorage()
     {
         if(file_exists($this->cache_file)) {
             $this->storage = unserialize(file_get_contents($this->cache_file));
+        }
+    }
+
+    /**
+     * Add all config files to the appstorage
+     */
+    private function addAllConfigFiles()
+    {
+        // Go through all modules
+        $handler = Handler::getInstance();
+        foreach ($handler->getModuleClasses() as $name => $module) {
+            try {
+                $mod = $handler->getModule($name);
+                if (is_object($mod) && method_exists($mod, 'getReflectionClass')) {
+                    $dir = $mod->getBaseDirectory() . DS . 'Config';
+
+                    if (file_exists($dir)) {
+                        // Load all files inside the Config dir except directories
+                        $files = array_diff(scandir($dir), ['..', '.']);
+                        foreach($files as $file) {
+                            if(!is_dir($file)) {
+                                $conf_name = str_replace('.yaml', '', $file);
+
+                                // Get something from config file so it gets stored in the appstorage
+                                Charm::Config()->get($name . '#' . $conf_name . ':foobar');
+                            }
+                        }
+
+                    }
+                }
+            } catch (\Exception $e) {
+                // Just continue...
+            }
         }
     }
 
