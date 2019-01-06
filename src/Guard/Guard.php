@@ -137,7 +137,7 @@ class Guard extends Module implements ModuleInterface
             return true;
         }
 
-        $lastactivity = new Carbon($_SESSION['last_activity']);
+        $lastactivity = Carbon::parse($_SESSION['last_activity']);
 
         // If "remember me" is checked -> never expire session!
         // If not -> session expires 60 minutes after last activity
