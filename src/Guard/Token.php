@@ -143,7 +143,15 @@ class Token extends Module implements ModuleInterface
      */
     public function isLoggedIn()
     {
-        return !empty($this->token) && $this->user_class::where('api_token', $this->token)->count() > 0;
+        if(!empty($this->token)) {
+            // Check redis
+            $in_redis = Charm::has('Redis') && Charm::Redis()->getClient()->hexists('api_user', $this->token);
+
+            // Check database if not in redis yet
+            return $in_redis || $this->user_class::where('api_token', $this->token)->count() > 0;
+        }
+
+        return false;
     }
 
     /**
