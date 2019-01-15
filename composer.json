@@ -13,6 +13,7 @@
     "php": ">=7.0",
     "ext-json": "*",
     "ext-fileinfo": "*",
+    "ext-openssl": "*",
     "illuminate/database": "^5.5",
     "monolog/monolog": "^1.23",
     "nesbot/carbon": "^1.27",

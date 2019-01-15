@@ -108,11 +108,29 @@ class Token extends Module implements ModuleInterface
      */
     public function getUser()
     {
+        // Get user by token stored in redis
+        if(Charm::has('Redis')) {
+            $user_id = Charm::Redis()->getClient()->hget('api_user', $this->token);
+            if(!empty($user_id)) {
+                $user = $this->user_class::findWithCache($user_id);
+                if(is_object($user)) {
+                    return $user;
+                }
+            }
+        }
+
         $u = $this->user_class::where('api_token', $this->token)->first();
 
         // If user not found -> use system user
+        $default_user = false;
         if (!is_object($u)) {
             $u = $this->user_class::getDefaultUser();
+            $default_user = true;
+        }
+
+        // Store in redis cache
+        if(Charm::has('Redis') && !$default_user) {
+            Charm::Redis()->getClient()->hset('api_user', $this->token, $u->id);
         }
 
         return $u;
