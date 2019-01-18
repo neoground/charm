@@ -9,6 +9,7 @@ use Charm\Cache\Cache;
 use Charm\Events\EventProvider;
 use Charm\Guard\Guard;
 use Charm\Guard\Token;
+use Charm\Mailman\Mailman;
 use Charm\Vivid\Kernel\EngineManager;
 use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
@@ -25,7 +26,6 @@ use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
  * @method static Kernel\Modules\Debug Debug
  * @method static Kernel\Modules\Formatter Formatter
  * @method static Kernel\Modules\Logging Logging
- * @method static Kernel\Modules\Mailman Mailman
  * @method static Kernel\Modules\Redis Redis
  * @method static Kernel\Modules\Request Request
  * @method static Kernel\Modules\Server Server
@@ -34,6 +34,7 @@ use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
  * @method static Guard Guard
  * @method static Token Token
  * @method static Cache Cache
+ * @method static Mailman Mailman
  * @method static EngineManager App
  * @method static EventProvider Events
  *

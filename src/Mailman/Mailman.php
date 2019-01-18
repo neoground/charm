@@ -3,49 +3,40 @@
  * This file contains the init class for mailman.
  */
 
-namespace Charm\Vivid\Kernel\Modules;
+namespace Charm\Mailman;
 
 use Charm\Vivid\Charm;
 use Charm\Vivid\Helper\ViewExtension;
 use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Charm\Vivid\PathFinder;
-use DoctrineTest\InstantiatorTestAsset\XMLReaderAsset;
-use PHPMailer\PHPMailer\Exception;
-use PHPMailer\PHPMailer\PHPMailer;
 
 /**
  * Class Mailman
  *
  * Mailman module
  *
- * @package Charm\Vivid\Kernel\Modules
+ * @package Charm\Mailman
  */
 class Mailman implements ModuleInterface
 {
-    /** @var PHPMailer PHPMailer instance */
-    protected $mail;
+    /** @var MailmanDriverInterface the driver instance */
+    protected $driver;
 
     /** @var \Twig_Environment Twig instance */
     protected $twig;
 
-    /** @var string from data */
-    protected $from;
-
-    /** @var bool sent success */
-    protected $success;
-
-    /** @var string|null the error message */
-    protected $error_msg;
+    /** @var object the user instance if a user is added */
+    protected $user;
 
     /**
      * Load the module
      */
     public function loadModule()
     {
-        // Set default connection
-        $this->setConnection('default');
-        
+        // Set default driver + connection
+        $driver = Charm::Config()->get('connections:emails.default.driver', 'Smtp');
+        $this->setDriver($driver, 'default');
         return true;
     }
 
@@ -99,77 +90,41 @@ class Mailman implements ModuleInterface
     }
 
     /**
-     * Set SMTP connection
+     * Magic methods from driver
      *
-     * @param string  $name  name of connection (defined in connections:email)
+     * @param $name
+     * @param $arguments
      *
-     * @return $this
+     * @return mixed|false
      */
-    public function setConnection($name)
+    public function __call($name, $arguments)
     {
-        // Where do we find the config data?
-        $configspace = 'connections:emails.' . $name;
-        
-        // Init PHPMailer and set config values
-        try {
-            $mail = new PHPMailer(true);
-            $mail->CharSet = 'UTF-8';
-            $mail->XMailer = 'Charm';
-
-            $type = Charm::Config()->get($configspace . '.auth');
-
-            if($type == 'sendmail') {
-                // Just use sendmail
-                $mail->isSendmail();
-
-            } elseif($type == 'smtp') {
-                // SMTP connection
-                $mail->isSMTP();
-
-                $mail->SMTPAuth = Charm::Config()->get($configspace . '.auth');
-                $mail->AuthType = strtoupper(Charm::Config()->get($configspace . '.authtype', 'LOGIN'));
-                $mail->Host = Charm::Config()->get($configspace . '.host');
-                $mail->Username = Charm::Config()->get($configspace . '.username');
-                $mail->Password = Charm::Config()->get($configspace . '.password');
-                $mail->Port = Charm::Config()->get($configspace . '.port');
-
-                // TLS / SSL security
-                if (Charm::Config()->get($configspace . '.usetls')) {
-                    $mail->SMTPSecure = 'tls';
-                } elseif (Charm::Config()->get($configspace . '.usessl')) {
-                    $mail->SMTPSecure = 'ssl';
-                } else {
-                    $mail->SMTPSecure = false;
-                }
-
-                // Allow self signed certificates
-                if (Charm::Config()->get($configspace . '.trustall', false)) {
-                    $mail->SMTPOptions = [
-                        'ssl' => [
-                            'verify_peer' => false,
-                            'verify_peer_name' => false,
-                            'allow_self_signed' => true
-                        ]
-                    ];
-                }
-            }
-
-            $mail->setFrom(
-                Charm::Config()->get($configspace . '.frommail'),
-                Charm::Config()->get($configspace . '.fromname')
-            );
-            $this->from = Charm::Config()->get($configspace . '.fromname')
-                . ' <' .  Charm::Config()->get($configspace . '.frommail') . '>';
-
-            // Debug mode
-            if(Charm::Config()->get('main:debug.debugmode', false)) {
-                $mail->SMTPDebug = 4;
-            }
-        } catch(Exception $e) {
-            Charm::Logging()->error('Could not set SMTP connection', [$e->getMessage(), $mail->ErrorInfo]);
+        if(method_exists($this->driver, $name)) {
+            return $this->driver->$name($arguments);
         }
 
-        $this->mail = $mail;
+        return false;
+    }
+
+    /**
+     * Set the driver
+     *
+     * @param string $name driver name
+     * @param mixed $data optional data to pass to driver
+     *
+     * @return self
+     */
+    public function setDriver($name, $data = null)
+    {
+        $full_class = $name;
+        if(!in_string('\\', $full_class)) {
+            // Got native driver
+            $full_class = '\\Charm\\Mailman\\Drivers\\' . $name;
+        }
+
+        if(class_exists($full_class)) {
+            $this->driver = $full_class::compose($data);
+        }
 
         return $this;
     }
@@ -196,7 +151,7 @@ class Mailman implements ModuleInterface
      */
     public function addAddress($email, $name = '')
     {
-        $this->mail->addAddress($email, $name);
+        $this->driver->addAddress($email, $name);
         return $this;
     }
 
@@ -210,7 +165,7 @@ class Mailman implements ModuleInterface
      */
     public function addCC($email, $name = '')
     {
-        $this->mail->addCC($email, $name);
+        $this->driver->addCC($email, $name);
         return $this;
     }
 
@@ -224,7 +179,7 @@ class Mailman implements ModuleInterface
      */
     public function addBCC($email, $name = '')
     {
-        $this->mail->addBCC($email, $name);
+        $this->driver->addBCC($email, $name);
         return $this;
     }
 
@@ -237,7 +192,8 @@ class Mailman implements ModuleInterface
      */
     public function addUser($user)
     {
-        $this->mail->addAddress($user->email, $user->getDisplayName());
+        $this->driver->addAddress($user->email, $user->getDisplayName());
+        $this->user = $user;
         return $this;
     }
 
@@ -262,29 +218,7 @@ class Mailman implements ModuleInterface
      */
     public function addAttachment($path, $name = '')
     {
-        try {
-            $this->mail->addAttachment($path, $name);
-        } catch(Exception $e) {
-            Charm::Logging()->error(
-                'Could not add attachment to e-mail',
-                [$e->getMessage(), $this->mail->ErrorInfo]
-            );
-        }
-
-        return $this;
-    }
-
-    /**
-     * Mass mail option
-     *
-     * SMTP connection will not close after each email sent, reduces SMTP overhead.
-     * Useful for sending many emails at once.
-     *
-     * @return $this
-     */
-    public function isMassMail()
-    {
-        $this->mail->SMTPKeepAlive = true;
+        $this->driver->addAttachment($path, $name);
         return $this;
     }
 
@@ -299,7 +233,7 @@ class Mailman implements ModuleInterface
      */
     public function setTextContent($msg)
     {
-        $this->mail->AltBody = $msg;
+        $this->driver->setTextContent($msg);
         return $this;
     }
 
@@ -312,8 +246,7 @@ class Mailman implements ModuleInterface
      */
     public function setHtmlContent($msg)
     {
-        $this->mail->isHTML(true);
-        $this->mail->Body = $msg;
+        $this->driver->setHtmlContent($msg);
         return $this;
     }
 
@@ -326,7 +259,7 @@ class Mailman implements ModuleInterface
      */
     public function setSubject($name)
     {
-        $this->mail->Subject = $name;
+        $this->driver->setSubject($name);
         return $this;
     }
 
@@ -344,8 +277,8 @@ class Mailman implements ModuleInterface
         // Init twig
         $this->initTwig();
 
-        // Add mail data to twig data
-        $data['mailman'] = $this->mail;
+        // Add mailman instance to twig data
+        $data['mailman'] = $this;
 
         // Render template
         try {
@@ -363,13 +296,12 @@ class Mailman implements ModuleInterface
                 $view = $name . DS . $file;
             }
 
-            $this->mail->isHTML(true);
-            $this->mail->Body = $this->twig->render($view, $data);
+            $this->setHtmlContent($this->twig->render($view, $data));
 
             if($combined) {
                 // Also add text version
                 $view = str_replace('_html', '_text', $view);
-                $this->mail->AltBody = $this->twig->render($view, $data);
+                $this->setTextContent($this->twig->render($view, $data));
             }
 
         } catch (\Exception $e) {
@@ -386,17 +318,17 @@ class Mailman implements ModuleInterface
      */
     public function getBody()
     {
-        return $this->mail->Body;
+        return $this->driver->getBody();
     }
 
     /**
-     * Get text body (alt body)
+     * Get plain text body
      *
      * @return string
      */
     public function getTextBody()
     {
-        return $this->mail->AltBody;
+        return $this->driver->getTextBody();
     }
 
     /**
@@ -406,7 +338,17 @@ class Mailman implements ModuleInterface
      */
     public function getFrom()
     {
-        return $this->from;
+        return $this->driver->getFrom();
+    }
+
+    /**
+     * Get the set user
+     *
+     * @return object|null
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 
     /**
@@ -416,7 +358,7 @@ class Mailman implements ModuleInterface
      */
     public function isSuccess()
     {
-        return $this->success;
+        return $this->driver->isSuccess();
     }
 
     /**
@@ -426,7 +368,7 @@ class Mailman implements ModuleInterface
      */
     public function getErrorMessage()
     {
-        return $this->error_msg;
+        return $this->driver->getErrorMessage();
     }
 
     /**
@@ -436,34 +378,8 @@ class Mailman implements ModuleInterface
      */
     public function send()
     {
-        $ret = false;
-
-        try {
-            $ret = $this->mail->send();
-            $this->success = true;
-        } catch(Exception $e) {
-            Charm::Logging()->error('Could not send email', [$e->getMessage(), $this->mail->ErrorInfo]);
-            $this->success = false;
-            $this->error_msg = $e->getMessage();
-        }
-
-        if($ret === false) {
-            $this->success = false;
-
-            if(Charm::has('Events')) {
-                Charm::Events()->fire('Mailman', 'sentSuccess');
-            }
-        } else {
-            if(Charm::has('Events')) {
-                Charm::Events()->fire('Mailman', 'sentError');
-            }
-        }
-
-        // Clear all recipients to prevent errors with multiple recipients on mass mails
-        $this->mail->clearAllRecipients();
-
+        $this->driver->send();
         return $this;
     }
-
 
 }

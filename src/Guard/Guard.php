@@ -120,8 +120,6 @@ class Guard extends Module implements ModuleInterface
             }
         }
 
-        // Remember me cookie
-
         return false;
     }
 
