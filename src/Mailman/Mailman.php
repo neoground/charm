@@ -119,7 +119,7 @@ class Mailman implements ModuleInterface
         $full_class = $name;
         if(!in_string('\\', $full_class)) {
             // Got native driver
-            $full_class = '\\Charm\\Mailman\\Drivers\\' . $name;
+            $full_class = '\\Charm\\Mailman\\Drivers\\' . ucfirst($name);
         }
 
         if(class_exists($full_class)) {
