@@ -179,7 +179,11 @@ class Request implements ModuleInterface
      */
     public function getIpAddress()
     {
-        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+        // Cloudflare origin ip support
+        $cf_ip = $this->getHeader('CF-Connecting-IP');
+        if (!empty($cf_ip)) {
+            return $cf_ip;
+        } elseif (!empty($_SERVER['HTTP_CLIENT_IP'])) {
             $ip = $_SERVER['HTTP_CLIENT_IP'];
         } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
