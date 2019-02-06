@@ -1,6 +1,6 @@
 <?php
 /**
- * This file contains the Module class
+ * This file contains the EventProvider class
  */
 
 namespace Charm\Events;
@@ -12,11 +12,11 @@ use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 
 /**
- * Class Module
+ * Class EventProvider
  *
  * Module binding to Charm kernel
  *
- * @package Charm\Guard
+ * @package Charm\Events
  */
 class EventProvider extends Module implements ModuleInterface
 {
@@ -58,7 +58,7 @@ class EventProvider extends Module implements ModuleInterface
                             $class = $namespace . "\\" . $pathinfo['filename'];
 
                             if (class_exists($class)) {
-                                /** @var EventListener $instance */
+                                /** @var ValidationInstance $instance */
                                 $instance = new $class;
                                 $instance->addEvent();
                             }
