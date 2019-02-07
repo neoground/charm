@@ -81,7 +81,7 @@ class Json implements OutputInterface, HttpCodes
     public function withPagination($total, $per_page, $custom_data = [])
     {
         $get = $_GET;
-        $page = Charm::Request()->get('page', 1);
+        $page = (int) Charm::Request()->get('page', 1);
 
         $total_pages = ceil($total / $per_page);
 
