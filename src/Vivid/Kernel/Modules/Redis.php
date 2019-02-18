@@ -21,6 +21,9 @@ class Redis implements ModuleInterface
     /** @var Client|\Redis redis client */
     protected $redis_client;
 
+    /** @var Client|\Redis custom redis client for getPredisClient */
+    protected $custom_client;
+
     /**
      * Module init
      */
@@ -98,6 +101,50 @@ class Redis implements ModuleInterface
     public function getClient()
     {
         return $this->redis_client;
+    }
+
+    /**
+     * Get the predis client
+     *
+     * @return Client
+     */
+    public function getPredisClient()
+    {
+        if($this->redis_client instanceof Client) {
+            return $this->redis_client;
+        }
+
+        if($this->custom_client instanceof Client) {
+            return $this->custom_client;
+        }
+
+        // Init client
+        $host = Charm::Config()->get('connections:redis.host', '127.0.0.1');
+        $port = Charm::Config()->get('connections:redis.port', 6379);
+        $pw = Charm::Config()->get('connections:redis.password');
+        $persistent = Charm::Config()->get('connections:redis.persistent', false);
+
+        $options = [];
+
+        // Set prefix
+        $options['prefix'] = Charm::Config()->get('connections:redis.prefix');
+
+        // Set redis password
+        if (!empty($pw)) {
+            $options['parameters'] = [
+                'password' => $pw
+            ];
+        }
+
+        // Create client
+        $this->custom_client = new Client([
+            'scheme' => 'tcp',
+            'host' => $host,
+            'port' => $port,
+            'persistent' => $persistent
+        ], $options);
+
+        return $this->custom_client;
     }
 
     /**
