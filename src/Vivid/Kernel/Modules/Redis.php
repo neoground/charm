@@ -29,17 +29,18 @@ class Redis implements ModuleInterface
      */
     public function loadModule()
     {
-       // Init redis
+        // Init redis
         if (Charm::Config()->get('connections:redis.enabled', true)) {
             $host = Charm::Config()->get('connections:redis.host', '127.0.0.1');
             $port = Charm::Config()->get('connections:redis.port', 6379);
             $pw = Charm::Config()->get('connections:redis.password');
             $persistent = Charm::Config()->get('connections:redis.persistent', false);
+            $driver = strtolower(Charm::Config()->get('connections:redis.driver', 'phpredis'));
 
             // Prevent socket timeout
             ini_set("default_socket_timeout", -1);
 
-            if(class_exists("\\Redis")) {
+            if($driver == 'phpredis' && class_exists("\\Redis")) {
                 // Use native redis driver
                 $redis = new \Redis();
 
