@@ -102,7 +102,7 @@ class EventListener
      * @param string $module name of module
      * @param string $name   name of event when this should be fired
      */
-    private function fireOnEvent($module, $name)
+    protected function fireOnEvent($module, $name)
     {
         $this->setModule($module)->setName($name);
     }

@@ -31,6 +31,9 @@
     "phpunit/phpunit": "^5.1",
     "jeremeamia/SuperClosure": "^2.4"
   },
+  "suggest": {
+    "ext-redis": "For native redis support instead of using predis"
+  },
   "autoload": {
     "psr-4": {
       "Charm\\": "src/"

@@ -26,7 +26,7 @@ class ViewExtender implements ViewExtenderInterface
     }
 
     /**
-     * Add debugBar functions to twig
+     * Add Guard functions to twig
      *
      * @param $twig \Twig_Environment the twig instance
      */

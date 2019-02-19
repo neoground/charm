@@ -93,7 +93,10 @@ class Queue extends Module implements ModuleInterface
             $queue = strtolower($name) . '-p' . $priority;
 
             $count = Charm::Redis()->getClient()->llen($queue);
-            Charm::Logging()->info('[BBQ] Starting queue ' . $queue . ' - Got ' . $count . ' jobs');
+
+            if($count > 0) {
+                Charm::Logging()->info('[BBQ] Starting queue ' . $queue . ' - Got ' . $count . ' jobs');
+            }
 
             // Work as long as there are elements left in this queue
             while (Charm::Redis()->getClient()->llen($queue) > 0) {
