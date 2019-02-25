@@ -315,10 +315,16 @@ class Guard extends Module implements ModuleInterface
      *
      * @param string  $username  the username
      *
-     * @return object  the user object
+     * @return object|false  the user object or false if not found
      */
     public function findUserByUsername($username)
     {
+        // Empty usernames are not allowed
+        $username = trim($username);
+        if(empty($username)) {
+            return false;
+        }
+
         return $this->user_class::where($this->username_field, $username)->first();
     }
 
