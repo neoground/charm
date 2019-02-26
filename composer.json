@@ -14,7 +14,7 @@
     "ext-json": "*",
     "ext-fileinfo": "*",
     "ext-openssl": "*",
-    "illuminate/database": "^5.5",
+    "illuminate/database": "^5.8",
     "monolog/monolog": "^1.23",
     "nesbot/carbon": "^1.27",
     "symfony/console": "^3.4",
