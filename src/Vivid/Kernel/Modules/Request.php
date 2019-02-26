@@ -173,6 +173,32 @@ class Request implements ModuleInterface
     }
 
     /**
+     * Get multiple uploaded files
+     *
+     * @param string $name name field of uploaded file
+     *
+     * @return UploadedFile[]
+     */
+    public function getFiles($name)
+    {
+        $arr = [];
+        $total = count($this->files[$name]['name']);
+
+        // Looping through all files
+        for($i = 0; $i < $total; $i++){
+            $arr[] = new UploadedFile([
+                'name' => $this->files[$name]['name'][$i],
+                'type' => $this->files[$name]['type'][$i],
+                'size' => $this->files[$name]['size'][$i],
+                'tmp_name' => $this->files[$name]['tmp_name'][$i],
+                'error' => $this->files[$name]['error'][$i],
+            ]);
+        }
+
+        return $arr;
+    }
+
+    /**
      * Get ip address of current request
      *
      * @return string
