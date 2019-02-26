@@ -184,6 +184,11 @@ class Request implements ModuleInterface
         $arr = [];
         $total = count($this->files[$name]['name']);
 
+        if($total == 1) {
+            // Only return single file
+            return [$this->getFile($name)];
+        }
+
         // Looping through all files
         for($i = 0; $i < $total; $i++){
             $arr[] = new UploadedFile([
