@@ -28,7 +28,7 @@
     "filp/whoops": "^2.1",
     "maximebf/debugbar": "^1.15",
     "kint-php/kint": "^2.2",
-    "phpunit/phpunit": "^5.1",
+    "phpunit/phpunit": "^8",
     "jeremeamia/SuperClosure": "^2.4"
   },
   "suggest": {
