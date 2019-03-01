@@ -267,7 +267,7 @@ class Smtp implements MailmanDriverInterface
             $mail->CharSet = 'UTF-8';
             $mail->XMailer = 'Charm';
 
-            $type = Charm::Config()->get($configspace . '.auth');
+            $type = Charm::Config()->get($configspace . '.type', 'smtp');
 
             if($type == 'sendmail') {
                 // Just use sendmail
