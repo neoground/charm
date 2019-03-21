@@ -40,6 +40,9 @@ class DataTable implements OutputInterface
     /** @var callable  the format data function */
     protected $callable;
 
+    /** @var int the max length to return */
+    protected $max_length;
+
     /**
      * Output factory
      *
@@ -127,6 +130,23 @@ class DataTable implements OutputInterface
     public function formatData($callable)
     {
         $this->callable = $callable;
+        return $this;
+    }
+
+    /**
+     * Set max length to return if length = -1 is requested
+     *
+     * By default it will return 1.000 entities to
+     * prevent timeouts or overloads by returning too many
+     * items at once.
+     *
+     * @param int $length
+     *
+     * @return $this
+     */
+    public function setMaxLengt($length)
+    {
+        $this->max_length = $length;
         return $this;
     }
 
@@ -274,7 +294,19 @@ class DataTable implements OutputInterface
         $filtered = $entities->count();
 
         // Get wanted amount
-        $entities = $entities->skip($start)->take($length)->get();
+        if($length == -1) {
+            // -1 -> get all
+            // Length can be overridden by $this->max_length
+            if(!empty($this->max_length)) {
+                $entities = $entities->skip($start)->take($this->max_length)->get();
+            } else {
+                // Get 1.000 entities to prevent a too large set
+                $entities = $entities->skip($start)->take(1000)->get();
+            }
+        } else {
+            // Just get provided amount
+            $entities = $entities->skip($start)->take($length)->get();
+        }
 
         // Format data
         $callable = $this->callable;
