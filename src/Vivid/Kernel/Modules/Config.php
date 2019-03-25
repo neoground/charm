@@ -110,6 +110,30 @@ class Config implements ModuleInterface
     }
 
     /**
+     * Get formatted config value
+     *
+     * Gets a value from config and applies
+     * vsprintf with $values (good for i18n)
+     *
+     * @param string     $key     the key
+     * @param array      $values  (optional) values to insert by vsprintf
+     * @param null|mixed $default (optional) default value to return. Default: null
+     * @param bool       $cache   (optional) use cache for configuration? Default: true
+     *
+     * @return string|null
+     */
+    public function getf($key, $values = [], $default = null, $cache = true)
+    {
+        $get = $this->get($key, null, $cache);
+
+        if($get === null) {
+            return $default;
+        }
+
+        return vsprintf($get, $values);
+    }
+
+    /**
      * Check if debug mode is enabled
      *
      * @return bool
