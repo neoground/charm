@@ -78,14 +78,20 @@ class DataTable implements OutputInterface
      *
      * @param string|array  $where  where array or key if $val is specified
      * @param null|string   $val    the value if where is the wanted key
+     * @param null|string   $val2   another value in the wall
      *
      * @return $this
      */
-    public function where($where, $val = null)
+    public function where($where, $val = null, $val2 = null)
     {
         // Value set for normal where condition
         if (!empty($val)) {
             $where = [$where => $val];
+        }
+
+        // Support for classic eloquent where's ("field", ">", "10")
+        if(!empty($val) && !empty($val2)) {
+            $where = [$where => $val . " " . $val2];
         }
 
         $this->wheres = array_merge($this->wheres, $where);
@@ -227,6 +233,12 @@ class DataTable implements OutputInterface
                         $entities->whereNotNull(implode(" ", $parts));
                     }
 
+                } elseif (in_array($parts[0], ['>', '>=', '<', '<=']) && count($parts) > 1) {
+                    if (!$entities) {
+                        $entities = $model::where($k, $parts[0], $parts[1]);
+                    } else {
+                        $entities->where($k, $parts[0], $parts[1]);
+                    }
                 } else {
                     // Normal where
                     if (!$entities) {
@@ -282,6 +294,8 @@ class DataTable implements OutputInterface
             } elseif ($parts[0] == 'NOT') {
                 array_shift($parts);
                 $entities->where($k, '<>', implode(" ", $parts));
+            } elseif (in_array($parts[0], ['>', '>=', '<', '<=']) && count($parts) > 1) {
+                $entities->where($k, $parts[0], $parts[1]);
             } else {
                 // Normal where
                 $entities->where($k, $w);
