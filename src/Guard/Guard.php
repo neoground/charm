@@ -43,10 +43,14 @@ class Guard extends Module implements ModuleInterface
     /**
      * Get the logged in user
      *
-     * @return object  the user object
+     * @return object|false  the user object or false if guard is disabled
      */
     public function getUser()
     {
+        if(!Charm::Config()->get('main:guard.enabled', true)) {
+            return false;
+        }
+
         // Return default user if access via CLI
         if (is_cli()) {
             return $this->user_class::getDefaultUser();
@@ -72,10 +76,14 @@ class Guard extends Module implements ModuleInterface
      * This is more performant than getUser() because the id is stored in the session.
      * No database query needed.
      *
-     * @return int
+     * @return int|false the user id or false if guard is disabled
      */
     public function getUserId()
     {
+        if(!Charm::Config()->get('main:guard.enabled', true)) {
+            return false;
+        }
+
         // API calls (with token) can have a different user on each request
         // So always get the user by token to prevent problems
         if (Charm::Token()->hasToken()) {
@@ -101,6 +109,10 @@ class Guard extends Module implements ModuleInterface
      */
     public function isLoggedIn()
     {
+        if(!Charm::Config()->get('main:guard.enabled', true)) {
+            return false;
+        }
+
         // API
         if (Charm::Token()->hasToken()) {
             return Charm::Token()->isLoggedIn();
