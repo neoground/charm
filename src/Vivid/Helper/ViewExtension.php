@@ -241,6 +241,16 @@ class ViewExtension extends \Twig_Extension
     }
 
     /**
+     * Get the name of the current environment
+     *
+     * @return string
+     */
+    public function getEnvironment()
+    {
+        return Charm::App()->getEnvironment();
+    }
+
+    /**
      * In string method
      *
      * @param string $needle   what we look for
