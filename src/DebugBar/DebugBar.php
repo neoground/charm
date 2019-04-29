@@ -1,6 +1,6 @@
 <?php
 /**
- * This file contains the Module class
+ * This file contains the DebugBar module class
  */
 
 namespace Charm\DebugBar;
@@ -71,7 +71,9 @@ class DebugBar extends Module implements ModuleInterface
     public function getRenderHead()
     {
         // Only in debug mode!
-        if(!Charm::Config()->get('main:debug.debugmode', false)) {
+        if(!Charm::Config()->get('main:debug.debugmode', false)
+            || !Charm::Config()->get('main:debug.show_debugbar', false)
+        ) {
             return '';
         }
 
@@ -87,7 +89,9 @@ class DebugBar extends Module implements ModuleInterface
     public function getRenderBar()
     {
         // Only in debug mode!
-        if(!Charm::Config()->get('main:debug.debugmode', false)) {
+        if(!Charm::Config()->get('main:debug.debugmode', false)
+            || !Charm::Config()->get('main:debug.show_debugbar', false)
+        ) {
             return '';
         }
 
