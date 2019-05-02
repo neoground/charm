@@ -150,6 +150,20 @@ class Smtp implements MailmanDriverInterface
     }
 
     /**
+     * Set reply to
+     *
+     * @param string $email the email address
+     * @param string $name  the name
+     *
+     * @return $this
+     */
+    public function setReplyTo($email, $name)
+    {
+        $this->mail->addReplyTo($email, $name);
+        return $this;
+    }
+
+    /**
      * Get body
      *
      * @return string
