@@ -7,6 +7,8 @@ namespace Charm\Vivid\Helper;
 
 use Carbon\Carbon;
 use Charm\Vivid\Charm;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 /**
  * Class ViewExtension
@@ -15,12 +17,12 @@ use Charm\Vivid\Charm;
  *
  * @package Charm\Vivid\Helper
  */
-class ViewExtension extends \Twig_Extension
+class ViewExtension extends AbstractExtension
 {
     /**
      * Set array of all functions to add to twig
      *
-     * @return array|\Twig_Function[]
+     * @return array|TwigFunction[]
      */
     public function getFunctions()
     {
@@ -42,7 +44,7 @@ class ViewExtension extends \Twig_Extension
         // Build array, remove twig methods
         foreach($methods as $method) {
             if(!in_array($method, $ignore)) {
-                $arr[$method] = new \Twig_Function($method, [$this, $method]);
+                $arr[$method] = new TwigFunction($method, [$this, $method]);
             }
         }
 
