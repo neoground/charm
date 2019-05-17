@@ -90,11 +90,15 @@ class DataTable implements OutputInterface
         }
 
         // Support for classic eloquent where's ("field", ">", "10")
+        if(is_array($where)) {
+            $where = key($where);
+        }
+
         if(!empty($val) && !empty($val2)) {
             $where = [$where => $val . " " . $val2];
         }
 
-        $this->wheres = array_merge($this->wheres, $where);
+        $this->wheres[] = $where;
         return $this;
     }
 
@@ -186,7 +190,10 @@ class DataTable implements OutputInterface
 
         // Add optional wheres
         if (count($this->wheres) > 0) {
-            foreach ($this->wheres as $k => $w) {
+            foreach ($this->wheres as $w) {
+                $k = key($w);
+                $w = $w[$k];
+
                 // Like?
                 $parts = explode(" ", $w);
                 if ($parts[0] == 'LIKE') {
@@ -277,7 +284,10 @@ class DataTable implements OutputInterface
         });
 
         // Add optional wheres
-        foreach ($this->wheres as $k => $w) {
+        foreach ($this->wheres as $w) {
+            $k = key($w);
+            $w = $w[$k];
+
             // Like?
             $parts = explode(" ", $w);
             if ($parts[0] == 'LIKE') {
