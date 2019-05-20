@@ -87,15 +87,17 @@ class DataTable implements OutputInterface
         // Value set for normal where condition
         if (!empty($val)) {
             $where = [$where => $val];
-        }
-
-        // Support for classic eloquent where's ("field", ">", "10")
-        if(is_array($where)) {
-            $where = key($where);
-        }
-
-        if(!empty($val) && !empty($val2)) {
+        } elseif(!empty($val) && !empty($val2)) {
+            // Support for classic eloquent where's ("field", ">", "10")
             $where = [$where => $val . " " . $val2];
+        } elseif(is_array($where)) {
+            $where  = [];
+            // Separate multiple where's
+            foreach($where as $k => $v) {
+                $this->wheres[] = [$k => $v];
+            }
+            // Already return because already added items
+            return $this;
         }
 
         $this->wheres[] = $where;
