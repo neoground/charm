@@ -151,7 +151,8 @@ class Redis implements ModuleInterface
     /**
      * Remove specified keys
      *
-     * @param array $keys An array of keys
+     * @param array|string $keys An array of keys or a single string key
+     *
      * @return int Number of keys deleted
      */
     public function del($keys)

@@ -81,6 +81,26 @@ class Queue extends Module implements ModuleInterface
     }
 
     /**
+     * Clear a queue
+     *
+     * @param string $name the queue's name
+     */
+    public function clear($name)
+    {
+        // Get prefix
+        $prefix = Charm::Config()->get('main:bbq.name',
+            Charm::Config()->get('main:session.name', 'charm')
+        );
+
+        for ($priority = 1; $priority <= 5; $priority++) {
+            // Get queue name
+            $queue = $prefix . '-' . strtolower($name) . '-p' . $priority;
+
+            Charm::Redis()->del($queue);
+        }
+    }
+
+    /**
      * Worker method. Do the work!
      *
      * @param string $name      the queue name
@@ -88,9 +108,14 @@ class Queue extends Module implements ModuleInterface
      */
     private function doWork($name, $worker_id = 1)
     {
+        // Get prefix
+        $prefix = Charm::Config()->get('main:bbq.name',
+            Charm::Config()->get('main:session.name', 'charm')
+        );
+
         for ($priority = 1; $priority <= 5; $priority++) {
             // Get queue name
-            $queue = strtolower($name) . '-p' . $priority;
+            $queue = $prefix . '-' . strtolower($name) . '-p' . $priority;
 
             $count = Charm::Redis()->getClient()->llen($queue);
 

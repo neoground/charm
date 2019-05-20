@@ -5,6 +5,8 @@
 
 namespace Charm\Barbequeue;
 
+use Charm\Vivid\Charm;
+
 /**
  * Class QueueEntry
  *
@@ -44,11 +46,16 @@ class QueueEntry
      */
     public function getQueueName($as_key = false)
     {
+        // Set prefix to support multiple BBQ instances on one redis installation
+        $prefix = Charm::Config()->get('main:bbq.name',
+            Charm::Config()->get('main:session.name', 'charm')
+        );
+
         if($as_key) {
-            return strtolower($this->queue_name) . '-p' . $this->priority;
+            return $prefix . '-' . strtolower($this->queue_name) . '-p' . $this->priority;
         }
 
-        return $this->queue_name;
+        return $prefix . '-' . $this->queue_name;
     }
 
     /**
