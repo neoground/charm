@@ -146,6 +146,8 @@ class Formatter implements ModuleInterface
     {
         $input = filter_var($input, \FILTER_SANITIZE_EMAIL);
 
+        $input = trim($input);
+
         // Famous gmail fix
         $input = str_replace("@googlemail.", "@gmail.", $input);
 

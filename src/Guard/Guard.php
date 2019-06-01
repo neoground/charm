@@ -337,7 +337,7 @@ class Guard extends Module implements ModuleInterface
             return false;
         }
 
-        return $this->user_class::where($this->username_field, $username)->first();
+        return $this->user_class::where($this->username_field, 'LIKE', $username)->first();
     }
 
     /**
