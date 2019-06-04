@@ -100,6 +100,11 @@ class DataTable implements OutputInterface
             return $this;
         }
 
+        // Support for simple text
+        if(!is_array($where)) {
+            $where = [$where];
+        }
+
         $this->wheres[] = $where;
         return $this;
     }
