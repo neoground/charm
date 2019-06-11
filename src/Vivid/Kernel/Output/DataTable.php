@@ -185,7 +185,7 @@ class DataTable implements OutputInterface
             $order_dir = 'ASC';
         }
         if(empty($order_column)) {
-            $order_column = 'id';
+            $order_column = 0;
         }
 
         // Get the order column
