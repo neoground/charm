@@ -84,12 +84,17 @@ class DataTable implements OutputInterface
      */
     public function where($where, $val = null, $val2 = null)
     {
-        // Value set for normal where condition
-        if (!empty($val)) {
-            $where = [$where => $val];
-        } elseif(!empty($val) && !empty($val2)) {
+        if(!empty($val) && !empty($val2)) {
             // Support for classic eloquent where's ("field", ">", "10")
+
+            if(is_array($val2)) {
+                $val2 = implode("||", $val2);
+            }
+
             $where = [$where => $val . " " . $val2];
+        } elseif (!empty($val)) {
+            // Value set for normal where condition
+            $where = [$where => $val];
         } elseif(is_array($where)) {
             $where  = [];
             // Separate multiple where's
@@ -161,7 +166,7 @@ class DataTable implements OutputInterface
      *
      * @return $this
      */
-    public function setMaxLengt($length)
+    public function setMaxLength($length)
     {
         $this->max_length = $length;
         return $this;
@@ -218,6 +223,15 @@ class DataTable implements OutputInterface
                         $entities = $model::where($k, 'LIKE', '%' . implode(" ", $parts) . '%');
                     } else {
                         $entities->where($k, 'LIKE', '%' . implode(" ", $parts) . '%');
+                    }
+                } elseif ($parts[0] == 'IN') {
+                    // Where In
+                    $entries = explode("||", $parts[1]);
+
+                    if (!$entities) {
+                        $entities = $model::whereIn($k, $entries);
+                    } else {
+                        $entities->whereIn($k, $entries);
                     }
 
                 } elseif ($w == 'onlyTrashed') {
@@ -308,6 +322,16 @@ class DataTable implements OutputInterface
                 // Like
                 array_shift($parts);
                 $entities->where($k, 'LIKE', '%' . implode(" ", $parts) . '%');
+            } elseif ($parts[0] == 'IN') {
+                // Where In
+                $entries = explode("||", $parts[1]);
+
+                if (!$entities) {
+                    $entities = $model::whereIn($k, $entries);
+                } else {
+                    $entities->whereIn($k, $entries);
+                }
+
             } elseif ($parts[0] == 'onlyTrashed') {
                 $entities->onlyTrashed();
             } elseif ($parts[0] == 'withTrashed') {
