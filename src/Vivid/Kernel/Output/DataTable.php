@@ -181,6 +181,13 @@ class DataTable implements OutputInterface
         $order_dir = $order[0]['dir'];
         $order_column = $order[0]['column'];
 
+        if(empty($order_dir)) {
+            $order_dir = 'ASC';
+        }
+        if(empty($order_column)) {
+            $order_column = 'id';
+        }
+
         // Get the order column
         $o_column = $this->order_cols[0];
         if (array_key_exists($order_column, $this->order_cols)) {
