@@ -16,7 +16,7 @@
     "ext-openssl": "*",
     "illuminate/database": "^5.8",
     "monolog/monolog": "^1.23",
-    "nesbot/carbon": "^1.27",
+    "nesbot/carbon": "^2.16.3",
     "symfony/console": "^3.4",
     "twig/twig": "^2.4",
     "phroute/phroute": "^2.1",
@@ -29,7 +29,7 @@
     "maximebf/debugbar": "^1.15",
     "kint-php/kint": "^2.2",
     "phpunit/phpunit": "^8",
-    "jeremeamia/SuperClosure": "^2.4"
+    "jeremeamia/superclosure": "^2.4"
   },
   "suggest": {
     "ext-redis": "For native redis support instead of using predis"
