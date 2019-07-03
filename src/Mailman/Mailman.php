@@ -10,6 +10,9 @@ use Charm\Vivid\Helper\ViewExtension;
 use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Charm\Vivid\PathFinder;
+use Twig\Environment;
+use Twig\Extension\StringLoaderExtension;
+use Twig\Loader\FilesystemLoader;
 
 /**
  * Class Mailman
@@ -23,7 +26,7 @@ class Mailman implements ModuleInterface
     /** @var MailmanDriverInterface the driver instance */
     protected $driver;
 
-    /** @var \Twig_Environment Twig instance */
+    /** @var Environment Twig instance */
     protected $twig;
 
     /** @var object the user instance if a user is added */
@@ -54,9 +57,9 @@ class Mailman implements ModuleInterface
             $tpl_path = Charm::AppStorage()->get('Mailman', 'template_path');
         }
 
-        $loader = new \Twig_Loader_Filesystem($tpl_path);
+        $loader = new FilesystemLoader($tpl_path);
 
-        $twig = new \Twig_Environment($loader, array(
+        $twig = new Environment($loader, array(
             'cache' => false,
             'debug' => Charm::Config()->get('main:debug.debugmode', false)
         ));
@@ -84,7 +87,7 @@ class Mailman implements ModuleInterface
         }
 
         // Add string loader
-        $twig->addExtension(new \Twig_Extension_StringLoader());
+        $twig->addExtension(new StringLoaderExtension());
 
         $this->twig = $twig;
     }

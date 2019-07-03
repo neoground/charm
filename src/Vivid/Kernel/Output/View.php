@@ -12,6 +12,9 @@ use Charm\Vivid\Kernel\Interfaces\HttpCodes;
 use Charm\Vivid\Kernel\Interfaces\OutputInterface;
 use Charm\Vivid\Kernel\Interfaces\ViewExtenderInterface;
 use Charm\Vivid\PathFinder;
+use Twig\Environment;
+use Twig\Extension\StringLoaderExtension;
+use Twig\Loader\FilesystemLoader;
 
 /**
  * Class View
@@ -34,7 +37,7 @@ class View implements OutputInterface, HttpCodes
     /** @var string template name */
     protected $tpl;
 
-    /** @var \Twig_Environment twig instance */
+    /** @var Environment twig instance */
     protected $twig;
 
     /**
@@ -91,22 +94,22 @@ class View implements OutputInterface, HttpCodes
     /**
      * Init the twig instance
      *
-     * @return \Twig_Environment
+     * @return Environment
      */
     private function initTwig()
     {
-        $loader = new \Twig_Loader_Filesystem(PathFinder::getAppPath() . DS . 'Views');
+        $loader = new FilesystemLoader(PathFinder::getAppPath() . DS . 'Views');
 
         $debug_mode = Charm::Config()->get('main:debug.debugmode', false);
 
         // Init environment
-        $twig = new \Twig_Environment($loader, [
+        $twig = new Environment($loader, [
             'cache' => PathFinder::getCachePath() . DS . 'views',
             'debug' => $debug_mode
         ]);
 
         // Add extensions
-        $twig->addExtension(new \Twig_Extension_StringLoader());
+        $twig->addExtension(new StringLoaderExtension());
 
         // Add charm global
         $twig->addGlobal('charm', Charm::getInstance());
@@ -197,10 +200,9 @@ class View implements OutputInterface, HttpCodes
      * Build the final output which will be sent to the browser
      *
      * @return string
-     *
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
      */
     public function render()
     {
@@ -237,7 +239,8 @@ class View implements OutputInterface, HttpCodes
      */
     public static function exists($name)
     {
-        // TODO Implement
+        $rel_path = str_replace(".", DS, $name);
+        return file_exists(PathFinder::getAppPath() . DS . 'Views' . DS . $rel_path . '.twig');
     }
 
 }

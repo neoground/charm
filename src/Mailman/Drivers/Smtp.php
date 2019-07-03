@@ -264,6 +264,96 @@ class Smtp implements MailmanDriverInterface
     }
 
     /**
+     * Set a manual SMTP connection
+     *
+     * This can be used instead of using the connections.yaml with setConnection()
+     *
+     * The parameters are the same as in the config file.
+     *
+     * @param string $host       host name
+     * @param string $username   login user name
+     * @param string $password   login password
+     * @param string $from_name  from name
+     * @param string $from_mail  from email address
+     * @param int    $port       (opt.) host port (Default: 587)
+     * @param bool   $use_tls    (opt.) use tls? (Default: true)
+     * @param bool   $use_ssl    (opt.) use ssl? (Default: false)
+     * @param bool   $auth       (opt.) needs auth? (Default: true)
+     * @param string $auth_type  (opt.) auth type (Default: LOGIN)
+     * @param bool   $trust_all  (opt.) trust all certificates? (Default: false)
+     *
+     * @return $this
+     */
+    public function setSmtpConnection(
+        $host,
+        $username,
+        $password,
+        $from_name,
+        $from_mail,
+        $port = 587,
+        $use_tls = true,
+        $use_ssl = false,
+        $auth = true,
+        $auth_type = 'login',
+        $trust_all = false
+    ){
+        // Init PHPMailer and set config values
+        try {
+            $mail = new PHPMailer(true);
+            $mail->CharSet = 'UTF-8';
+            $mail->XMailer = 'Charm';
+
+            // SMTP connection
+            $mail->isSMTP();
+
+            $mail->SMTPAuth = $auth;
+            $mail->AuthType = strtoupper($auth_type);
+            $mail->Host = $host;
+            $mail->Username = $username;
+            $mail->Password = $password;
+            $mail->Port = $port;
+
+            // TLS / SSL security
+            if ($use_tls) {
+                $mail->SMTPSecure = 'tls';
+            } elseif ($use_ssl) {
+                $mail->SMTPSecure = 'ssl';
+            } else {
+                $mail->SMTPSecure = false;
+            }
+
+            // Allow self signed certificates
+            if ($trust_all) {
+                $mail->SMTPOptions = [
+                    'ssl' => [
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                        'allow_self_signed' => true
+                    ]
+                ];
+            }
+
+            $mail->setFrom(
+                $from_mail,
+                $from_name
+            );
+            $this->from = $from_name
+                . ' <' .  $from_mail . '>';
+
+            // Debug mode
+            if(Charm::Config()->get('main:debug.debugmode', false)) {
+                $mail->SMTPDebug = 4;
+            }
+        } catch(Exception $e) {
+            Charm::Logging()->error('Could not set SMTP connection', [$e->getMessage(), $mail->ErrorInfo]);
+        }
+
+        $this->mail = $mail;
+
+        return $this;
+    }
+
+    /**
      * Set SMTP connection
      *
      * @param string  $name  name of connection (defined in connections:email)
