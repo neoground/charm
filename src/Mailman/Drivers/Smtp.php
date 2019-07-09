@@ -271,7 +271,9 @@ class Smtp implements MailmanDriverInterface
     public function enableDebugOutput()
     {
         $this->mail->SMTPDebug = 4;
-        $this->Debugoutput = Charm::Logging();
+        $this->mail->Debugoutput = function($str, $level) {
+            Charm::Logging()->info('[MAIL] SMTP ' . $level . ': ' . $str);
+        };
         return $this;
     }
 
