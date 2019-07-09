@@ -264,6 +264,18 @@ class Smtp implements MailmanDriverInterface
     }
 
     /**
+     * Enable debug outputting of SMTP communication to default log file
+     *
+     * @return $this
+     */
+    public function enableDebugOutput()
+    {
+        $this->mail->SMTPDebug = 4;
+        $this->Debugoutput = Charm::Logging();
+        return $this;
+    }
+
+    /**
      * Set a manual SMTP connection
      *
      * This can be used instead of using the connections.yaml with setConnection()
@@ -339,16 +351,16 @@ class Smtp implements MailmanDriverInterface
             );
             $this->from = $from_name
                 . ' <' .  $from_mail . '>';
-
-            // Debug mode
-            if(Charm::Config()->get('main:debug.debugmode', false)) {
-                $mail->SMTPDebug = 4;
-            }
         } catch(Exception $e) {
             Charm::Logging()->error('Could not set SMTP connection', [$e->getMessage(), $mail->ErrorInfo]);
         }
 
         $this->mail = $mail;
+
+        // Debug mode
+        if(Charm::Config()->get('main:debug.debugmode', false)) {
+            $this->enableDebugOutput();
+        }
 
         return $this;
     }
@@ -415,16 +427,16 @@ class Smtp implements MailmanDriverInterface
             );
             $this->from = Charm::Config()->get($configspace . '.fromname')
                 . ' <' .  Charm::Config()->get($configspace . '.frommail') . '>';
-
-            // Debug mode
-            if(Charm::Config()->get('main:debug.debugmode', false)) {
-                $mail->SMTPDebug = 4;
-            }
         } catch(Exception $e) {
             Charm::Logging()->error('Could not set SMTP connection', [$e->getMessage(), $mail->ErrorInfo]);
         }
 
         $this->mail = $mail;
+
+        // Debug mode
+        if(Charm::Config()->get('main:debug.debugmode', false)) {
+            $this->enableDebugOutput();
+        }
 
         return $this;
     }
