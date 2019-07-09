@@ -109,7 +109,7 @@ class Router extends Module implements ModuleInterface
      *
      * @return string
      */
-    public function buildUrl($name, $args = [])
+    public function buildUrl(string $name, array $args = []) : string
     {
         // Got URL?
         if (in_string('://', $name)) {
@@ -138,13 +138,44 @@ class Router extends Module implements ModuleInterface
     }
 
     /**
+     * Build GET parameters to append to an URL
+     *
+     * This will return a string like ?foo=bar&a=b
+     *
+     * @param array $params           an array with all parameters
+     * @param bool  $add_empty (opt.) also add parameter if value is empty? Default: false
+     *
+     * @return string
+     */
+    public function buildGetParameters(array $params, bool $add_empty = false) : string
+    {
+        $str = '';
+
+        foreach($params as $k => $v) {
+
+            if(!$add_empty) {
+                if(!empty($v)) {
+                    $str .= '&' . $k . '=' . $v;
+                }
+            } else {
+                $str .= '&' . $k . '=' . $v;
+            }
+
+        }
+
+        ltrim($str, '&');
+
+        return '?' . $str;
+    }
+
+    /**
      * Check if a route exists
      *
      * @param string $name name of route
      *
      * @return bool
      */
-    public function hasRoute($name)
+    public function hasRoute(string $name) : bool
     {
         return $this->route->hasRoute($name);
     }
@@ -157,7 +188,7 @@ class Router extends Module implements ModuleInterface
      *
      * @return string
      */
-    public function getRelativeUrl()
+    public function getRelativeUrl() : string
     {
         $path_info = pathinfo($_SERVER['PHP_SELF']);
         return rtrim($path_info['dirname'], '/');
@@ -168,7 +199,7 @@ class Router extends Module implements ModuleInterface
      *
      * @return string
      */
-    public function getBaseUrl()
+    public function getBaseUrl() : string
     {
         $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
         return rtrim($protocol . $_SERVER['HTTP_HOST'] . $this->getRelativeUrl(), '/');
@@ -179,7 +210,7 @@ class Router extends Module implements ModuleInterface
      *
      * @return string
      */
-    public function getAssetsUrl()
+    public function getAssetsUrl() : string
     {
         return $this->getBaseUrl() . '/assets';
     }
@@ -189,7 +220,7 @@ class Router extends Module implements ModuleInterface
      *
      * @return string
      */
-    public function getCurrentUrl()
+    public function getCurrentUrl() : string
     {
         $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
         return $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
@@ -208,7 +239,7 @@ class Router extends Module implements ModuleInterface
      *
      * @return array
      */
-    public function getCurrentRouteData()
+    public function getCurrentRouteData() : array
     {
         return Charm::AppStorage()->get('Routes', 'CurrentRoute');
     }
