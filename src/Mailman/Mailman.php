@@ -103,7 +103,7 @@ class Mailman implements ModuleInterface
     public function __call($name, $arguments)
     {
         if(method_exists($this->driver, $name)) {
-            return $this->driver->$name($arguments);
+            return call_user_func_array([$this->driver, $name], $arguments);
         }
 
         return false;
