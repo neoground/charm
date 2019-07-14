@@ -112,7 +112,7 @@ class Router extends Module implements ModuleInterface
      *
      * @throws LogicException if no route name is given
      */
-    public function buildUrl(string $name, array $args = []) : string
+    public function buildUrl(string $name, $args = []) : string
     {
         if(empty($name)) {
             throw new LogicException('No route name given');
