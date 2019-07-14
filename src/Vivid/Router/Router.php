@@ -7,6 +7,7 @@ namespace Charm\Vivid\Router;
 
 use Charm\Vivid\Base\Module;
 use Charm\Vivid\Charm;
+use Charm\Vivid\Exceptions\LogicException;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Charm\Vivid\Kernel\Interfaces\OutputInterface;
 use Charm\Vivid\PathFinder;
@@ -108,9 +109,15 @@ class Router extends Module implements ModuleInterface
      * @param array|string $args (optional) array with values for all variables in route
      *
      * @return string
+     *
+     * @throws LogicException if no route name is given
      */
     public function buildUrl(string $name, array $args = []) : string
     {
+        if(empty($name)) {
+            throw new LogicException('No route name given');
+        }
+
         // Got URL?
         if (in_string('://', $name)) {
             return $name;

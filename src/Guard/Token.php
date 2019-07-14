@@ -5,6 +5,7 @@
 
 namespace Charm\Guard;
 
+use Carbon\Carbon;
 use Charm\Vivid\Base\Module;
 use Charm\Vivid\Charm;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
@@ -21,6 +22,9 @@ class Token extends Module implements ModuleInterface
     /** @var string  the token */
     protected $token;
 
+    /** @var string  the token location */
+    protected $token_location;
+
     /** @var string  the client token */
     protected $client_token;
 
@@ -35,7 +39,8 @@ class Token extends Module implements ModuleInterface
     public function loadModule()
     {
         // Get user class
-        $this->user_class = Charm::Config()->get('main:guard.user_class');
+        $this->user_class = Charm::Config()->get('main:guard.user_class', 'App\\Models\\User');
+        $this->token_location = Charm::Config()->get('main:guard.token_location', 'api_token');
 
         // Get token
         $this->getToken();
@@ -102,6 +107,29 @@ class Token extends Module implements ModuleInterface
     }
 
     /**
+     * Find user by current token
+     *
+     * @return mixed user object or false if none found
+     */
+    private function findUserByToken()
+    {
+        if(class_exists($this->token_location)) {
+            // Got class
+            $token_class = $this->token_location::where('token', $this->getToken())
+                ->where('expiration', '>=', Carbon::now()->toDateTimeString())
+                ->where('type', 'api')
+                ->first();
+
+            if(is_object($token_class)) {
+                return $this->user_class::findWithCache($token_class->user_id);
+            }
+        }
+
+        // Got field
+        return $this->user_class::where($this->token_location, $this->token)->first();
+    }
+
+    /**
      * Get the user by the provided token
      *
      * @return object  the user object  (if no user is found, the system user will be returned)
@@ -119,7 +147,7 @@ class Token extends Module implements ModuleInterface
             }
         }
 
-        $u = $this->user_class::where('api_token', $this->token)->first();
+        $u = $this->findUserByToken();
 
         // If user not found -> use system user
         $default_user = false;
@@ -148,7 +176,7 @@ class Token extends Module implements ModuleInterface
             $in_redis = Charm::has('Redis') && Charm::Redis()->getClient()->hexists('api_user', $this->token);
 
             // Check database if not in redis yet
-            return $in_redis || $this->user_class::where('api_token', $this->token)->count() > 0;
+            return $in_redis || is_object($this->findUserByToken());
         }
 
         return false;
