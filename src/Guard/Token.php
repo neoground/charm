@@ -123,6 +123,8 @@ class Token extends Module implements ModuleInterface
             if(is_object($token_class)) {
                 return $this->user_class::findWithCache($token_class->user_id);
             }
+
+            return false;
         }
 
         // Got field
