@@ -52,7 +52,7 @@ class Session implements ModuleInterface
      *
      * @return bool
      */
-    public function destroy()
+    public function destroy() : bool
     {
         // Return false if we don't have a session
         if (session_status() != PHP_SESSION_ACTIVE) {
@@ -72,7 +72,7 @@ class Session implements ModuleInterface
      *
      * @return bool
      */
-    public function refresh()
+    public function refresh() : bool
     {
         return session_regenerate_id(true);
     }
@@ -102,7 +102,7 @@ class Session implements ModuleInterface
      *
      * @return bool
      */
-    public function has($key)
+    public function has($key) : bool
     {
         return Charm::Arrays()->has($_SESSION, $key);
     }
@@ -137,7 +137,7 @@ class Session implements ModuleInterface
      *
      * @return bool
      */
-    public function checkFingerprint()
+    public function checkFingerprint() : bool
     {
         $hash = md5($_SERVER['HTTP_USER_AGENT']);
 
@@ -148,6 +148,16 @@ class Session implements ModuleInterface
         $_SESSION['charm_fingerprint'] = $hash;
 
         return true;
+    }
+
+    /**
+     * Return all session data
+     *
+     * @return array
+     */
+    public function all() : array
+    {
+        return $_SESSION;
     }
 
 }
