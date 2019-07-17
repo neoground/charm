@@ -55,6 +55,11 @@ class Token extends Module implements ModuleInterface
     {
         $auth_header = Charm::Request()->getHeader('authorization');
 
+        if(empty($auth_header)) {
+            // Try x-authorization, some prefer this
+            $auth_header = Charm::Request()->getHeader('x-authorization');
+        }
+
         $matches = [];
         preg_match('/usertoken="(.*?)"/', $auth_header, $matches);
         if(isset($matches[1])){
