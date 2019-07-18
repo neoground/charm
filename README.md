@@ -1,12 +1,11 @@
 # Charm Framework
 
-Welcome to the Charm framework!
+Welcome to the Charm - the magnetic framework!
 
 The hassle-free php environment for the real world.
 
-
-
-
+Now including: The magnet! Just entry and explore 
+this entire world by starting with C::
 
 ## ToDo's
 - Own routing engine based on phroute with serialization support
