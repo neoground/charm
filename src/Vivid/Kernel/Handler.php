@@ -410,7 +410,10 @@ class Handler
         $error_style = $this->getModule('Config')->get('main:output.error_style', 'default');
 
         // Show whoops in debug mode
-        if($this->getModule('Config')->get('main:debug.debugmode', false) || $error_style == 'exception') {
+        $is_debug_mode = $this->getModule('Config')->get('main:debug.debugmode', false);
+        $debug_exception = $this->getModule('Config')->get('main:debug.exceptions', true);
+
+        if( ($is_debug_mode && $debug_exception) || $error_style == 'exception') {
             throw new OutputException($msg);
         }
 
