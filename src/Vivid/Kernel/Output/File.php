@@ -28,6 +28,9 @@ class File implements OutputInterface
     /** @var string the body content */
     protected $content;
 
+    /** @var string content disposition */
+    protected $disposition;
+
     /**
      * Output factory
      *
@@ -61,7 +64,13 @@ class File implements OutputInterface
         if(empty($this->filename)) {
             $this->filename = basename($this->path);
         }
-        header("Content-Disposition: attachment; filename=" . $this->filename);
+
+        $dispo = $this->disposition;
+        if(empty($dispo)) {
+            $dispo = 'attachment';
+        }
+
+        header("Content-Disposition: " . $dispo . "; filename=" . $this->filename);
 
         // Return content if set
         if(!empty($this->content)) {
@@ -151,7 +160,30 @@ class File implements OutputInterface
      */
     public function asDownload()
     {
-        $this->contenttype = "application/octet-stream";
+        $this->contenttype = 'application/octet-stream';
+        $this->disposition = 'attachment';
+        return $this;
+    }
+
+    /**
+     * Show file inline (e.g. in pdf reader in browser)
+     *
+     * @return $this
+     */
+    public function inline()
+    {
+        $this->disposition = 'inline';
+        return $this;
+    }
+
+    /**
+     * File is attachment = file download
+     *
+     * @return $this
+     */
+    public function asAttachment()
+    {
+        $this->disposition = 'attachment';
         return $this;
     }
 
