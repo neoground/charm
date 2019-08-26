@@ -70,7 +70,7 @@ class File implements OutputInterface
             $dispo = 'attachment';
         }
 
-        header("Content-Disposition: " . $dispo . "; filename=" . $this->filename);
+        header("Content-Disposition: " . $dispo . "; filename=\"" . $this->filename . "\"");
 
         // Return content if set
         if(!empty($this->content)) {
