@@ -57,6 +57,34 @@ class UploadedFile
     }
 
     /**
+     * Get file size in bytes
+     *
+     * @return int
+     */
+    public function getSize()
+    {
+        if(!array_key_exists('size', $this->file)) {
+            return 0;
+        }
+
+        return $this->file['size'];
+    }
+
+    /**
+     * Get mime type of this file
+     *
+     * @return bool|string mime type of false if none detected
+     */
+    public function getMime()
+    {
+        if(!array_key_exists('tsype', $this->file)) {
+            return false;
+        }
+
+        return $this->file['type'];
+    }
+
+    /**
      * Save uploaded file as
      *
      * This will override the $dest file if it exists.
