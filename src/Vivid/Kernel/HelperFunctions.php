@@ -16,7 +16,7 @@ if(!function_exists('in_string')) {
     function in_string($needle, $haystack)
     {
         // Ignore arrays!
-        if (is_array($needle) || is_array($haystack)) {
+        if (is_array($needle) || is_array($haystack) || empty($needle)) {
             return false;
         }
 
