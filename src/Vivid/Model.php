@@ -20,6 +20,9 @@ class Model extends \Illuminate\Database\Eloquent\Model
     /** @var bool set created_by / updated_by? */
     protected $set_by = true;
 
+    /** @var bool enable caching for this entity? Can be overridden in connections.yaml */
+    protected $caching = true;
+
     /**
      * Disable population of created_by / updated_by fields for an entry
      *
@@ -110,7 +113,10 @@ class Model extends \Illuminate\Database\Eloquent\Model
         $this->afterSave();
 
         // Update this instance. Flush cache
-        if(Charm::has('Cache')) {
+        if(Charm::has('Cache')
+            && Charm::Config()->get('connections:database.caching', true)
+            && $this->caching) {
+
             $classname = str_replace("\\", ":", get_called_class());
             $key = "Model:" . $classname . ':' . $this->id;
             Charm::Cache()->remove($key);
