@@ -178,11 +178,11 @@ class Sendgrid implements MailmanDriverInterface
     /**
      * Get from string
      *
-     * @return string
+     * @return \SendGrid\Mail\From
      */
     public function getFrom()
     {
-        return $this->mail->getFrom()->getEmail();
+        return $this->mail->getFrom();
     }
 
     /**
