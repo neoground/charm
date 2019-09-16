@@ -182,7 +182,7 @@ class Sendgrid implements MailmanDriverInterface
      */
     public function getFrom()
     {
-        return $this->mail->getFrom();
+        return $this->mail->getFrom()->getEmail();
     }
 
     /**
