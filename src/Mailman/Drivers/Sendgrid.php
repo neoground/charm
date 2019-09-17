@@ -216,8 +216,14 @@ class Sendgrid implements MailmanDriverInterface
         try {
             $response = $sendgrid->send($this->mail);
             $this->success = ((int) $response->statusCode() < 300);
+
+            if(!$this->success) {
+                Charm::Logging()->error('[SENDGRID] Error: ' . $response->body());
+            }
+
         } catch (\Exception $e) {
             $this->error_msg = $e->getMessage();
+            Charm::Logging()->error('[SENDGRID] Error: ' . $e->getMessage());
         }
 
         return $this;
