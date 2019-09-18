@@ -385,4 +385,14 @@ class Mailman implements ModuleInterface
         return $this;
     }
 
+    /**
+     * Get the driver
+     *
+     * @return MailmanDriverInterface
+     */
+    public function getDriver()
+    {
+        return $this->driver;
+    }
+
 }
