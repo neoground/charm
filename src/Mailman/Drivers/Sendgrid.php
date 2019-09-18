@@ -7,6 +7,8 @@ namespace Charm\Mailman\Drivers;
 
 use Charm\Mailman\MailmanDriverInterface;
 use Charm\Vivid\Charm;
+use SendGrid\Mail\From;
+use SendGrid\Mail\Mail;
 
 /**
  * Class Sendgrid
@@ -46,9 +48,10 @@ class Sendgrid implements MailmanDriverInterface
     {
         $x = new self;
         $x->configspace = 'connections:emails.' . $data;
-        $x->mail = new \SendGrid\Mail\Mail();
-        $x->mail->setFrom(Charm::Config()->get($x->configspace . '.frommail'),
-            Charm::Config()->get($x->configspace . '.fromname'));
+        $x->mail = new Mail(
+            new From(Charm::Config()->get($x->configspace . '.frommail'),
+                Charm::Config()->get($x->configspace . '.fromname'))
+        );
 
         return $x;
     }
