@@ -26,6 +26,12 @@ class Mailman implements ModuleInterface
     /** @var MailmanDriverInterface the driver instance */
     protected $driver;
 
+    /** @var string the driver name */
+    protected $driver_name;
+
+    /** @var mixed the passed driver data */
+    protected $driver_data;
+
     /** @var Environment Twig instance */
     protected $twig;
 
@@ -127,6 +133,8 @@ class Mailman implements ModuleInterface
 
         if(class_exists($full_class)) {
             $this->driver = $full_class::compose($data);
+            $this->driver_name = $name;
+            $this->driver_data = $data;
         }
 
         return $this;
@@ -141,7 +149,10 @@ class Mailman implements ModuleInterface
      */
     public function compose()
     {
-        return clone $this;
+        // Clone e-mail and re-set driver to prevent driver-related problems on mass emails
+        $new_email = clone $this;
+        $new_email->setDriver($this->driver_name, $this->driver_data);
+        return $new_email;
     }
 
     /**
