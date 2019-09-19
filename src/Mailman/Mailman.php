@@ -299,13 +299,13 @@ class Mailman implements ModuleInterface
                 $view = $name . DS . $file;
             }
 
-            $this->setHtmlContent($this->twig->render($view, $data));
-
             if($combined) {
-                // Also add text version
+                // Combined: First add text version
                 $view = str_replace('_html', '_text', $view);
                 $this->setTextContent($this->twig->render($view, $data));
             }
+
+            $this->setHtmlContent($this->twig->render($view, $data));
 
         } catch (\Exception $e) {
             Charm::Logging()->error('Could not render e-mail template', [$name, $e->getMessage()]);
