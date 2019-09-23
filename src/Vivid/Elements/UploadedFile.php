@@ -77,7 +77,7 @@ class UploadedFile
      */
     public function getMime()
     {
-        if(!array_key_exists('tsype', $this->file)) {
+        if(!array_key_exists('type', $this->file)) {
             return false;
         }
 
