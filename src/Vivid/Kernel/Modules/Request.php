@@ -55,13 +55,21 @@ class Request implements ModuleInterface
     /**
      * Get a request value
      *
-     * @param $key     string     the wanted key, arrays separated by .
-     * @param $default null|mixed (optional) default parameter
+     * @param $key      string        the wanted key, arrays separated by .
+     * @param $default  null|mixed    (optional) default parameter
+     * @param $sanitize bool|callable (optional) sanitize request value (will strip tags if set to true or use your own sanitizing function)
      *
      * @return null|string|array
      */
-    public function get($key, $default = null)
+    public function get($key, $default = null, $sanitize = false)
     {
+        if($sanitize !== false) {
+            if(is_callable($sanitize)) {
+                return $sanitize(Charm::Arrays()->get($this->vars, $key, $default));
+            }
+            return strip_tags(Charm::Arrays()->get($this->vars, $key, $default));
+        }
+
         return Charm::Arrays()->get($this->vars, $key, $default);
     }
 
