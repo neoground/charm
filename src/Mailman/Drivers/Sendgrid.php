@@ -108,6 +108,10 @@ class Sendgrid implements MailmanDriverInterface
      */
     public function addAttachment($path, $name = '')
     {
+        if(empty($name)) {
+            $name = basename($path);
+        }
+
         $attachment = new \SendGrid\Mail\Attachment(
             file_get_contents($path),
             mime_content_type($path),
