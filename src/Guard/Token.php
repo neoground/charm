@@ -216,5 +216,22 @@ class Token extends Module implements ModuleInterface
         return $token;
     }
 
+    /**
+     * Manually set token
+     *
+     * Please note: This will change the token from every code executed after this command.
+     *              This will not change the detected token in the charm init procedure.
+     *
+     * @param string|int $token new token
+     *
+     * @return $this
+     */
+    public function setToken($token)
+    {
+        $this->token = $token;
+
+        return $this;
+    }
+
 
 }
