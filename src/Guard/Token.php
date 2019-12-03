@@ -54,7 +54,7 @@ class Token extends Module implements ModuleInterface
     public function getToken()
     {
         if(!empty($this->token)) {
-            return $token;
+            return $this->token;
         }
 
         $auth_header = Charm::Request()->getHeader('authorization');
