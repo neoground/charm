@@ -312,8 +312,8 @@ class Mailman implements ModuleInterface
 
             if($combined) {
                 // Combined: First add text version
-                $view = str_replace('_html', '_text', $view);
-                $this->setTextContent($this->twig->render($view, $data));
+                $textview = str_replace('_html', '_text', $view);
+                $this->setTextContent($this->twig->render($textview, $data));
             }
 
             $this->setHtmlContent($this->twig->render($view, $data));
