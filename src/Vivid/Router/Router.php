@@ -108,14 +108,12 @@ class Router extends Module implements ModuleInterface
      * @param string $name name of route or absolute url
      * @param array|string $args (optional) array with values for all variables in route
      *
-     * @return string
-     *
-     * @throws LogicException if no route name is given
+     * @return string|null null if no route name was given
      */
     public function buildUrl(string $name, $args = []) : string
     {
         if(empty($name)) {
-            throw new LogicException('No route name given');
+            return null;
         }
 
         // Got URL?
