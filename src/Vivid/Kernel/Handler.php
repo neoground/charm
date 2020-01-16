@@ -101,9 +101,9 @@ class Handler
 
         $h->loadModules();
 
-        // Add dependand modules (e.g. app)
-        //$h->addDependendModules('App');
-        //$h->loadModules();
+        // Add dependand modules of app (not earlier because now all modules are loaded and available)
+        $h->addDependendModules('App');
+        $h->loadModules();
     }
 
     /**
@@ -115,6 +115,9 @@ class Handler
     {
         // Init the whole system
         $this->initSystem();
+
+        // System ready -> init Router
+        $this->getModule('Router')->init();
 
         // Post init hooks
         $this->callPostInitHooks();

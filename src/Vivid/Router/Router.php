@@ -33,16 +33,18 @@ class Router extends Module implements ModuleInterface
      */
     public function loadModule()
     {
-        // Collect routes and init everything
-        $this->init();
+        // Nothing to do here yet.
     }
 
     /**
      * Init the routing system and collect all data
      *
+     * This is called by the Handler after all modules are loaded because they might contain
+     * sub-routes which need to be available first.
+     *
      * @return true
      */
-    private function init()
+    public function init()
     {
         // Get router instance from cache
         if (Charm::AppStorage()->has('Routes', 'RouteCollector')

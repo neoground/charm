@@ -105,17 +105,17 @@ class View implements OutputInterface, HttpCodes
 
         // Add views of modules (except App) with module's name as namespace
         foreach(Handler::getInstance()->getModuleClasses() as $name => $module) {
-            try {
-                $mod = Handler::getInstance()->getModule($name);
-                if(is_object($mod) && $name != 'App' && method_exists($mod, 'getBaseDirectory')) {
-                    $dir = $mod->getBaseDirectory() . DS . 'app' . DS . 'Views';
+            $mod = Handler::getInstance()->getModule($name);
+            if(is_object($mod) && $name != 'App' && method_exists($mod, 'getBaseDirectory')) {
+                // Depending on module type, the base dir path might be in app dir or not. We support both cases.
+                $dir = $mod->getBaseDirectory() . DS . 'app' . DS . 'Views';
+                $alt_dir = $mod->getBaseDirectory() . DS . 'Views';
 
-                    if(file_exists($dir)) {
-                        $loader->addPath($dir, $name);
-                    }
+                if(file_exists($dir)) {
+                    $loader->addPath($dir, $name);
+                } elseif(file_exists($alt_dir)) {
+                    $loader->addPath($alt_dir, $name);
                 }
-            } catch (\Exception $e) {
-                // Not existing? Just continue
             }
         }
 
@@ -148,7 +148,7 @@ class View implements OutputInterface, HttpCodes
                     }
                 }
             } catch (\Exception $e) {
-                 // Not existing? Just continue
+                // Not existing? Just continue
             }
         }
 
