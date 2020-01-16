@@ -83,6 +83,12 @@ class Config extends Module implements ModuleInterface
 
         // Not found or no cache usage -> return data from file
         $file = $this->getConfigFile($key, false, $module);
+
+        // Return default if file is not existing
+        if(!file_exists($file)) {
+            return $default;
+        }
+
         $content = file_get_contents($file);
 
         // Parse yaml content

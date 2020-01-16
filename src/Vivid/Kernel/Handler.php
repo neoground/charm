@@ -241,7 +241,7 @@ class Handler
         // Get all modules defined in app config
         try {
             $modules = Charm::Config()->get($module . '#modules:modules');
-        } catch (ModuleNotFoundException $e) {
+        } catch (\Exception $e) {
             // Invalid, so no dependency.
             return false;
         }
