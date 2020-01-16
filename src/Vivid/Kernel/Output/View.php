@@ -40,10 +40,13 @@ class View implements OutputInterface, HttpCodes
     /** @var Environment twig instance */
     protected $twig;
 
+    /** @var string  the module delimiter */
+    protected $module_delimiter = "#";
+
     /**
      * View constructor.
      *
-     * @param string    $tpl        Template name without extension (folder separated by .)
+     * @param string    $tpl        Template name without extension (folder separated by '.', prepend optional package with ':')
      * @param int|array $statuscode HTTP status code or optional with() parameters
      */
     function __construct($tpl, $statuscode = 200)
@@ -67,7 +70,7 @@ class View implements OutputInterface, HttpCodes
     /**
      * Make a new view response
      *
-     * @param string    $tpl           The template name without extension (folder separated by .)
+     * @param string    $tpl           The template name without extension (folder separated by '.', prepend optional package with ':')
      * @param int|array $statuscode    status code, default: 200 or optional with() parameters
      *
      * @return View
@@ -99,6 +102,22 @@ class View implements OutputInterface, HttpCodes
     private function initTwig()
     {
         $loader = new FilesystemLoader(PathFinder::getAppPath() . DS . 'Views');
+
+        // Add views of modules (except App) with module's name as namespace
+        foreach(Handler::getInstance()->getModuleClasses() as $name => $module) {
+            try {
+                $mod = Handler::getInstance()->getModule($name);
+                if(is_object($mod) && $name != 'App' && method_exists($mod, 'getBaseDirectory')) {
+                    $dir = $mod->getBaseDirectory() . DS . 'app' . DS . 'Views';
+
+                    if(file_exists($dir)) {
+                        $loader->addPath($dir, $name);
+                    }
+                }
+            } catch (\Exception $e) {
+                // Not existing? Just continue
+            }
+        }
 
         $debug_mode = Charm::Config()->get('main:debug.debugmode', false);
 
@@ -224,8 +243,18 @@ class View implements OutputInterface, HttpCodes
             Charm::Session()->delete('charm_message');
         }
 
+        // Add support for packages
+        $tpl_str = $this->tpl;
+        $package_parts = explode($this->module_delimiter, $this->tpl);
+        if(count($package_parts) > 1) {
+            $package = $package_parts[0];
+            $tpl = $package_parts[1];
+
+            $tpl_str = '@' . $package . '/' . $tpl;
+        }
+
         return $this->twig->render(
-            str_replace('.', DS, $this->tpl) . '.twig',
+            str_replace('.', '/', $tpl_str) . '.twig',
             $this->content
         );
     }

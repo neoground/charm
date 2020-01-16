@@ -5,6 +5,7 @@
 
 namespace Charm\Mailman;
 
+use Charm\Vivid\Base\Module;
 use Charm\Vivid\Charm;
 use Charm\Vivid\Helper\ViewExtension;
 use Charm\Vivid\Kernel\Handler;
@@ -21,7 +22,7 @@ use Twig\Loader\FilesystemLoader;
  *
  * @package Charm\Mailman
  */
-class Mailman implements ModuleInterface
+class Mailman extends Module implements ModuleInterface
 {
     /** @var MailmanDriverInterface the driver instance */
     protected $driver;

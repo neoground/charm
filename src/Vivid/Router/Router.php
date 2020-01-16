@@ -8,6 +8,7 @@ namespace Charm\Vivid\Router;
 use Charm\Vivid\Base\Module;
 use Charm\Vivid\Charm;
 use Charm\Vivid\Exceptions\LogicException;
+use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Charm\Vivid\Kernel\Interfaces\OutputInterface;
 use Charm\Vivid\PathFinder;
@@ -89,14 +90,29 @@ class Router extends Module implements ModuleInterface
      */
     private function collectAllRoutes()
     {
-        $dir = PathFinder::getAppPath() . DS . 'Routes';
+        // Go through all modules
+        $handler = Handler::getInstance();
+        foreach ($handler->getModuleClasses() as $name => $module) {
+            try {
+                $mod = $handler->getModule($name);
+                if (is_object($mod) && method_exists($mod, 'getBaseDirectory')) {
+                    $dir = $mod->getBaseDirectory() . DS . 'Routes';
 
-        // Get all files without dotfiles
-        $files = array_slice(scandir($dir), 2);
+                    if (file_exists($dir)) {
+                        // Add routes of this module
 
-        // And require them to collect routes, filters and groups defined in them
-        foreach ($files as $file) {
-            require_once($dir . DS . $file);
+                        // Get all files without dotfiles
+                        $files = array_slice(scandir($dir), 2);
+
+                        // And require them to collect routes, filters and groups defined in them
+                        foreach ($files as $file) {
+                            require_once($dir . DS . $file);
+                        }
+                    }
+                }
+            } catch (\Exception $e) {
+                // If module throws error -> routes not needed
+            }
         }
     }
 

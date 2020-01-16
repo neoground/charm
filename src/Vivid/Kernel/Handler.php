@@ -102,8 +102,8 @@ class Handler
         $h->loadModules();
 
         // Add dependand modules (e.g. app)
-        $h->addDependendModules('App');
-        $h->loadModules();
+        //$h->addDependendModules('App');
+        //$h->loadModules();
     }
 
     /**
@@ -313,6 +313,9 @@ class Handler
             // Save module instance
             $this->modules[$name] = $mod;
             $this->module_classes[$name] = $class;
+
+            // Load dependant modules
+            $this->addDependendModules($name);
         }
     }
 

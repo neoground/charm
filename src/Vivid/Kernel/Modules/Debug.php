@@ -5,6 +5,7 @@
 
 namespace Charm\Vivid\Kernel\Modules;
 
+use Charm\Vivid\Base\Module;
 use Charm\Vivid\Charm;
 use Charm\Vivid\Helper\ModuleDescriber;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
@@ -21,7 +22,7 @@ use Whoops\Util\Misc;
  *
  * @package Charm\Vivid\Kernel\Modules
  */
-class Debug implements ModuleInterface
+class Debug extends Module implements ModuleInterface
 {
     /** @var StandardDebugBar debug bar object */
     protected $debugbar;

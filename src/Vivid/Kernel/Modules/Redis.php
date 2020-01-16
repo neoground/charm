@@ -5,6 +5,7 @@
 
 namespace Charm\Vivid\Kernel\Modules;
 
+use Charm\Vivid\Base\Module;
 use Charm\Vivid\Charm;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Predis\Client;
@@ -16,7 +17,7 @@ use Predis\Client;
  *
  * @package Charm\Vivid\Kernel\Modules
  */
-class Redis implements ModuleInterface
+class Redis extends Module implements ModuleInterface
 {
     /** @var Client|\Redis redis client */
     protected $redis_client;

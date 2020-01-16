@@ -5,6 +5,7 @@
 
 namespace Charm\Vivid\Kernel\Modules;
 
+use Charm\Vivid\Base\Module;
 use Charm\Vivid\Charm;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 
@@ -15,7 +16,7 @@ use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
  *
  * @package Charm\Vivid\Kernel\Modules
  */
-class Server implements ModuleInterface
+class Server extends Module implements ModuleInterface
 {
     /**
      * Load the module

@@ -5,6 +5,7 @@
 
 namespace Charm\Vivid\Kernel\Modules;
 
+use Charm\Vivid\Base\Module;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 
 /**
@@ -14,7 +15,7 @@ use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
  *
  * @package Charm\Vivid\Kernel\Modules
  */
-class Arrays implements ModuleInterface
+class Arrays extends Module implements ModuleInterface
 {
     /**
      * Module init

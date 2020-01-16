@@ -5,6 +5,7 @@
 
 namespace Charm\Vivid\Kernel\Modules;
 
+use Charm\Vivid\Base\Module;
 use Charm\Vivid\Charm;
 use Charm\Vivid\Helper\EloquentDebugbar;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
@@ -19,7 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package Charm\Vivid\Kernel\Modules
  */
-class Database implements ModuleInterface
+class Database extends Module implements ModuleInterface
 {
     /** @var \Illuminate\Database\Connection the eloquent database connection */
     protected $eloquent_instance;

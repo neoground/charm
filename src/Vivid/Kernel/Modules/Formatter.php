@@ -6,6 +6,7 @@
 namespace Charm\Vivid\Kernel\Modules;
 
 use Carbon\Carbon;
+use Charm\Vivid\Base\Module;
 use Charm\Vivid\Charm;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 
@@ -16,7 +17,7 @@ use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
  *
  * @package Charm\Vivid\Kernel\Modules
  */
-class Formatter implements ModuleInterface
+class Formatter extends Module implements ModuleInterface
 {
     /**
      * Module init

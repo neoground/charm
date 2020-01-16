@@ -5,6 +5,7 @@
 
 namespace Charm\Vivid\Kernel\Modules;
 
+use Charm\Vivid\Base\Module;
 use Charm\Vivid\Charm;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Charm\Vivid\PathFinder;
@@ -19,7 +20,7 @@ use Psr\Log\LoggerInterface;
  *
  * @package Charm\Vivid\Kernel\Modules
  */
-class Logging implements ModuleInterface, LoggerInterface
+class Logging extends Module implements ModuleInterface, LoggerInterface
 {
     /** @var Logger the logger instance */
     protected $logger;

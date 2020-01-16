@@ -6,6 +6,7 @@
 namespace Charm\Vivid\Kernel\Modules;
 
 use Carbon\Carbon;
+use Charm\Vivid\Base\Module;
 use Charm\Vivid\Charm;
 use Charm\Vivid\Exceptions\LogicException;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
@@ -19,7 +20,7 @@ use Symfony\Component\Yaml\Yaml;
  *
  * @package Charm\Vivid\Kernel\Modules
  */
-class Config implements ModuleInterface
+class Config extends Module implements ModuleInterface
 {
     /** @var string  the module delimiter */
     protected $module_delimiter = "#";

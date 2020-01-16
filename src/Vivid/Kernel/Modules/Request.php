@@ -5,6 +5,7 @@
 
 namespace Charm\Vivid\Kernel\Modules;
 
+use Charm\Vivid\Base\Module;
 use Charm\Vivid\Charm;
 use Charm\Vivid\Elements\UploadedFile;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
@@ -16,7 +17,7 @@ use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
  *
  * @package Charm\Vivid\Kernel\Modules
  */
-class Request implements ModuleInterface
+class Request extends Module implements ModuleInterface
 {
     /** @var array All request variables */
     protected $vars;

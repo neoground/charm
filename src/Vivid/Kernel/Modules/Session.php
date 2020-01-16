@@ -5,6 +5,7 @@
 
 namespace Charm\Vivid\Kernel\Modules;
 
+use Charm\Vivid\Base\Module;
 use Charm\Vivid\Charm;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Charm\Vivid\PathFinder;
@@ -16,7 +17,7 @@ use Charm\Vivid\PathFinder;
  *
  * @package Charm\Vivid\Kernel\Modules
  */
-class Session implements ModuleInterface
+class Session extends Module implements ModuleInterface
 {
     /**
      * Load the module
