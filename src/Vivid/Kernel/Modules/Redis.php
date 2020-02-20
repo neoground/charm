@@ -51,10 +51,6 @@ class Redis extends Module implements ModuleInterface
                     $redis->connect($host, $port);
                 }
 
-                if(!empty($pw)) {
-                    $redis->auth($pw);
-                }
-
                 // Auto serialize
                 $redis->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP);
 
@@ -63,6 +59,10 @@ class Redis extends Module implements ModuleInterface
 
                 // Set timeout
                 $redis->setOption(\Redis::OPT_READ_TIMEOUT, -1);
+
+                if(!empty($pw)) {
+                    $redis->auth($pw);
+                }
 
                 $this->redis_client = $redis;
                 return true;
