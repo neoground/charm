@@ -36,8 +36,10 @@ class Guard extends Module implements ModuleInterface
         $this->user_class = Charm::Config()->get('main:guard.user_class');
         $this->username_field = Charm::Config()->get('main:guard.username_field', 'username');
 
-        // Auto login user if cookies are present
-        $this->doAutoLogin();
+        // Auto login user if cookies are present and guard is enabled
+        if(Charm::Config()->get('main:guard.enabled', true)) {
+            $this->doAutoLogin();
+        }
     }
 
     /**
