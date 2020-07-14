@@ -288,38 +288,53 @@ class Handler
     {
         // Load all modules
         foreach ($this->modules_to_load as $name => $class) {
-            // Class blacklisted?
-            if (in_array($class, $this->modules_blacklist)) {
-                // Just ignore it.
-                continue;
-            }
-
-            // If no module name is set, use class name
-            if (is_numeric($name)) {
-                $mod_name = explode("\\", $class);
-                $name = array_pop($mod_name);
-            }
-
-            // Ignore already loaded modules
-            if (array_key_exists($name, $this->modules)) {
-                continue;
-            }
-
-            // If no namespace is present, use own namespace
-            if (!in_string("\\", $class)) {
-                $class = "\\Charm\\Vivid\\Kernel\\Modules\\" . $class;
-            }
-
-            $mod = new $class;
-            $mod->loadModule();
-
-            // Save module instance
-            $this->modules[$name] = $mod;
-            $this->module_classes[$name] = $class;
-
-            // Load dependant modules
-            $this->addDependendModules($name);
+            $this->loadModule($name, $class);
         }
+    }
+
+    /**
+     * Load a module
+     *
+     * @param string $name name of module
+     * @param string $class class of module
+     *
+     * @return bool
+     */
+    public function loadModule($name, $class)
+    {
+        // Class blacklisted?
+        if (in_array($class, $this->modules_blacklist)) {
+            // Just ignore it.
+            return false;
+        }
+
+        // If no module name is set, use class name
+        if (is_numeric($name)) {
+            $mod_name = explode("\\", $class);
+            $name = array_pop($mod_name);
+        }
+
+        // Ignore already loaded modules
+        if (array_key_exists($name, $this->modules)) {
+            return false;
+        }
+
+        // If no namespace is present, use own namespace
+        if (!in_string("\\", $class)) {
+            $class = "\\Charm\\Vivid\\Kernel\\Modules\\" . $class;
+        }
+
+        $mod = new $class;
+        $mod->loadModule();
+
+        // Save module instance
+        $this->modules[$name] = $mod;
+        $this->module_classes[$name] = $class;
+
+        // Load dependant modules
+        $this->addDependendModules($name);
+
+        return true;
     }
 
     /**
