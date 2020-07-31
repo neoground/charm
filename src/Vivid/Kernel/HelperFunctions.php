@@ -8,6 +8,9 @@ if(!function_exists('in_string')) {
     /**
      * Check if a string contains a specific substring
      *
+     * Since PHP 8.0 you can use the built-in command "str_contains".
+     * So this function will be deprecated soon!
+     *
      * @param string $needle   what we look for
      * @param string $haystack what we have
      *
@@ -15,6 +18,12 @@ if(!function_exists('in_string')) {
      */
     function in_string($needle, $haystack)
     {
+        // Use built-in function if available
+        // TODO: Activate this in Dec 20 when PHP8 is available
+        /*if(function_exists('str_contains')) {
+            return str_contains($haystack, $needle);
+        }*/
+
         // Ignore arrays!
         if (is_array($needle) || is_array($haystack) || empty($needle)) {
             return false;
