@@ -29,7 +29,7 @@
     "maximebf/debugbar": "^1.15",
     "kint-php/kint": "^2.2",
     "phpunit/phpunit": "^8",
-    "jeremeamia/superclosure": "^2.4"
+    "opis/closure": "^3.5"
   },
   "suggest": {
     "ext-redis": "For native redis support instead of using predis"
