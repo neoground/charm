@@ -46,11 +46,13 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
         $path = PathFinder::getLogPath() . DS . date("Y-m-d") . ".log";
 
         // Get log level
-        $loglevel_name = Charm::Config()->get('main:loglevel', 'info');
+        $loglevel_name = Charm::Config()->get('main:logging.level', 'info');
         $loglevel = Logger::toMonologLevel($loglevel_name);
 
+        $permissions = Charm::Config()->get('main:logging.file_permission', 0664);
+
         $logger = new Logger("charm");
-        $logger->pushHandler(new StreamHandler($path, $loglevel));
+        $logger->pushHandler(new StreamHandler($path, $loglevel, true, $permissions));
 
         // Save instance
         $this->logger = $logger;
