@@ -47,7 +47,7 @@ class Queue extends Module implements ModuleInterface
         ];
 
         if (Charm::Config()->inDebugMode()) {
-            Charm::Logging()->info('[BBQ] Pushing job to queue: ' . $entry->getMethod());
+            Charm::Logging()->debug('[BBQ] Pushing job to queue: ' . $entry->getMethod());
         }
 
         if(Charm::has('Events')) {
