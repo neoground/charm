@@ -62,8 +62,8 @@ class CreateMigrationCommand extends Command
         $table_name = $input->getOption('table');
         $template = $input->getOption('template');
 
-        if(empty($template)) {
-            $template = $input->getArgument('tablearg');
+        if(empty($table_name)) {
+            $table_name = $input->getArgument('tablearg');
         }
 
         if(empty($template)) {
