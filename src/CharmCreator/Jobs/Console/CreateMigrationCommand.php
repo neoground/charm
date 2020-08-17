@@ -99,8 +99,8 @@ class CreateMigrationCommand extends Command
 
         Charm::CharmCreator()->createMigration($dir . DS . $filename, $data, $template);
 
-        $output->writeln('<success>Created migration ' . $filename
-            . ' - ' . $table_name_formatted . '</success>');
+        $output->writeln('Created migration ' . $filename
+            . ' - ' . $table_name_formatted);
 
         return true;
     }
