@@ -141,7 +141,7 @@ class CharmCreator extends Module implements ModuleInterface
      */
     public function addMethodToController($path, $data = [], $tplname = 'Default', $output = null)
     {
-        $tpl = $this->getControllerTemplate($tplname);
+        $tpl = $this->getTemplate('controller', $tplname);
 
         // Stop if template or controller is not found
         if(empty($tpl) || !file_exists($path)) {
@@ -196,7 +196,7 @@ class CharmCreator extends Module implements ModuleInterface
      */
     public function createController($path, $data = [], $tplname = 'Default')
     {
-        $tpl = $this->getControllerTemplate($tplname);
+        $tpl = $this->getTemplate('controller', $tplname);
 
         // Stop if template is not found or file already exists
         if(empty($tpl) || file_exists($path)) {
@@ -216,16 +216,52 @@ class CharmCreator extends Module implements ModuleInterface
     }
 
     /**
-     * Get the controller template
+     * Create a new migration file
      *
-     * @param string $name (opt.) name of controller template
+     * @param string $path absolute path to the new file (including file extension)
+     * @param array $data the data for replacing placeholders (keys are the placeholder names)
+     * @param string $tplname (opt.) name of template
+     *
+     * @return bool|int false if template is not found or controller already exists, return of file_put_contents on success
+     */
+    public function createMigration($path, $data = [], $tplname = 'Default') {
+        $tpl = $this->getTemplate('migration', $tplname);
+
+        // Stop if template is not found or file already exists
+        if(empty($tpl) || file_exists($path)) {
+            return false;
+        }
+
+        // Replace placeholders
+        foreach($data as $key => $value) {
+            $tpl = str_replace($key, $value, $tpl);
+        }
+
+        // Create file with this template
+        return file_put_contents($path, $tpl);
+    }
+
+    /**
+     * Get a template
+     *
+     * @param string $type type of template (e.g. controller)
+     * @param string $name (opt.) name of template
      *
      * @return bool|string false if template is not found
      */
-    public function getControllerTemplate($name = 'Default')
+    public function getTemplate($type, $name = 'Default')
     {
         try {
-            $path = self::getBaseDirectory() . DS . 'Templates' . DS . 'Controllers' . DS . $name . '.php';
+
+            switch($type) {
+                case 'controller':
+                    $path = self::getBaseDirectory() . DS . 'Templates' . DS . 'Controllers' . DS . $name . '.php';
+                    break;
+                case 'migration':
+                    $path = self::getBaseDirectory() . DS . 'Templates' . DS . 'Migrations' . DS . $name . '.php';
+                    break;
+            }
+
         } catch (\ReflectionException $e) {
             return false;
         }
