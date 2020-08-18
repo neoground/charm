@@ -101,7 +101,7 @@ class CreateMigrationCommand extends Command
 
         Charm::CharmCreator()->createMigration($dir . DS . $filename, $data, $template);
 
-        $output->writeln('✅ Created migration ' . $filename
+        $output->writeln('Created migration ' . $filename
             . ' - ' . $table_name_formatted);
 
         if(!empty($withmodel)) {
@@ -117,7 +117,7 @@ class CreateMigrationCommand extends Command
 
             Charm::CharmCreator()->createModel($dir . DS . $filename, $data, $template);
 
-            $output->writeln('✅ Created model ' . $filename);
+            $output->writeln('Created model ' . $filename);
         }
 
         return true;
