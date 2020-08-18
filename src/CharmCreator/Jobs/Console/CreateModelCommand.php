@@ -15,13 +15,13 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class CreateMigrationCommand
+ * Class CreateModelCommand
  *
- * Creating migration files
+ * Creating model files
  *
  * @package Charm\CharmCreator\Jobs\Console
  */
-class CreateMigrationCommand extends Command
+class CreateModelCommand extends Command
 {
 
     /**
@@ -29,8 +29,8 @@ class CreateMigrationCommand extends Command
      */
     protected function configure()
     {
-        $this->setName("cc:migration")
-            ->setDescription("Creating a migration file")
+        $this->setName("cc:model")
+            ->setDescription("Creating a model file")
             ->addArgument(
                 'tablearg',
                 InputArgument::OPTIONAL,
@@ -46,11 +46,6 @@ class CreateMigrationCommand extends Command
                 'tpl',
                 InputOption::VALUE_OPTIONAL,
                 'Template name'
-            )->addOption(
-                'withmodel',
-                'm',
-                InputOption::VALUE_OPTIONAL,
-                'Also create model file?'
             );
     }
 
@@ -66,7 +61,6 @@ class CreateMigrationCommand extends Command
     {
         $table_name = $input->getOption('table');
         $template = $input->getOption('template');
-        $withmodel = $input->getOption('withmodel');
 
         if(empty($table_name)) {
             $table_name = $input->getArgument('tablearg');
@@ -80,45 +74,17 @@ class CreateMigrationCommand extends Command
         $table_name_formatted = str_replace("_", "", $table_name_formatted);
 
         $data = [
-            'TABLECLASSNAME' => $table_name_formatted . "Table",
+            'CLASSNAME' => $table_name_formatted,
             'TABLENAME' => $table_name
         ];
 
-        $dir = PathFinder::getAppPath() . DS . 'System' . DS . 'Migrations';
+        $dir = PathFinder::getAppPath() . DS . 'Models';
 
-        $date = Carbon::now()->format('Ymd');
+        $filename = $table_name_formatted . '.php';
 
-        $counter = 1;
-        foreach(scandir($dir) as $file) {
-            if(in_string($date, $file)) {
-                $counter++;
-            }
-        }
+        Charm::CharmCreator()->createModel($dir . DS . $filename, $data, $template);
 
-        $counter = $counter * 10;
-
-        $filename = $date . '_' . $counter . '_' . $table_name . '.php';
-
-        Charm::CharmCreator()->createMigration($dir . DS . $filename, $data, $template);
-
-        $output->writeln('✅ Created migration ' . $filename
-            . ' - ' . $table_name_formatted);
-
-        if(!empty($withmodel)) {
-            // Also create model file
-            $data = [
-                'CLASSNAME' => $table_name_formatted,
-                'TABLENAME' => $table_name
-            ];
-
-            $dir = PathFinder::getAppPath() . DS . 'Models';
-
-            $filename = $table_name_formatted . '.php';
-
-            Charm::CharmCreator()->createModel($dir . DS . $filename, $data, $template);
-
-            $output->writeln('✅ Created model ' . $filename);
-        }
+        $output->writeln('✅ Created model ' . $filename);
 
         return true;
     }

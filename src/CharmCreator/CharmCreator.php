@@ -216,6 +216,32 @@ class CharmCreator extends Module implements ModuleInterface
     }
 
     /**
+     * Create a new model file
+     *
+     * @param string $path absolute path to the new file (including file extension)
+     * @param array $data the data for replacing placeholders (keys are the placeholder names)
+     * @param string $tplname (opt.) name of template
+     *
+     * @return bool|int false if template is not found or controller already exists, return of file_put_contents on success
+     */
+    public function createModel($path, $data = [], $tplname = 'Default') {
+        $tpl = $this->getTemplate('model', $tplname);
+
+        // Stop if template is not found or file already exists
+        if(empty($tpl) || file_exists($path)) {
+            return false;
+        }
+
+        // Replace placeholders
+        foreach($data as $key => $value) {
+            $tpl = str_replace($key, $value, $tpl);
+        }
+
+        // Create file with this template
+        return file_put_contents($path, $tpl);
+    }
+
+    /**
      * Create a new migration file
      *
      * @param string $path absolute path to the new file (including file extension)
@@ -256,6 +282,9 @@ class CharmCreator extends Module implements ModuleInterface
             switch($type) {
                 case 'controller':
                     $path = self::getBaseDirectory() . DS . 'Templates' . DS . 'Controllers' . DS . $name . '.php';
+                    break;
+                case 'model':
+                    $path = self::getBaseDirectory() . DS . 'Templates' . DS . 'Models' . DS . $name . '.php';
                     break;
                 case 'migration':
                     $path = self::getBaseDirectory() . DS . 'Templates' . DS . 'Migrations' . DS . $name . '.php';
