@@ -50,7 +50,8 @@ class CreateMigrationCommand extends Command
                 'withmodel',
                 'm',
                 InputOption::VALUE_OPTIONAL,
-                'Also create model file?'
+                'Also create model file?',
+                false
             );
     }
 
@@ -104,7 +105,7 @@ class CreateMigrationCommand extends Command
         $output->writeln('Created migration ' . $filename
             . ' - ' . $table_name_formatted);
 
-        if(!empty($withmodel)) {
+        if($withmodel !== false) {
             // Also create model file
             $data = [
                 'CLASSNAME' => $table_name_formatted,
