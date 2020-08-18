@@ -82,18 +82,14 @@ class CreateMigrationCommand extends Command
 
         $date = Carbon::now()->format('Ymd');
 
-        $counter = 0;
+        $counter = 1;
         foreach(scandir($dir) as $file) {
             if(in_string($date, $file)) {
                 $counter++;
             }
         }
 
-        if($counter == 0) {
-            $counter = 10;
-        } else {
-            $counter = $counter * 10;
-        }
+        $counter = $counter * 10;
 
         $filename = $date . '_' . $counter . '_' . $table_name . '.php';
 
