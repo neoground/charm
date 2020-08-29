@@ -104,6 +104,10 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
         if(Charm::has('Events')) {
             Charm::Event()->fire('Logging', 'debug');
         }
+        if(Charm::has('DebugBar')) {
+            $db = Charm::DebugBar()->getInstance();
+            $db['messages']->debug($message);
+        }
 
         return $this->logger->debug($message, $context);
     }
@@ -124,6 +128,10 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
 
         if(Charm::has('Events')) {
             Charm::Event()->fire('Logging', 'emergency');
+        }
+        if(Charm::has('DebugBar')) {
+            $db = Charm::DebugBar()->getInstance();
+            $db['messages']->emergency($message);
         }
 
         return $this->logger->emergency($message, $context);
@@ -149,6 +157,10 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
         if(Charm::has('Events')) {
             Charm::Event()->fire('Logging', 'alert');
         }
+        if(Charm::has('DebugBar')) {
+            $db = Charm::DebugBar()->getInstance();
+            $db['messages']->alert($message);
+        }
 
         return $this->logger->alert($message, $context);
     }
@@ -172,6 +184,10 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
         if(Charm::has('Events')) {
             Charm::Event()->fire('Logging', 'critical');
         }
+        if(Charm::has('DebugBar')) {
+            $db = Charm::DebugBar()->getInstance();
+            $db['messages']->crit($message);
+        }
 
         return $this->logger->critical($message, $context);
     }
@@ -193,6 +209,10 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
 
         if(Charm::has('Events')) {
             Charm::Event()->fire('Logging', 'error');
+        }
+        if(Charm::has('DebugBar')) {
+            $db = Charm::DebugBar()->getInstance();
+            $db['messages']->err($message);
         }
 
         return $this->logger->error($message, $context);
@@ -218,6 +238,10 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
         if(Charm::has('Events')) {
             Charm::Event()->fire('Logging', 'warning');
         }
+        if(Charm::has('DebugBar')) {
+            $db = Charm::DebugBar()->getInstance();
+            $db['warning']->emergency($message);
+        }
 
         return $this->logger->warning($message, $context);
     }
@@ -238,6 +262,10 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
 
         if(Charm::has('Events')) {
             Charm::Event()->fire('Logging', 'notice');
+        }
+        if(Charm::has('DebugBar')) {
+            $db = Charm::DebugBar()->getInstance();
+            $db['messages']->notice($message);
         }
 
         return $this->logger->notice($message, $context);
@@ -261,6 +289,10 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
 
         if(Charm::has('Events')) {
             Charm::Event()->fire('Logging', 'info');
+        }
+        if(Charm::has('DebugBar')) {
+            $db = Charm::DebugBar()->getInstance();
+            $db['messages']->info($message);
         }
 
         return $this->logger->info($message, $context);

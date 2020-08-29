@@ -56,6 +56,7 @@ class Handler
             'Storage' => '\\Charm\\Storage\\Storage',
             'Server',
             'Event' => '\\Charm\\Events\\EventProvider',
+            'DebugBar' => '\\Charm\\DebugBar\\DebugBar',
             'App' => '\\App\\Engine',
             'Config',
             'Logging',

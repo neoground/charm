@@ -6,6 +6,7 @@
 namespace Charm\Vivid;
 
 use Charm\Cache\Cache;
+use Charm\DebugBar\DebugBar;
 use Charm\Events\EventProvider;
 use Charm\Guard\Guard;
 use Charm\Guard\Token;
@@ -32,6 +33,7 @@ use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
  * @method static Kernel\Modules\Server Server
  * @method static Kernel\Modules\Session Session
  * @method static Router\Router Router
+ * @method static DebugBar DebugBar
  * @method static Guard Guard
  * @method static Token Token
  * @method static Cache Cache

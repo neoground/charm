@@ -7,7 +7,11 @@ namespace Charm\DebugBar;
 
 use Charm\Vivid\Base\Module;
 use Charm\Vivid\Charm;
+use Charm\Vivid\Helper\ModuleDescriber;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
+use DebugBar\DataCollector\MessagesCollector;
+use DebugBar\DataCollector\RequestDataCollector;
+use DebugBar\DataCollector\TimeDataCollector;
 use DebugBar\JavascriptRenderer;
 use DebugBar\StandardDebugBar;
 
@@ -33,8 +37,32 @@ class DebugBar extends Module implements ModuleInterface
      */
     public function loadModule()
     {
-        // Get DebugBar instance
-        $this->debugBar = Charm::Debug()->getDebugBar();
+        // Only init if we're in debug mode
+        if(Charm::Config()->get('main:debug.debugmode', false)) {
+            $this->initDebugBar();
+        }
+    }
+
+    /**
+     * Init the debug bar
+     *
+     * @return bool
+     */
+    private function initDebugBar()
+    {
+        // No debug bar if disabled or not installed
+        if(!Charm::Config()->get('main:debug.show_debugbar', false)
+            || !class_exists("DebugBar\\StandardDebugBar")
+        ) {
+            return false;
+        }
+
+        $this->debugBar = new StandardDebugBar();
+        $this->debugBar->addCollector(new TimeDataCollector());
+        $this->debugBar->addCollector(new MessagesCollector());
+        $this->debugBar->addCollector(new RequestDataCollector());
+
+        return true;
     }
 
     /**

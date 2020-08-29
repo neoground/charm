@@ -35,7 +35,6 @@ class Debug extends Module implements ModuleInterface
         // Only init debug modules if we're in debug mode
         if(Charm::Config()->get('main:debug.debugmode', false)) {
             $this->initWhoops();
-            $this->initDebugBar();
         }
     }
 
@@ -64,69 +63,6 @@ class Debug extends Module implements ModuleInterface
 
         $whoops->register();
         return true;
-    }
-
-    /**
-     * Init the debug bar
-     *
-     * @return bool
-     */
-    private function initDebugBar()
-    {
-        // No debug bar if disabled or not installed
-        if(!Charm::Config()->get('main:debug.show_debugbar', false)
-            || !class_exists("DebugBar\\StandardDebugBar")
-        ) {
-            return false;
-        }
-
-        $this->debugbar = new StandardDebugBar();
-
-        // Append two debug bar methods to twig head / body
-        Charm::AppStorage()->append('View', 'Head', ModuleDescriber::create()
-            ->setModule('Debug')
-            ->setMethod('getDebugBarHead')
-        );
-
-        Charm::AppStorage()->append('View', 'Body', ModuleDescriber::create()
-            ->setModule('Debug')
-            ->setMethod('getDebugBarBody')
-        );
-
-        return true;
-    }
-
-    /**
-     * Get debug bar instance
-     *
-     * @return StandardDebugBar
-     */
-    public function getDebugBar()
-    {
-        return $this->debugbar;
-    }
-
-    /**
-     * Get debug bar <head> section
-     *
-     * @return string
-     */
-    public function getDebugBarHead()
-    {
-        $renderer = $this->debugbar->getJavascriptRenderer();
-        $renderer->setBaseUrl(cPath('/vendor/maximebf/debugbar/src/DebugBar/Resources'));
-        return $renderer->renderHead();
-    }
-
-    /**
-     * Get debug bar <body> section
-     *
-     * @return string
-     */
-    public function getDebugBarBody()
-    {
-        $renderer = $this->debugbar->getJavascriptRenderer();
-        return $renderer->render();
     }
 
 }

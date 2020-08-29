@@ -81,13 +81,15 @@ class Database extends Module implements ModuleInterface
      */
     private function addEloquentToDebugBar()
     {
-        $debugbar = Charm::Debug()->getDebugBar();
+        if(Charm::has('DebugBar')) {
+            $debugbar = Charm::DebugBar()->getInstance();
 
-        // Add Eloquent data if we got a database connection
-        if (Charm::Config()->get('main:debug.debugmode', false)
-            && Charm::Config()->get('main:debug.show_debugbar', false)) {
-            // Init and add debug bar collector
-            $debugbar->addCollector(new EloquentDebugbar());
+            // Add Eloquent data if we got a database connection
+            if (Charm::Config()->get('main:debug.debugmode', false)
+                && Charm::Config()->get('main:debug.show_debugbar', false)) {
+                // Init and add debug bar collector
+                $debugbar->addCollector(new EloquentDebugbar());
+            }
         }
     }
 
