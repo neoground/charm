@@ -29,7 +29,8 @@
     "maximebf/debugbar": "^1.16",
     "kint-php/kint": "^3.3",
     "phpunit/phpunit": "^9",
-    "opis/closure": "^3.5"
+    "opis/closure": "^3.5",
+    "spatie/db-dumper": "^2.16"
   },
   "suggest": {
     "ext-redis": "For native redis support instead of using predis"
