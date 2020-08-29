@@ -5,6 +5,7 @@
 
 namespace Charm\Vivid\Kernel;
 
+use Charm\Vivid\C;
 use Charm\Vivid\Charm;
 use Charm\Vivid\Exceptions\ModuleNotFoundException;
 use Charm\Vivid\Exceptions\OutputException;
@@ -116,17 +117,17 @@ class Handler
     public function start()
     {
         // Save time for performance measurements
-        $start_time = time();
+        $start_time = microtime(true);
 
         // Init the whole system
         $this->initSystem();
 
-        $init_time = time();
+        $init_time = microtime(true);
 
         // System ready -> init Router
         $this->getModule('Router')->init();
 
-        $routing_time = time();
+        $routing_time = microtime(true);
 
         // Post init hooks
         $this->callPostInitHooks();
@@ -406,6 +407,12 @@ class Handler
         try {
             /** @var OutputInterface $response */
             $response = $this->getModule('Router')->dispatch();
+
+            // Time measurement
+            if(Charm::Config()->inDebugMode()) {
+                Charm::AppStorage()->set('Charm', 'time_controller', microtime(true));
+            }
+
         } catch (HttpRouteNotFoundException $e) {
             // Route not found
             return $this->outputError('RouteNotFound', 404);

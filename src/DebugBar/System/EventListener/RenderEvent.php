@@ -37,11 +37,13 @@ class RenderEvent extends EventListener
             $time_start = C::AppStorage()->get('Charm', 'time_start');
             $time_init = C::AppStorage()->get('Charm', 'time_init');
             $time_routing = C::AppStorage()->get('Charm', 'time_routing');
+            $time_controller = C::AppStorage()->get('Charm', 'time_controller');
 
             // Add time measurements
             if(!empty($time_start) && !empty($time_init) && !empty($time_routing)) {
                 C::DebugBar()->getInstance()['time']->addMeasure('Startup', $time_start, $time_init);
                 C::DebugBar()->getInstance()['time']->addMeasure('Routing', $time_init, $time_routing);
+                C::DebugBar()->getInstance()['time']->addMeasure('Controller', $time_routing, $time_controller);
             }
 
             // Add debugbar to head + body

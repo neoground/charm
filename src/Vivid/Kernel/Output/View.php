@@ -6,6 +6,7 @@
 namespace Charm\Vivid\Kernel\Output;
 
 use Charm\Vivid\C;
+use Charm\Vivid\Charm;
 use Charm\Vivid\Helper\ViewExtension;
 use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\HttpCodes;
@@ -38,9 +39,6 @@ class View implements OutputInterface, HttpCodes
 
     /** @var string  the module delimiter */
     protected $module_delimiter = "#";
-    
-    /** @var int start time for performance measurement */
-    protected $start_time;
 
     /**
      * View constructor.
@@ -50,9 +48,6 @@ class View implements OutputInterface, HttpCodes
      */
     function __construct($tpl, $statuscode = 200)
     {
-        // Time measurement: start
-        $this->start_time = time();
-
         $this->tpl = $tpl;
         $this->twig = $this->initTwig();
 
@@ -191,27 +186,8 @@ class View implements OutputInterface, HttpCodes
         // Set status code
         http_response_code($this->statuscode);
 
-        // Add charm data to content (custom head / body of modules)
-        $head = C::AppStorage()->get('View', 'add_head', []);
-        $body = C::AppStorage()->get('View', 'add_body', []);
-
-        if(!is_array($head)) {
-            $head = [];
-        }
-        if(!is_array($body)) {
-            $body = [];
-        }
-
-        $this->content['charm'] = [
-            'head' => implode("\n", $head),
-            'body' => implode("\n", $body)
-        ];
-
-        // Add optional message
-        if(C::Session()->has('charm_message')) {
-            $this->content['charm']['message'] = C::Session()->get('charm_message');
-            C::Session()->delete('charm_message');
-        }
+        // Set charm data
+        $this->setCharmData();
 
         // Add support for packages
         $tpl_str = $this->tpl;
@@ -223,17 +199,57 @@ class View implements OutputInterface, HttpCodes
             $tpl_str = '@' . $package . '/' . $tpl;
         }
 
-        $render = $this->twig->render(
+        return $this->twig->render(
             str_replace('.', '/', $tpl_str) . '.twig',
             $this->content
         );
+    }
 
-        // Time measurement: stop
-        if(C::has('DebugBar') && C::Config()->get('main:debug.show_debugbar', false)) {
-            C::DebugBar()->getInstance()['time']->addMeasure('View Rendering', $this->start_time, time());
+    /**
+     * Set charm data
+     *
+     * Will add header + body of modules, custom message
+     */
+    private function setCharmData()
+    {
+        // Add charm data to content (custom head / body of modules)
+        $head = C::AppStorage()->get('View', 'add_head', []);
+        $body = C::AppStorage()->get('View', 'add_body', []);
+
+        if(!is_array($head)) {
+            $head = [];
+        }
+        if(!is_array($body)) {
+            $body = [];
         }
 
-        return $render;
+        $head_content = '';
+        $body_content = '';
+
+        foreach($head as $n => $head_entry) {
+            if(Charm::Config()->inDebugMode()) {
+                $head_content .= '<!-- [MODULE] ' . $n . ' -->';
+            }
+            $head_content .= $head_entry . "\n";
+        }
+
+        foreach($body as $n => $body_entry) {
+            if(Charm::Config()->inDebugMode()) {
+                $body_content .= '<!-- [MODULE] ' . $n . ' -->';
+            }
+            $body_content .= $body_entry . "\n";
+        }
+
+        $this->content['charm'] = [
+            'head' => $head_content,
+            'body' => $body_content
+        ];
+
+        // Add optional message
+        if(C::Session()->has('charm_message')) {
+            $this->content['charm']['message'] = C::Session()->get('charm_message');
+            C::Session()->delete('charm_message');
+        }
     }
 
     /**
