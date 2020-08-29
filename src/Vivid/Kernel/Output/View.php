@@ -187,9 +187,19 @@ class View implements OutputInterface, HttpCodes
         http_response_code($this->statuscode);
 
         // Add charm data to content (custom head / body of modules)
+        $head = C::AppStorage()->get('View', 'add_head', []);
+        $body = C::AppStorage()->get('View', 'add_body', []);
+
+        if(!is_array($head)) {
+            $head = [];
+        }
+        if(!is_array($body)) {
+            $body = [];
+        }
+
         $this->content['charm'] = [
-            'head' => implode("\n", C::AppStorage()->get('View', 'add_head', [])),
-            'body' => implode("\n", C::AppStorage()->get('View', 'add_body', []))
+            'head' => implode("\n", $head),
+            'body' => implode("\n", $body)
         ];
 
         // Add optional message

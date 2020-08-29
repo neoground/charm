@@ -45,7 +45,7 @@ class EventListener
      *
      * @throws LogicException When the fire() method is not implemented in an event
      */
-    protected function fire()
+    public function fire()
     {
         throw new LogicException("You must override the fire() method for this event.");
     }
@@ -114,7 +114,7 @@ class EventListener
      */
     public function addEvent()
     {
-        Charm::Event()->addListener($this->module, $this->name, self::class . '.fire');
+        Charm::Event()->addListener($this->module, $this->name, static::class . '.fire');
     }
 
 

@@ -84,10 +84,6 @@ class EventProvider extends Module implements ModuleInterface
      */
     public function addListener($module, $name, $method)
     {
-        if(!Charm::has($module)) {
-            throw new ModuleNotFoundException('Module ' . $module . ' could not be found.');
-        }
-
         // Add listener
         return Charm::AppStorage()->append('Events', $module . '_' . $name, $method);
     }

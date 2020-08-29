@@ -20,6 +20,9 @@ this entire world by starting with C::
 
 - Cache: When removing entries, remove the associated tags as well,
   if existing
+  
+- Better Autocomplete, especially in PHPStorm. Create IDE helper file similar to
+  barryvdh/laravel-ide-helper: https://github.com/barryvdh/laravel-ide-helper
 
 - Validator:
   Validator for Charm. Validate request fields by data type (like

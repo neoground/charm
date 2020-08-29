@@ -30,9 +30,9 @@ class RenderEvent extends EventListener
     /**
      * Event execution
      */
-    protected function fire()
+    public function fire()
     {
-        View::addHead(C::DebugBar()->getRenderHead());
-        View::addBody(C::DebugBar()->getRenderBar());
+        View::addHead('debugbar_head', C::DebugBar()->getRenderHead());
+        View::addBody('debugbar_body', C::DebugBar()->getRenderBar());
     }
 }
