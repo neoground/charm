@@ -7,6 +7,7 @@ namespace Charm\DebugBar;
 
 use Charm\Vivid\Base\Module;
 use Charm\Vivid\C;
+use Charm\Vivid\Charm;
 use Charm\Vivid\Helper\ModuleDescriber;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use DebugBar\DataCollector\MessagesCollector;
@@ -115,6 +116,16 @@ class DebugBar extends Module implements ModuleInterface
             ]);
         }
 
+        $route_data = C::Router()->getCurrentRouteData();
+        if(is_array($route_data)) {
+            $r->addControl('current_route', [
+                "icon" => "map-marker",
+                "tooltip" => $route_data['class'] . '.' .$route_data['method'],
+                "default" => "[]",
+                "title" => C::Server()->get('REQUEST_METHOD') . ' ' . $route_data['name']
+            ]);
+        }
+
         // Add current user
         if(C::has('Guard')) {
             if(!C::Guard()->isLoggedIn()) {
@@ -151,5 +162,19 @@ class DebugBar extends Module implements ModuleInterface
 
         $r = $this->getRenderer();
         return $r->render();
+    }
+
+    /**
+     * Debug multiple vars (outputting to debug bar)
+     *
+     * Can be used as a replacement for ddd()
+     *
+     * @param mixed ...$params
+     */
+    public function debugVar(...$params)
+    {
+        foreach($params as $param) {
+            $this->getInstance()['messages']->debug($param);
+        }
     }
 }

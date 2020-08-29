@@ -88,6 +88,19 @@ if(!function_exists('ddd') && class_exists("\\Kint")) {
 
 }
 
+if(!function_exists('ddb')) {
+
+    /**
+     * Dump to DebugBar
+     *
+     * @param mixed ...$vars
+     */
+    function ddb(...$vars)
+    {
+        \Charm\Vivid\C::DebugBar()->debugVar(...$vars);
+    }
+}
+
 if(!function_exists('to_string')) {
 
     /**
