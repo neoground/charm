@@ -107,7 +107,7 @@ class DebugBar extends Module implements ModuleInterface
 
         // Add twig template name
         $tpl_name = C::AppStorage()->get('View', 'template_name', false);
-        if($tpl_name) {
+        if(!empty($tpl_name)) {
             $r->addControl('twig_template', [
                 "icon" => "eye",
                 "tooltip" => "Twig Template",
