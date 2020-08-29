@@ -115,14 +115,28 @@ class Handler
      */
     public function start()
     {
+        // Save time for performance measurements
+        $start_time = time();
+
         // Init the whole system
         $this->initSystem();
+
+        $init_time = time();
 
         // System ready -> init Router
         $this->getModule('Router')->init();
 
+        $routing_time = time();
+
         // Post init hooks
         $this->callPostInitHooks();
+
+        // Save measurements
+        if(Charm::Config()->inDebugMode()) {
+            Charm::AppStorage()->set('Charm', 'time_start', $start_time);
+            Charm::AppStorage()->set('Charm', 'time_init', $init_time);
+            Charm::AppStorage()->set('Charm', 'time_routing', $routing_time);
+        }
 
         // Route + Output!
         $this->output();

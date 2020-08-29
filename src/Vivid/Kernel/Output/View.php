@@ -48,6 +48,11 @@ class View implements OutputInterface, HttpCodes
      */
     function __construct($tpl, $statuscode = 200)
     {
+        // Time measurement: start
+        if(Charm::has('DebugBar') && Charm::Config()->get('main:debug.show_debugbar', false)) {
+            Charm::DebugBar()->getInstance()['time']->startMeasure('viewrender', 'View Rendering');
+        }
+
         $this->tpl = $tpl;
         $this->twig = $this->initTwig();
 
@@ -218,10 +223,17 @@ class View implements OutputInterface, HttpCodes
             $tpl_str = '@' . $package . '/' . $tpl;
         }
 
-        return $this->twig->render(
+        $render = $this->twig->render(
             str_replace('.', '/', $tpl_str) . '.twig',
             $this->content
         );
+
+        // Time measurement: stop
+        if(Charm::has('DebugBar') && Charm::Config()->get('main:debug.show_debugbar', false)) {
+            Charm::DebugBar()->getInstance()['time']->stopMeasure('viewrender');
+        }
+
+        return $render;
     }
 
     /**
