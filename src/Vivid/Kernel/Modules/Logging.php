@@ -102,7 +102,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
         }
 
         if(Charm::has('Events')) {
-            Charm::Events()->fire('Logging', 'debug');
+            Charm::Event()->fire('Logging', 'debug');
         }
 
         return $this->logger->debug($message, $context);
@@ -123,7 +123,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
         }
 
         if(Charm::has('Events')) {
-            Charm::Events()->fire('Logging', 'emergency');
+            Charm::Event()->fire('Logging', 'emergency');
         }
 
         return $this->logger->emergency($message, $context);
@@ -147,7 +147,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
         }
 
         if(Charm::has('Events')) {
-            Charm::Events()->fire('Logging', 'alert');
+            Charm::Event()->fire('Logging', 'alert');
         }
 
         return $this->logger->alert($message, $context);
@@ -170,7 +170,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
         }
 
         if(Charm::has('Events')) {
-            Charm::Events()->fire('Logging', 'critical');
+            Charm::Event()->fire('Logging', 'critical');
         }
 
         return $this->logger->critical($message, $context);
@@ -192,7 +192,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
         }
 
         if(Charm::has('Events')) {
-            Charm::Events()->fire('Logging', 'error');
+            Charm::Event()->fire('Logging', 'error');
         }
 
         return $this->logger->error($message, $context);
@@ -216,7 +216,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
         }
 
         if(Charm::has('Events')) {
-            Charm::Events()->fire('Logging', 'warning');
+            Charm::Event()->fire('Logging', 'warning');
         }
 
         return $this->logger->warning($message, $context);
@@ -237,7 +237,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
         }
 
         if(Charm::has('Events')) {
-            Charm::Events()->fire('Logging', 'notice');
+            Charm::Event()->fire('Logging', 'notice');
         }
 
         return $this->logger->notice($message, $context);
@@ -260,7 +260,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
         }
 
         if(Charm::has('Events')) {
-            Charm::Events()->fire('Logging', 'info');
+            Charm::Event()->fire('Logging', 'info');
         }
 
         return $this->logger->info($message, $context);
@@ -282,7 +282,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
         }
 
         if(Charm::has('Events')) {
-            Charm::Events()->fire('Logging', $level);
+            Charm::Event()->fire('Logging', $level);
         }
 
         return $this->logger->log($level, $message, $context);

@@ -10,6 +10,7 @@ use Charm\Events\EventProvider;
 use Charm\Guard\Guard;
 use Charm\Guard\Token;
 use Charm\Mailman\Mailman;
+use Charm\Storage\Storage;
 use Charm\Vivid\Kernel\EngineManager;
 use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
@@ -35,8 +36,9 @@ use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
  * @method static Token Token
  * @method static Cache Cache
  * @method static Mailman Mailman
+ * @method static Storage Storage
  * @method static EngineManager App
- * @method static EventProvider Events
+ * @method static EventProvider Event
  *
  * @package Charm\Vivid
  */

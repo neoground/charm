@@ -51,7 +51,7 @@ class Queue extends Module implements ModuleInterface
         }
 
         if(Charm::has('Events')) {
-            Charm::Events()->fire('Queue', 'push');
+            Charm::Event()->fire('Queue', 'push');
         }
 
         // Add it to the queue in redis
@@ -73,7 +73,7 @@ class Queue extends Module implements ModuleInterface
         }
 
         if(Charm::has('Events')) {
-            Charm::Events()->fire('Queue', 'run');
+            Charm::Event()->fire('Queue', 'run');
         }
 
         $this->doWork($name, $worker_id);
@@ -134,7 +134,7 @@ class Queue extends Module implements ModuleInterface
         }
 
         if(Charm::has('Events')) {
-            Charm::Events()->fire('Queue', 'done');
+            Charm::Event()->fire('Queue', 'done');
         }
 
         Charm::Logging()->debug('Worker ' . $worker_id . ' done! Terminating.');

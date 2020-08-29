@@ -5,12 +5,12 @@
 
 namespace Charm\Vivid\Kernel\Output;
 
+use Charm\Vivid\C;
 use Charm\Vivid\Charm;
 use Charm\Vivid\Helper\ViewExtension;
 use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\HttpCodes;
 use Charm\Vivid\Kernel\Interfaces\OutputInterface;
-use Charm\Vivid\Kernel\Interfaces\ViewExtenderInterface;
 use Charm\Vivid\PathFinder;
 use Twig\Environment;
 use Twig\Extension\StringLoaderExtension;
@@ -27,9 +27,6 @@ class View implements OutputInterface, HttpCodes
 {
     /** @var array content array */
     protected $content = [];
-
-    /** @var array charm content array */
-    protected $charm_content = [];
 
     /** @var int status code */
     protected $statuscode;
@@ -60,11 +57,6 @@ class View implements OutputInterface, HttpCodes
         } else {
             $this->statuscode = $statuscode;
         }
-
-        $this->charm_content = [
-            'head' => [],
-            'body' => []
-        ];
     }
 
     /**
@@ -90,7 +82,7 @@ class View implements OutputInterface, HttpCodes
      */
     public static function makeError($message, $statuscode = 500)
     {
-        $x = new self(Charm::Config()->get('main:output.error_view', '_base.error'), $statuscode);
+        $x = new self(C::Config()->get('main:output.error_view', '_base.error'), $statuscode);
         return $x->with(['error_message' => $message, 'statuscode' => $statuscode]);
     }
 
@@ -119,7 +111,7 @@ class View implements OutputInterface, HttpCodes
             }
         }
 
-        $debug_mode = Charm::Config()->get('main:debug.debugmode', false);
+        $debug_mode = C::Config()->get('main:debug.debugmode', false);
 
         // Init environment
         $twig = new Environment($loader, [
@@ -131,12 +123,12 @@ class View implements OutputInterface, HttpCodes
         $twig->addExtension(new StringLoaderExtension());
 
         // Add charm global
-        $twig->addGlobal('charm', Charm::getInstance());
+        $twig->addGlobal('charm', C::getInstance());
 
         // Add charm twig extension
         $twig->addExtension(new ViewExtension());
 
-        // Add own / custom twig functions (including app's ViewExtension)
+        // Add own / custom twig functions from all modules (including app's ViewExtension)
         foreach(Handler::getInstance()->getModuleClasses() as $name => $module) {
             try {
                 $mod = Handler::getInstance()->getModule($name);
@@ -179,43 +171,6 @@ class View implements OutputInterface, HttpCodes
     }
 
     /**
-     * Add view / twig extensions from all modules
-     */
-    private function addExtensionsFromModules()
-    {
-        // Add twig extensions from modules
-        $modules = Handler::getInstance()->getModuleClasses();
-
-        $loaded_extenders = [];
-        foreach($modules as $module) {
-
-            // Build class name (replace last part after namespace)
-            $view_extender_classname_tmp1 = explode("\\", $module);
-            // Remove last element (class name)
-            array_pop($view_extender_classname_tmp1);
-
-            // Replace last part with ViewExtender class
-            $view_extender_classname = implode("\\", $view_extender_classname_tmp1) . "\\ViewExtender";
-
-            // Load view extender if existing and not loaded yet
-            if(class_exists($view_extender_classname) && !in_array($view_extender_classname, $loaded_extenders)) {
-                // Init this class so twig can be extended
-                $loaded_extenders[] = $view_extender_classname;
-
-                /** @var ViewExtenderInterface $ve */
-                $ve = new $view_extender_classname();
-
-                // Extend twig
-                $ve->extendTwig($this->twig);
-
-                // Add head + body data
-                $this->charm_content['head'][] = $ve->addHeadData();
-                $this->charm_content['body'][] = $ve->addBodyData();
-            }
-        }
-    }
-
-    /**
      * Build the final output which will be sent to the browser
      *
      * @return string
@@ -225,22 +180,22 @@ class View implements OutputInterface, HttpCodes
      */
     public function render()
     {
+        // Fire event
+        Charm::Event()->fire('View', 'renderStart');
+
         // Set status code
         http_response_code($this->statuscode);
 
-        // Add modules data
-        $this->addExtensionsFromModules();
-
-        // Add charm data to content
+        // Add charm data to content (custom head / body of modules)
         $this->content['charm'] = [
-            'head' => implode("\n", $this->charm_content['head']),
-            'body' => implode("\n", $this->charm_content['body'])
+            'head' => implode("\n", C::AppStorage()->get('View', 'add_head', [])),
+            'body' => implode("\n", C::AppStorage()->get('View', 'add_body', []))
         ];
 
         // Add optional message
-        if(Charm::Session()->has('charm_message')) {
-            $this->content['charm']['message'] = Charm::Session()->get('charm_message');
-            Charm::Session()->delete('charm_message');
+        if(C::Session()->has('charm_message')) {
+            $this->content['charm']['message'] = C::Session()->get('charm_message');
+            C::Session()->delete('charm_message');
         }
 
         // Add support for packages
@@ -270,6 +225,32 @@ class View implements OutputInterface, HttpCodes
     {
         $rel_path = str_replace(".", DS, $name);
         return file_exists(PathFinder::getAppPath() . DS . 'Views' . DS . $rel_path . '.twig');
+    }
+
+    /**
+     * Add data to <head> part of view
+     * 
+     * @param string $name name of data
+     * @param string $val data (most likely your html)
+     */
+    public static function addHead($name, $val)
+    {
+        $data = C::AppStorage()->get('View', 'add_head', []);
+        $data[$name] = $val;
+        C::AppStorage()->set('View', 'add_head', $data);
+    }
+
+    /**
+     * Add data to the end of the <body> part of view
+     *
+     * @param string $name name of data
+     * @param string $val data (most likely your html)
+     */
+    public static function addBody($name, $val)
+    {
+        $data = C::AppStorage()->get('View', 'add_body', []);
+        $data[$name] = $val;
+        C::AppStorage()->set('View', 'add_body', $data);
     }
 
 }

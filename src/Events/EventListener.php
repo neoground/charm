@@ -114,7 +114,7 @@ class EventListener
      */
     public function addEvent()
     {
-        Charm::Events()->addListener($this->module, $this->name, self::class . '.fire');
+        Charm::Event()->addListener($this->module, $this->name, self::class . '.fire');
     }
 
 

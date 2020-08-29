@@ -53,6 +53,7 @@ class Handler
         $this->modules_to_load = [
             'Arrays',
             'AppStorage',
+            'Storage' => '\\Charm\\Storage\\Storage',
             'Server',
             'Event' => '\\Charm\\Events\\EventProvider',
             'App' => '\\App\\Engine',

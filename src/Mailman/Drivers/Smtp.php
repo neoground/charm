@@ -235,11 +235,11 @@ class Smtp implements MailmanDriverInterface
             $this->success = false;
 
             if(Charm::has('Events')) {
-                Charm::Events()->fire('Mailman', 'sentSuccess');
+                Charm::Event()->fire('Mailman', 'sentSuccess');
             }
         } else {
             if(Charm::has('Events')) {
-                Charm::Events()->fire('Mailman', 'sentError');
+                Charm::Event()->fire('Mailman', 'sentError');
             }
         }
 
