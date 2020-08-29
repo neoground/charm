@@ -129,13 +129,13 @@ class DebugBar extends Module implements ModuleInterface
         // Add current user
         if(C::has('Guard')) {
             if(!C::Guard()->isLoggedIn()) {
-                $r->addControl('twig_template', [
+                $r->addControl('current_user', [
                     "icon" => "user",
                     "tooltip" => "Not Logged In",
                     "title" => ""
                 ]);
             } else {
-                $r->addControl('twig_template', [
+                $r->addControl('current_user', [
                     "icon" => "user",
                     "tooltip" => "Logged in as: " . C::Guard()->getUser()->getDisplayName(),
                     "title" => C::Guard()->getUserId()
