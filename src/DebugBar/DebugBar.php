@@ -58,9 +58,6 @@ class DebugBar extends Module implements ModuleInterface
         }
 
         $this->debugBar = new StandardDebugBar();
-        $this->debugBar->addCollector(new TimeDataCollector());
-        $this->debugBar->addCollector(new MessagesCollector());
-        $this->debugBar->addCollector(new RequestDataCollector());
 
         return true;
     }
