@@ -57,6 +57,8 @@ class View implements OutputInterface, HttpCodes
         } else {
             $this->statuscode = $statuscode;
         }
+
+        C::AppStorage()->set('View', 'template_name', $tpl);
     }
 
     /**

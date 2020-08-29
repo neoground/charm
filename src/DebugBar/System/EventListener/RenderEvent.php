@@ -7,7 +7,6 @@ namespace Charm\DebugBar\System\EventListener;
 
 use Charm\Events\EventListener;
 use Charm\Vivid\C;
-use Charm\Vivid\Charm;
 use Charm\Vivid\Kernel\Output\View;
 
 /**
@@ -33,7 +32,7 @@ class RenderEvent extends EventListener
      */
     public function fire()
     {
-        if(Charm::Config()->get('main:debug.show_debugbar', false)) {
+        if(C::Config()->get('main:debug.show_debugbar', false)) {
             $time_start = C::AppStorage()->get('Charm', 'time_start');
             $time_init = C::AppStorage()->get('Charm', 'time_init');
             $time_routing = C::AppStorage()->get('Charm', 'time_routing');
