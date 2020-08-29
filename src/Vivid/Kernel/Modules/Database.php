@@ -7,10 +7,13 @@ namespace Charm\Vivid\Kernel\Modules;
 
 use Charm\Vivid\Base\Module;
 use Charm\Vivid\Charm;
+use Charm\Vivid\Exceptions\LogicException;
 use Charm\Vivid\Helper\EloquentDebugbar;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Charm\Vivid\PathFinder;
 use Illuminate\Database\Capsule\Manager;
+use Spatie\DbDumper\Databases\MySql;
+use Spatie\DbDumper\Databases\PostgreSql;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -30,19 +33,39 @@ class Database extends Module implements ModuleInterface
      */
     public function loadModule()
     {
+        $db_available = false;
+
         // Init Eloquent
         $capsule = new Manager;
 
+        // Add single database (default)
         $config = Charm::Config()->get('connections:database');
 
-        if($config['enabled'] == true) {
+        if(is_array($config) && $config['enabled'] == true) {
             unset($config['enabled']);
 
             $capsule->addConnection($config);
+            $db_available = true;
+        }
 
+        // Add multiple databases
+        $config = Charm::Config()->get('connections:databases');
+
+        if(is_array($config)) {
+            foreach($config as $name => $dbvals) {
+                if(is_array($dbvals) && $dbvals['enabled'] == true) {
+                    // Got valid entry
+                    unset($dbvals['enabled']);
+
+                    $capsule->addConnection($dbvals, $name);
+                    $db_available = true;
+                }
+            }
+        }
+
+        // Finish setup if at least 1 database is present
+        if($db_available) {
             $capsule->setAsGlobal();
-
-            // Setup!
             $capsule->bootEloquent();
 
             // Make capsule accessible
@@ -194,6 +217,67 @@ class Database extends Module implements ModuleInterface
         if ($output) {
             $output->writeln('<info>Finished all migrations!</info>');
         }
+    }
+
+    /**
+     * Create a database dump
+     *
+     * @param string $name optional connection name
+     *
+     * @return MySql|PostgreSql
+     *
+     * @throws LogicException
+     */
+    public function createDump($name = 'default')
+    {
+        // Get database config
+        $db_type = false;
+        $db_username = false;
+        $db_password = false;
+        $db_name = false;
+
+        // Single database (default)
+        $config = Charm::Config()->get('connections:database');
+
+        if(is_array($config) && $name == 'default') {
+            // Got wanted entry
+            $db_type = $config['driver'];
+            $db_username = $config['username'];
+            $db_password = $config['password'];
+            $db_name = $config['database'];
+        }
+
+        // Multiple databases
+        $config = Charm::Config()->get('connections:databases');
+
+        if(is_array($config)) {
+            foreach($config as $confname => $dbvals) {
+                if(is_array($dbvals) && $confname == $name) {
+                    // Got wanted entry
+                    $db_type = $dbvals['driver'];
+                    $db_username = $dbvals['username'];
+                    $db_password = $dbvals['password'];
+                    $db_name = $dbvals['database'];
+                }
+            }
+        }
+
+        switch($db_type) {
+            case 'mysql':
+                return MySql::create()
+                    ->setDbName($db_name)
+                    ->setUserName($db_username)
+                    ->setPassword($db_password);
+                break;
+            case 'postgresql':
+                return PostgreSql::create()
+                    ->setDbName($db_name)
+                    ->setUserName($db_username)
+                    ->setPassword($db_password);
+                break;
+        }
+
+        throw new LogicException("Valid database connection not found");
     }
 
 }
