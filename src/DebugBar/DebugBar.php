@@ -7,7 +7,6 @@ namespace Charm\DebugBar;
 
 use Charm\Vivid\Base\Module;
 use Charm\Vivid\C;
-use Charm\Vivid\Charm;
 use Charm\Vivid\Helper\ModuleDescriber;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use DebugBar\DataCollector\MessagesCollector;
