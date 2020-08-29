@@ -6,7 +6,6 @@
 namespace Charm\Vivid\Kernel\Output;
 
 use Charm\Vivid\C;
-use Charm\Vivid\Charm;
 use Charm\Vivid\Helper\ViewExtension;
 use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\HttpCodes;
@@ -39,6 +38,9 @@ class View implements OutputInterface, HttpCodes
 
     /** @var string  the module delimiter */
     protected $module_delimiter = "#";
+    
+    /** @var int start time for performance measurement */
+    protected $start_time;
 
     /**
      * View constructor.
@@ -49,9 +51,7 @@ class View implements OutputInterface, HttpCodes
     function __construct($tpl, $statuscode = 200)
     {
         // Time measurement: start
-        if(Charm::has('DebugBar') && Charm::Config()->get('main:debug.show_debugbar', false)) {
-            Charm::DebugBar()->getInstance()['time']->startMeasure('viewrender', 'View Rendering');
-        }
+        $this->start_time = time();
 
         $this->tpl = $tpl;
         $this->twig = $this->initTwig();
@@ -186,7 +186,7 @@ class View implements OutputInterface, HttpCodes
     public function render()
     {
         // Fire event
-        Charm::Event()->fire('View', 'renderStart');
+        C::Event()->fire('View', 'renderStart');
 
         // Set status code
         http_response_code($this->statuscode);
@@ -229,8 +229,8 @@ class View implements OutputInterface, HttpCodes
         );
 
         // Time measurement: stop
-        if(Charm::has('DebugBar') && Charm::Config()->get('main:debug.show_debugbar', false)) {
-            Charm::DebugBar()->getInstance()['time']->stopMeasure('viewrender');
+        if(C::has('DebugBar') && C::Config()->get('main:debug.show_debugbar', false)) {
+            C::DebugBar()->getInstance()['time']->addMeasure('View Rendering', $this->start_time, time());
         }
 
         return $render;
