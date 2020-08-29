@@ -9,6 +9,7 @@ use Charm\Vivid\Base\Module;
 use Charm\Vivid\C;
 use Charm\Vivid\Helper\ModuleDescriber;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
+use Charm\Vivid\PathFinder;
 use DebugBar\DataCollector\MessagesCollector;
 use DebugBar\DataCollector\RequestDataCollector;
 use DebugBar\DataCollector\TimeDataCollector;
@@ -142,7 +143,11 @@ class DebugBar extends Module implements ModuleInterface
             }
         }
 
-        return $r->renderHead();
+        // Add custom style
+        $css_path = PathFinder::getModulePath('DebugBar') . DS . 'debugbar.css';
+        $css_url = PathFinder::pathToUrl($css_path);
+
+        return $r->renderHead() . "\n" . '<link rel="stylesheet" type="text/css" href="' . $css_url . '">';
     }
 
     /**
