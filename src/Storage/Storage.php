@@ -91,12 +91,17 @@ class Storage extends Module implements ModuleInterface
      * Add a new local filesystem and return it
      *
      * @param string $name name of filesystem
-     * @param string $path absolute path to dir
+     * @param string $path path to dir (absolute "/foo/bar" or relative to base dir "data/foobar")
      *
      * @return Filesystem
      */
     public function addLocalFilesystem($name, $path)
     {
+        if($path[0] != DS) {
+            // Prepend base path because we got a relative path
+            $path = $this->getBasePath() . DS . $path;
+        }
+
         return $this->addFilesystemByAdapter($name, new LocalFilesystemAdapter($path));
     }
 
