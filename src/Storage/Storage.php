@@ -21,8 +21,6 @@ use League\Flysystem\PhpseclibV2\SftpConnectionProvider;
  *
  * Module binding to Charm kernel
  *
- * TODO: Add support for S3 / FTP / SFTP via Flysystem
- *
  * @package Charm\Storage
  */
 class Storage extends Module implements ModuleInterface
@@ -51,14 +49,14 @@ class Storage extends Module implements ModuleInterface
     {
         $filesystems = C::Config()->get('main:storages');
 
-        if(is_array($filesystems)) {
-            foreach($filesystems as $name => $data) {
+        if (is_array($filesystems)) {
+            foreach ($filesystems as $name => $data) {
 
-                if(is_array($data) && array_key_exists('type', $data)) {
+                if (is_array($data) && array_key_exists('type', $data)) {
 
-                    switch($data['type']) {
+                    switch ($data['type']) {
                         case 'local':
-                            if(array_key_exists('path', $data)) {
+                            if (array_key_exists('path', $data)) {
                                 $this->addLocalFilesystem($name, $data['path']);
                             }
                             break;
@@ -95,9 +93,9 @@ class Storage extends Module implements ModuleInterface
      *
      * @return Filesystem
      */
-    public function addLocalFilesystem($name, $path)
+    public function addLocalFilesystem(string $name, string $path): Filesystem
     {
-        if($path[0] != DS) {
+        if ($path[0] != DS) {
             // Prepend base path because we got a relative path
             $path = $this->getBasePath() . DS . $path;
         }
@@ -108,12 +106,12 @@ class Storage extends Module implements ModuleInterface
     /**
      * Add a FTP filesystem
      *
-     * @param string $name name of filesystem
-     * @param array $config config values (see FtpConnectionOptions)
+     * @param string $name   name of filesystem
+     * @param array  $config config values (see FtpConnectionOptions)
      *
      * @return Filesystem
      */
-    public function addFtpFilesystem($name, $config)
+    public function addFtpFilesystem(string $name, array $config): Filesystem
     {
         return $this->addFilesystemByAdapter($name, new FtpAdapter(
             FtpConnectionOptions::fromArray($config)
@@ -123,12 +121,12 @@ class Storage extends Module implements ModuleInterface
     /**
      * Add a SFTP filesystem
      *
-     * @param string $name name of filesystem
-     * @param array $config config values (see SftpConnectionProvider)
+     * @param string $name   name of filesystem
+     * @param array  $config config values (see SftpConnectionProvider)
      *
      * @return Filesystem
      */
-    public function addSftpFilesystem($name, $config)
+    public function addSftpFilesystem(string $name, array $config): Filesystem
     {
         return $this->addFilesystemByAdapter($name, new SftpAdapter(
             new SftpConnectionProvider(
@@ -145,10 +143,21 @@ class Storage extends Module implements ModuleInterface
 
     public function addS3Filesystem($name, $config)
     {
-
+        // TODO Add support for S3 storage
     }
 
-    public function addFilesystemByAdapter($name, $adapter)
+    /**
+     * Add a filesystem by adapter
+     *
+     * This is useful to add custom storages which are already
+     * initialized by the adapter.
+     *
+     * @param string            $name    storage name
+     * @param FilesystemAdapter $adapter the adapter
+     *
+     * @return Filesystem
+     */
+    public function addFilesystemByAdapter(string $name, FilesystemAdapter $adapter): Filesystem
     {
         $this->filesystems[$name] = new Filesystem($adapter);
         return $this->filesystems[$name];
@@ -171,7 +180,7 @@ class Storage extends Module implements ModuleInterface
      *
      * @return string
      */
-    public function getBasePath()
+    public function getBasePath(): string
     {
         return cPath('/');
     }
@@ -181,7 +190,7 @@ class Storage extends Module implements ModuleInterface
      *
      * @return string
      */
-    public function getLogPath()
+    public function getLogPath(): string
     {
         return cPath('/var/logs');
     }
@@ -191,7 +200,7 @@ class Storage extends Module implements ModuleInterface
      *
      * @return string
      */
-    public function getVarPath()
+    public function getVarPath(): string
     {
         return cPath('/var');
     }
@@ -201,7 +210,7 @@ class Storage extends Module implements ModuleInterface
      *
      * @return string
      */
-    public function getCachePath()
+    public function getCachePath(): string
     {
         return cPath('/var/cache');
     }
@@ -211,7 +220,7 @@ class Storage extends Module implements ModuleInterface
      *
      * @return string
      */
-    public function getAppPath()
+    public function getAppPath(): string
     {
         return $this->getModulePath('App');
     }
@@ -219,11 +228,11 @@ class Storage extends Module implements ModuleInterface
     /**
      * Get the absolute path to the module base directory
      *
-     * @param string  $module  name of module
+     * @param string $module name of module
      *
      * @return string
      */
-    public function getModulePath($module)
+    public function getModulePath($module): string
     {
         return C::get($module)->getBaseDirectory();
     }
@@ -233,7 +242,7 @@ class Storage extends Module implements ModuleInterface
      *
      * @return string
      */
-    public function getAssetsPath()
+    public function getAssetsPath(): string
     {
         return cPath('/assets');
     }
@@ -243,7 +252,7 @@ class Storage extends Module implements ModuleInterface
      *
      * @return string
      */
-    public function getDataPath()
+    public function getDataPath(): string
     {
         return cPath('/data');
     }
@@ -255,7 +264,7 @@ class Storage extends Module implements ModuleInterface
      *
      * @return string
      */
-    public function pathToUrl($path)
+    public function pathToUrl(string $path): string
     {
         return str_replace(cPath('/'), C::Router()->getBaseUrl(), $path);
     }
@@ -263,13 +272,13 @@ class Storage extends Module implements ModuleInterface
     /**
      * Format absolute URL of file to path of file
      *
-     * @param string $path the absolute path
+     * @param string $url the full URL
      *
      * @return string
      */
-    public function urlToPath($url)
+    public function urlToPath(string $url): string
     {
-        return str_replace(C::Router()->getBaseUrl(), cPath('/'), $path);
+        return str_replace(C::Router()->getBaseUrl(), cPath('/'), $url);
     }
 
 }
