@@ -6,7 +6,6 @@
 namespace Charm\Vivid\Kernel\Output;
 
 use Charm\Vivid\C;
-use Charm\Vivid\Charm;
 use Charm\Vivid\Helper\ViewExtension;
 use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\HttpCodes;
@@ -229,15 +228,15 @@ class View implements OutputInterface, HttpCodes
         $body_content = '';
 
         foreach($head as $n => $head_entry) {
-            if(Charm::Config()->inDebugMode()) {
-                $head_content .= '<!-- [MODULE] ' . $n . ' -->';
+            if(C::Config()->inDebugMode()) {
+                $head_content .= '<!-- [MODULE] ' . $n . ' -->' . "\n";
             }
             $head_content .= $head_entry . "\n";
         }
 
         foreach($body as $n => $body_entry) {
-            if(Charm::Config()->inDebugMode()) {
-                $body_content .= '<!-- [MODULE] ' . $n . ' -->';
+            if(C::Config()->inDebugMode()) {
+                $body_content .= '<!-- [MODULE] ' . $n . ' -->' . "\n";
             }
             $body_content .= $body_entry . "\n";
         }

@@ -12,6 +12,8 @@ use Charm\Vivid\Kernel\Modules\Config;
  *
  * path and url class
  *
+ * @deprecated 2020-08-30 please use C::Storage() instead. This class will be removed soon.
+ *
  * @package Charm\Vivid
  */
 class PathFinder
