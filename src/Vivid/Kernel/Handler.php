@@ -9,6 +9,7 @@ use Charm\Vivid\C;
 use Charm\Vivid\Charm;
 use Charm\Vivid\Exceptions\ModuleNotFoundException;
 use Charm\Vivid\Exceptions\OutputException;
+use Charm\Vivid\Exceptions\ViewException;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Charm\Vivid\Kernel\Interfaces\OutputInterface;
 use Charm\Vivid\Kernel\Output\Json;
@@ -17,6 +18,7 @@ use Charm\Vivid\Kernel\Traits\SingletonTrait;
 use Phroute\Phroute\Exception\HttpMethodNotAllowedException;
 use Phroute\Phroute\Exception\HttpRouteNotFoundException;
 use Symfony\Component\Console\Application;
+use Twig\Error\RuntimeError;
 
 /**
  * Class Init
@@ -435,8 +437,32 @@ class Handler
             echo $response->render();
             return true;
         } catch (\Exception $e) {
+
+            // Pretty exception for twig views
+            if($this->shouldOutputException() && $e instanceof RuntimeError) {
+                throw new ViewException($e->getFile(), $e->getLine(), $e->getMessage());
+            }
+
             return $this->outputError($e->getMessage(), 500);
         }
+    }
+
+    /**
+     * Check if exception should be outputted
+     *
+     * @return bool
+     *
+     * @throws ModuleNotFoundException
+     */
+    private function shouldOutputException()
+    {
+        $error_style = $this->getModule('Config')->get('main:output.error_style', 'default');
+
+        // Show whoops in debug mode
+        $is_debug_mode = $this->getModule('Config')->get('main:debug.debugmode', false);
+        $debug_exception = $this->getModule('Config')->get('main:debug.exceptions', true);
+
+        return ($is_debug_mode && $debug_exception) || $error_style == 'exception';
     }
 
     /**
@@ -451,17 +477,12 @@ class Handler
      */
     private function outputError($msg, $statuscode = 500)
     {
-        $error_style = $this->getModule('Config')->get('main:output.error_style', 'default');
-
-        // Show whoops in debug mode
-        $is_debug_mode = $this->getModule('Config')->get('main:debug.debugmode', false);
-        $debug_exception = $this->getModule('Config')->get('main:debug.exceptions', true);
-
-        if( ($is_debug_mode && $debug_exception) || $error_style == 'exception') {
+        if( $this->shouldOutputException() ) {
             throw new OutputException($msg);
         }
 
         // Output JSON for API
+        $error_style = $this->getModule('Config')->get('main:output.error_style', 'default');
         $http_accept = $this->getModule('Request')->get('HTTP_ACCEPT');
         if(in_string('json', $http_accept) || $error_style == 'json') {
             $output = Json::makeErrorMessage($msg, $statuscode);
