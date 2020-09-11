@@ -196,7 +196,8 @@ class Database extends Module implements ModuleInterface
                 if(!class_exists($class)) {
                     // Still not found. Ignore.
                     if($output) {
-                        $output->writeln('<error>Invalid class: ' . $class_raw . '</error>');
+                        $output->writeln('<error>Invalid class in: ' . $class_raw
+                            . '. Expected: ' . $class . '</error>');
                     }
                     continue;
                 }
