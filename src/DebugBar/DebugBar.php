@@ -15,6 +15,7 @@ use DebugBar\DataCollector\RequestDataCollector;
 use DebugBar\DataCollector\TimeDataCollector;
 use DebugBar\JavascriptRenderer;
 use DebugBar\StandardDebugBar;
+use DebugBar\Storage\FileStorage;
 
 /**
  * Class Module
@@ -59,6 +60,11 @@ class DebugBar extends Module implements ModuleInterface
         }
 
         $this->debugBar = new StandardDebugBar();
+
+        // Set storage if enabled
+        if(C::Config()->get('main:debug.log_debugbar', true)) {
+            $this->debugBar->setStorage(new FileStorage(C::Storage()->getCachePath() . DS . 'debugbar'));
+        }
 
         return true;
     }
