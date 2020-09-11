@@ -90,6 +90,7 @@ class DebugBar extends Module implements ModuleInterface
             && C::Config()->get('main:debug.show_debugbar', false)) {
             $this->debugBarRenderer = $this->debugBar->getJavascriptRenderer();
             $this->debugBarRenderer->setBaseUrl(cBaseUrl() . '/vendor/maximebf/debugbar/src/DebugBar/Resources');
+            $this->debugBarRenderer->setOpenHandlerUrl(cBaseUrl() . '/charm/debugbar_handler');
         }
 
         return $this->debugBarRenderer;
