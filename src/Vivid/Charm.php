@@ -108,4 +108,14 @@ class Charm
         return self::get($name);
     }
 
+    /**
+     * Shutdown the application
+     *
+     * Use this to gracefully shutdown the application instead of die() or exit()
+     */
+    public static function shutdown()
+    {
+        Handler::getInstance()->shutdown();
+    }
+
 }

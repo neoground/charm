@@ -505,7 +505,7 @@ class Handler
     /**
      * Shutdown the application because we're done!
      */
-    private function shutdown()
+    public function shutdown()
     {
         // Fire shutdown event
         if(C::has('Events')) {

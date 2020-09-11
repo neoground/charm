@@ -6,6 +6,7 @@
 namespace Charm\Vivid\Router;
 
 use Charm\Vivid\Base\Module;
+use Charm\Vivid\C;
 use Charm\Vivid\Charm;
 use Charm\Vivid\Exceptions\LogicException;
 use Charm\Vivid\Kernel\Handler;
@@ -47,11 +48,11 @@ class Router extends Module implements ModuleInterface
     public function init()
     {
         // Get router instance from cache
-        if (Charm::AppStorage()->has('Routes', 'RouteCollector')
-            && Charm::AppStorage()->has('Routes', 'RoutesData')
+        if (C::AppStorage()->has('Routes', 'RouteCollector')
+            && C::AppStorage()->has('Routes', 'RoutesData')
         ) {
-            $this->route = Charm::AppStorage()->get('Routes', 'RouteCollector');
-            $this->routes = Charm::AppStorage()->get('Routes', 'RoutesData');
+            $this->route = C::AppStorage()->get('Routes', 'RouteCollector');
+            $this->routes = C::AppStorage()->get('Routes', 'RoutesData');
             return true;
         }
 
@@ -62,9 +63,9 @@ class Router extends Module implements ModuleInterface
 
         // Get collected elements: filters, routes and groups
         $elements = [
-            Charm::AppStorage()->get('Routes', 'Filters'),
-            Charm::AppStorage()->get('Routes', 'Routes'),
-            Charm::AppStorage()->get('Routes', 'Groups')
+            C::AppStorage()->get('Routes', 'Filters'),
+            C::AppStorage()->get('Routes', 'Routes'),
+            C::AppStorage()->get('Routes', 'Groups')
         ];
 
         $routes = [];
@@ -79,8 +80,8 @@ class Router extends Module implements ModuleInterface
         }
 
         // Cache RouteCollector instance + routes array
-        Charm::AppStorage()->set('Routes', 'RouteCollector', $router);
-        Charm::AppStorage()->set('Routes', 'RoutesData', $routes);
+        C::AppStorage()->set('Routes', 'RouteCollector', $router);
+        C::AppStorage()->set('Routes', 'RoutesData', $routes);
 
         // Set for whole class
         $this->route = $router;
@@ -128,7 +129,7 @@ class Router extends Module implements ModuleInterface
      *
      * @return string|null null if no route name was given
      */
-    public function buildUrl(string $name, $args = []) : string
+    public function buildUrl(string $name, $args = [])
     {
         if(empty($name)) {
             return null;
@@ -264,7 +265,7 @@ class Router extends Module implements ModuleInterface
      */
     public function getCurrentRouteData() : array
     {
-        return Charm::AppStorage()->get('Routes', 'CurrentRoute');
+        return C::AppStorage()->get('Routes', 'CurrentRoute');
     }
 
     /**
@@ -282,12 +283,12 @@ class Router extends Module implements ModuleInterface
         );
 
         // Get route data from cache
-        if (Charm::AppStorage()->has('Routes', 'RouteData')) {
-            $data = Charm::AppStorage()->get('Routes', 'RouteData');
+        if (C::AppStorage()->has('Routes', 'RouteData')) {
+            $data = C::AppStorage()->get('Routes', 'RouteData');
         } else {
             // Get data and cache it
             $data = $this->route->getData();
-            Charm::AppStorage()->set('Routes', 'RouteData', $data);
+            C::AppStorage()->set('Routes', 'RouteData', $data);
         }
 
         $dispatcher = new Dispatcher($data);
@@ -305,7 +306,7 @@ class Router extends Module implements ModuleInterface
      */
     public function getRoutesData()
     {
-        return Charm::AppStorage()->get('Routes', 'RoutesData');
+        return C::AppStorage()->get('Routes', 'RoutesData');
     }
 
 }
