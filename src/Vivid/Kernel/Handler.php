@@ -135,10 +135,10 @@ class Handler
         $this->callPostInitHooks();
 
         // Save measurements
-        if(Charm::Config()->inDebugMode()) {
-            Charm::AppStorage()->set('Charm', 'time_start', $start_time);
-            Charm::AppStorage()->set('Charm', 'time_init', $init_time);
-            Charm::AppStorage()->set('Charm', 'time_routing', $routing_time);
+        if(C::Config()->inDebugMode()) {
+            C::AppStorage()->set('Charm', 'time_start', $start_time);
+            C::AppStorage()->set('Charm', 'time_init', $init_time);
+            C::AppStorage()->set('Charm', 'time_routing', $routing_time);
         }
 
         // Route + Output!
@@ -507,6 +507,11 @@ class Handler
      */
     private function shutdown()
     {
+        // Fire shutdown event
+        if(C::has('Events')) {
+            C::Event()->fire('Charm', 'shutdown');
+        }
+
         exit(0);
     }
 
