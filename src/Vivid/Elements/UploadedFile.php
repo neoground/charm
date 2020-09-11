@@ -4,6 +4,7 @@
  */
 
 namespace Charm\Vivid\Elements;
+
 use Charm\Vivid\Exceptions\FileSystemException;
 
 
@@ -25,7 +26,7 @@ class UploadedFile
     /**
      * UploadedFile constructor.
      *
-     * @param array  $file  the uploaded file array
+     * @param array $file the uploaded file array
      */
     public function __construct($file)
     {
@@ -63,7 +64,7 @@ class UploadedFile
      */
     public function getSize()
     {
-        if(!array_key_exists('size', $this->file)) {
+        if (!array_key_exists('size', $this->file)) {
             return 0;
         }
 
@@ -77,7 +78,7 @@ class UploadedFile
      */
     public function getMime()
     {
-        if(!array_key_exists('type', $this->file)) {
+        if (!array_key_exists('type', $this->file)) {
             return false;
         }
 
@@ -85,21 +86,36 @@ class UploadedFile
     }
 
     /**
+     * Get absolute path to temp file
+     *
+     * @return string|false absolute path or false on error
+     */
+    public function getTempName()
+    {
+        if (!array_key_exists('tmp_name', $this->file)) {
+            return false;
+        }
+
+        return $this->file['tmp_name'];
+    }
+
+    /**
      * Save uploaded file as
      *
      * This will override the $dest file if it exists.
      *
-     * @param string  $dest      the absolute path to the destination with filename
+     * @param string $dest     the absolute path to the destination with filename
+     * @param bool   $override override file if existing? Default: true
      *
      * @throws FileSystemException
      */
-    public function saveAs($dest)
+    public function saveAs($dest, $override = true)
     {
-        if (file_exists($dest)) {
+        if (file_exists($dest) && $override) {
             unlink($dest);
         }
 
-        if (!move_uploaded_file($this->file['tmp_name'], $dest)) {
+        if (!move_uploaded_file($this->getTempName(), $dest)) {
             // Was not successful. Show error
             throw new FileSystemException("File upload failed");
         }
