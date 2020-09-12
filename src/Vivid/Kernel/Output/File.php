@@ -5,6 +5,7 @@
 
 namespace Charm\Vivid\Kernel\Output;
 
+use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Interfaces\OutputInterface;
 
 /**
@@ -52,6 +53,9 @@ class File implements OutputInterface
      */
     public function render()
     {
+        // Fire event
+        C::Event()->fire('File', 'renderStart');
+
         // Send content type
         if(empty($this->contenttype)) {
             // Auto set content type based on file extension

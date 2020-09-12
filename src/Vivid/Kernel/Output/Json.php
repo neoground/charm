@@ -5,6 +5,7 @@
 
 namespace Charm\Vivid\Kernel\Output;
 
+use Charm\Vivid\C;
 use Charm\Vivid\Charm;
 use Charm\Vivid\Kernel\Interfaces\HttpCodes;
 use Charm\Vivid\Kernel\Interfaces\OutputInterface;
@@ -153,6 +154,9 @@ class Json implements OutputInterface, HttpCodes
      */
     public function render()
     {
+        // Fire event
+        C::Event()->fire('Json', 'renderStart');
+
         // Set content type
         header('Content-type: application/json');
 

@@ -5,6 +5,7 @@
 
 namespace Charm\Vivid\Kernel\Output;
 
+use Charm\Vivid\C;
 use Charm\Vivid\Charm;
 use Charm\Vivid\Kernel\Interfaces\OutputInterface;
 use Charm\Vivid\Model;
@@ -390,6 +391,9 @@ class DataTable implements OutputInterface
      */
     public function render()
     {
+        // Fire event
+        C::Event()->fire('DataTable', 'renderStart');
+
         // Set status code
         http_response_code($this->statuscode);
 

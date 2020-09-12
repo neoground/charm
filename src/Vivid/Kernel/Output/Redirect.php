@@ -5,6 +5,7 @@
 
 namespace Charm\Vivid\Kernel\Output;
 
+use Charm\Vivid\C;
 use Charm\Vivid\Charm;
 use Charm\Vivid\Kernel\Interfaces\OutputInterface;
 
@@ -57,6 +58,9 @@ class Redirect implements OutputInterface
      */
     public function render()
     {
+        // Fire event
+        C::Event()->fire('Redirect', 'renderStart');
+
         // Set current page as last for easier redirecting
         Charm::Session()->set('charm_last_page', Charm::Router()->getCurrentUrl());
 
