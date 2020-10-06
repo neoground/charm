@@ -7,6 +7,7 @@ namespace Charm\Vivid\Helper;
 
 use Carbon\Carbon;
 use Charm\Vivid\Charm;
+use Charm\Vivid\Kernel\Output\View;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -263,6 +264,20 @@ class ViewExtension extends AbstractExtension
     public function in_string($needle, $haystack)
     {
         return in_string($needle, $haystack);
+    }
+
+    /**
+     * Get template path for usage in twig iself
+     *
+     * Contains support for modules
+     *
+     * @param string $name charm's template name (e.g. Module#foo.bar)
+     *
+     * @return string
+     */
+    public function getTemplateByName(string $name)
+    {
+        return View::getTemplateByName($name);
     }
 
 }

@@ -76,7 +76,7 @@ if(!function_exists('ddd') && class_exists("\\Kint")) {
     /**
      * Dump and die
      *
-     * @param array ...$vars
+     * @param mixed ...$vars
      */
     function ddd(...$vars)
     {

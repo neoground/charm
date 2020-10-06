@@ -37,7 +37,7 @@ class View implements OutputInterface, HttpCodes
     protected $twig;
 
     /** @var string  the module delimiter */
-    protected $module_delimiter = "#";
+    protected static $module_delimiter = "#";
 
     /**
      * View constructor.
@@ -190,9 +190,25 @@ class View implements OutputInterface, HttpCodes
         // Set charm data
         $this->setCharmData();
 
-        // Add support for packages
-        $tpl_str = $this->tpl;
-        $package_parts = explode($this->module_delimiter, $this->tpl);
+        return $this->twig->render(
+            self::getTemplateByName($this->tpl),
+            $this->content
+        );
+    }
+
+    /**
+     * Get template path for usage in twig iself
+     *
+     * Contains support for modules
+     *
+     * @param string $tpl charm's template name (e.g. Module#foo.bar)
+     *
+     * @return string
+     */
+    public static function getTemplateByName(string $tpl)
+    {
+        $tpl_str = $tpl;
+        $package_parts = explode(self::$module_delimiter, $tpl_str);
         if(count($package_parts) > 1) {
             $package = $package_parts[0];
             $tpl = $package_parts[1];
@@ -200,10 +216,7 @@ class View implements OutputInterface, HttpCodes
             $tpl_str = '@' . $package . '/' . $tpl;
         }
 
-        return $this->twig->render(
-            str_replace('.', '/', $tpl_str) . '.twig',
-            $this->content
-        );
+        return str_replace('.', '/', $tpl_str) . '.twig';
     }
 
     /**
