@@ -94,7 +94,7 @@ class View implements OutputInterface, HttpCodes
      */
     private function initTwig()
     {
-        $loader = new FilesystemLoader(PathFinder::getAppPath() . DS . 'Views');
+        $loader = new FilesystemLoader(C::Storage()->getAppPath() . DS . 'Views');
 
         // Add views of modules (except App) with module's name as namespace
         foreach(Handler::getInstance()->getModuleClasses() as $name => $module) {
