@@ -175,6 +175,10 @@ class Guard extends Module implements ModuleInterface
     {
         $u = $username;
 
+        if(is_string($u)) {
+            $u = $this->findUserByUsername($u);
+        }
+
         // Get user
         if(!$u instanceof $this->user_class) {
             // Sanitize e-mail
@@ -325,7 +329,7 @@ class Guard extends Module implements ModuleInterface
     }
 
     /**
-     * Find a user by it's username
+     * Find a user by its username
      *
      * @param string  $username  the username
      *
