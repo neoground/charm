@@ -36,7 +36,7 @@ class CronRunCommand extends Command
      * @param InputInterface   $input
      * @param OutputInterface  $output
      *
-     * @return bool
+     * @return int
      *
      * @throws \Charm\Crown\Exceptions\InvalidCronjobException
      */
@@ -46,6 +46,6 @@ class CronRunCommand extends Command
         $c = Charm::Crown();
         $c->setConsoleOutput($output);
         $c->run();
-        return true;
+        return Command::SUCCESS;
     }
 }

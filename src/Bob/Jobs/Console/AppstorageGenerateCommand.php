@@ -35,7 +35,7 @@ class AppstorageGenerateCommand extends Command
      * @param InputInterface   $input
      * @param OutputInterface  $output
      *
-     * @return bool
+     * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -48,6 +48,6 @@ class AppstorageGenerateCommand extends Command
         }
 
         $output->writeln('Done!');
-        return true;
+        return Command::SUCCESS;
     }
 }

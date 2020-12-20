@@ -65,6 +65,6 @@ class DbMigrateCommand extends Command
         }
 
         $output->writeln('<info>Done!</info>');
-        return true;
+        return Command::SUCCESS;
     }
 }

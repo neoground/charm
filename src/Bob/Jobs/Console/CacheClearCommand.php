@@ -36,7 +36,7 @@ class CacheClearCommand extends Command
      * @param InputInterface   $input
      * @param OutputInterface  $output
      *
-     * @return bool
+     * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -58,7 +58,7 @@ class CacheClearCommand extends Command
         }
 
         $output->writeln('Done!');
-        return true;
+        return Command::SUCCESS;
     }
 
     /**
