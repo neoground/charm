@@ -44,3 +44,10 @@ this entire world by starting with C::
 
   getErrors() : array ['request_key' => 'value', 'age' => 'wrongFormat', 'name' => 'empty']
   ```
+  
+### PHP 8 Roadmap
+
+- Move routes system to controller class + method attributes to make code cleaner + easier
+  - go through classes + methods instead of routes files, add filter methods
+  - documentation
+- Code refactoring: Better / less docblocks, better argument names etc.
