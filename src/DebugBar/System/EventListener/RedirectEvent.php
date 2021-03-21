@@ -34,7 +34,10 @@ class RedirectEvent extends EventListener
     {
         if(C::Config()->get('main:debug.debugmode', false)) {
             // Collect all data in file
-            C::DebugBar()->getInstance()->collect();
+            $instance = C::DebugBar()->getInstance();
+            if(is_object($instance)) {
+                $instance->collect();
+            }
         }
     }
 }
