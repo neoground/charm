@@ -5,8 +5,7 @@
 
 namespace Charm\Bob\Jobs\Console;
 
-use Charm\Vivid\Charm;
-use Charm\Vivid\PathFinder;
+use Charm\Vivid\C;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -42,10 +41,10 @@ class CacheClearCommand extends Command
     {
         // AppStorage
         $output->writeln('Removing AppStorage cache file');
-        Charm::AppStorage()->clearCache();
+        C::AppStorage()->clearCache();
 
         // Clear views cache
-        $dir = PathFinder::getCachePath() . DS . 'views';
+        $dir = C::Storage()->getCachePath() . DS . 'views';
         if(file_exists($dir)) {
             $output->writeln('Removing Views cache');
             $this->removeDirectoryContent($dir);
@@ -55,6 +54,11 @@ class CacheClearCommand extends Command
         if(function_exists('opcache_reset')) {
             $output->writeln('Resetting opcache');
             opcache_reset();
+        }
+
+        if(C::has('Events')) {
+            $output->writeln('Firing cache clear event');
+            C::Event()->fire('Cache', 'clear');
         }
 
         $output->writeln('Done!');
