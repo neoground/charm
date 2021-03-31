@@ -234,11 +234,11 @@ class Smtp implements MailmanDriverInterface
         if($ret === false) {
             $this->success = false;
 
-            if(Charm::has('Events')) {
+            if(Charm::has('Event')) {
                 Charm::Event()->fire('Mailman', 'sentSuccess');
             }
         } else {
-            if(Charm::has('Events')) {
+            if(Charm::has('Event')) {
                 Charm::Event()->fire('Mailman', 'sentError');
             }
         }

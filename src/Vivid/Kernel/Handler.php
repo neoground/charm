@@ -508,7 +508,7 @@ class Handler
     public function shutdown()
     {
         // Fire shutdown event
-        if(C::has('Events')) {
+        if(C::has('Event')) {
             C::Event()->fire('Charm', 'shutdown');
         }
 

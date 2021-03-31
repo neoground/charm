@@ -56,7 +56,7 @@ class CacheClearCommand extends Command
             opcache_reset();
         }
 
-        if(C::has('Events')) {
+        if(C::has('Event')) {
             $output->writeln('Firing cache clear event');
             C::Event()->fire('Cache', 'clear');
         }

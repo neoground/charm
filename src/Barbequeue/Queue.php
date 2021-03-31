@@ -50,7 +50,7 @@ class Queue extends Module implements ModuleInterface
             Charm::Logging()->debug('[BBQ] Pushing job to queue: ' . $entry->getMethod());
         }
 
-        if(Charm::has('Events')) {
+        if(Charm::has('Event')) {
             Charm::Event()->fire('Queue', 'push');
         }
 
@@ -72,7 +72,7 @@ class Queue extends Module implements ModuleInterface
             $worker_id = 1;
         }
 
-        if(Charm::has('Events')) {
+        if(Charm::has('Event')) {
             Charm::Event()->fire('Queue', 'run');
         }
 
@@ -133,7 +133,7 @@ class Queue extends Module implements ModuleInterface
             }
         }
 
-        if(Charm::has('Events')) {
+        if(Charm::has('Event')) {
             Charm::Event()->fire('Queue', 'done');
         }
 

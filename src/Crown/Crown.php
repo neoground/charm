@@ -51,7 +51,7 @@ class Crown extends Module implements ModuleInterface
      */
     public function run()
     {
-        if (Charm::has('Events')) {
+        if (Charm::has('Event')) {
             Charm::Event()->fire('Crown', 'run');
         }
 

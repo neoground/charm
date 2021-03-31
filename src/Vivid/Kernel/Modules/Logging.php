@@ -101,7 +101,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
             return false;
         }
 
-        if(Charm::has('Events')) {
+        if(Charm::has('Event')) {
             Charm::Event()->fire('Logging', 'debug');
         }
         if(Charm::has('DebugBar')) {
@@ -126,7 +126,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
             return false;
         }
 
-        if(Charm::has('Events')) {
+        if(Charm::has('Event')) {
             Charm::Event()->fire('Logging', 'emergency');
         }
         if(Charm::has('DebugBar')) {
@@ -154,7 +154,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
             return false;
         }
 
-        if(Charm::has('Events')) {
+        if(Charm::has('Event')) {
             Charm::Event()->fire('Logging', 'alert');
         }
         if(Charm::has('DebugBar')) {
@@ -181,7 +181,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
             return false;
         }
 
-        if(Charm::has('Events')) {
+        if(Charm::has('Event')) {
             Charm::Event()->fire('Logging', 'critical');
         }
         if(Charm::has('DebugBar')) {
@@ -207,7 +207,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
             return false;
         }
 
-        if(Charm::has('Events')) {
+        if(Charm::has('Event')) {
             Charm::Event()->fire('Logging', 'error');
         }
         if(Charm::has('DebugBar')) {
@@ -235,7 +235,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
             return false;
         }
 
-        if(Charm::has('Events')) {
+        if(Charm::has('Event')) {
             Charm::Event()->fire('Logging', 'warning');
         }
         if(Charm::has('DebugBar')) {
@@ -260,7 +260,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
             return false;
         }
 
-        if(Charm::has('Events')) {
+        if(Charm::has('Event')) {
             Charm::Event()->fire('Logging', 'notice');
         }
         if(Charm::has('DebugBar')) {
@@ -287,7 +287,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
             return false;
         }
 
-        if(Charm::has('Events')) {
+        if(Charm::has('Event')) {
             Charm::Event()->fire('Logging', 'info');
         }
         if(Charm::has('DebugBar')) {
@@ -313,7 +313,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
             return false;
         }
 
-        if(Charm::has('Events')) {
+        if(Charm::has('Event')) {
             Charm::Event()->fire('Logging', $level);
         }
 
