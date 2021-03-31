@@ -194,6 +194,9 @@ class Handler
         // Init the whole system
         $this->initSystem();
 
+        // Post init hooks
+        $this->callPostInitHooks();
+
         // TODO: Dynamize version string
         $app = new Application('Bob from Charm', '1.0');
 

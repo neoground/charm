@@ -58,7 +58,6 @@ class EventProvider extends Module implements ModuleInterface
                             $class = $namespace . "\\" . $pathinfo['filename'];
 
                             if (class_exists($class)) {
-                                /** @var ValidationInstance $instance */
                                 $instance = new $class;
                                 $instance->addEvent();
                             }
