@@ -32,9 +32,12 @@ class ShutdownEvent extends EventListener
      */
     public function fire()
     {
-        if(C::Config()->get('main:debug.debugmode', false)) {
-            // Collect all data in file
-            C::DebugBar()->getInstance()->collect();
+        if(C::Config()->get('main:debug.debugmode', false) && C::has('DebugBar')) {
+            // Collect all data in file if enabled
+            $instance = C::DebugBar()->getInstance();
+            if(is_object($instance)) {
+                C::DebugBar()->getInstance()->collect();
+            }
         }
     }
 }

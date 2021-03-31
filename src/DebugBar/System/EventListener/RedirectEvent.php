@@ -32,7 +32,7 @@ class RedirectEvent extends EventListener
      */
     public function fire()
     {
-        if(C::Config()->get('main:debug.debugmode', false)) {
+        if(C::Config()->get('main:debug.debugmode', false) && C::has('DebugBar')) {
             // Collect all data in file
             $instance = C::DebugBar()->getInstance();
             if(is_object($instance)) {

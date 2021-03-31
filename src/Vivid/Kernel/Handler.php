@@ -6,7 +6,6 @@
 namespace Charm\Vivid\Kernel;
 
 use Charm\Vivid\C;
-use Charm\Vivid\Charm;
 use Charm\Vivid\Exceptions\ModuleNotFoundException;
 use Charm\Vivid\Exceptions\OutputException;
 use Charm\Vivid\Exceptions\ViewException;
@@ -21,9 +20,9 @@ use Symfony\Component\Console\Application;
 use Twig\Error\RuntimeError;
 
 /**
- * Class Init
+ * Class Handler
  *
- * Initializing the system.
+ * Handling system init, execution, shutdown.
  *
  * @package Charm\Vivid\Kernel
  */
@@ -197,8 +196,7 @@ class Handler
         // Post init hooks
         $this->callPostInitHooks();
 
-        // TODO: Dynamize version string
-        $app = new Application('Bob from Charm', '1.0');
+        $app = new Application('Bob from Charm', C::VERSION);
 
         // Add commands from all modules (including the app itself)
         foreach($this->getModuleClasses() as $name => $module) {
@@ -265,7 +263,7 @@ class Handler
     {
         // Get all modules defined in app config
         try {
-            $modules = Charm::Config()->get($module . '#modules:modules');
+            $modules = C::Config()->get($module . '#modules:modules');
         } catch (\Exception $e) {
             // Invalid, so no dependency.
             return false;
@@ -414,8 +412,8 @@ class Handler
             $response = $this->getModule('Router')->dispatch();
 
             // Time measurement
-            if(Charm::Config()->inDebugMode()) {
-                Charm::AppStorage()->set('Charm', 'time_controller', microtime(true));
+            if(C::Config()->inDebugMode()) {
+                C::AppStorage()->set('Charm', 'time_controller', microtime(true));
             }
 
         } catch (HttpRouteNotFoundException $e) {
@@ -431,7 +429,7 @@ class Handler
 
         // Render method must exist
         if (!is_object($response) || !method_exists($response, 'render')) {
-            Charm::Logging()->error('[OUTPUT] No output provided by method.');
+            C::Logging()->error('[OUTPUT] No output provided by method.');
             return $this->outputError('NoOutputProvided', 501);
         }
 
