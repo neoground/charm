@@ -199,6 +199,8 @@ class ViewExtension extends AbstractExtension
      *
      * @param string  $data      input value
      * @param int     $decimals  (opt.) the decimals (default: 2)
+     * @param string  $decimal   (opt.) decimal separator
+     * @param string  $thousands (opt.) thousands separator
      *
      * @return int|string
      */

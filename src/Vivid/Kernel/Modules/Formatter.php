@@ -112,10 +112,10 @@ class Formatter extends Module implements ModuleInterface
      */
     public function formatMoney($cash, $decimals = 2, $decimal = null, $thousands = null)
     {
-        if(empty($decimal)) {
+        if($decimal === null) {
             $decimal = Charm::Config()->get('main:local.formatting.decimal');
         }
-        if(empty($thousands)) {
+        if($thousands === null) {
             $thousands = Charm::Config()->get('main:local.formatting.thousands');
         }
 
