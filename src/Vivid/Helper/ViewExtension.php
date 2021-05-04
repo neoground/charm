@@ -202,9 +202,9 @@ class ViewExtension extends AbstractExtension
      *
      * @return int|string
      */
-    public function formatMoney($data, $decimals = 2)
+    public function formatMoney($data, $decimals = 2, $decimal = null, $thousands = null)
     {
-        return Charm::Formatter()->formatMoney($data, $decimals);
+        return Charm::Formatter()->formatMoney($data, $decimals, $decimal, $thousands);
     }
 
     /**

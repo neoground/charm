@@ -105,16 +105,22 @@ class Formatter extends Module implements ModuleInterface
      *
      * @param string  $cash      input value
      * @param int     $decimals  (opt.) the decimals (default: 2)
+     * @param string  $decimal   (opt.) decimal separator
+     * @param string  $thousands (opt.) thousands separator
      *
      * @return int|string
      */
-    public function formatMoney($cash, $decimals = 2)
+    public function formatMoney($cash, $decimals = 2, $decimal = null, $thousands = null)
     {
+        if(empty($decimal)) {
+            $decimal = Charm::Config()->get('main:local.formatting.decimal');
+        }
+        if(empty($thousands)) {
+            $thousands = Charm::Config()->get('main:local.formatting.thousands');
+        }
+
         if (!empty($cash)) {
-            return number_format((float)$cash, $decimals,
-                Charm::Config()->get('main:local.formatting.decimal'),
-                Charm::Config()->get('main:local.formatting.thousands')
-            );
+            return number_format((float)$cash, $decimals, $decimal, $thousands);
         }
         return 0;
     }

@@ -10,11 +10,10 @@
     }
   ],
   "require": {
-    "php": ">=7.3",
+    "php": ">=7.4",
     "ext-json": "*",
     "ext-fileinfo": "*",
     "ext-openssl": "*",
-    "illuminate/database": "^8.32",
     "monolog/monolog": "^2.2",
     "nesbot/carbon": "^2.46",
     "symfony/console": "^5.2",
@@ -31,7 +30,8 @@
     "phpunit/phpunit": "^9.5",
     "opis/closure": "^3.6",
     "spatie/db-dumper": "^2.21",
-    "claviska/simpleimage": "^3.6"
+    "claviska/simpleimage": "^3.6",
+    "illuminate/database": "^8.40"
   },
   "suggest": {
     "ext-redis": "For native redis support instead of using predis"
