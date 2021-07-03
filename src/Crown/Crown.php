@@ -117,8 +117,28 @@ class Crown extends Module implements ModuleInterface
                 throw new InvalidCronjobException("Job must extend the Cronjob class");
             }
 
+            // Get and validate cron expression
+            $expression = $job->getExpression();
+            if(empty($expression) || !CronExpression::isValidExpression($expression)) {
+
+                if(is_object($this->output)) {
+                    $this->output->writeln('Invalid cronjob expression: ' . $expression
+                        . ' for job: ' . $job->getName(),
+                        OutputInterface::VERBOSITY_VERBOSE);
+                }
+
+                continue;
+            }
+
+            if(is_object($this->output)) {
+                $this->output->writeln('Checking cronjob for run: ' . $job->getName()
+                    . '. Expression: ' . $expression,
+                    OutputInterface::VERBOSITY_VERBOSE);
+            }
+
             // Is job due in this minute?
             $cron = new CronExpression($job->getExpression());
+            $this->output->writeln($job->getExpression());
             if ($cron->isDue()) {
                 // Yup. Run it!
                 $this->executeCronJob($job);

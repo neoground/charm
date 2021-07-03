@@ -27,6 +27,9 @@ class DebugBar extends Module implements ModuleInterface
     /** @var JavascriptRenderer the javascript renderer instance */
     protected $debugBarRenderer;
 
+    /** @var bool is debug bar enabled? */
+    protected $enabled;
+
     /**
      * Load the module
      *
@@ -34,18 +37,15 @@ class DebugBar extends Module implements ModuleInterface
      */
     public function loadModule()
     {
+        $this->enabled = false;
+
         // Only init if we're in debug mode
-        if(C::Config()->get('main:debug.debugmode', false)) {
+        if(C::Config()->inDebugMode()) {
             $this->initDebugBar();
         }
     }
 
-    /**
-     * Init the debug bar
-     *
-     * @return bool
-     */
-    private function initDebugBar()
+    private function initDebugBar() : bool
     {
         // No debug bar if disabled or not installed
         if(!C::Config()->get('main:debug.show_debugbar', false)
@@ -54,6 +54,7 @@ class DebugBar extends Module implements ModuleInterface
             return false;
         }
 
+        $this->enabled = true;
         $this->debugBar = new StandardDebugBar();
 
         // Set storage if enabled
@@ -64,25 +65,19 @@ class DebugBar extends Module implements ModuleInterface
         return true;
     }
 
-    /**
-     * Get debug bar instance
-     *
-     * @return StandardDebugBar
-     */
-    public function getInstance()
+    public function isEnabled() : bool
+    {
+        return $this->enabled;
+    }
+
+    public function getInstance() : StandardDebugBar
     {
         return $this->debugBar;
     }
 
-    /**
-     * Get debug bar javascript renderer if debug bar is enabled
-     *
-     * @return JavascriptRenderer
-     */
-    public function getRenderer()
+    public function getRenderer() : JavascriptRenderer
     {
-        if(!is_object($this->debugBarRenderer)
-            && C::Config()->get('main:debug.show_debugbar', false)) {
+        if(!is_object($this->debugBarRenderer) && $this->isEnabled()) {
             $this->debugBarRenderer = $this->debugBar->getJavascriptRenderer();
             $this->debugBarRenderer->setBaseUrl(cBaseUrl() . '/vendor/maximebf/debugbar/src/DebugBar/Resources');
             $this->debugBarRenderer->setOpenHandlerUrl(cBaseUrl() . '/charm/debugbar_handler');
@@ -99,9 +94,7 @@ class DebugBar extends Module implements ModuleInterface
     public function getRenderHead()
     {
         // Only in debug mode!
-        if(!C::Config()->get('main:debug.debugmode', false)
-            || !C::Config()->get('main:debug.show_debugbar', false)
-        ) {
+        if(!$this->isEnabled()) {
             return '';
         }
 
@@ -160,9 +153,7 @@ class DebugBar extends Module implements ModuleInterface
     public function getRenderBar()
     {
         // Only in debug mode!
-        if(!C::Config()->get('main:debug.debugmode', false)
-            || !C::Config()->get('main:debug.show_debugbar', false)
-        ) {
+        if(!$this->isEnabled()) {
             return '';
         }
 
@@ -179,8 +170,10 @@ class DebugBar extends Module implements ModuleInterface
      */
     public function debugVar(...$params)
     {
-        foreach($params as $param) {
-            $this->getInstance()['messages']->debug($param);
+        if($this->isEnabled()) {
+            foreach ($params as $param) {
+                $this->getInstance()['messages']->debug($param);
+            }
         }
     }
 }

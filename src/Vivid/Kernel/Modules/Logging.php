@@ -96,19 +96,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
      */
     public function debug($message, array $context = [])
     {
-        if(!$this->enabled) {
-            return false;
-        }
-
-        if(C::has('Event')) {
-            C::Event()->fire('Logging', 'debug');
-        }
-        if(C::has('DebugBar')) {
-            $db = C::DebugBar()->getInstance();
-            $db['messages']->debug($message);
-        }
-
-        return $this->logger->debug($message, $context);
+        return $this->log('debug', $message, $context);
     }
 
     /**
@@ -121,19 +109,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
      */
     public function emergency($message, array $context = [])
     {
-        if(!$this->enabled) {
-            return false;
-        }
-
-        if(C::has('Event')) {
-            C::Event()->fire('Logging', 'emergency');
-        }
-        if(C::has('DebugBar')) {
-            $db = C::DebugBar()->getInstance();
-            $db['messages']->emergency($message);
-        }
-
-        return $this->logger->emergency($message, $context);
+        return $this->log('emergency', $message, $context);
     }
 
     /**
@@ -149,19 +125,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
      */
     public function alert($message, array $context = [])
     {
-        if(!$this->enabled) {
-            return false;
-        }
-
-        if(C::has('Event')) {
-            C::Event()->fire('Logging', 'alert');
-        }
-        if(C::has('DebugBar')) {
-            $db = C::DebugBar()->getInstance();
-            $db['messages']->alert($message);
-        }
-
-        return $this->logger->alert($message, $context);
+        return $this->log('alert', $message, $context);
     }
 
     /**
@@ -176,19 +140,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
      */
     public function critical($message, array $context = [])
     {
-        if(!$this->enabled) {
-            return false;
-        }
-
-        if(C::has('Event')) {
-            C::Event()->fire('Logging', 'critical');
-        }
-        if(C::has('DebugBar')) {
-            $db = C::DebugBar()->getInstance();
-            $db['messages']->crit($message);
-        }
-
-        return $this->logger->critical($message, $context);
+        return $this->log('critical', $message, $context);
     }
 
     /**
@@ -202,19 +154,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
      */
     public function error($message, array $context = [])
     {
-        if(!$this->enabled) {
-            return false;
-        }
-
-        if(C::has('Event')) {
-            C::Event()->fire('Logging', 'error');
-        }
-        if(C::has('DebugBar')) {
-            $db = C::DebugBar()->getInstance();
-            $db['messages']->err($message);
-        }
-
-        return $this->logger->error($message, $context);
+        return $this->log('error', $message, $context);
     }
 
     /**
@@ -230,19 +170,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
      */
     public function warning($message, array $context = [])
     {
-        if(!$this->enabled) {
-            return false;
-        }
-
-        if(C::has('Event')) {
-            C::Event()->fire('Logging', 'warning');
-        }
-        if(C::has('DebugBar')) {
-            $db = C::DebugBar()->getInstance();
-            $db['warning']->emergency($message);
-        }
-
-        return $this->logger->warning($message, $context);
+        return $this->log('warning', $message, $context);
     }
 
     /**
@@ -255,19 +183,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
      */
     public function notice($message, array $context = [])
     {
-        if(!$this->enabled) {
-            return false;
-        }
-
-        if(C::has('Event')) {
-            C::Event()->fire('Logging', 'notice');
-        }
-        if(C::has('DebugBar')) {
-            $db = C::DebugBar()->getInstance();
-            $db['messages']->notice($message);
-        }
-
-        return $this->logger->notice($message, $context);
+        return $this->log('notice', $message, $context);
     }
 
     /**
@@ -282,19 +198,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
      */
     public function info($message, array $context = [])
     {
-        if(!$this->enabled) {
-            return false;
-        }
-
-        if(C::has('Event')) {
-            C::Event()->fire('Logging', 'info');
-        }
-        if(C::has('DebugBar')) {
-            $db = C::DebugBar()->getInstance();
-            $db['messages']->info($message);
-        }
-
-        return $this->logger->info($message, $context);
+        return $this->log('info', $message, $context);
     }
 
     /**
@@ -312,10 +216,17 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
             return false;
         }
 
+        $level = strtolower($level);
+
         if(C::has('Event')) {
             C::Event()->fire('Logging', $level);
         }
 
-        return $this->logger->log($level, $message, $context);
+        if(C::has('DebugBar') && C::DebugBar()->isEnabled()) {
+            $db = C::DebugBar()->getInstance();
+            $db['messages']->$level($message);
+        }
+
+        return $this->logger->addRecord(Logger::toMonologLevel($level), $message, $context);
     }
 }
