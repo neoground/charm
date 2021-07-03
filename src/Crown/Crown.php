@@ -8,7 +8,7 @@ namespace Charm\Crown;
 use Carbon\Carbon;
 use Charm\Crown\Exceptions\InvalidCronjobException;
 use Charm\Vivid\Base\Module;
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Cron\CronExpression;
@@ -51,10 +51,11 @@ class Crown extends Module implements ModuleInterface
      */
     public function run()
     {
-        if (Charm::has('Event')) {
-            Charm::Event()->fire('Crown', 'run');
+        if (C::has('Event')) {
+            C::Event()->fire('Crown', 'run');
         }
 
+        C::Logging()->debug('Running cron jobs');
         if($this->output) {
             $this->output->writeln('<info>Runninig cron jobs</info>');
         }
@@ -102,7 +103,7 @@ class Crown extends Module implements ModuleInterface
             // Job existing?
             if (!class_exists($class)) {
                 // Job (class) not existing!
-                Charm::Logging()->notice('[CROWN] Got invalid job. Class not existing: ' . $class);
+                C::Logging()->notice('[CROWN] Got invalid job. Class not existing: ' . $class);
                 if ($this->output) {
                     $this->output->writeln('<error>Got invalid job. Class not existing: ' . $class . '</error>');
                 }
@@ -119,7 +120,7 @@ class Crown extends Module implements ModuleInterface
             }
 
             // Is job due in this minute?
-            $cron = CronExpression::factory($job->getExpression());
+            $cron = new CronExpression($job->getExpression());
             if ($cron->isDue()) {
                 // Yup. Run it!
                 $this->executeCronJob($job);
@@ -134,7 +135,7 @@ class Crown extends Module implements ModuleInterface
      */
     private function executeCronJob($job)
     {
-        Charm::Logging()->info('[CROWN] Running job: ' . $job->getName());
+        C::Logging()->info('[CROWN] Running job: ' . get_class($job) . ' - ' . $job->getName());
 
         if ($this->output) {
             $this->output->writeln('[' . Carbon::now()->toDateTimeString() . '] Running: ' . $job->getName());
@@ -145,7 +146,7 @@ class Crown extends Module implements ModuleInterface
 
             if (!$ret) {
                 // Job didn't run successful
-                Charm::Logging()->warning('[CROWN] Job exited with false: ' . $job->getName());
+                C::Logging()->warning('[CROWN] Job exited with false: ' . $job->getName());
                 if ($this->output) {
                     $this->output->writeln('<error>Job exited with false: ' . $job->getName() . '</error>');
                 }
@@ -153,7 +154,7 @@ class Crown extends Module implements ModuleInterface
 
         } catch (\Exception $e) {
             // Log exception
-            Charm::Logging()->error('[CROWN] Exception', [$e->getMessage()]);
+            C::Logging()->error('[CROWN] Exception', [$e->getMessage()]);
             if ($this->output) {
                 $this->output->writeln('<error> Exception: ' . $e->getMessage() . '</error>');
             }
