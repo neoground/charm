@@ -138,7 +138,6 @@ class Crown extends Module implements ModuleInterface
 
             // Is job due in this minute?
             $cron = new CronExpression($job->getExpression());
-            $this->output->writeln($job->getExpression());
             if ($cron->isDue()) {
                 // Yup. Run it!
                 $this->executeCronJob($job);
