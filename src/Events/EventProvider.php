@@ -6,6 +6,7 @@
 namespace Charm\Events;
 
 use Charm\Vivid\Base\Module;
+use Charm\Vivid\C;
 use Charm\Vivid\Charm;
 use Charm\Vivid\Exceptions\ModuleNotFoundException;
 use Charm\Vivid\Kernel\Handler;
@@ -47,10 +48,7 @@ class EventProvider extends Module implements ModuleInterface
 
                     if(file_exists($dir)) {
                         // Add all events in this directory
-                        $files = array_diff(scandir($dir), ['..', '.']);
-
-                        // Go through all files
-                        foreach ($files as $file) {
+                        foreach (C::Storage()->scanDir($dir) as $file) {
                             $fullpath = $dir . DS . $file;
                             $pathinfo = pathinfo($fullpath);
                             require_once($fullpath);

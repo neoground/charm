@@ -39,13 +39,10 @@ class ClearDebugbarCache extends Cronjob
         $now = time();
 
         if(file_exists($path)) {
-            $files = scandir($path);
-            foreach($files as $file) {
-                if (is_file($file)) {
-                    // When file is older than 48 hours, delete it
-                    if ($now - filemtime($file) >= 60 * 60 * 48) {
-                        unlink($file);
-                    }
+            foreach(C::Storage()->scanDirForFiles($path) as $file) {
+                // When file is older than 48 hours, delete it
+                if ($now - filemtime($file) >= 60 * 60 * 48) {
+                    unlink($file);
                 }
             }
         }

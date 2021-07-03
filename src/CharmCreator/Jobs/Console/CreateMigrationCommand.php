@@ -6,6 +6,7 @@
 namespace Charm\CharmCreator\Jobs\Console;
 
 use Carbon\Carbon;
+use Charm\Vivid\C;
 use Charm\Vivid\Charm;
 use Charm\Vivid\PathFinder;
 use Symfony\Component\Console\Command\Command;
@@ -90,7 +91,7 @@ class CreateMigrationCommand extends Command
         $date = Carbon::now()->format('Ymd');
 
         $counter = 1;
-        foreach(scandir($dir) as $file) {
+        foreach(C::Storage()->scanDir($dir) as $file) {
             if(in_string($date, $file)) {
                 $counter++;
             }

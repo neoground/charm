@@ -90,10 +90,8 @@ class Crown extends Module implements ModuleInterface
      */
     private function checkCronJobs($dir, $namespace)
     {
-        $files = array_diff(scandir($dir), ['..', '.']);
-
         // Go through all cron jobs
-        foreach ($files as $file) {
+        foreach (C::Storage()->scanDir($dir) as $file) {
             $fullpath = $dir . DS . $file;
             $pathinfo = pathinfo($fullpath);
             require_once($fullpath);

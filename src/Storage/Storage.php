@@ -281,4 +281,61 @@ class Storage extends Module implements ModuleInterface
         return str_replace(C::Router()->getBaseUrl(), cPath('/'), $url);
     }
 
+    /**
+     * Scan a local dir for files and directories
+     *
+     * Will exclude dotfiles
+     *
+     * @param string $dir absolute path to directory
+     *
+     * @return array|false returns false on error
+     */
+    public function scanDir($dir)
+    {
+        if(!file_exists($dir) || !is_dir($dir)) {
+            return false;
+        }
+        return array_diff(scandir($dir), ['.', '..']);
+    }
+
+    /**
+     * Scan a local dir for directories only
+     *
+     * Will exclude dotfiles
+     *
+     * @param string $dir absolute path to directory
+     *
+     * @return array|false returns false on error
+     */
+    public function scanDirForDirectories($dir)
+    {
+        $ret = [];
+        foreach($this->scanDir($dir) as $file) {
+            if(is_dir($file)) {
+                $ret[] = $file;
+            }
+        }
+        return $ret;
+    }
+
+    /**
+     * Scan a local dir for files only
+     *
+     * Will exclude dotfiles
+     *
+     * @param string $dir absolute path to directory
+     *
+     * @return array|false returns false on error
+     */
+    public function scanDirForFiles($dir)
+    {
+        $ret = [];
+        foreach($this->scanDir($dir) as $file) {
+            if(is_file($file)) {
+                $ret[] = $file;
+            }
+        }
+        return $ret;
+    }
+
 }
