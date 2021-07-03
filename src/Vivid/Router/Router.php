@@ -207,7 +207,7 @@ class Router extends Module implements ModuleInterface
                         foreach ($attributes as $attribute) {
                             $attr = $attribute->newInstance();
                             $attr->call_class = $class;
-                            $attr->call_method = $method;
+                            $attr->call_method = $method->getName();
 
                             // Add route
                             $attribute_routes[] = $attr;
