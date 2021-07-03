@@ -5,8 +5,7 @@
 
 namespace Charm\Barbequeue\Jobs\Console;
 
-use Charm\Crown\Crown;
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -62,7 +61,7 @@ class QueueRunCommand extends Command
         $output->writeln('<info>Starting queue ' . $name . ', worker ID: ' . $worker . '</info>');
 
         // Execute bbq
-        $q = Charm::Queue();
+        $q = C::Queue();
         $q->run($name, $worker);
 
         $output->writeln('<info>Done!</info>');

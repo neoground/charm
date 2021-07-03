@@ -5,7 +5,7 @@
 
 namespace Charm\Bob\Jobs\Console;
 
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -40,7 +40,7 @@ class AppstorageClearCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln('<info>Removing AppStorage cache file...</info>');
-        Charm::AppStorage()->clearCache();
+        C::AppStorage()->clearCache();
 
         // Also clear opcache
         if(function_exists('opcache_reset')) {

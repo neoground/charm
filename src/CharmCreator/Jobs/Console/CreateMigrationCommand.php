@@ -7,8 +7,6 @@ namespace Charm\CharmCreator\Jobs\Console;
 
 use Carbon\Carbon;
 use Charm\Vivid\C;
-use Charm\Vivid\Charm;
-use Charm\Vivid\PathFinder;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -86,7 +84,7 @@ class CreateMigrationCommand extends Command
             'TABLENAME' => $table_name
         ];
 
-        $dir = PathFinder::getAppPath() . DS . 'System' . DS . 'Migrations';
+        $dir = C::Storage()->getAppPath() . DS . 'System' . DS . 'Migrations';
 
         $date = Carbon::now()->format('Ymd');
 
@@ -101,7 +99,7 @@ class CreateMigrationCommand extends Command
 
         $filename = $date . '_' . $counter . '_' . $table_name . '.php';
 
-        Charm::CharmCreator()->createMigration($dir . DS . $filename, $data, $template);
+        C::CharmCreator()->createMigration($dir . DS . $filename, $data, $template);
 
         $output->writeln('Created migration ' . $filename
             . ' - ' . $table_name_formatted);
@@ -113,11 +111,11 @@ class CreateMigrationCommand extends Command
                 'TABLENAME' => $table_name
             ];
 
-            $dir = PathFinder::getAppPath() . DS . 'Models';
+            $dir = C::Storage()->getAppPath() . DS . 'Models';
 
             $filename = $table_name_formatted . '.php';
 
-            Charm::CharmCreator()->createModel($dir . DS . $filename, $data, $template);
+            C::CharmCreator()->createModel($dir . DS . $filename, $data, $template);
 
             $output->writeln('Created model ' . $filename);
         }

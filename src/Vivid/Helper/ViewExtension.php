@@ -6,7 +6,7 @@
 namespace Charm\Vivid\Helper;
 
 use Carbon\Carbon;
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Output\View;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -59,7 +59,7 @@ class ViewExtension extends AbstractExtension
      */
     public function getAssetsUrl()
     {
-        return Charm::Router()->getAssetsUrl();
+        return C::Router()->getAssetsUrl();
     }
 
     /**
@@ -69,7 +69,7 @@ class ViewExtension extends AbstractExtension
      */
     public function getBaseUrl()
     {
-        return Charm::Router()->getBaseUrl();
+        return C::Router()->getBaseUrl();
     }
 
     /**
@@ -82,7 +82,7 @@ class ViewExtension extends AbstractExtension
      */
     public function getUrl($name, $args = [])
     {
-        return Charm::Router()->buildUrl($name, $args);
+        return C::Router()->buildUrl($name, $args);
     }
 
     /**
@@ -107,7 +107,7 @@ class ViewExtension extends AbstractExtension
      */
     public function getCurrentUrl()
     {
-        return Charm::Router()->getCurrentUrl();
+        return C::Router()->getCurrentUrl();
     }
 
     /**
@@ -117,7 +117,7 @@ class ViewExtension extends AbstractExtension
      */
     public function getRelativeUrl()
     {
-        return Charm::Router()->getRelativeUrl();
+        return C::Router()->getRelativeUrl();
     }
 
     /**
@@ -130,7 +130,7 @@ class ViewExtension extends AbstractExtension
      */
     public function getConfig($key, $default = null)
     {
-        return Charm::Config()->get($key, $default);
+        return C::Config()->get($key, $default);
     }
 
     /**
@@ -167,7 +167,7 @@ class ViewExtension extends AbstractExtension
      */
     public function formatDate($data)
     {
-        return Charm::Formatter()->formatDate($data);
+        return C::Formatter()->formatDate($data);
     }
 
     /**
@@ -179,7 +179,7 @@ class ViewExtension extends AbstractExtension
      */
     public function formatDateShort($data)
     {
-        return Charm::Formatter()->formatDateShort($data);
+        return C::Formatter()->formatDateShort($data);
     }
 
     /**
@@ -191,7 +191,7 @@ class ViewExtension extends AbstractExtension
      */
     public function formatDateTimeShort($data)
     {
-        return Charm::Formatter()->formatDateTimeShort($data);
+        return C::Formatter()->formatDateTimeShort($data);
     }
 
     /**
@@ -206,7 +206,7 @@ class ViewExtension extends AbstractExtension
      */
     public function formatMoney($data, $decimals = 2, $decimal = null, $thousands = null)
     {
-        return Charm::Formatter()->formatMoney($data, $decimals, $decimal, $thousands);
+        return C::Formatter()->formatMoney($data, $decimals, $decimal, $thousands);
     }
 
     /**
@@ -242,7 +242,7 @@ class ViewExtension extends AbstractExtension
      */
     public function isDebug()
     {
-        return Charm::Config()->get('main:debug.debugmode', false);
+        return C::Config()->get('main:debug.debugmode', false);
     }
 
     /**
@@ -252,7 +252,7 @@ class ViewExtension extends AbstractExtension
      */
     public function getEnvironment()
     {
-        return Charm::App()->getEnvironment();
+        return C::App()->getEnvironment();
     }
 
     /**

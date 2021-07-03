@@ -6,7 +6,6 @@
 namespace Charm\Vivid\Kernel\Output;
 
 use Charm\Vivid\C;
-use Charm\Vivid\Charm;
 use Charm\Vivid\Kernel\Interfaces\OutputInterface;
 use Charm\Vivid\Model;
 
@@ -179,11 +178,11 @@ class DataTable implements OutputInterface
     private function buildResponse()
     {
         // Get values
-        $length = Charm::Request()->get('length', 10);
-        $start = Charm::Request()->get('start');
-        $draw = Charm::Request()->get('draw');
+        $length = C::Request()->get('length', 10);
+        $start = C::Request()->get('start');
+        $draw = C::Request()->get('draw');
 
-        $order = Charm::Request()->get('order');
+        $order = C::Request()->get('order');
         $order_dir = $order[0]['dir'];
         $order_column = $order[0]['column'];
 
@@ -200,7 +199,7 @@ class DataTable implements OutputInterface
             $o_column = $this->order_cols[$order_column];
         }
 
-        $search_value = Charm::Request()->get('search')['value'];
+        $search_value = C::Request()->get('search')['value'];
 
         /** @var Model $model */
         $model = $this->model;

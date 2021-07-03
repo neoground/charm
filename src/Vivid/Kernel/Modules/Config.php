@@ -7,10 +7,9 @@ namespace Charm\Vivid\Kernel\Modules;
 
 use Carbon\Carbon;
 use Charm\Vivid\Base\Module;
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use Charm\Vivid\Exceptions\LogicException;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
-use Charm\Vivid\PathFinder;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -77,8 +76,8 @@ class Config extends Module implements ModuleInterface
 
         // Get from app storage if stored
         $cache_key = 'CF-' . $module . '-' . $filename;
-        if($cache && Charm::AppStorage()->has('Config', $cache_key)) {
-            return Charm::AppStorage()->aget('Config', $cache_key, $wanted_key, $default);
+        if($cache && C::AppStorage()->has('Config', $cache_key)) {
+            return C::AppStorage()->aget('Config', $cache_key, $wanted_key, $default);
         }
 
         // Not found or no cache usage -> return data from file
@@ -105,15 +104,15 @@ class Config extends Module implements ModuleInterface
             $envyaml = Yaml::parse($envcontent);
 
             // Merge them
-            $yaml = Charm::Arrays()->array_merge_recursive($yaml, $envyaml);
+            $yaml = C::Arrays()->array_merge_recursive($yaml, $envyaml);
         }
 
         // Store whole config in cache
         // No expiration because config is persistent until it gets removed by command.
-        Charm::AppStorage()->set('Config', $cache_key, $yaml);
+        C::AppStorage()->set('Config', $cache_key, $yaml);
 
         // Return found value
-        return Charm::get('Arrays')->get($yaml, $wanted_key, $default);
+        return C::get('Arrays')->get($yaml, $wanted_key, $default);
     }
 
     /**
@@ -202,7 +201,7 @@ class Config extends Module implements ModuleInterface
     private function getConfigFile($key, $env = false, $module = 'App')
     {
         // Default case: app config
-        $path = PathFinder::getModulePath($module) . DS . 'Config';
+        $path = C::get($module)->getBaseDirectory() . DS . 'Config';
 
         // Get filename
         if(!in_string($this->file_delimiter, $key)) {
@@ -214,7 +213,7 @@ class Config extends Module implements ModuleInterface
 
         // Local path?
         if($env) {
-            $path .= DS . 'Environments' . DS . Charm::App()->getEnvironment();
+            $path .= DS . 'Environments' . DS . C::App()->getEnvironment();
         }
 
         return $path . DS . $filename . '.yaml';

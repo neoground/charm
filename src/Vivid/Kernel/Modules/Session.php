@@ -6,9 +6,8 @@
 namespace Charm\Vivid\Kernel\Modules;
 
 use Charm\Vivid\Base\Module;
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
-use Charm\Vivid\PathFinder;
 
 /**
  * Class Session
@@ -25,7 +24,7 @@ class Session extends Module implements ModuleInterface
     public function loadModule()
     {
         // Set lifetime and session data
-        ini_set('session.gc_maxlifetime', Charm::Config()->get('main:session.expire', 720) * 60);
+        ini_set('session.gc_maxlifetime', C::Config()->get('main:session.expire', 720) * 60);
         ini_set('session.gc_divisor', 1);
         ini_set('session.gc_probability', 0);
 
@@ -35,7 +34,7 @@ class Session extends Module implements ModuleInterface
         ini_set('session.use_only_cookies', 1);
 
         // Set session name
-        session_name(Charm::Config()->get('main:session.name', 'charm'));
+        session_name(C::Config()->get('main:session.name', 'charm'));
 
         // Start session
         session_start();
@@ -87,7 +86,7 @@ class Session extends Module implements ModuleInterface
      */
     public function get($key)
     {
-        $val = Charm::Arrays()->get($_SESSION, $key, null);
+        $val = C::Arrays()->get($_SESSION, $key, null);
 
         if(empty($val)) {
             return null;
@@ -105,7 +104,7 @@ class Session extends Module implements ModuleInterface
      */
     public function has($key) : bool
     {
-        return Charm::Arrays()->has($_SESSION, $key);
+        return C::Arrays()->has($_SESSION, $key);
     }
 
     /**

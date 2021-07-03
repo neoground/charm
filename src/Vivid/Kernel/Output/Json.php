@@ -6,7 +6,6 @@
 namespace Charm\Vivid\Kernel\Output;
 
 use Charm\Vivid\C;
-use Charm\Vivid\Charm;
 use Charm\Vivid\Kernel\Interfaces\HttpCodes;
 use Charm\Vivid\Kernel\Interfaces\OutputInterface;
 
@@ -82,7 +81,7 @@ class Json implements OutputInterface, HttpCodes
     public function withPagination($total, $per_page, $custom_data = [])
     {
         $get = $_GET;
-        $page = (int) Charm::Request()->get('page', 1);
+        $page = (int) C::Request()->get('page', 1);
 
         $total_pages = ceil($total / $per_page);
 
@@ -169,7 +168,7 @@ class Json implements OutputInterface, HttpCodes
         }
 
         // Pretty output?
-        if (Charm::Config()->get('main:output.json.pretty', true)) {
+        if (C::Config()->get('main:output.json.pretty', true)) {
             return json_encode($this->data, JSON_PRETTY_PRINT);
         }
 

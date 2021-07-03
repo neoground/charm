@@ -5,7 +5,7 @@
 
 namespace Charm\Vivid\Base;
 
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\Migrations\Migration as IMigration;
 
@@ -31,7 +31,7 @@ class Migration extends IMigration
      */
     public function __construct()
     {
-        $this->database = Charm::Database()->getDatabaseConnection()->getSchemaBuilder();
+        $this->database = C::Database()->getDatabaseConnection()->getSchemaBuilder();
     }
 
     /**

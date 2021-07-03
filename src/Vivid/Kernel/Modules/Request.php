@@ -6,7 +6,7 @@
 namespace Charm\Vivid\Kernel\Modules;
 
 use Charm\Vivid\Base\Module;
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use Charm\Vivid\Elements\UploadedFile;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 
@@ -66,12 +66,12 @@ class Request extends Module implements ModuleInterface
     {
         if($sanitize !== false) {
             if(is_callable($sanitize)) {
-                return $sanitize(Charm::Arrays()->get($this->vars, $key, $default));
+                return $sanitize(C::Arrays()->get($this->vars, $key, $default));
             }
-            return strip_tags(Charm::Arrays()->get($this->vars, $key, $default));
+            return strip_tags(C::Arrays()->get($this->vars, $key, $default));
         }
 
-        return Charm::Arrays()->get($this->vars, $key, $default);
+        return C::Arrays()->get($this->vars, $key, $default);
     }
 
     /**
@@ -83,7 +83,7 @@ class Request extends Module implements ModuleInterface
      */
     public function has($key)
     {
-        return Charm::Arrays()->has($this->vars, $key);
+        return C::Arrays()->has($this->vars, $key);
     }
 
     /**
@@ -147,7 +147,7 @@ class Request extends Module implements ModuleInterface
         $headers = array_change_key_case(apache_request_headers());
         $key = strtolower($key);
 
-        return Charm::Arrays()->get($headers, $key, $default);
+        return C::Arrays()->get($headers, $key, $default);
     }
 
     /**

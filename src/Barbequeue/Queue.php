@@ -6,7 +6,7 @@
 namespace Charm\Barbequeue;
 
 use Charm\Vivid\Base\Module;
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 
 /**
@@ -46,16 +46,16 @@ class Queue extends Module implements ModuleInterface
             'args' => $entry->getArguments()
         ];
 
-        if (Charm::Config()->inDebugMode()) {
-            Charm::Logging()->debug('[BBQ] Pushing job to queue: ' . $entry->getMethod());
+        if (C::Config()->inDebugMode()) {
+            C::Logging()->debug('[BBQ] Pushing job to queue: ' . $entry->getMethod());
         }
 
-        if(Charm::has('Event')) {
-            Charm::Event()->fire('Queue', 'push');
+        if(C::has('Event')) {
+            C::Event()->fire('Queue', 'push');
         }
 
         // Add it to the queue in redis
-        return Charm::Redis()->rpush($queue_name, json_encode($job_content));
+        return C::Redis()->rpush($queue_name, json_encode($job_content));
     }
 
     /**
@@ -72,8 +72,8 @@ class Queue extends Module implements ModuleInterface
             $worker_id = 1;
         }
 
-        if(Charm::has('Event')) {
-            Charm::Event()->fire('Queue', 'run');
+        if(C::has('Event')) {
+            C::Event()->fire('Queue', 'run');
         }
 
         $this->doWork($name, $worker_id);
@@ -88,15 +88,15 @@ class Queue extends Module implements ModuleInterface
     public function clear($name)
     {
         // Get prefix
-        $prefix = Charm::Config()->get('main:bbq.name',
-            Charm::Config()->get('main:session.name', 'charm')
+        $prefix = C::Config()->get('main:bbq.name',
+            C::Config()->get('main:session.name', 'charm')
         );
 
         for ($priority = 1; $priority <= 5; $priority++) {
             // Get queue name
             $queue = $prefix . '-' . strtolower($name) . '-p' . $priority;
 
-            Charm::Redis()->del($queue);
+            C::Redis()->del($queue);
         }
     }
 
@@ -109,35 +109,35 @@ class Queue extends Module implements ModuleInterface
     private function doWork($name, $worker_id = 1)
     {
         // Get prefix
-        $prefix = Charm::Config()->get('main:bbq.name',
-            Charm::Config()->get('main:session.name', 'charm')
+        $prefix = C::Config()->get('main:bbq.name',
+            C::Config()->get('main:session.name', 'charm')
         );
 
         for ($priority = 1; $priority <= 5; $priority++) {
             // Get queue name
             $queue = $prefix . '-' . strtolower($name) . '-p' . $priority;
 
-            $count = Charm::Redis()->getClient()->llen($queue);
+            $count = C::Redis()->getClient()->llen($queue);
 
             if($count > 0) {
-                Charm::Logging()->info('[BBQ] Starting queue ' . $queue . ' - Got ' . $count . ' jobs');
+                C::Logging()->info('[BBQ] Starting queue ' . $queue . ' - Got ' . $count . ' jobs');
             }
 
             // Work as long as there are elements left in this queue
-            while (Charm::Redis()->getClient()->llen($queue) > 0) {
+            while (C::Redis()->getClient()->llen($queue) > 0) {
                 // Get first element. This is our job!
-                $job = Charm::Redis()->getClient()->lpop($queue);
+                $job = C::Redis()->getClient()->lpop($queue);
 
                 // And execute the job!
                 $this->executeJob($job, $worker_id);
             }
         }
 
-        if(Charm::has('Event')) {
-            Charm::Event()->fire('Queue', 'done');
+        if(C::has('Event')) {
+            C::Event()->fire('Queue', 'done');
         }
 
-        Charm::Logging()->debug('Worker ' . $worker_id . ' done! Terminating.');
+        C::Logging()->debug('Worker ' . $worker_id . ' done! Terminating.');
     }
 
     /**
@@ -148,7 +148,7 @@ class Queue extends Module implements ModuleInterface
      */
     private function executeJob($job, $worker_id)
     {
-        Charm::Logging()->debug('[BBQ] [Worker ' . $worker_id . '] Running: ' . $job);
+        C::Logging()->debug('[BBQ] [Worker ' . $worker_id . '] Running: ' . $job);
 
         // Get the job data
         if(is_serialized($job)) {
@@ -165,13 +165,13 @@ class Queue extends Module implements ModuleInterface
             }
 
         } catch (\Exception $e) {
-            Charm::Logging()->error('[BBQ] Exception: ' . $e->getMessage());
+            C::Logging()->error('[BBQ] Exception: ' . $e->getMessage());
             $ret = false;
         }
 
         if ($ret === false) {
             // Error for this job
-            Charm::Logging()->error('[BBQ] Error for job: ' . $job_data['method'] .
+            C::Logging()->error('[BBQ] Error for job: ' . $job_data['method'] .
                 '; Args: ' . json_encode($job_data['args']));
 
         }

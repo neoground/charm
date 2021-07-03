@@ -5,8 +5,7 @@
 
 namespace Charm\Vivid\Router\Elements;
 
-use Charm\Vivid\Charm;
-use Charm\Vivid\Exceptions\LogicException;
+use Charm\Vivid\C;
 use Charm\Vivid\Router\RouterElement;
 
 /**
@@ -194,7 +193,7 @@ class Group implements RouterElement
         $this->groups = [];
 
         if(!$inside_group) {
-            Charm::AppStorage()->append('Routes', 'Groups', $this);
+            C::AppStorage()->append('Routes', 'Groups', $this);
         }
     }
 

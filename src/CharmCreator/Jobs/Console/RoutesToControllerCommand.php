@@ -5,8 +5,7 @@
 
 namespace Charm\CharmCreator\Jobs\Console;
 
-use Charm\Crown\Crown;
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -40,7 +39,7 @@ class RoutesToControllerCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        Charm::CharmCreator()->routesToControllerMethods($output);
+        C::CharmCreator()->routesToControllerMethods($output);
         return true;
     }
 }

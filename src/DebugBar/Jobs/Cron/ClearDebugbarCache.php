@@ -5,10 +5,8 @@
 
 namespace Charm\DebugBar\Jobs\Cron;
 
-use Carbon\Carbon;
 use Charm\Crown\Cronjob;
 use Charm\Vivid\C;
-use Charm\Vivid\Charm;
 
 /**
  * Class ClearDebugbarCache

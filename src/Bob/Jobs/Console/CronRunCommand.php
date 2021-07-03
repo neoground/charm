@@ -6,7 +6,7 @@
 namespace Charm\Bob\Jobs\Console;
 
 use Charm\Crown\Crown;
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -43,7 +43,7 @@ class CronRunCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         /** @var Crown $c */
-        $c = Charm::Crown();
+        $c = C::Crown();
         $c->setConsoleOutput($output);
         $c->run();
         return Command::SUCCESS;

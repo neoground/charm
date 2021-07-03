@@ -6,9 +6,8 @@
 namespace Charm\Vivid\Kernel\Modules;
 
 use Charm\Vivid\Base\Module;
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
-use Charm\Vivid\PathFinder;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
@@ -37,19 +36,19 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
     public function loadModule()
     {
         // Logging disabled?
-        $this->enabled = Charm::Config()->get('main:logging.enabled', true);
+        $this->enabled = C::Config()->get('main:logging.enabled', true);
         if(!$this->enabled) {
             return false;
         }
 
         // Build file path
-        $path = PathFinder::getLogPath() . DS . date("Y-m-d") . ".log";
+        $path = C::Storage()->getLogPath() . DS . date("Y-m-d") . ".log";
 
         // Get log level
-        $loglevel_name = Charm::Config()->get('main:logging.level', 'info');
+        $loglevel_name = C::Config()->get('main:logging.level', 'info');
         $loglevel = Logger::toMonologLevel($loglevel_name);
 
-        $permissions = Charm::Config()->get('main:logging.file_permission', 0664);
+        $permissions = C::Config()->get('main:logging.file_permission', 0664);
 
         $logger = new Logger("charm");
         $logger->pushHandler(new StreamHandler($path, $loglevel, true, $permissions));
@@ -58,8 +57,8 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
         $this->logger = $logger;
 
         // Also redirect stderr to custom log file?
-        if(Charm::Config()->get('main:logging.errors', true)) {
-            ini_set('error_log', PathFinder::getLogPath() . DS . date("Y-m-d") . "-errors.log");
+        if(C::Config()->get('main:logging.errors', true)) {
+            ini_set('error_log', C::Storage()->getLogPath() . DS . date("Y-m-d") . "-errors.log");
         }
 
         return true;
@@ -101,11 +100,11 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
             return false;
         }
 
-        if(Charm::has('Event')) {
-            Charm::Event()->fire('Logging', 'debug');
+        if(C::has('Event')) {
+            C::Event()->fire('Logging', 'debug');
         }
-        if(Charm::has('DebugBar')) {
-            $db = Charm::DebugBar()->getInstance();
+        if(C::has('DebugBar')) {
+            $db = C::DebugBar()->getInstance();
             $db['messages']->debug($message);
         }
 
@@ -126,11 +125,11 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
             return false;
         }
 
-        if(Charm::has('Event')) {
-            Charm::Event()->fire('Logging', 'emergency');
+        if(C::has('Event')) {
+            C::Event()->fire('Logging', 'emergency');
         }
-        if(Charm::has('DebugBar')) {
-            $db = Charm::DebugBar()->getInstance();
+        if(C::has('DebugBar')) {
+            $db = C::DebugBar()->getInstance();
             $db['messages']->emergency($message);
         }
 
@@ -154,11 +153,11 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
             return false;
         }
 
-        if(Charm::has('Event')) {
-            Charm::Event()->fire('Logging', 'alert');
+        if(C::has('Event')) {
+            C::Event()->fire('Logging', 'alert');
         }
-        if(Charm::has('DebugBar')) {
-            $db = Charm::DebugBar()->getInstance();
+        if(C::has('DebugBar')) {
+            $db = C::DebugBar()->getInstance();
             $db['messages']->alert($message);
         }
 
@@ -181,11 +180,11 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
             return false;
         }
 
-        if(Charm::has('Event')) {
-            Charm::Event()->fire('Logging', 'critical');
+        if(C::has('Event')) {
+            C::Event()->fire('Logging', 'critical');
         }
-        if(Charm::has('DebugBar')) {
-            $db = Charm::DebugBar()->getInstance();
+        if(C::has('DebugBar')) {
+            $db = C::DebugBar()->getInstance();
             $db['messages']->crit($message);
         }
 
@@ -207,11 +206,11 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
             return false;
         }
 
-        if(Charm::has('Event')) {
-            Charm::Event()->fire('Logging', 'error');
+        if(C::has('Event')) {
+            C::Event()->fire('Logging', 'error');
         }
-        if(Charm::has('DebugBar')) {
-            $db = Charm::DebugBar()->getInstance();
+        if(C::has('DebugBar')) {
+            $db = C::DebugBar()->getInstance();
             $db['messages']->err($message);
         }
 
@@ -235,11 +234,11 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
             return false;
         }
 
-        if(Charm::has('Event')) {
-            Charm::Event()->fire('Logging', 'warning');
+        if(C::has('Event')) {
+            C::Event()->fire('Logging', 'warning');
         }
-        if(Charm::has('DebugBar')) {
-            $db = Charm::DebugBar()->getInstance();
+        if(C::has('DebugBar')) {
+            $db = C::DebugBar()->getInstance();
             $db['warning']->emergency($message);
         }
 
@@ -260,11 +259,11 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
             return false;
         }
 
-        if(Charm::has('Event')) {
-            Charm::Event()->fire('Logging', 'notice');
+        if(C::has('Event')) {
+            C::Event()->fire('Logging', 'notice');
         }
-        if(Charm::has('DebugBar')) {
-            $db = Charm::DebugBar()->getInstance();
+        if(C::has('DebugBar')) {
+            $db = C::DebugBar()->getInstance();
             $db['messages']->notice($message);
         }
 
@@ -287,11 +286,11 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
             return false;
         }
 
-        if(Charm::has('Event')) {
-            Charm::Event()->fire('Logging', 'info');
+        if(C::has('Event')) {
+            C::Event()->fire('Logging', 'info');
         }
-        if(Charm::has('DebugBar')) {
-            $db = Charm::DebugBar()->getInstance();
+        if(C::has('DebugBar')) {
+            $db = C::DebugBar()->getInstance();
             $db['messages']->info($message);
         }
 
@@ -313,8 +312,8 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
             return false;
         }
 
-        if(Charm::has('Event')) {
-            Charm::Event()->fire('Logging', $level);
+        if(C::has('Event')) {
+            C::Event()->fire('Logging', $level);
         }
 
         return $this->logger->log($level, $message, $context);

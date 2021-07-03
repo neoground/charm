@@ -10,7 +10,6 @@ use Charm\Vivid\Helper\ViewExtension;
 use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\HttpCodes;
 use Charm\Vivid\Kernel\Interfaces\OutputInterface;
-use Charm\Vivid\PathFinder;
 use Twig\Environment;
 use Twig\Extension\StringLoaderExtension;
 use Twig\Loader\FilesystemLoader;
@@ -116,7 +115,7 @@ class View implements OutputInterface, HttpCodes
 
         // Init environment
         $twig = new Environment($loader, [
-            'cache' => PathFinder::getCachePath() . DS . 'views',
+            'cache' => C::Storage()->getCachePath() . DS . 'views',
             'debug' => $debug_mode
         ]);
 
@@ -276,7 +275,7 @@ class View implements OutputInterface, HttpCodes
     public static function exists($name)
     {
         $rel_path = str_replace(".", DS, $name);
-        return file_exists(PathFinder::getAppPath() . DS . 'Views' . DS . $rel_path . '.twig');
+        return file_exists(C::Storage()->getAppPath() . DS . 'Views' . DS . $rel_path . '.twig');
     }
 
     /**

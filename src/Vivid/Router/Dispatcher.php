@@ -5,7 +5,7 @@
 
 namespace Charm\Vivid\Router;
 
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use Phroute\Phroute\Exception\HttpMethodNotAllowedException;
 use Phroute\Phroute\Exception\HttpRouteNotFoundException;
 use Phroute\Phroute\HandlerResolver;
@@ -71,7 +71,7 @@ class Dispatcher {
 
         // Save route meta data
         $route_name = null;
-        $all_routes = Charm::AppStorage()->get('Routes', 'RoutesData');
+        $all_routes = C::AppStorage()->get('Routes', 'RoutesData');
         foreach($all_routes as $route) {
             if($route['call_class'] == $handler[0] && $route['call_method'] == $handler[1]) {
                 $route_name = $route['name'];
@@ -89,7 +89,7 @@ class Dispatcher {
                 'after' => $afterFilter
             ]
         ];
-        Charm::AppStorage()->set('Routes', 'CurrentRoute', $data);
+        C::AppStorage()->set('Routes', 'CurrentRoute', $data);
 
         if(($response = $this->dispatchFilters($beforeFilter)) !== null)
         {

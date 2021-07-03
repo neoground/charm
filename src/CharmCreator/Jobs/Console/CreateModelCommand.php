@@ -5,9 +5,7 @@
 
 namespace Charm\CharmCreator\Jobs\Console;
 
-use Carbon\Carbon;
-use Charm\Vivid\Charm;
-use Charm\Vivid\PathFinder;
+use Charm\Vivid\C;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -78,11 +76,11 @@ class CreateModelCommand extends Command
             'TABLENAME' => $table_name
         ];
 
-        $dir = PathFinder::getAppPath() . DS . 'Models';
+        $dir = C::Storage()->getAppPath() . DS . 'Models';
 
         $filename = $table_name_formatted . '.php';
 
-        Charm::CharmCreator()->createModel($dir . DS . $filename, $data, $template);
+        C::CharmCreator()->createModel($dir . DS . $filename, $data, $template);
 
         $output->writeln('✅ Created model ' . $filename);
 

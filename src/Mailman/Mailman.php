@@ -6,11 +6,10 @@
 namespace Charm\Mailman;
 
 use Charm\Vivid\Base\Module;
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use Charm\Vivid\Helper\ViewExtension;
 use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
-use Charm\Vivid\PathFinder;
 use Twig\Environment;
 use Twig\Extension\StringLoaderExtension;
 use Twig\Loader\FilesystemLoader;
@@ -45,7 +44,7 @@ class Mailman extends Module implements ModuleInterface
     public function loadModule()
     {
         // Set default driver + connection
-        $driver = Charm::Config()->get('connections:emails.default.driver', 'Smtp');
+        $driver = C::Config()->get('connections:emails.default.driver', 'Smtp');
         $this->setDriver($driver, 'default');
         return true;
     }
@@ -57,22 +56,22 @@ class Mailman extends Module implements ModuleInterface
      */
     private function initTwig()
     {
-        $tpl_path = PathFinder::getAssetsPath() . DS . 'templates' . DS . 'email';
+        $tpl_path = C::Storage()->getAssetsPath() . DS . 'templates' . DS . 'email';
 
         // Can be overridden by setting
-        if(Charm::AppStorage()->has('Mailman', 'template_path')) {
-            $tpl_path = Charm::AppStorage()->get('Mailman', 'template_path');
+        if(C::AppStorage()->has('Mailman', 'template_path')) {
+            $tpl_path = C::AppStorage()->get('Mailman', 'template_path');
         }
 
         $loader = new FilesystemLoader($tpl_path);
 
         $twig = new Environment($loader, array(
             'cache' => false,
-            'debug' => Charm::Config()->get('main:debug.debugmode', false)
+            'debug' => C::Config()->get('main:debug.debugmode', false)
         ));
 
         // Add charm global
-        $twig->addGlobal('charm', Charm::getInstance());
+        $twig->addGlobal('charm', C::getInstance());
 
         // Add charm twig extension
         $twig->addExtension(new ViewExtension());
@@ -219,7 +218,7 @@ class Mailman extends Module implements ModuleInterface
      */
     public function addCurrentUser()
     {
-        $this->addUser(Charm::Guard()->getUser());
+        $this->addUser(C::Guard()->getUser());
         return $this;
     }
 
@@ -320,7 +319,7 @@ class Mailman extends Module implements ModuleInterface
             $this->setHtmlContent($this->twig->render($view, $data));
 
         } catch (\Exception $e) {
-            Charm::Logging()->error('Could not render e-mail template', [$name, $e->getMessage()]);
+            C::Logging()->error('Could not render e-mail template', [$name, $e->getMessage()]);
         }
 
         return $this;

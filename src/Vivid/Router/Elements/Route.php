@@ -5,7 +5,7 @@
 
 namespace Charm\Vivid\Router\Elements;
 
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use Charm\Vivid\Exceptions\LogicException;
 use Charm\Vivid\Router\RouterElement;
 
@@ -158,7 +158,7 @@ class Route implements RouterElement
      */
     public function setFilters($filters)
     {
-        $this->filters = Charm::Arrays()->array_merge_recursive($this->filters, $filters);
+        $this->filters = C::Arrays()->array_merge_recursive($this->filters, $filters);
         return $this;
     }
 
@@ -174,7 +174,7 @@ class Route implements RouterElement
         $this->filters = ['before' => [], 'after' => []];
 
         if(!$inside_group) {
-            Charm::AppStorage()->append('Routes', 'Routes', $this);
+            C::AppStorage()->append('Routes', 'Routes', $this);
         }
     }
 

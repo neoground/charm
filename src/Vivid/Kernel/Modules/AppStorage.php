@@ -6,10 +6,9 @@
 namespace Charm\Vivid\Kernel\Modules;
 
 use Charm\Vivid\Base\Module;
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
-use Charm\Vivid\PathFinder;
 
 /**
  * Class AppStorage
@@ -40,7 +39,7 @@ class AppStorage extends Module implements ModuleInterface
         ];
 
         // Set path to cache file
-        $this->cache_file = PathFinder::getCachePath() . DS . 'charm_appstorage.cache';
+        $this->cache_file = cPath('/var/cache') . DS . 'charm_appstorage.cache';
 
         // Load stored init array from cache for better performance
         $this->loadInitStorage();
@@ -75,7 +74,7 @@ class AppStorage extends Module implements ModuleInterface
             return false;
         }
 
-        return Charm::Arrays()->get($this->storage[$module], $key, $default);
+        return C::Arrays()->get($this->storage[$module], $key, $default);
     }
 
     /**
@@ -88,7 +87,7 @@ class AppStorage extends Module implements ModuleInterface
      */
     public function has($module, $key)
     {
-        return array_key_exists($module, $this->storage) && Charm::Arrays()->has($this->storage[$module], $key);
+        return array_key_exists($module, $this->storage) && C::Arrays()->has($this->storage[$module], $key);
     }
 
     /**
@@ -171,7 +170,7 @@ class AppStorage extends Module implements ModuleInterface
             return false;
         }
 
-        return Charm::Arrays()->get($this->storage[$module][$arrname], $key, $default);
+        return C::Arrays()->get($this->storage[$module][$arrname], $key, $default);
     }
 
     /**
@@ -253,7 +252,7 @@ class AppStorage extends Module implements ModuleInterface
                                 $conf_name = str_replace('.yaml', '', $file);
 
                                 // Get something from config file so it gets stored in the appstorage
-                                Charm::Config()->get($name . '#' . $conf_name . ':foobar');
+                                C::Config()->get($name . '#' . $conf_name . ':foobar');
                             }
                         }
 

@@ -6,8 +6,7 @@
 namespace Charm\Vivid\Kernel\Modules;
 
 use Charm\Vivid\Base\Module;
-use Charm\Vivid\Charm;
-use Charm\Vivid\Helper\ModuleDescriber;
+use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use DebugBar\StandardDebugBar;
 use Whoops\Handler\JsonResponseHandler;
@@ -33,7 +32,7 @@ class Debug extends Module implements ModuleInterface
     public function loadModule()
     {
         // Only init debug modules if we're in debug mode
-        if(Charm::Config()->get('main:debug.debugmode', false)) {
+        if(C::Config()->get('main:debug.debugmode', false)) {
             $this->initWhoops();
         }
     }

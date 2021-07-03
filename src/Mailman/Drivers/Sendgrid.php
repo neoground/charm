@@ -6,7 +6,7 @@
 namespace Charm\Mailman\Drivers;
 
 use Charm\Mailman\MailmanDriverInterface;
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use SendGrid\Mail\From;
 use SendGrid\Mail\Mail;
 
@@ -49,8 +49,8 @@ class Sendgrid implements MailmanDriverInterface
         $x = new self;
         $x->configspace = 'connections:emails.' . $data;
         $x->mail = new Mail(
-            new From(Charm::Config()->get($x->configspace . '.frommail'),
-                Charm::Config()->get($x->configspace . '.fromname'))
+            new From(C::Config()->get($x->configspace . '.frommail'),
+                C::Config()->get($x->configspace . '.fromname'))
         );
 
         return $x;
@@ -219,18 +219,18 @@ class Sendgrid implements MailmanDriverInterface
      */
     public function send()
     {
-        $sendgrid = new \SendGrid(Charm::Config()->get($this->configspace . '.sendgrid.token'));
+        $sendgrid = new \SendGrid(C::Config()->get($this->configspace . '.sendgrid.token'));
         try {
             $response = $sendgrid->send($this->mail);
             $this->success = ((int) $response->statusCode() < 300);
 
             if(!$this->success) {
-                Charm::Logging()->error('[SENDGRID] [Code ' . (int) $response->statusCode() . '] Error: ' . $response->body());
+                C::Logging()->error('[SENDGRID] [Code ' . (int) $response->statusCode() . '] Error: ' . $response->body());
             }
 
         } catch (\Exception $e) {
             $this->error_msg = $e->getMessage();
-            Charm::Logging()->error('[SENDGRID] Exception: ' . $e->getMessage());
+            C::Logging()->error('[SENDGRID] Exception: ' . $e->getMessage());
         }
 
         return $this;

@@ -6,7 +6,7 @@
 namespace Charm\Mailman\Drivers;
 
 use Charm\Mailman\MailmanDriverInterface;
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -100,7 +100,7 @@ class Smtp implements MailmanDriverInterface
         try {
             $this->mail->addAttachment($path, $name);
         } catch(Exception $e) {
-            Charm::Logging()->error(
+            C::Logging()->error(
                 'Could not add attachment to e-mail',
                 [$e->getMessage(), $this->mail->ErrorInfo]
             );
@@ -226,7 +226,7 @@ class Smtp implements MailmanDriverInterface
             $ret = $this->mail->send();
             $this->success = true;
         } catch(Exception $e) {
-            Charm::Logging()->error('Could not send email', [$e->getMessage(), $this->mail->ErrorInfo]);
+            C::Logging()->error('Could not send email', [$e->getMessage(), $this->mail->ErrorInfo]);
             $this->success = false;
             $this->error_msg = $e->getMessage();
         }
@@ -234,12 +234,12 @@ class Smtp implements MailmanDriverInterface
         if($ret === false) {
             $this->success = false;
 
-            if(Charm::has('Event')) {
-                Charm::Event()->fire('Mailman', 'sentSuccess');
+            if(C::has('Event')) {
+                C::Event()->fire('Mailman', 'sentSuccess');
             }
         } else {
-            if(Charm::has('Event')) {
-                Charm::Event()->fire('Mailman', 'sentError');
+            if(C::has('Event')) {
+                C::Event()->fire('Mailman', 'sentError');
             }
         }
 
@@ -272,7 +272,7 @@ class Smtp implements MailmanDriverInterface
     {
         $this->mail->SMTPDebug = 4;
         $this->mail->Debugoutput = function($str, $level) {
-            Charm::Logging()->info('[MAIL] SMTP ' . $level . ': ' . $str);
+            C::Logging()->info('[MAIL] SMTP ' . $level . ': ' . $str);
         };
         return $this;
     }
@@ -354,13 +354,13 @@ class Smtp implements MailmanDriverInterface
             $this->from = $from_name
                 . ' <' .  $from_mail . '>';
         } catch(Exception $e) {
-            Charm::Logging()->error('Could not set SMTP connection', [$e->getMessage(), $mail->ErrorInfo]);
+            C::Logging()->error('Could not set SMTP connection', [$e->getMessage(), $mail->ErrorInfo]);
         }
 
         $this->mail = $mail;
 
         // Debug mode
-        if(Charm::Config()->get('main:debug.debugmode', false)) {
+        if(C::Config()->get('main:debug.debugmode', false)) {
             $this->enableDebugOutput();
         }
 
@@ -385,7 +385,7 @@ class Smtp implements MailmanDriverInterface
             $mail->CharSet = 'UTF-8';
             $mail->XMailer = 'Charm';
 
-            $type = Charm::Config()->get($configspace . '.type', 'smtp');
+            $type = C::Config()->get($configspace . '.type', 'smtp');
 
             if($type == 'sendmail') {
                 // Just use sendmail
@@ -395,24 +395,24 @@ class Smtp implements MailmanDriverInterface
                 // SMTP connection
                 $mail->isSMTP();
 
-                $mail->SMTPAuth = Charm::Config()->get($configspace . '.auth');
-                $mail->AuthType = strtoupper(Charm::Config()->get($configspace . '.authtype', 'LOGIN'));
-                $mail->Host = Charm::Config()->get($configspace . '.host');
-                $mail->Username = Charm::Config()->get($configspace . '.username');
-                $mail->Password = Charm::Config()->get($configspace . '.password');
-                $mail->Port = Charm::Config()->get($configspace . '.port');
+                $mail->SMTPAuth = C::Config()->get($configspace . '.auth');
+                $mail->AuthType = strtoupper(C::Config()->get($configspace . '.authtype', 'LOGIN'));
+                $mail->Host = C::Config()->get($configspace . '.host');
+                $mail->Username = C::Config()->get($configspace . '.username');
+                $mail->Password = C::Config()->get($configspace . '.password');
+                $mail->Port = C::Config()->get($configspace . '.port');
 
                 // TLS / SSL security
-                if (Charm::Config()->get($configspace . '.usetls')) {
+                if (C::Config()->get($configspace . '.usetls')) {
                     $mail->SMTPSecure = 'tls';
-                } elseif (Charm::Config()->get($configspace . '.usessl')) {
+                } elseif (C::Config()->get($configspace . '.usessl')) {
                     $mail->SMTPSecure = 'ssl';
                 } else {
                     $mail->SMTPSecure = false;
                 }
 
                 // Allow self signed certificates
-                if (Charm::Config()->get($configspace . '.trustall', false)) {
+                if (C::Config()->get($configspace . '.trustall', false)) {
                     $mail->SMTPOptions = [
                         'ssl' => [
                             'verify_peer' => false,
@@ -424,19 +424,19 @@ class Smtp implements MailmanDriverInterface
             }
 
             $mail->setFrom(
-                Charm::Config()->get($configspace . '.frommail'),
-                Charm::Config()->get($configspace . '.fromname')
+                C::Config()->get($configspace . '.frommail'),
+                C::Config()->get($configspace . '.fromname')
             );
-            $this->from = Charm::Config()->get($configspace . '.fromname')
-                . ' <' .  Charm::Config()->get($configspace . '.frommail') . '>';
+            $this->from = C::Config()->get($configspace . '.fromname')
+                . ' <' .  C::Config()->get($configspace . '.frommail') . '>';
         } catch(Exception $e) {
-            Charm::Logging()->error('Could not set SMTP connection', [$e->getMessage(), $mail->ErrorInfo]);
+            C::Logging()->error('Could not set SMTP connection', [$e->getMessage(), $mail->ErrorInfo]);
         }
 
         $this->mail = $mail;
 
         // Debug mode
-        if(Charm::Config()->get('main:debug.debugmode', false)) {
+        if(C::Config()->get('main:debug.debugmode', false)) {
             $this->enableDebugOutput();
         }
 

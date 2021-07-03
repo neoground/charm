@@ -5,7 +5,7 @@
 
 namespace Charm\Vivid\Router\Elements;
 
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use Charm\Vivid\Router\RouterElement;
 use Opis\Closure\SerializableClosure;
 
@@ -31,7 +31,7 @@ class Filter implements RouterElement, \Serializable
     public static function add($name, $callback)
     {
         $filter = new self($name, $callback);
-        Charm::AppStorage()->append('Routes', 'Filters', $filter);
+        C::AppStorage()->append('Routes', 'Filters', $filter);
     }
 
     /**

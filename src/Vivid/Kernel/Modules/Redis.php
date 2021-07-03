@@ -6,7 +6,7 @@
 namespace Charm\Vivid\Kernel\Modules;
 
 use Charm\Vivid\Base\Module;
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Predis\Client;
 
@@ -31,12 +31,12 @@ class Redis extends Module implements ModuleInterface
     public function loadModule()
     {
         // Init redis
-        if (Charm::Config()->get('connections:redis.enabled', true)) {
-            $host = Charm::Config()->get('connections:redis.host', '127.0.0.1');
-            $port = Charm::Config()->get('connections:redis.port', 6379);
-            $pw = Charm::Config()->get('connections:redis.password');
-            $persistent = Charm::Config()->get('connections:redis.persistent', false);
-            $driver = strtolower(Charm::Config()->get('connections:redis.driver', 'phpredis'));
+        if (C::Config()->get('connections:redis.enabled', true)) {
+            $host = C::Config()->get('connections:redis.host', '127.0.0.1');
+            $port = C::Config()->get('connections:redis.port', 6379);
+            $pw = C::Config()->get('connections:redis.password');
+            $persistent = C::Config()->get('connections:redis.persistent', false);
+            $driver = strtolower(C::Config()->get('connections:redis.driver', 'phpredis'));
 
             // Prevent socket timeout
             ini_set("default_socket_timeout", -1);
@@ -55,7 +55,7 @@ class Redis extends Module implements ModuleInterface
                 $redis->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP);
 
                 // Set prefix
-                $redis->setOption(\Redis::OPT_PREFIX, Charm::Config()->get('connections:redis.prefix'));
+                $redis->setOption(\Redis::OPT_PREFIX, C::Config()->get('connections:redis.prefix'));
 
                 // Set timeout
                 $redis->setOption(\Redis::OPT_READ_TIMEOUT, -1);
@@ -72,7 +72,7 @@ class Redis extends Module implements ModuleInterface
             $options = [];
 
             // Set prefix
-            $options['prefix'] = Charm::Config()->get('connections:redis.prefix');
+            $options['prefix'] = C::Config()->get('connections:redis.prefix');
 
             // Set redis password
             if (!empty($pw)) {
@@ -121,15 +121,15 @@ class Redis extends Module implements ModuleInterface
         }
 
         // Init client
-        $host = Charm::Config()->get('connections:redis.host', '127.0.0.1');
-        $port = Charm::Config()->get('connections:redis.port', 6379);
-        $pw = Charm::Config()->get('connections:redis.password');
-        $persistent = Charm::Config()->get('connections:redis.persistent', false);
+        $host = C::Config()->get('connections:redis.host', '127.0.0.1');
+        $port = C::Config()->get('connections:redis.port', 6379);
+        $pw = C::Config()->get('connections:redis.password');
+        $persistent = C::Config()->get('connections:redis.persistent', false);
 
         $options = [];
 
         // Set prefix
-        $options['prefix'] = Charm::Config()->get('connections:redis.prefix');
+        $options['prefix'] = C::Config()->get('connections:redis.prefix');
 
         // Set redis password
         if (!empty($pw)) {

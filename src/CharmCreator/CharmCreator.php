@@ -6,12 +6,9 @@
 namespace Charm\CharmCreator;
 
 use Charm\Vivid\Base\Module;
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
-use Charm\Vivid\PathFinder;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * Class CharmCreator
@@ -45,10 +42,10 @@ class CharmCreator extends Module implements ModuleInterface
             $output->writeln(' ');
         }
 
-        $routes = Charm::Router()->getRoutesData();
+        $routes = C::Router()->getRoutesData();
         $namespace = '\\App\\Controllers\\';
 
-        $basepath = PathFinder::getAppPath() . DS . 'Controllers';
+        $basepath = C::Storage()->getAppPath() . DS . 'Controllers';
 
         foreach($routes as $route) {
             if(in_string($namespace, $route['call_class'])) {

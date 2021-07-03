@@ -5,7 +5,7 @@
 
 namespace Charm\Validator;
 
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 
 /**
  * Class ValidationInstance
@@ -135,7 +135,7 @@ class ValidationInstance
      */
     private function getField($field)
     {
-        return Charm::Request()->get($field);
+        return C::Request()->get($field);
     }
 
     /**

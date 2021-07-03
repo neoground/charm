@@ -5,7 +5,7 @@
 
 namespace Charm\Bob\Jobs\Console;
 
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -59,9 +59,9 @@ class DbMigrateCommand extends Command
         }
 
         if ($action == 'up') {
-            Charm::Database()->runMigrations('up', $file, $module, $output);
+            C::Database()->runMigrations('up', $file, $module, $output);
         } elseif ($action == 'down') {
-            Charm::Database()->runMigrations('down', $file, $module, $output);
+            C::Database()->runMigrations('down', $file, $module, $output);
         }
 
         $output->writeln('<info>Done!</info>');

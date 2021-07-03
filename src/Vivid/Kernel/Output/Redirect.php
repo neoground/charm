@@ -6,7 +6,6 @@
 namespace Charm\Vivid\Kernel\Output;
 
 use Charm\Vivid\C;
-use Charm\Vivid\Charm;
 use Charm\Vivid\Kernel\Interfaces\OutputInterface;
 
 /**
@@ -62,11 +61,11 @@ class Redirect implements OutputInterface
         C::Event()->fire('Redirect', 'renderStart');
 
         // Set current page as last for easier redirecting
-        Charm::Session()->set('charm_last_page', Charm::Router()->getCurrentUrl());
+        C::Session()->set('charm_last_page', C::Router()->getCurrentUrl());
 
         // Optinally set message / custom value
         if (!empty($this->message)) {
-            Charm::Session()->set('charm_message', $this->message);
+            C::Session()->set('charm_message', $this->message);
         }
 
         // Set redirect header
@@ -91,7 +90,7 @@ class Redirect implements OutputInterface
             $this->destination = $val;
         } else {
             // Got route
-            $this->destination = Charm::Router()->buildUrl($val, $args);
+            $this->destination = C::Router()->buildUrl($val, $args);
         }
 
         return $this;
@@ -121,7 +120,7 @@ class Redirect implements OutputInterface
             $back = $_SERVER['HTTP_REFERER'];
         } else {
             // Fallback if referer is not set
-            $back = Charm::Router()->getBaseUrl();
+            $back = C::Router()->getBaseUrl();
         }
 
         return self::make($back);

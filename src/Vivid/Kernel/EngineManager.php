@@ -6,8 +6,7 @@
 namespace Charm\Vivid\Kernel;
 
 use Charm\Vivid\Base\Module;
-use Charm\Vivid\Charm;
-use Charm\Vivid\PathFinder;
+use Charm\Vivid\C;
 
 /**
  * Class EngineManager
@@ -45,7 +44,7 @@ class EngineManager extends Module
     public function getEnvironment()
     {
         // Use manually set environment from the app.env file
-        $appenv = PathFinder::getAppPath() . DS . 'app.env';
+        $appenv = C::Storage()->getAppPath() . DS . 'app.env';
         if(file_exists($appenv) && !$this->set_via_file) {
             $this->environment = trim(file_get_contents($appenv));
             $this->set_via_file = true;
@@ -64,7 +63,7 @@ class EngineManager extends Module
      */
     public function setConfig($arr)
     {
-        $this->config = Charm::Arrays()->array_merge_recursive($this->config, $arr);
+        $this->config = C::Arrays()->array_merge_recursive($this->config, $arr);
     }
 
     /**
@@ -77,7 +76,7 @@ class EngineManager extends Module
      */
     public function getConfig($key, $default = null)
     {
-        return Charm::Arrays()->get($this->config, $key, $default);
+        return C::Arrays()->get($this->config, $key, $default);
     }
 
     /**
@@ -90,7 +89,7 @@ class EngineManager extends Module
      */
     public function enablePreflightHandling()
     {
-        if(Charm::Server()->get('REQUEST_METHOD') == "OPTIONS") {
+        if(C::Server()->get('REQUEST_METHOD') == "OPTIONS") {
             // Basic headers are provided by nginx. No Access-Control needed again...
             header("Content-Length: 0");
             header("Content-Type: text/plain");

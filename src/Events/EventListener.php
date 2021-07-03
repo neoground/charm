@@ -5,7 +5,7 @@
 
 namespace Charm\Events;
 
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use Charm\Vivid\Exceptions\LogicException;
 use Charm\Vivid\Exceptions\ModuleNotFoundException;
 
@@ -114,7 +114,7 @@ class EventListener
      */
     public function addEvent()
     {
-        Charm::Event()->addListener($this->module, $this->name, static::class . '.fire');
+        C::Event()->addListener($this->module, $this->name, static::class . '.fire');
     }
 
 

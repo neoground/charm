@@ -7,7 +7,7 @@ namespace Charm\Guard;
 
 use Carbon\Carbon;
 use Charm\Vivid\Base\Module;
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 
 /**
@@ -39,8 +39,8 @@ class Token extends Module implements ModuleInterface
     public function loadModule()
     {
         // Get user class
-        $this->user_class = Charm::Config()->get('main:guard.user_class', 'App\\Models\\User');
-        $this->token_location = Charm::Config()->get('main:guard.token_location', 'api_token');
+        $this->user_class = C::Config()->get('main:guard.user_class', 'App\\Models\\User');
+        $this->token_location = C::Config()->get('main:guard.token_location', 'api_token');
 
         // Get token
         $this->getToken();
@@ -57,11 +57,11 @@ class Token extends Module implements ModuleInterface
             return $this->token;
         }
 
-        $auth_header = Charm::Request()->getHeader('authorization');
+        $auth_header = C::Request()->getHeader('authorization');
 
         if(empty($auth_header)) {
             // Try x-authorization, some prefer this
-            $auth_header = Charm::Request()->getHeader('x-authorization');
+            $auth_header = C::Request()->getHeader('x-authorization');
         }
 
         $matches = [];
@@ -92,7 +92,7 @@ class Token extends Module implements ModuleInterface
      */
     public function getClientToken()
     {
-        $auth_header = Charm::Request()->getHeader('authorization');
+        $auth_header = C::Request()->getHeader('authorization');
 
         $matches = [];
         preg_match('/client="(.*?)"/', $auth_header, $matches);
@@ -148,8 +148,8 @@ class Token extends Module implements ModuleInterface
     public function getUser()
     {
         // Get user by token stored in redis
-        if(Charm::has('Redis')) {
-            $user_id = Charm::Redis()->getClient()->hget('api_user', $this->token);
+        if(C::has('Redis')) {
+            $user_id = C::Redis()->getClient()->hget('api_user', $this->token);
             if(!empty($user_id)) {
                 $user = $this->user_class::findWithCache($user_id);
                 if(is_object($user)) {
@@ -168,8 +168,8 @@ class Token extends Module implements ModuleInterface
         }
 
         // Store in redis cache
-        if(Charm::has('Redis') && !$default_user) {
-            Charm::Redis()->getClient()->hset('api_user', $this->token, $u->id);
+        if(C::has('Redis') && !$default_user) {
+            C::Redis()->getClient()->hset('api_user', $this->token, $u->id);
         }
 
         return $u;
@@ -184,7 +184,7 @@ class Token extends Module implements ModuleInterface
     {
         if(!empty($this->token)) {
             // Check redis
-            $in_redis = Charm::has('Redis') && Charm::Redis()->getClient()->hexists('api_user', $this->token);
+            $in_redis = C::has('Redis') && C::Redis()->getClient()->hexists('api_user', $this->token);
 
             // Check database if not in redis yet
             return $in_redis || is_object($this->findUserByToken());

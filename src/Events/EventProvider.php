@@ -7,7 +7,6 @@ namespace Charm\Events;
 
 use Charm\Vivid\Base\Module;
 use Charm\Vivid\C;
-use Charm\Vivid\Charm;
 use Charm\Vivid\Exceptions\ModuleNotFoundException;
 use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
@@ -82,7 +81,7 @@ class EventProvider extends Module implements ModuleInterface
     public function addListener($module, $name, $method)
     {
         // Add listener
-        return Charm::AppStorage()->append('Events', $module . '_' . $name, $method);
+        return C::AppStorage()->append('Events', $module . '_' . $name, $method);
     }
 
     /**
@@ -95,7 +94,7 @@ class EventProvider extends Module implements ModuleInterface
      */
     public function getListeners($module, $name)
     {
-        return Charm::AppStorage()->get('Events', $module . '_' . $name);
+        return C::AppStorage()->get('Events', $module . '_' . $name);
     }
 
     /**

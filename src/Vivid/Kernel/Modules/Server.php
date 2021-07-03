@@ -6,7 +6,7 @@
 namespace Charm\Vivid\Kernel\Modules;
 
 use Charm\Vivid\Base\Module;
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 
 /**
@@ -36,7 +36,7 @@ class Server extends Module implements ModuleInterface
      */
     public function get($key, $default = null)
     {
-        return Charm::Arrays()->get($_SERVER, $key, $default);
+        return C::Arrays()->get($_SERVER, $key, $default);
     }
 
     /**
@@ -48,7 +48,7 @@ class Server extends Module implements ModuleInterface
      */
     public function has($key)
     {
-        return Charm::Arrays()->has($_SERVER, $key);
+        return C::Arrays()->has($_SERVER, $key);
     }
 
     /**

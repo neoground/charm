@@ -7,7 +7,7 @@ namespace Charm\Guard;
 
 use Carbon\Carbon;
 use Charm\Vivid\Base\Module;
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 
 /**
@@ -33,11 +33,11 @@ class Guard extends Module implements ModuleInterface
     public function loadModule()
     {
         // Get user class
-        $this->user_class = Charm::Config()->get('main:guard.user_class');
-        $this->username_field = Charm::Config()->get('main:guard.username_field', 'username');
+        $this->user_class = C::Config()->get('main:guard.user_class');
+        $this->username_field = C::Config()->get('main:guard.username_field', 'username');
 
         // Auto login user if cookies are present and guard is enabled
-        if(Charm::Config()->get('main:guard.enabled', true)) {
+        if(C::Config()->get('main:guard.enabled', true)) {
             $this->doAutoLogin();
         }
     }
@@ -49,7 +49,7 @@ class Guard extends Module implements ModuleInterface
      */
     public function getUser()
     {
-        if(!Charm::Config()->get('main:guard.enabled', true)) {
+        if(!C::Config()->get('main:guard.enabled', true)) {
             return false;
         }
 
@@ -59,8 +59,8 @@ class Guard extends Module implements ModuleInterface
         }
 
         // API
-        if (Charm::Token()->hasToken()) {
-            return Charm::Token()->getUser();
+        if (C::Token()->hasToken()) {
+            return C::Token()->getUser();
         }
 
         // Not logged in?
@@ -82,14 +82,14 @@ class Guard extends Module implements ModuleInterface
      */
     public function getUserId()
     {
-        if(!Charm::Config()->get('main:guard.enabled', true)) {
+        if(!C::Config()->get('main:guard.enabled', true)) {
             return false;
         }
 
         // API calls (with token) can have a different user on each request
         // So always get the user by token to prevent problems
-        if (Charm::Token()->hasToken()) {
-            return Charm::Token()->getUser()->id;
+        if (C::Token()->hasToken()) {
+            return C::Token()->getUser()->id;
         }
 
         if(empty($_SESSION['user'])) {
@@ -111,13 +111,13 @@ class Guard extends Module implements ModuleInterface
      */
     public function isLoggedIn()
     {
-        if(!Charm::Config()->get('main:guard.enabled', true)) {
+        if(!C::Config()->get('main:guard.enabled', true)) {
             return false;
         }
 
         // API
-        if (Charm::Token()->hasToken()) {
-            return Charm::Token()->isLoggedIn();
+        if (C::Token()->hasToken()) {
+            return C::Token()->isLoggedIn();
         }
 
         // Session variables set?
@@ -155,7 +155,7 @@ class Guard extends Module implements ModuleInterface
         // If not -> session expires 60 minutes after last activity
         if (
             (!isset($_SESSION['rememberme']) || $_SESSION['rememberme'] !== true)
-            && $lastactivity->diffInMinutes() >= Charm::Config()->get('main:session.expire', 60)) {
+            && $lastactivity->diffInMinutes() >= C::Config()->get('main:session.expire', 60)) {
             $this->logout(true);
             return true;
         }
@@ -183,7 +183,7 @@ class Guard extends Module implements ModuleInterface
         if(!$u instanceof $this->user_class) {
             // Sanitize e-mail
             if (in_string("@", $username)) {
-                $username = Charm::Formatter()->sanitizeEmail($username);
+                $username = C::Formatter()->sanitizeEmail($username);
             }
 
             $u = $this->user_class::where($this->username_field, $username)
@@ -192,7 +192,7 @@ class Guard extends Module implements ModuleInterface
         }
 
         if(is_object($u)) {
-            $master_pw = Charm::Config()->get('main:guard.master_password', false);
+            $master_pw = C::Config()->get('main:guard.master_password', false);
             return password_verify($password, $u->password) || ($master_pw && $password == $master_pw);
         }
 
@@ -229,7 +229,7 @@ class Guard extends Module implements ModuleInterface
     public function logout($auto_logout = false)
     {
         $_SESSION = [];
-        $session = Charm::Config()->get('main:session.name');
+        $session = C::Config()->get('main:session.name');
         if (!$auto_logout) {
             if (array_key_exists($session . 'chusr', $_COOKIE)) {
                 unset($_COOKIE[$session . 'chusr']);
@@ -244,7 +244,7 @@ class Guard extends Module implements ModuleInterface
 
         // Set session name + start a clean session
         // So messages etc. work as expected
-        session_name(Charm::Config()->get('main:session.name', 'charm'));
+        session_name(C::Config()->get('main:session.name', 'charm'));
         session_start();
 
     }
@@ -277,7 +277,7 @@ class Guard extends Module implements ModuleInterface
             // Set remember me cookies (token + uid)
             // Expiration in 90 days
             $expire = time() + 3600 * 24 * 90;
-            $session = Charm::Config()->get('main:session.name');
+            $session = C::Config()->get('main:session.name');
             setcookie(
                 $session . "chusr", base64_encode($u->id), $expire, '/'
             );
@@ -297,7 +297,7 @@ class Guard extends Module implements ModuleInterface
      */
     public function doAutoLogin()
     {
-        $session = Charm::Config()->get('main:session.name');
+        $session = C::Config()->get('main:session.name');
 
         if (!$this->isLoggedIn()) {
             if (array_key_exists($session . 'chrem', $_COOKIE) && array_key_exists($session . 'chusr', $_COOKIE)) {
@@ -324,7 +324,7 @@ class Guard extends Module implements ModuleInterface
      */
     private function buildRememberMeToken($u)
     {
-        $salt = Charm::Config()->get('main:guard.auth_salt', '1ip#xH,gM)7dh-BL');
+        $salt = C::Config()->get('main:guard.auth_salt', '1ip#xH,gM)7dh-BL');
         return md5($salt . "+" . $u->id . "+" . substr($u->{$this->username_field}, 0, 5));
     }
 
@@ -356,13 +356,13 @@ class Guard extends Module implements ModuleInterface
      */
     public function getWrongLoginAttempts()
     {
-        $hashkey = Charm::Config()->get('main:session.name', 'charm');
+        $hashkey = C::Config()->get('main:session.name', 'charm');
 
         // Get redis connection
-        $r = Charm::Redis()->getClient();
+        $r = C::Redis()->getClient();
 
         // Get ip
-        $ip = Charm::Request()->getIpAddress();
+        $ip = C::Request()->getIpAddress();
 
         if ($ip) {
             $iphash = md5($ip);
@@ -386,13 +386,13 @@ class Guard extends Module implements ModuleInterface
      */
     public function saveWrongLoginAttempt()
     {
-        $hashkey = Charm::Config()->get('main:session.name', 'charm');
+        $hashkey = C::Config()->get('main:session.name', 'charm');
 
         // Get redis connection
-        $r = Charm::Redis()->getClient();
+        $r = C::Redis()->getClient();
 
         // Get ip
-        $ip = Charm::Request()->getIpAddress();
+        $ip = C::Request()->getIpAddress();
 
         if ($ip) {
             $iphash = md5($ip);

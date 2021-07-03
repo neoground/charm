@@ -6,11 +6,10 @@
 namespace Charm\Vivid\Kernel\Modules;
 
 use Charm\Vivid\Base\Module;
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use Charm\Vivid\Exceptions\LogicException;
 use Charm\Vivid\Helper\EloquentDebugbar;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
-use Charm\Vivid\PathFinder;
 use Illuminate\Database\Capsule\Manager;
 use Spatie\DbDumper\Databases\MySql;
 use Spatie\DbDumper\Databases\PostgreSql;
@@ -39,7 +38,7 @@ class Database extends Module implements ModuleInterface
         $capsule = new Manager;
 
         // Add single database (default)
-        $config = Charm::Config()->get('connections:database');
+        $config = C::Config()->get('connections:database');
 
         if(is_array($config) && $config['enabled'] == true) {
             unset($config['enabled']);
@@ -49,7 +48,7 @@ class Database extends Module implements ModuleInterface
         }
 
         // Add multiple databases
-        $config = Charm::Config()->get('connections:databases');
+        $config = C::Config()->get('connections:databases');
 
         if(is_array($config)) {
             foreach($config as $name => $dbvals) {
@@ -81,12 +80,12 @@ class Database extends Module implements ModuleInterface
      */
     private function addEloquentToDebugBar()
     {
-        if(Charm::has('DebugBar')) {
-            $debugbar = Charm::DebugBar()->getInstance();
+        if(C::has('DebugBar')) {
+            $debugbar = C::DebugBar()->getInstance();
 
             // Add Eloquent data if we got a database connection
-            if (Charm::Config()->get('main:debug.debugmode', false)
-                && Charm::Config()->get('main:debug.show_debugbar', false)) {
+            if (C::Config()->get('main:debug.debugmode', false)
+                && C::Config()->get('main:debug.show_debugbar', false)) {
                 // Init and add debug bar collector
                 $debugbar->addCollector(new EloquentDebugbar());
             }
@@ -112,7 +111,7 @@ class Database extends Module implements ModuleInterface
      */
     public function getRedisClient()
     {
-        return Charm::Redis()->getClient();
+        return C::Redis()->getClient();
     }
 
     /**
@@ -130,15 +129,15 @@ class Database extends Module implements ModuleInterface
         }
 
         // Get needed data from module
-        $mod = Charm::get($module);
+        $mod = C::get($module);
 
         // Defaults
-        $path = PathFinder::getAppPath() . DS . 'System' . DS . 'Migrations';
+        $path = C::Storage()->getAppPath() . DS . 'System' . DS . 'Migrations';
         $namespace = "\\App\\System\\Migrations";
 
         // Module specific
         if(is_object($mod) && method_exists($mod, 'getReflectionClass')) {
-            $path = Charm::get($module)->getBaseDirectory() . DS . 'System' . DS . 'Migrations';
+            $path = C::get($module)->getBaseDirectory() . DS . 'System' . DS . 'Migrations';
 
             $namespace = $mod->getReflectionClass()->getNamespaceName() . "\\System\\Migrations";
         }
@@ -240,7 +239,7 @@ class Database extends Module implements ModuleInterface
         $db_name = false;
 
         // Single database (default)
-        $config = Charm::Config()->get('connections:database');
+        $config = C::Config()->get('connections:database');
 
         if(is_array($config) && $name == 'default') {
             // Got wanted entry
@@ -251,7 +250,7 @@ class Database extends Module implements ModuleInterface
         }
 
         // Multiple databases
-        $config = Charm::Config()->get('connections:databases');
+        $config = C::Config()->get('connections:databases');
 
         if(is_array($config)) {
             foreach($config as $confname => $dbvals) {

@@ -7,7 +7,7 @@ namespace Charm\Vivid\Kernel\Modules;
 
 use Carbon\Carbon;
 use Charm\Vivid\Base\Module;
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 
 /**
@@ -51,7 +51,7 @@ class Formatter extends Module implements ModuleInterface
             return '';
         }
 
-        return $date->formatLocalized(Charm::Config()->get('main:local.timestamps.date'));
+        return $date->formatLocalized(C::Config()->get('main:local.timestamps.date'));
     }
 
     /**
@@ -69,7 +69,7 @@ class Formatter extends Module implements ModuleInterface
             }
 
             try {
-                return Carbon::parse($data)->formatLocalized(Charm::Config()->get('main:local.timestamps.dateshort'));
+                return Carbon::parse($data)->formatLocalized(C::Config()->get('main:local.timestamps.dateshort'));
             } catch (\Exception $e) {
                 return '';
             }
@@ -92,7 +92,7 @@ class Formatter extends Module implements ModuleInterface
             }
 
             try {
-                return Carbon::parse($data)->formatLocalized(Charm::Config()->get('main:local.timestamps.datetimeshort'));
+                return Carbon::parse($data)->formatLocalized(C::Config()->get('main:local.timestamps.datetimeshort'));
             } catch (\Exception $e) {
                 return '';
             }
@@ -113,10 +113,10 @@ class Formatter extends Module implements ModuleInterface
     public function formatMoney($cash, $decimals = 2, $decimal = null, $thousands = null)
     {
         if($decimal === null) {
-            $decimal = Charm::Config()->get('main:local.formatting.decimal');
+            $decimal = C::Config()->get('main:local.formatting.decimal');
         }
         if($thousands === null) {
-            $thousands = Charm::Config()->get('main:local.formatting.thousands');
+            $thousands = C::Config()->get('main:local.formatting.thousands');
         }
 
         if (!empty($cash)) {

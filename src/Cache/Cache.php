@@ -6,7 +6,7 @@
 namespace Charm\Cache;
 
 use Charm\Vivid\Base\Module;
-use Charm\Vivid\Charm;
+use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Predis\Client;
 
@@ -32,7 +32,7 @@ class Cache extends Module implements ModuleInterface
      */
     public function loadModule()
     {
-        $this->redis = Charm::Redis()->getClient();
+        $this->redis = C::Redis()->getClient();
     }
 
     /**
