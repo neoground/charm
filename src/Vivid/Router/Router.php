@@ -7,12 +7,10 @@ namespace Charm\Vivid\Router;
 
 use Charm\Vivid\Base\Module;
 use Charm\Vivid\C;
-use Charm\Vivid\Charm;
-use Charm\Vivid\Exceptions\LogicException;
 use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Charm\Vivid\Kernel\Interfaces\OutputInterface;
-use Charm\Vivid\PathFinder;
+use Charm\Vivid\Router\Attributes\Route;
 use Phroute\Phroute\RouteCollector;
 
 /**
@@ -52,7 +50,6 @@ class Router extends Module implements ModuleInterface
             && C::AppStorage()->has('Routes', 'RoutesData')
         ) {
             $this->route = C::AppStorage()->get('Routes', 'RouteCollector');
-            $this->routes = C::AppStorage()->get('Routes', 'RoutesData');
             return true;
         }
 
@@ -65,7 +62,7 @@ class Router extends Module implements ModuleInterface
         $elements = [
             C::AppStorage()->get('Routes', 'Filters'),
             C::AppStorage()->get('Routes', 'Routes'),
-            C::AppStorage()->get('Routes', 'Groups')
+            C::AppStorage()->get('Routes', 'Groups'),
         ];
 
         $routes = [];
@@ -79,6 +76,8 @@ class Router extends Module implements ModuleInterface
             }
         }
 
+        $this->addAttributeRoutesToRouter($router, $routes);
+
         // Cache RouteCollector instance + routes array
         C::AppStorage()->set('Routes', 'RouteCollector', $router);
         C::AppStorage()->set('Routes', 'RoutesData', $routes);
@@ -89,10 +88,59 @@ class Router extends Module implements ModuleInterface
     }
 
     /**
+     * Add attribute routes if existing
+     *
+     * @param RouteCollector $router
+     * @param array $routes
+     */
+    private function addAttributeRoutesToRouter($router, $routes)
+    {
+        $attribute_routes = C::AppStorage()->get('Routes', 'AttributeRoutes');
+        if(is_array($attribute_routes)) {
+            /** @var Route $attr_route */
+            foreach($attribute_routes as $attr_route) {
+
+                $method = $attr_route->method;
+                $url = $attr_route->url;
+                $name = $attr_route->name;
+
+                $filter_before = $attr_route->filter_before;
+                if(!is_array($filter_before)) {
+                    $filter_before = [$filter_before];
+                }
+
+                $filter_after = $attr_route->filter_after;
+                if(!is_array($filter_after)) {
+                    $filter_after = [$filter_after];
+                }
+
+                $filter = ['before' => $filter_before, 'after' => $filter_after];
+                $call_parts = [$attr_route->call_class, $attr_route->call_method];
+
+                // Add to router
+                $router->{$method}([$url, $name], $call_parts, $filter);
+
+                // Add to routes array
+                $routes[] = [
+                    'method' => $method,
+                    'url' => "/" . trim($url, "/"),
+                    'name' => $name,
+                    'call_class' => $attr_route->call_class,
+                    'call_method' => $attr_route->call_method,
+                    'filters' => $filter,
+                ];
+            }
+        }
+    }
+
+    /**
      * Collect all routes
      */
     private function collectAllRoutes()
     {
+        // Storage for attribute routes
+        $attribute_routes = [];
+
         // Go through all modules
         $handler = Handler::getInstance();
         foreach ($handler->getModuleClasses() as $name => $module) {
@@ -103,13 +151,18 @@ class Router extends Module implements ModuleInterface
 
                     if (file_exists($dir)) {
                         // Add routes of this module
-
-                        // Get all files without dotfiles
-                        $files = array_slice(scandir($dir), 2);
-
                         // And require them to collect routes, filters and groups defined in them
-                        foreach ($files as $file) {
+                        foreach (C::Storage()->scanDir($dir) as $file) {
                             require_once($dir . DS . $file);
+                        }
+                    }
+
+                    // PHP8 Attribute routes
+                    if(version_compare(phpversion(), '8.0', '>=')) {
+                        $dir = $mod->getBaseDirectory() . DS . 'Controllers';
+
+                        if(file_exists($dir)) {
+                            $attribute_routes = $this->findAndAddAttributeRoutes($dir, $mod, $attribute_routes);
                         }
                     }
                 }
@@ -117,6 +170,57 @@ class Router extends Module implements ModuleInterface
                 // If module throws error -> routes not needed
             }
         }
+
+        if(count($attribute_routes) > 0) {
+            C::AppStorage()->set('Routes', 'AttributeRoutes', $attribute_routes);
+        }
+    }
+
+    /**
+     * Find and add attribute routes in a directory with controller classes
+     *
+     * @param string $dir
+     * @param object $mod
+     * @param array $attribute_routes
+     *
+     * @return mixed
+     * @throws \ReflectionException
+     */
+    private function findAndAddAttributeRoutes($dir, $mod, $attribute_routes)
+    {
+        foreach (C::Storage()->scanDir($dir) as $file) {
+
+            if(is_dir($dir . DS . $file)) {
+                // Check sub dir for files
+                $attribute_routes = $this->findAndAddAttributeRoutes($dir . DS . $file, $mod, $attribute_routes);
+            } else {
+                // Got controller file
+                $classname = str_replace(".php", "", $file);
+                $refobject = new \ReflectionObject($mod);
+                $class = $refobject->getNamespaceName() . "\\Controllers\\" . $classname;
+                if(class_exists($class)) {
+                    $reflection = new \ReflectionClass($class);
+
+                    foreach ($reflection->getMethods() as $method) {
+                        $attributes = $method->getAttributes(Route::class);
+
+                        foreach ($attributes as $attribute) {
+                            $attr = $attribute->newInstance();
+                            $attr->call_class = $class;
+                            $attr->call_method = $method;
+
+                            // Add route
+                            $attribute_routes[] = $attr;
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+
+        return $attribute_routes;
     }
 
     /**
