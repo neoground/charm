@@ -6,12 +6,13 @@
 namespace Charm\Vivid\Router\Attributes;
 
 /**
- * Class Route
+ * Attribute class Route
  *
  * Route attribute class
  *
  * @package Charm\Vivid\Router
  */
+#[\Attribute]
 class Route {
     public string $method;
     public string $url;
