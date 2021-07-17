@@ -118,17 +118,13 @@ class Database extends Module implements ModuleInterface
     /**
      * Run all database migrations of a module
      *
-     * @param string           $method  method to call (up / down)
-     * @param string           $file    optional filename (part) for single migration
-     * @param string           $module  optional module name which should be migrated
-     * @param OutputInterface  $output  optional console output interface
+     * @param string          $method method to call (up / down)
+     * @param string          $file   optional filename (part) for single migration
+     * @param string          $module optional module name which should be migrated
+     * @param OutputInterface $output optional console output interface
      */
-    public function runMigrations($method, $file = null, $module = "App", $output = null)
+    public function runMigrations(string $method, $file = null, $module = "App", $output = null)
     {
-        if ($output) {
-            $output->writeln('<info>Running ' . $method . ' migrations</info>');
-        }
-
         // Get needed data from module
         $mod = C::get($module);
 
@@ -146,7 +142,7 @@ class Database extends Module implements ModuleInterface
         // Get all migration files
         if(!file_exists($path)) {
             if($output) {
-                $output->writeln('<error>No migrations found for module ' . $module . '</error>');
+                $output->writeln('No migrations found for module: ' . $module);
             }
         }
 
@@ -221,11 +217,6 @@ class Database extends Module implements ModuleInterface
             $output->writeln('<info>Running ' . $method . ' migrations in models</info>');
         }
         $this->runModelMigrations($method, $module, $output);
-
-        // Finish console progress bar
-        if ($output) {
-            $output->writeln('<info>Finished all migrations!</info>');
-        }
     }
 
     /**
@@ -243,6 +234,8 @@ class Database extends Module implements ModuleInterface
 
             $this->runMigrations($method, null, $name, $output);
         }
+
+        $this->runMigrations($method, null, "App", $output);
     }
 
     /**

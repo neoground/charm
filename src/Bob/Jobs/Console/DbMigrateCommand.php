@@ -59,8 +59,10 @@ class DbMigrateCommand extends Command
         }
 
         if ($action == 'up') {
+            $output->writeln('<info>Running UP migrations</info>');
             C::Database()->runMigrations('up', $file, $module, $output);
         } elseif ($action == 'down') {
+            $output->writeln('<info>Running DOWN migrations</info>');
             C::Database()->runMigrations('down', $file, $module, $output);
         }
 
