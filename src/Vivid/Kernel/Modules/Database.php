@@ -297,6 +297,9 @@ class Database extends Module implements ModuleInterface
 
             if($output) {
                 $output->writeln('Checking model file: ' . $fullpath, OutputInterface::VERBOSITY_VERBOSE);
+
+                // This is a dir -> don't process. Go to next file.
+                continue;
             }
 
             require_once($fullpath);
