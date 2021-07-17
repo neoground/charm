@@ -63,6 +63,17 @@ class Charm
     }
 
     /**
+     * Get all loaded modules
+     *
+     * @return object[]
+     */
+    public static function getAllModules()
+    {
+        $handler = Handler::getInstance();
+        return $handler->getAllModules();
+    }
+
+    /**
      * Check if a module is loaded
      *
      * @param string $name name of moduile or full class name

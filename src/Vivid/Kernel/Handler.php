@@ -376,6 +376,16 @@ class Handler
     }
 
     /**
+     * Get all modules
+     *
+     * @return object[]
+     */
+    public function getAllModules()
+    {
+        return $this->modules;
+    }
+
+    /**
      * Get class names of all loaded modules as array
      *
      * @return array

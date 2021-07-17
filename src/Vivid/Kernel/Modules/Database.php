@@ -125,6 +125,10 @@ class Database extends Module implements ModuleInterface
      */
     public function runMigrations(string $method, $file = null, $module = "App", $output = null)
     {
+        if($output) {
+            $output->writeln('Migration ' . $method . ':' . $module, OutputInterface::VERBOSITY_NORMAL);
+        }
+
         // Get needed data from module
         $mod = C::get($module);
 
@@ -227,7 +231,7 @@ class Database extends Module implements ModuleInterface
      */
     public function runAllMigrations($method, $output = null)
     {
-        foreach(Handler::getInstance()->getModuleClasses() as $name => $module) {
+        foreach(C::getAllModules() as $name => $module) {
             if ($output) {
                 $output->writeln('<info>Running ' . $method . ' migrations for module: ' . $name . '</info>');
             }
@@ -247,6 +251,9 @@ class Database extends Module implements ModuleInterface
      */
     private function runModelMigrations($method, $module = "App", $output = null)
     {
+        if($output) {
+            $output->writeln('Model Migration ' . $method . ':' . $module, OutputInterface::VERBOSITY_NORMAL);
+        }
         try {
             $mod = C::get($module);
 
