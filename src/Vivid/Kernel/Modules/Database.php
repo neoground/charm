@@ -9,7 +9,6 @@ use Charm\Vivid\Base\Module;
 use Charm\Vivid\C;
 use Charm\Vivid\Exceptions\LogicException;
 use Charm\Vivid\Helper\EloquentDebugbar;
-use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\Schema\Builder;
@@ -126,10 +125,6 @@ class Database extends Module implements ModuleInterface
      */
     public function runMigrations(string $method, $file = null, $module = "App", $output = null)
     {
-        if($output) {
-            $output->writeln('Migration ' . $method . ': ' . $module, OutputInterface::VERBOSITY_NORMAL);
-        }
-
         // Get needed data from module
         $mod = C::get($module);
 
@@ -147,7 +142,7 @@ class Database extends Module implements ModuleInterface
         // Get all migration files
         if(!file_exists($path)) {
             if($output) {
-                $output->writeln('No migrations found for module: ' . $module);
+                $output->writeln('No migrations found for module: ' . $module, OutputInterface::VERBOSITY_VERBOSE);
             }
         }
 
@@ -309,6 +304,9 @@ class Database extends Module implements ModuleInterface
             require_once($fullpath);
 
             if(method_exists($class, "getTableStructure")) {
+
+                // If class is already declared (in most cases due to classic migration), remove this
+
                 $obj = new $class;
                 $tablename = $obj->getTable();
 
