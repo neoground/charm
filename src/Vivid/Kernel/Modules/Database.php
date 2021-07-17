@@ -9,6 +9,7 @@ use Charm\Vivid\Base\Module;
 use Charm\Vivid\C;
 use Charm\Vivid\Exceptions\LogicException;
 use Charm\Vivid\Helper\EloquentDebugbar;
+use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Illuminate\Database\Capsule\Manager;
 use Spatie\DbDumper\Databases\MySql;
@@ -115,11 +116,11 @@ class Database extends Module implements ModuleInterface
     }
 
     /**
-     * Run all database migrations
+     * Run all database migrations of a module
      *
      * @param string           $method  method to call (up / down)
      * @param string           $file    optional filename (part) for single migration
-     * @param string           $module  optional module name where migrations should run
+     * @param string           $module  optional module name which should be migrated
      * @param OutputInterface  $output  optional console output interface
      */
     public function runMigrations($method, $file = null, $module = "App", $output = null)
@@ -215,10 +216,109 @@ class Database extends Module implements ModuleInterface
             }
         }
 
+        // Run migrations in models
+        if ($output) {
+            $output->writeln('<info>Running ' . $method . ' migrations in models</info>');
+        }
+        $this->runModelMigrations($method, $module, $output);
+
         // Finish console progress bar
         if ($output) {
             $output->writeln('<info>Finished all migrations!</info>');
         }
+    }
+
+    /**
+     * Run all database migrations of all modules
+     *
+     * @param string           $method  method to call (up / down)
+     * @param OutputInterface  $output  optional console output interface
+     */
+    public function runAllMigrations($method, $output = null)
+    {
+        foreach(Handler::getInstance()->getModuleClasses() as $name => $module) {
+            if ($output) {
+                $output->writeln('<info>Running ' . $method . ' migrations for module: ' . $name . '</info>');
+            }
+
+            $this->runMigrations($method, null, $name, $output);
+        }
+    }
+
+    /**
+     * Run migrations of all model files of a module
+     *
+     * @param string $method migration method (up / down)
+     * @param string $module wanted module
+     * @param null|OutputInterface $output optional console output
+     */
+    private function runModelMigrations($method, $module = "App", $output = null)
+    {
+        try {
+            $mod = C::get($module);
+
+            if(is_object($mod)) {
+                $models_dir = $mod->getBaseDirectory() . DS . 'Models';
+                $namespace = $mod->getReflectionClass()->getNamespaceName() . "\\Models";
+
+                $schema_builder = $this->getDatabaseConnection()->getSchemaBuilder();
+
+                if(file_exists($models_dir)) {
+
+                    foreach(C::Storage()->scanDirForFiles($models_dir) as $file) {
+                        // Check if getTableStructure() method is existing in model class
+
+                        $fullpath = $models_dir . DS . $file;
+                        $pathinfo = pathinfo($fullpath);
+                        require_once($fullpath);
+
+                        $class = $namespace . "\\" . $pathinfo['filename'];
+
+                        if(method_exists($class, "getTableStructure")) {
+                            $obj = new $class;
+                            $tablename = $obj->getTable();
+
+                            if($method == 'down') {
+
+                                // DOWN migration
+
+                                if($output) {
+                                    $output->writeln('Dropping table: ' . $tablename);
+                                }
+
+                                $schema_builder->dropIfExists($tablename);
+
+                            } else {
+
+                                // UP migration
+                                if (!$schema_builder->hasTable($tablename)) {
+
+                                    if($output) {
+                                        $output->writeln('Creating table: ' . $tablename);
+                                    }
+
+                                    $schema_builder->create($tablename, $obj::getTableStructure());
+                                } else {
+
+                                    if($output) {
+                                        $output->writeln('Ignoring existing table: ' . $tablename);
+                                    }
+
+                                }
+
+                            }
+
+
+                        }
+
+                    }
+
+                }
+            }
+        } catch(\Exception $e) {
+            // Invalid module or file -> ignore.
+        }
+
     }
 
     /**
