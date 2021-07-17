@@ -12,6 +12,7 @@ use Charm\Vivid\Helper\EloquentDebugbar;
 use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Illuminate\Database\Capsule\Manager;
+use Illuminate\Database\Schema\Builder;
 use Spatie\DbDumper\Databases\MySql;
 use Spatie\DbDumper\Databases\PostgreSql;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -126,7 +127,7 @@ class Database extends Module implements ModuleInterface
     public function runMigrations(string $method, $file = null, $module = "App", $output = null)
     {
         if($output) {
-            $output->writeln('Migration ' . $method . ':' . $module, OutputInterface::VERBOSITY_NORMAL);
+            $output->writeln('Migration ' . $method . ': ' . $module, OutputInterface::VERBOSITY_NORMAL);
         }
 
         // Get needed data from module
@@ -252,7 +253,7 @@ class Database extends Module implements ModuleInterface
     private function runModelMigrations($method, $module = "App", $output = null)
     {
         if($output) {
-            $output->writeln('Model Migration ' . $method . ':' . $module, OutputInterface::VERBOSITY_NORMAL);
+            $output->writeln('Model Migration ' . $method . ': ' . $module, OutputInterface::VERBOSITY_NORMAL);
         }
         try {
             $mod = C::get($module);
@@ -264,61 +265,78 @@ class Database extends Module implements ModuleInterface
                 $schema_builder = $this->getDatabaseConnection()->getSchemaBuilder();
 
                 if(file_exists($models_dir)) {
-
-                    foreach(C::Storage()->scanDirForFiles($models_dir) as $file) {
-                        // Check if getTableStructure() method is existing in model class
-
-                        $fullpath = $models_dir . DS . $file;
-                        $pathinfo = pathinfo($fullpath);
-                        require_once($fullpath);
-
-                        $class = $namespace . "\\" . $pathinfo['filename'];
-
-                        if(method_exists($class, "getTableStructure")) {
-                            $obj = new $class;
-                            $tablename = $obj->getTable();
-
-                            if($method == 'down') {
-
-                                // DOWN migration
-
-                                if($output) {
-                                    $output->writeln('Dropping table: ' . $tablename);
-                                }
-
-                                $schema_builder->dropIfExists($tablename);
-
-                            } else {
-
-                                // UP migration
-                                if (!$schema_builder->hasTable($tablename)) {
-
-                                    if($output) {
-                                        $output->writeln('Creating table: ' . $tablename);
-                                    }
-
-                                    $schema_builder->create($tablename, $obj::getTableStructure());
-                                } else {
-
-                                    if($output) {
-                                        $output->writeln('Ignoring existing table: ' . $tablename);
-                                    }
-
-                                }
-
-                            }
-
-
-                        }
-
-                    }
-
+                    $this->scanDirForModelMigration($models_dir, $method, $schema_builder, $namespace, $output);
                 }
             }
         } catch(\Exception $e) {
             // Invalid module or file -> ignore.
         }
 
+    }
+
+    /**
+     * Scan a dir for model migrations recursively and execute migrations
+     *
+     * @param string          $dir            absolute path to dir
+     * @param string          $method         wanted method up / down
+     * @param Builder         $schema_builder schema buiilder object
+     * @param string          $namespace      namespace of classes in this dir
+     * @param OutputInterface|null $output         optional output interface
+     */
+    private function scanDirForModelMigration(string $dir, string $method, Builder $schema_builder, string $namespace, OutputInterface|null $output = null)
+    {
+        foreach(C::Storage()->scanDir($dir) as $file) {
+            $fullpath = $dir . DS . $file;
+            $pathinfo = pathinfo($fullpath);
+
+            $class = $namespace . "\\" . $pathinfo['filename'];
+
+            if(is_dir($fullpath)) {
+                $this->scanDirForModelMigration($fullpath, $method, $schema_builder, $class, $output);
+            }
+
+            if($output) {
+                $output->writeln('Checking model file: ' . $fullpath, OutputInterface::VERBOSITY_VERBOSE);
+            }
+
+            require_once($fullpath);
+
+            if(method_exists($class, "getTableStructure")) {
+                $obj = new $class;
+                $tablename = $obj->getTable();
+
+                if($method == 'down') {
+
+                    // DOWN migration
+
+                    if($output) {
+                        $output->writeln('Dropping table: ' . $tablename);
+                    }
+
+                    $schema_builder->dropIfExists($tablename);
+
+                } else {
+
+                    // UP migration
+                    if (!$schema_builder->hasTable($tablename)) {
+
+                        if($output) {
+                            $output->writeln('Creating table: ' . $tablename);
+                        }
+
+                        $schema_builder->create($tablename, $obj::getTableStructure());
+                    } else {
+
+                        if($output) {
+                            $output->writeln('Ignoring existing table: ' . $tablename);
+                        }
+
+                    }
+
+                }
+            }
+
+        }
     }
 
     /**

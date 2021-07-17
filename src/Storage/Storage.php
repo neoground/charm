@@ -311,7 +311,7 @@ class Storage extends Module implements ModuleInterface
     {
         $ret = [];
         foreach($this->scanDir($dir) as $file) {
-            if(is_dir($file)) {
+            if(is_dir($dir . DS . $file)) {
                 $ret[] = $file;
             }
         }
@@ -331,7 +331,7 @@ class Storage extends Module implements ModuleInterface
     {
         $ret = [];
         foreach($this->scanDir($dir) as $file) {
-            if(is_file($file)) {
+            if(is_file($dir . DS . $file)) {
                 $ret[] = $file;
             }
         }
