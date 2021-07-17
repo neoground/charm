@@ -292,14 +292,18 @@ class Database extends Module implements ModuleInterface
             $class = $namespace . "\\" . $pathinfo['filename'];
 
             if(is_dir($fullpath)) {
+                if($output) {
+                    $output->writeln('Checking sub directory: ' . $fullpath, OutputInterface::VERBOSITY_VERBOSE);
+                }
+
                 $this->scanDirForModelMigration($fullpath, $method, $schema_builder, $class, $output);
+
+                // This is a dir -> don't process. Go to next file.
+                continue;
             }
 
             if($output) {
                 $output->writeln('Checking model file: ' . $fullpath, OutputInterface::VERBOSITY_VERBOSE);
-
-                // This is a dir -> don't process. Go to next file.
-                continue;
             }
 
             require_once($fullpath);
