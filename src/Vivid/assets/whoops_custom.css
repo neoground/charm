@@ -1,5 +1,8 @@
 /* Dark mode support for whoops */
 @media (prefers-color-scheme: dark) {
+    body {
+        color: #fff;
+    }
 
     .left-panel {
         background: #181818;
