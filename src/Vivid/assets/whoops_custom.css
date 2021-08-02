@@ -45,7 +45,17 @@
         background: #376A6B;
     }
 
-    pre.sf-dump .sf-dump-str {
+    pre.sf-dump .sf-dump-str,
+    .details pre.sf-dump, .details pre.sf-dump .sf-dump-num, .details pre.sf-dump .sf-dump-const,
+    .details pre.sf-dump .sf-dump-str,
+    .details pre.sf-dump .sf-dump-note,
+    .details pre.sf-dump .sf-dump-ref,
+    .details pre.sf-dump .sf-dump-public,
+    .details pre.sf-dump .sf-dump-protected,
+    .details pre.sf-dump .sf-dump-private,
+    .details pre.sf-dump .sf-dump-meta,
+    .details pre.sf-dump .sf-dump-key,
+    .details pre.sf-dump .sf-dump-index {
         color: #A3AEF7;
     }
 
