@@ -123,6 +123,7 @@ class View implements OutputInterface, HttpCodes
         $twig->addExtension(new StringLoaderExtension());
 
         // Add charm global
+        // TODO Remove this because c() viewextension method works way better
         $twig->addGlobal('charm', C::getInstance());
 
         // Add charm twig extension

@@ -265,7 +265,20 @@ class ViewExtension extends AbstractExtension
      */
     public function in_string($needle, $haystack)
     {
-        return in_string($needle, $haystack);
+        return str_contains($haystack, $needle);
+    }
+
+    /**
+     * String contains method
+     *
+     * @param string $haystack what we have
+     * @param string $needle   what we look for
+     *
+     * @return bool
+     */
+    public function str_contains($haystack, $needle)
+    {
+        return str_contains($haystack, $needle);
     }
 
     /**
@@ -280,6 +293,18 @@ class ViewExtension extends AbstractExtension
     public function getTemplateByName(string $name)
     {
         return View::getTemplateByName($name);
+    }
+
+    /**
+     * Access the magic magnet
+     *
+     * @param string $module name of module, normally used as C::name()
+     *
+     * @return mixed
+     */
+    public function c(string $module)
+    {
+        return C::get($module);
     }
 
 }
