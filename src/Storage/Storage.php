@@ -338,4 +338,16 @@ class Storage extends Module implements ModuleInterface
         return $ret;
     }
 
+    /**
+     * Create all directories in this path if they don't exist
+     *
+     * @param int $mode chmod value (default: 0777)
+     *
+     * @return bool  true if created or already existing, false on failure
+     */
+    public function createDirectoriesIfNotExisting(string $path, int $mode = 0777) : bool
+    {
+        return file_exists($path) || mkdir($path, $mode, true);
+    }
+
 }
