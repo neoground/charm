@@ -10,6 +10,7 @@ use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use DebugBar\StandardDebugBar;
 use Whoops\Handler\JsonResponseHandler;
+use Whoops\Handler\PlainTextHandler;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
 use Whoops\Util\Misc;
@@ -53,11 +54,13 @@ class Debug extends Module implements ModuleInterface
 
         $handle->setPageTitle("Whoops! Charm Error");
 
-        $whoops->pushHandler($handle);
-
-        // JSON output for AJAX request
-        if (Misc::isAjaxRequest()) {
-            $whoops->pushHandler(new JsonResponseHandler);
+        // Output depending on CLI / AJAX Request / default view
+        if (is_cli()) {
+            $whoops->pushHandler(new PlainTextHandler());
+        } elseif (Misc::isAjaxRequest()) {
+                $whoops->pushHandler(new JsonResponseHandler);
+        } else {
+            $whoops->pushHandler($handle);
         }
 
         $whoops->register();
