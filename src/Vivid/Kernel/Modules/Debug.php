@@ -66,8 +66,9 @@ class Debug extends Module implements ModuleInterface
 
         // Add custom style
         $css_path = C::Storage()->getBasePath() . DS . 'vendor' . DS . 'neoground' . DS . 'charm'
-            . DS . 'src' . DS . 'Vivid' . DS . 'assets' . DS . 'whoops.css';
-        $handle->addCustomCss($css_path);
+            . DS . 'src' . DS . 'Vivid' . DS . 'assets' . DS . 'whoops_custom.css';
+        $handle->addResourcePath(dirname($css_path));
+        $handle->addCustomCss(basename($css_path));
 
         // Output depending on CLI / AJAX Request / default view
         if (is_cli()) {
