@@ -52,6 +52,16 @@ class Debug extends Module implements ModuleInterface
         $whoops = new Run;
         $handle = new PrettyPageHandler;
 
+        $root_path = C::Config()->get('main:debug.base_path', false);
+        if($root_path !== false) {
+            $handle->setApplicationRootPath($root_path);
+        }
+
+        $editor = C::Config()->get('main:debug.editor', false);
+        if($editor !== false) {
+            $handle->setEditor($editor);
+        }
+
         $handle->setPageTitle("Whoops! Charm Error");
 
         // Output depending on CLI / AJAX Request / default view
