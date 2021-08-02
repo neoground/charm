@@ -192,7 +192,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
      */
     public static function filterBasedOnRequest()
     {
-        $model = new self;
+        $model = new static();
         $x = self::where($model->getKeyName(), '>', 0);
 
         if(property_exists($model, 'filter_attributes')) {
