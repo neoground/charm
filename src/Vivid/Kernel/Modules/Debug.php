@@ -64,6 +64,10 @@ class Debug extends Module implements ModuleInterface
 
         $handle->setPageTitle("Whoops! Charm Error");
 
+        // Add custom style
+        $css_path = C::Storage()->getModulePath('DebugBar') . DS . 'whoops.css';
+        $handle->addCustomCss($css_path);
+
         // Output depending on CLI / AJAX Request / default view
         if (is_cli()) {
             $whoops->pushHandler(new PlainTextHandler());

@@ -1,0 +1,44 @@
+/* Dark mode support for whoops */
+@media (prefers-color-scheme: dark) {
+
+    .left-panel {
+        background: #181818;
+    }
+
+    .frame {
+        background: #444;
+    }
+
+    .frame-file {
+        color: #ccc;
+    }
+
+    .frame-method-info {
+        color: #fff;
+    }
+
+    .rightButton {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .details {
+        background: #2a2a2a;
+    }
+
+    .data-table-container label {
+        color: #fff;
+    }
+
+    .data-table span.empty {
+        color: rgba(255, 255, 255, .6);
+    }
+
+    .data-table td:first-child {
+        color: #C5A8ED;
+    }
+
+    .handler {
+        color: #ddd;
+    }
+
+}
