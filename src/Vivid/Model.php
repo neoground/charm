@@ -248,9 +248,9 @@ class Model extends \Illuminate\Database\Eloquent\Model
         $query = C::Request()->get('query', false);
         if($query !== false && property_exists($model, 'search_attributes')) {
             $search_att = $model->search_attributes;
-            $x->where(function($q) use ($search_att) {
+            $x->where(function($q) use ($search_att, $query) {
                 foreach($search_att as $val) {
-                    $q->orWhere($val, 'LIKE', '%' . $val . '%');
+                    $q->orWhere($val, 'LIKE', '%' . $query . '%');
                 }
             });
         }
