@@ -309,7 +309,11 @@ class Model extends \Illuminate\Database\Eloquent\Model
                 $order_dir = 'DESC';
             }
 
-            $x = $x->orderBy($order_by, $order_dir);
+            if($order_by == 'random') {
+                $x = $x->inRandomOrder();
+            } else {
+                $x = $x->orderBy($order_by, $order_dir);
+            }
         }
 
         $total = $x->clone()->count();
