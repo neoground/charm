@@ -41,4 +41,12 @@
         color: #ddd;
     }
 
+    .frame:not(.active):hover {
+        background: #376A6B;
+    }
+
+    pre.sf-dump .sf-dump-str {
+        color: #A3AEF7;
+    }
+
 }
