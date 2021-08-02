@@ -213,6 +213,15 @@ class Model extends \Illuminate\Database\Eloquent\Model
                     continue;
                 }
 
+                // If field is an array (JSON) format the value
+                if(is_array($model->casts)
+                    && array_key_exists($k, $model->casts)
+                    && $model->casts[$k] == 'array') {
+                    $val = json_encode($val);
+                    // Remove quotation marks at start + end so we have a clean string
+                    $val = trim($val, '"');
+                }
+
                 // Add value to query
                 switch ($v) {
                     case 'string':
