@@ -104,6 +104,26 @@ class Request extends Module implements ModuleInterface
     }
 
     /**
+     * Set a request value if it's not set yet or empty
+     *
+     * This can be used for custom overriding or
+     * for internal calling of other controller methods and so on.
+     *
+     * @param string $key
+     * @param mixed $value
+     *
+     * @return bool true if set, false if existing
+     */
+    public function setIfEmpty($key, $value)
+    {
+        if(!$this->has($key) || empty($this->get($key))) {
+            $this->set($key, $value);
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Get all passed values as array
      *
      * @return array
