@@ -213,15 +213,6 @@ class Model extends \Illuminate\Database\Eloquent\Model
                     continue;
                 }
 
-                // If field is an array (JSON) format the value
-                if(is_array($model->casts)
-                    && array_key_exists($k, $model->casts)
-                    && $model->casts[$k] == 'array') {
-                    $val = json_encode($val);
-                    // Remove quotation marks at start + end so we have a clean string
-                    $val = trim($val, '"');
-                }
-
                 // Add value to query
                 switch ($v) {
                     case 'string':
@@ -376,5 +367,19 @@ class Model extends \Illuminate\Database\Eloquent\Model
             'prev_page_url' => $prev_page_url,
             'data' => $results
         ];
+    }
+
+    /**
+     * JSON formatting with unescaped unicode
+     *
+     * This makes storage inside the database a lot easier
+     *
+     * @param mixed $value
+     *
+     * @return false|string
+     */
+    protected function asJson($value)
+    {
+        return json_encode($value, JSON_UNESCAPED_UNICODE);
     }
 }
