@@ -206,10 +206,10 @@ class Model extends \Illuminate\Database\Eloquent\Model
                 }
 
                 // Get value
-                $val = C::Request()->get($k, false);
+                $val = C::Request()->get($k);
 
                 // Check if we got a value
-                if ($val === false && $v !== "range") {
+                if (empty($val) && $v !== "range") {
                     continue;
                 }
 
@@ -246,7 +246,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
 
         // Add search query
         $query = C::Request()->get('query', false);
-        if($query !== false && property_exists($model, 'search_attributes')) {
+        if(!empty($query) && property_exists($model, 'search_attributes')) {
             $search_att = $model->search_attributes;
             $x->where(function($q) use ($search_att, $query) {
                 foreach($search_att as $val) {
