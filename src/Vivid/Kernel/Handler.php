@@ -14,6 +14,7 @@ use Charm\Vivid\Kernel\Interfaces\OutputInterface;
 use Charm\Vivid\Kernel\Output\Json;
 use Charm\Vivid\Kernel\Output\View;
 use Charm\Vivid\Kernel\Traits\SingletonTrait;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Phroute\Phroute\Exception\HttpMethodNotAllowedException;
 use Phroute\Phroute\Exception\HttpRouteNotFoundException;
 use Symfony\Component\Console\Application;
@@ -435,6 +436,9 @@ class Handler
         } catch (ModuleNotFoundException $e) {
             // Invalid module
             return $this->outputError('ModuleNotFound', 501);
+        } catch (ModelNotFoundException $e) {
+            // Searched model was not found (firstOrFail / findOrFail)
+            return $this->outputError($e->getMessage(), 404);
         }
 
         // Render method must exist
@@ -452,6 +456,11 @@ class Handler
             // Pretty exception for twig views
             if($this->shouldOutputException() && $e instanceof RuntimeError) {
                 throw new ViewException($e->getFile(), $e->getLine(), $e->getMessage());
+            }
+
+            // Handling of firstOrFail() / findOrFail()
+            if($e instanceof ModelNotFoundException) {
+                return $this->outputError($e->getMessage(), 404);
             }
 
             return $this->outputError($e->getMessage(), 500);
