@@ -5,6 +5,7 @@
 
 namespace Charm\Vivid\Kernel\Output;
 
+use Charm\Cache\CacheEntry;
 use Charm\Vivid\C;
 use Charm\Vivid\Helper\ViewExtension;
 use Charm\Vivid\Kernel\Handler;
@@ -37,6 +38,9 @@ class View implements OutputInterface, HttpCodes
 
     /** @var string  the module delimiter */
     protected static $module_delimiter = "#";
+
+    /** @var int should the output be cached? If so, the value is the cache duration in minutes */
+    protected $cache_output = 0;
 
     /**
      * View constructor.
@@ -190,6 +194,26 @@ class View implements OutputInterface, HttpCodes
         // Set charm data
         $this->setCharmData();
 
+        // Return cached view?
+        if($this->cache_output > 0) {
+            $key = 'View_' . $this->tpl;
+            if(C::has('Cache')) {
+                if(C::Cache()->has($key)) {
+                    return C::Cache()->get($key);
+                } else {
+                    // Store in cache
+                    $ce = new CacheEntry($key);
+                    $ce->setValue($this->twig->render(
+                        self::getTemplateByName($this->tpl),
+                        $this->content
+                    ));
+                    $ce->setTags(['View_Cache']);
+
+                    C::Cache()->setEntry($ce, $this->cache_output);
+                }
+            }
+        }
+
         return $this->twig->render(
             self::getTemplateByName($this->tpl),
             $this->content
@@ -303,6 +327,46 @@ class View implements OutputInterface, HttpCodes
         $data = C::AppStorage()->get('View', 'add_body', []);
         $data[$name] = $val;
         C::AppStorage()->set('View', 'add_body', $data);
+    }
+
+    /**
+     * Clear the view output cache
+     *
+     * @param null|string $view name of view or null to remove all
+     *
+     * @return bool true if removed, false if cache is not enabled
+     */
+    public static function clearCache($view = null)
+    {
+        if(C::has('Cache')) {
+            if(empty($view)) {
+                C::Cache()->removeByTag('View_Cache');
+            } else {
+                C::Cache()->remove('View_' . $view);
+            }
+
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Cache the whole View output
+     *
+     * This will cache the final html site and serve it
+     * statically from the cache for the specified time.
+     *
+     * To remove the cached view in case of content change,
+     * see View::clearCache('view_name');
+     *
+     * @param int $duration
+     *
+     * @return $this
+     */
+    public function cacheOutput(int $duration = 1440)
+    {
+        $this->cache_output = $duration;
+        return $this;
     }
 
 }
