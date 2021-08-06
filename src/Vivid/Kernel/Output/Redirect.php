@@ -85,7 +85,7 @@ class Redirect implements OutputInterface
      */
     public function withDestination($val, $args = [])
     {
-        if(in_string('://', $val)) {
+        if(str_contains($val, '://')) {
             // Got URL
             $this->destination = $val;
         } else {

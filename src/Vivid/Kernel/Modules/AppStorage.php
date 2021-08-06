@@ -248,7 +248,7 @@ class AppStorage extends Module implements ModuleInterface
                         $files = array_diff(scandir($dir), ['..', '.']);
 
                         foreach($files as $file) {
-                            if(in_string('.yaml', $file)) {
+                            if(str_contains($file, '.yaml')) {
                                 $conf_name = str_replace('.yaml', '', $file);
 
                                 // Get something from config file so it gets stored in the appstorage

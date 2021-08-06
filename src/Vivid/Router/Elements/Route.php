@@ -324,7 +324,7 @@ class Route implements RouterElement
             throw new LogicException('Invalid controller call name: ' . $this->call);
         }
 
-        if(!in_string("\\", $call_parts[0])) {
+        if(!str_contains($call_parts[0], "\\")) {
             // No namespace present. Prepend app namespace!
             $call_parts[0] = "\\App\\Controllers\\" . $call_parts[0];
         }

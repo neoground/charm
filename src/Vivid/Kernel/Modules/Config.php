@@ -204,7 +204,7 @@ class Config extends Module implements ModuleInterface
         $path = C::get($module)->getBaseDirectory() . DS . 'Config';
 
         // Get filename
-        if(!in_string($this->file_delimiter, $key)) {
+        if(!str_contains($key, $this->file_delimiter)) {
             throw new LogicException("No config file supplied for config: " . $key);
         }
 

@@ -115,7 +115,7 @@ class EventProvider extends Module implements ModuleInterface
             foreach($listeners as $listener) {
                 // Call method
 
-                if(in_string("::", $listener)) {
+                if(str_contains($listener, "::")) {
                     // Static method
                     $ret &= call_user_func($listener);
                 } else {

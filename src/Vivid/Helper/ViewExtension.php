@@ -258,6 +258,8 @@ class ViewExtension extends AbstractExtension
     /**
      * In string method
      *
+     * @deprecated Legacy support. Use str_contains instead
+     *
      * @param string $needle   what we look for
      * @param string $haystack what we have
      *

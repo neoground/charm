@@ -48,11 +48,11 @@ class CharmCreator extends Module implements ModuleInterface
         $basepath = C::Storage()->getAppPath() . DS . 'Controllers';
 
         foreach($routes as $route) {
-            if(in_string($namespace, $route['call_class'])) {
+            if(str_contains($route['call_class'], $namespace)) {
                 $class = str_replace($namespace, '', $route['call_class']);
                 $dir = $basepath;
 
-                if(in_string('\\', $class)) {
+                if(str_contains($class, '\\')) {
                     // Got sub namespace
                     $cparts = explode("\\", $class);
                     $class_name = array_pop($cparts);
@@ -147,7 +147,7 @@ class CharmCreator extends Module implements ModuleInterface
 
         // Stop if method already exists in controller
         $controller = file_get_contents($path);
-        if(in_string($data['METHOD_NAME'], $controller)) {
+        if(str_contains($controller, $data['METHOD_NAME'])) {
             if(is_object($output)) {
                 $output->writeln('[IGNORE] Method exists: ' . $data['METHOD_NAME']);
             }

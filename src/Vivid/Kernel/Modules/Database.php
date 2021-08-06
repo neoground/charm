@@ -161,7 +161,7 @@ class Database extends Module implements ModuleInterface
 
             // Remove every file which is not like the wanted name!
             foreach ($files as $k => $m) {
-                if (!in_string($file, $m)) {
+                if (!str_contains($m, $file)) {
                     // Remove from array
                     unset($files[$k]);
                 }

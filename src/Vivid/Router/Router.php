@@ -240,7 +240,7 @@ class Router extends Module implements ModuleInterface
         }
 
         // Got URL?
-        if (in_string('://', $name)) {
+        if (str_contains($name, '://')) {
             return $name;
         }
 
@@ -249,7 +249,7 @@ class Router extends Module implements ModuleInterface
 
         // Query string
         $query_string = '';
-        if (in_string('?', $name)) {
+        if (str_contains($name, '?')) {
             $parts = explode('?', $name);
 
             $name = array_shift($parts);

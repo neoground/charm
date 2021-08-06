@@ -90,7 +90,7 @@ class CreateMigrationCommand extends Command
 
         $counter = 1;
         foreach(C::Storage()->scanDir($dir) as $file) {
-            if(in_string($date, $file)) {
+            if(str_contains($file, $date)) {
                 $counter++;
             }
         }

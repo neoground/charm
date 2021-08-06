@@ -182,7 +182,7 @@ class Guard extends Module implements ModuleInterface
         // Get user
         if(!$u instanceof $this->user_class) {
             // Sanitize e-mail
-            if (in_string("@", $username)) {
+            if (str_contains($username, "@")) {
                 $username = C::Formatter()->sanitizeEmail($username);
             }
 

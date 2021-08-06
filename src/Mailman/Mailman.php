@@ -126,7 +126,7 @@ class Mailman extends Module implements ModuleInterface
     public function setDriver($name, $data = null)
     {
         $full_class = $name;
-        if(!in_string('\\', $full_class)) {
+        if(!str_contains($full_class, '\\')) {
             // Got native driver
             $full_class = '\\Charm\\Mailman\\Drivers\\' . ucfirst($name);
         }
@@ -300,7 +300,7 @@ class Mailman extends Module implements ModuleInterface
             $view = $name;
 
             // Got normal name -> directory?
-            if(!in_string('.twig', $name)) {
+            if(!str_contains($name, '.twig')) {
                 $file = 'email.twig';
 
                 if($combined) {

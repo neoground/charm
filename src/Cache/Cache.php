@@ -165,7 +165,7 @@ class Cache extends Module implements ModuleInterface
      * @return bool
      */
     public function has($key) {
-        if(!in_string($this->prefix, $key)) {
+        if(!str_contains($key, $this->prefix)) {
             $key = $this->prefix . ':' . $key;
         }
 
@@ -180,7 +180,7 @@ class Cache extends Module implements ModuleInterface
     public function remove($key)
     {
         // If prefix is provided, no need to add it again
-        if(!in_string($this->prefix, $key)) {
+        if(!str_contains($key, $this->prefix)) {
             $key = $this->prefix . ':' . $key;
         }
 

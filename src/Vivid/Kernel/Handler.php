@@ -341,7 +341,7 @@ class Handler
         }
 
         // If no namespace is present, use own namespace
-        if (!in_string("\\", $class)) {
+        if (!str_contains($class, "\\")) {
             $class = "\\Charm\\Vivid\\Kernel\\Modules\\" . $class;
         }
 
@@ -429,7 +429,7 @@ class Handler
 
         } catch (HttpRouteNotFoundException $e) {
             // Route not found
-            return $this->outputError('RouteNotFound', 404);
+            return $this->outputError('PageNotFound', 404);
         } catch (HttpMethodNotAllowedException $e) {
             // Route found, but method not allowed
             return $this->outputError('MethodNotAllowed', 403);
@@ -504,7 +504,7 @@ class Handler
         // Output JSON for API
         $error_style = $this->getModule('Config')->get('main:output.error_style', 'default');
         $http_accept = $this->getModule('Request')->get('HTTP_ACCEPT');
-        if(in_string('json', $http_accept) || $error_style == 'json') {
+        if(str_contains($http_accept, 'json') || $error_style == 'json') {
             $output = Json::makeErrorMessage($msg, $statuscode);
             echo $output->render();
 
