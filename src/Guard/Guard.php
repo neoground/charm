@@ -9,6 +9,8 @@ use Carbon\Carbon;
 use Charm\Vivid\Base\Module;
 use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
+use Charm\Vivid\Kernel\Output\Redirect;
+use Charm\Vivid\Router\Elements\Filter;
 
 /**
  * Class Guard
@@ -40,6 +42,26 @@ class Guard extends Module implements ModuleInterface
         if(C::Config()->get('main:guard.enabled', true)) {
             $this->doAutoLogin();
         }
+
+        // Add route filter
+        Filter::add('guard:auth', self::class . "::checkAuth");
+    }
+
+    /**
+     * Check authentication and if user can access this specific page
+     *
+     * TODO: Add permissions system
+     *
+     * @return null|Redirect
+     */
+    public static function checkAuth()
+    {
+        if(!C::Guard()->isLoggedIn()) {
+            // Got NO valid login -> redirect to no auth route
+            return Redirect::to(C::Config()->get('main:guard.no_auth_route', 'no_auth'));
+        }
+
+        return null;
     }
 
     /**
