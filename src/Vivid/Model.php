@@ -208,8 +208,8 @@ class Model extends \Illuminate\Database\Eloquent\Model
                 // Get value
                 $val = C::Request()->get($k);
 
-                // Check if we got a value
-                if (empty($val) && $v !== "range") {
+                // No filtering if value is empty (but allow 0 and handle range case)
+                if (empty($val) && $v !== "range" && $val !== 0) {
                     continue;
                 }
 
