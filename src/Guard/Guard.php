@@ -294,7 +294,7 @@ class Guard extends Module implements ModuleInterface
 
         // Set language if user model provides this feature
         if(method_exists($u, 'getLanguage')) {
-            C::Session()->set('charm_lang', $u->getLanguage());
+            C::Formatter()->setLanguage($u->getLanguage());
         }
 
         // Set remember me

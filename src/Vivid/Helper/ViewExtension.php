@@ -351,15 +351,25 @@ class ViewExtension extends AbstractExtension
      *
      * If text was not found, $default will be used. Variables will be applied as well.
      *
-     * @param       $key
-     * @param array $vars
-     * @param null  $default
+     * @param string     $key
+     * @param array      $vars
+     * @param mixed $default
      *
      * @return string
      */
-    public function __($key, $vars = [], $default = null)
+    public function __(string $key, array $vars = [], mixed $default = null)
     {
         return C::Formatter()->translate($key, $vars, $default);
+    }
+
+    /**
+     * Get language string
+     *
+     * @return string
+     */
+    public function getLanguage()
+    {
+        return C::Formatter()->getLanguage();
     }
 
 }

@@ -265,6 +265,30 @@ class Formatter extends Module implements ModuleInterface
     }
 
     /**
+     * Get language string for translation
+     *
+     * @return string
+     */
+    public function getLanguage()
+    {
+        $lang = C::Session()->get('charm_lang');
+        if(empty($lang)) {
+            $lang = C::Config()->get('main:session.default_language', 'en');
+        }
+        return $lang;
+    }
+
+    /**
+     * Set the language
+     *
+     * @param string $lang language string
+     */
+    public function setLanguage($lang)
+    {
+        C::Session()->set('charm_lang', $lang);
+    }
+
+    /**
      * Translate a text string
      *
      * The text can include variables, like {name}. Key needs to be lowercase.
@@ -285,13 +309,8 @@ class Formatter extends Module implements ModuleInterface
      */
     public function translate(string $key, $vars = [], $default = null)
     {
-        $lang = C::Session()->get('charm_lang');
-        if(empty($lang)) {
-            $lang = C::Config()->get('main:session.default_language', 'en');
-        }
-
         $text = C::Config()->get(
-            'Lang/' . $lang . '/' . $key,
+            'Lang/' . $this->getLanguage() . '/' . $key,
             $default
         );
 
