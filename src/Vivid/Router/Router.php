@@ -228,6 +228,8 @@ class Router extends Module implements ModuleInterface
      *
      * If you pass an absolute URL the URL will be returned.
      *
+     * TODO: Add support for controller + method name instead of route name
+     *
      * @param string $name name of route or absolute url
      * @param array|string $args (optional) array with values for all variables in route
      *

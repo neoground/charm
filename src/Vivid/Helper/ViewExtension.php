@@ -309,4 +309,38 @@ class ViewExtension extends AbstractExtension
         return C::get($module);
     }
 
+    /**
+     * Get the PHP version
+     *
+     * @return string
+     */
+    public function getPhpVersion() : string
+    {
+        $parts = explode("+", phpversion());
+        return $parts[0];
+    }
+
+    /**
+     * Get max size of an upload
+     *
+     * Thanks to: https://www.kavoir.com/2010/02/php-get-the-file-uploading-limit-max-file-size-allowed-to-upload.html
+     *
+     * @param bool $only_number only return number? Default: false
+     *
+     * @return string
+     */
+    public function getMaxUploadSize(bool $only_number = false) : string
+    {
+        $max_upload = (int)(ini_get('upload_max_filesize'));
+        $max_post = (int)(ini_get('post_max_size'));
+        $memory_limit = (int)(ini_get('memory_limit'));
+        $upload_mb = min($max_upload, $max_post, $memory_limit);
+
+        if($only_number) {
+            return $upload_mb;
+        }
+
+        return $upload_mb . ' MB';
+    }
+
 }
