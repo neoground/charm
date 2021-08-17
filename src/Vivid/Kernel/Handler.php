@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Phroute\Phroute\Exception\HttpMethodNotAllowedException;
 use Phroute\Phroute\Exception\HttpRouteNotFoundException;
 use Symfony\Component\Console\Application;
+use Twig\Error\Error;
 use Twig\Error\RuntimeError;
 
 /**
@@ -462,7 +463,7 @@ class Handler
             return true;
         } catch (\Exception $e) {
             // Pretty exception for twig views
-            if($this->shouldOutputException() && $e instanceof RuntimeError) {
+            if($this->shouldOutputException() && $e instanceof Error) {
                 throw new ViewException($e->getFile(), $e->getLine(), $e->getMessage());
             }
 
