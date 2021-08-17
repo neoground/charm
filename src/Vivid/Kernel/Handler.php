@@ -447,6 +447,12 @@ class Handler
             return $this->outputError('NoOutputProvided', 501);
         }
 
+        // Set current page as last for easier redirecting
+        if(C::has('Session')) {
+            C::Session()->set('charm_forelast_page', C::Session()->get('charm_last_page'));
+            C::Session()->set('charm_last_page', C::Router()->getCurrentUrl());
+        }
+
         // Output!
         try {
             echo $response->render();

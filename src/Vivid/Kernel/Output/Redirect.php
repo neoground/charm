@@ -60,10 +60,6 @@ class Redirect implements OutputInterface
         // Fire event
         C::Event()->fire('Redirect', 'renderStart');
 
-        // Set current page as last for easier redirecting
-        C::Session()->set('charm_forelast_page', C::Session()->get('charm_last_page'));
-        C::Session()->set('charm_last_page', C::Router()->getCurrentUrl());
-
         // Optinally set message / custom value
         if (!empty($this->message)) {
             C::Session()->set('charm_message', $this->message);
