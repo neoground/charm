@@ -288,13 +288,18 @@ class Guard extends Module implements ModuleInterface
         $u->save();
 
         // Set session
-        $_SESSION['logged_in'] = true;
-        $_SESSION['last_activity'] = $now->toDateTimeString();
-        $_SESSION['user'] = $u->id;
+        C::Session()->set('logged_in', true);
+        C::Session()->set('last_activity', $now->toDateTimeString());
+        C::Session()->set('user', $u->id);
+
+        // Set language if user model provides this feature
+        if(method_exists($u, 'getLanguage')) {
+            C::Session()->set('charm_lang', $u->getLanguage());
+        }
 
         // Set remember me
         if ($rememberme) {
-            $_SESSION['rememberme'] = true;
+            C::Session()->set('rememberme', true);
 
             // Set remember me cookies (token + uid)
             // Expiration in 90 days

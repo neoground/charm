@@ -343,4 +343,23 @@ class ViewExtension extends AbstractExtension
         return $upload_mb . ' MB';
     }
 
+    /**
+     * Translate a text string
+     *
+     * The text can include variables, like {name}. Key needs to be lowercase.
+     * This will be replaced by the value of $vars['name'].
+     *
+     * If text was not found, $default will be used. Variables will be applied as well.
+     *
+     * @param       $key
+     * @param array $vars
+     * @param null  $default
+     *
+     * @return string
+     */
+    public function __($key, $vars = [], $default = null)
+    {
+        return C::Formatter()->translate($key, $vars, $default);
+    }
+
 }
