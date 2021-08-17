@@ -439,6 +439,9 @@ class Handler
         } catch (ModelNotFoundException $e) {
             // Searched model was not found (firstOrFail / findOrFail)
             return $this->outputError($e->getMessage(), 404);
+        } catch (\Exception $e) {
+            // Other exception
+            return $this->outputError($e->getMessage(), 500);
         }
 
         // Render method must exist
@@ -458,7 +461,6 @@ class Handler
             echo $response->render();
             return true;
         } catch (\Exception $e) {
-
             // Pretty exception for twig views
             if($this->shouldOutputException() && $e instanceof RuntimeError) {
                 throw new ViewException($e->getFile(), $e->getLine(), $e->getMessage());
