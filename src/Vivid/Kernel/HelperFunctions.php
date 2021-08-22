@@ -41,7 +41,7 @@ if(!function_exists('is_json')) {
      *
      * @return bool
      */
-    function is_json($string)
+    function is_json($string) : bool
     {
         if(is_array($string)) {
             return false;
@@ -63,7 +63,7 @@ if(!function_exists('is_serialized')) {
      *
      * @return bool
      */
-    function is_serialized($string)
+    function is_serialized($string) : bool
     {
         return (@unserialize($string) !== false);
     }
@@ -160,7 +160,7 @@ if(!function_exists('is_cli')) {
      *
      * @return bool
      */
-    function is_cli()
+    function is_cli() : bool
     {
         return php_sapi_name() == 'cli';
     }
@@ -176,8 +176,34 @@ if (!function_exists('is_countable')) {
      *
      * @return bool
      */
-    function is_countable($c)
+    function is_countable($c) : bool
     {
         return is_array($c) || $c instanceof \Countable;
+    }
+}
+
+if (!function_exists('str_contains_array')) {
+
+    /**
+     * Check if an element of an array is in a string
+     *
+     * A combination of str_contains and in_array
+     *
+     * @param string $haystack the string which should contain something
+     * @param array|string $needles an array of needles the string should contain
+     *
+     * @return bool
+     */
+    function str_contains_array(string $haystack, array|string $needles) : bool
+    {
+        if(is_array($needles)) {
+            foreach($needles as $n) {
+                if (str_contains($haystack, $n)) {
+                    return true;
+                }
+            }
+        }
+
+        return str_contains($haystack, $needles);
     }
 }
