@@ -52,6 +52,8 @@ class Debug extends Module implements ModuleInterface
         $whoops = new Run;
         $handle = new PrettyPageHandler;
 
+        $handle->addDataTableCallback('charm', [self::class, 'getWhoopsMetadata']);
+
         $root_path = C::Config()->get('main:debug.base_path', false);
         if($root_path !== false) {
             $handle->setApplicationRootPath($root_path);
@@ -81,6 +83,25 @@ class Debug extends Module implements ModuleInterface
 
         $whoops->register();
         return true;
+    }
+
+    /**
+     * Get metadata which will be added to "whoops" error page
+     *
+     * @return array
+     */
+    public static function getWhoopsMetadata()
+    {
+        $route = null;
+        if(C::has('Router')) {
+            $route = C::Router()->getCurrentRouteData();
+        }
+
+        return [
+            'framework' => 'Charm',
+            'version' => C::VERSION,
+            'route' => $route
+        ];
     }
 
 }
