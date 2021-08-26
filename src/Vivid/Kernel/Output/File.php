@@ -32,6 +32,9 @@ class File implements OutputInterface
     /** @var string content disposition */
     protected $disposition;
 
+    /** @var bool output file in chunks? Useful for big files. Default: false */
+    protected bool $in_chunks = false;
+
     /**
      * Output factory
      *
@@ -81,8 +84,58 @@ class File implements OutputInterface
             return $this->content;
         }
 
+        if($this->in_chunks) {
+            // Return file in chunks
+            $this->readfile_chunked($this->path);
+
+            // Return empty content after that so the handler continues nicely
+            return "";
+        }
+
         // Return file content
         return file_get_contents($this->path);
+    }
+
+    /**
+     * Read a file in chunks
+     *
+     * @see https://stackoverflow.com/a/6914978/6026136
+     *
+     * @param string $filename absolute path to file
+     * @param bool $retbytes
+     *
+     * @return bool|int
+     */
+    public function readfile_chunked($filename, $retbytes = TRUE) {
+        // Size of file chunks in bytes
+        $chunk_size = 1024*1024;
+
+        $buffer = '';
+        $cnt    = 0;
+        $handle = fopen($filename, 'rb');
+
+        if ($handle === false) {
+            return false;
+        }
+
+        while (!feof($handle)) {
+            $buffer = fread($handle, $chunk_size);
+            echo $buffer;
+            ob_flush();
+            flush();
+
+            if ($retbytes) {
+                $cnt += strlen($buffer);
+            }
+        }
+
+        $status = fclose($handle);
+
+        if ($retbytes && $status) {
+            return $cnt; // return num. bytes delivered like readfile() does.
+        }
+
+        return $status;
     }
 
     /**
@@ -188,6 +241,17 @@ class File implements OutputInterface
     public function asAttachment()
     {
         $this->disposition = 'attachment';
+        return $this;
+    }
+
+    /**
+     * Output file in chunks. This is useful for big files.
+     *
+     * @return $this
+     */
+    public function inChunks()
+    {
+        $this->in_chunks = true;
         return $this;
     }
 
