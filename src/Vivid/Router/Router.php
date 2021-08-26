@@ -93,7 +93,7 @@ class Router extends Module implements ModuleInterface
      * @param RouteCollector $router
      * @param array $routes
      */
-    private function addAttributeRoutesToRouter($router, $routes)
+    private function addAttributeRoutesToRouter($router, &$routes)
     {
         $attribute_routes = C::AppStorage()->get('Routes', 'AttributeRoutes');
         if(is_array($attribute_routes)) {
