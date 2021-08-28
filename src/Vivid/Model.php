@@ -352,7 +352,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
         if($page > 1) {
             $prev_page_url = str_replace($page_string, "page=" . ($page - 1), $current_url);
         }
-        if($page + 1 < $last_page) {
+        if($page + 1 <= $last_page) {
             $next_page_url = str_replace($page_string, "page=" . ($page + 1), $current_url);
         }
 
