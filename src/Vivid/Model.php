@@ -228,9 +228,9 @@ class Model extends \Illuminate\Database\Eloquent\Model
                             $x->whereBetween($k, $parts);
                         } else {
                             // Check for separate fields
-                            $val1 = C::Request()->get($k . "_from", false);
-                            $val2 = C::Request()->get($k . "_to", false);
-                            if ($val1 !== false && $val2 !== false) {
+                            $val1 = C::Request()->get($k . "_from");
+                            $val2 = C::Request()->get($k . "_to");
+                            if (!empty($val1) && !empty($val2)) {
                                 $x->whereBetween($k, [$val1, $val2]);
                             }
                         }
