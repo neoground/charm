@@ -305,7 +305,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
                 }
             }
 
-            if(strtolower($order_dir) !== "ASC") {
+            if(strtoupper($order_dir) !== "ASC") {
                 $order_dir = 'DESC';
             }
 
