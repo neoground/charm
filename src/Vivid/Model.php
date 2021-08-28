@@ -336,7 +336,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
         $current_url = C::Router()->getCurrentUrl();
 
         $page_string = "page=" . $page;
-        if(!str_contains($current_url, 'page=')) {
+        if(!str_contains($current_url, '&page=') && !str_contains($current_url, '?page=')) {
             if(str_contains($current_url, '?')) {
                 $current_url .= '&' . $page_string;
             } else {
@@ -347,7 +347,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
         $prev_page_url = null;
         $next_page_url = null;
         $first_page_url = str_replace($page_string, "page=1", $current_url);
-        $last_page_url = str_replace($page_string, "page=" . $last_page, $current_url);;
+        $last_page_url = str_replace($page_string, "page=" . $last_page, $current_url);
 
         if($page > 1) {
             $prev_page_url = str_replace($page_string, "page=" . ($page - 1), $current_url);
