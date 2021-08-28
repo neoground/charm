@@ -233,6 +233,13 @@ class Model extends \Illuminate\Database\Eloquent\Model
                             if (!empty($val1) && !empty($val2)) {
                                 $x->whereBetween($k, [$val1, $val2]);
                             }
+                            if(!empty($val1) && empty($val2)) {
+                                // Only "from" value
+                                $x->where($k, ">=", $val1);
+                            } elseif(empty($val1) && !empty($val2)) {
+                                // Only "to" value
+                                $x->where($k, "<=", $val2);
+                            }
                         }
                         break;
                     case 'array':
