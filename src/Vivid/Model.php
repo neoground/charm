@@ -282,12 +282,12 @@ class Model extends \Illuminate\Database\Eloquent\Model
     {
         // Pagination
         $page = (int) C::Request()->get('page', 1);
-        $per_page = (int) C::Request()->get('per_page', 25);
-        $skip = ($page - 1) * $per_page;
+        $amount = (int) C::Request()->get('amount', 25);
+        $skip = ($page - 1) * $amount;
 
         // Prevent fetching too much data
-        if($per_page > 1000) {
-            $per_page = 1000;
+        if($amount > 1000) {
+            $amount = 1000;
         }
 
         // Add order by
@@ -319,7 +319,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
         $total = $x->clone()->count();
 
         // Fetch data
-        $x = $x->skip($skip)->take($per_page)->get();
+        $x = $x->skip($skip)->take($amount)->get();
 
         // Format results and build pagination array
         $results = [];
@@ -331,7 +331,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
             }
         }
 
-        $last_page = ceil($total / $per_page);
+        $last_page = ceil($total / $amount);
 
         $current_url = C::Router()->getCurrentUrl();
 
@@ -358,13 +358,14 @@ class Model extends \Illuminate\Database\Eloquent\Model
 
         return [
             'total' => $total,
-            'per_page' => $per_page,
+            'per_page' => $amount,
             'current_page' => $page,
             'last_page' => $last_page,
             'first_page_url' => $first_page_url,
             'last_page_url' => $last_page_url,
             'next_page_url' => $next_page_url,
             'prev_page_url' => $prev_page_url,
+            'custom_page_url' => $prev_page_url,
             'data' => $results
         ];
     }
