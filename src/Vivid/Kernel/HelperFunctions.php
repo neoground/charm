@@ -78,6 +78,18 @@ if(!function_exists('ddd') && class_exists("\\Kint")) {
      */
     function ddd(...$vars)
     {
+        // Handling of query debugging
+        foreach($vars as $k => $v) {
+            if($v instanceof \Illuminate\Database\Query\Builder) {
+                $vars[$k] = [
+                    'query' => $v->toSql(),
+                    'bindings' => $v->getBindings(),
+                    'explain' => $v->explain(),
+                    'builder' => $v
+                ];
+            }
+        }
+
         \Kint::dump(...$vars);
         \Charm\Vivid\C::shutdown();
     }
