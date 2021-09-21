@@ -127,7 +127,6 @@ class View implements OutputInterface, HttpCodes
 
         // Add extensions
         $twig->addExtension(new StringLoaderExtension());
-        $twig->addExtension(new OptimizerExtension());
         $twig->addExtension(new TwigExtension());
 
         // Add charm twig extension
