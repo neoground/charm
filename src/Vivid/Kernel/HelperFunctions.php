@@ -80,7 +80,7 @@ if(!function_exists('ddd') && class_exists("\\Kint")) {
     {
         // Handling of query debugging
         foreach($vars as $k => $v) {
-            if($v instanceof \Illuminate\Database\Query\Builder) {
+            if($v instanceof \Illuminate\Database\Eloquent\Builder) {
                 $vars[$k] = [
                     'query' => $v->toSql(),
                     'bindings' => $v->getBindings(),
