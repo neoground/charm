@@ -79,11 +79,8 @@ if(!function_exists('ddd') && class_exists("\\Kint")) {
     function ddd(...$vars)
     {
         \Kint::dump(...$vars);
-        exit;
+        \Charm\Vivid\C::shutdown();
     }
-
-    \Kint::$aliases[] = 'ddd';
-
 }
 
 if(!function_exists('ddb')) {

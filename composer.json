@@ -24,14 +24,15 @@
     "dragonmantank/cron-expression": "^3.1",
     "phpmailer/phpmailer": "^6.5",
     "league/flysystem": "^2.1",
-    "filp/whoops": "^2.13",
+    "filp/whoops": "^2.14",
     "maximebf/debugbar": "^1.16",
     "kint-php/kint": "^3.3",
     "phpunit/phpunit": "^9.5",
     "opis/closure": "^3.6",
     "spatie/db-dumper": "^2.21",
     "claviska/simpleimage": "^3.6",
-    "illuminate/database": "^8.40"
+    "illuminate/database": "^8.40",
+    "kint-php/kint-twig": "^3.0"
   },
   "suggest": {
     "ext-redis": "For native redis support instead of using predis"

@@ -11,7 +11,9 @@ use Charm\Vivid\Helper\ViewExtension;
 use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\HttpCodes;
 use Charm\Vivid\Kernel\Interfaces\OutputInterface;
+use Kint\Twig\TwigExtension;
 use Twig\Environment;
+use Twig\Extension\OptimizerExtension;
 use Twig\Extension\StringLoaderExtension;
 use Twig\Loader\FilesystemLoader;
 
@@ -125,10 +127,8 @@ class View implements OutputInterface, HttpCodes
 
         // Add extensions
         $twig->addExtension(new StringLoaderExtension());
-
-        // Add charm global
-        // TODO Remove this because c() viewextension method works way better
-        $twig->addGlobal('charm', C::getInstance());
+        $twig->addExtension(new OptimizerExtension());
+        $twig->addExtension(new TwigExtension());
 
         // Add charm twig extension
         $twig->addExtension(new ViewExtension());

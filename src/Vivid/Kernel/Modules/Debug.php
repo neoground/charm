@@ -8,7 +8,6 @@ namespace Charm\Vivid\Kernel\Modules;
 use Charm\Vivid\Base\Module;
 use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
-use DebugBar\StandardDebugBar;
 use Whoops\Handler\JsonResponseHandler;
 use Whoops\Handler\PlainTextHandler;
 use Whoops\Handler\PrettyPageHandler;
@@ -24,8 +23,8 @@ use Whoops\Util\Misc;
  */
 class Debug extends Module implements ModuleInterface
 {
-    /** @var StandardDebugBar debug bar object */
-    protected $debugbar;
+    /** @var Run the whoops instance */
+    protected Run $whoops;
 
     /**
      * Load the module
@@ -35,7 +34,13 @@ class Debug extends Module implements ModuleInterface
         // Only init debug modules if we're in debug mode
         if(C::Config()->get('main:debug.debugmode', false)) {
             $this->initWhoops();
+        } else {
+            // No debug mode -> production!
+            \Kint::$enabled_mode = false;
         }
+
+        // Set kint settings
+        \Kint::$aliases[] = 'ddd';
     }
 
     /**
@@ -43,7 +48,7 @@ class Debug extends Module implements ModuleInterface
      *
      * @return bool
      */
-    private function initWhoops()
+    private function initWhoops() : bool
     {
         if(!class_exists("Whoops\\Run")) {
             return false;
@@ -82,6 +87,7 @@ class Debug extends Module implements ModuleInterface
         }
 
         $whoops->register();
+        $this->whoops = $whoops;
         return true;
     }
 
@@ -90,7 +96,7 @@ class Debug extends Module implements ModuleInterface
      *
      * @return array
      */
-    public static function getWhoopsMetadata()
+    public static function getWhoopsMetadata() : array
     {
         $route = null;
         if(C::has('Router')) {
@@ -102,6 +108,16 @@ class Debug extends Module implements ModuleInterface
             'version' => C::VERSION,
             'route' => $route
         ];
+    }
+
+    /**
+     * Get the whoops instance
+     *
+     * @return Run
+     */
+    public function getWhoopsInstance() : Run
+    {
+        return $this->whoops;
     }
 
 }
