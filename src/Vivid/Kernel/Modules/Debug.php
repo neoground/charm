@@ -8,6 +8,7 @@ namespace Charm\Vivid\Kernel\Modules;
 use Charm\Vivid\Base\Module;
 use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
+use Kint\Renderer\RichRenderer;
 use Whoops\Handler\JsonResponseHandler;
 use Whoops\Handler\PlainTextHandler;
 use Whoops\Handler\PrettyPageHandler;
@@ -41,6 +42,7 @@ class Debug extends Module implements ModuleInterface
 
         // Set kint settings
         \Kint::$aliases[] = 'ddd';
+        RichRenderer::$folder = false;
     }
 
     /**
