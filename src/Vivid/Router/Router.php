@@ -367,9 +367,9 @@ class Router extends Module implements ModuleInterface
      * vars:    provided variables for method
      * filters: array with before and after filters
      *
-     * @return array
+     * @return array|bool array with data or false if not found
      */
-    public function getCurrentRouteData() : array
+    public function getCurrentRouteData() : array|bool
     {
         return C::AppStorage()->get('Routes', 'CurrentRoute');
     }
