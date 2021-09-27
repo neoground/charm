@@ -81,7 +81,7 @@ class Request extends Module implements ModuleInterface
      *
      * @return bool
      */
-    public function has($key)
+    public function has($key) : bool
     {
         return C::Arrays()->has($this->vars, $key);
     }
@@ -97,7 +97,7 @@ class Request extends Module implements ModuleInterface
      *
      * @return true
      */
-    public function set($key, $value)
+    public function set($key, $value) : bool
     {
         $this->vars[$key] = $value;
         return true;
@@ -114,13 +114,37 @@ class Request extends Module implements ModuleInterface
      *
      * @return bool true if set, false if existing
      */
-    public function setIfEmpty($key, $value)
+    public function setIfEmpty($key, $value) : bool
     {
         if(!$this->has($key) || empty($this->get($key))) {
             $this->set($key, $value);
             return true;
         }
         return false;
+    }
+
+    /**
+     * Get multiple fields at once in an array
+     *
+     * @param array $keys the keys to get
+     *
+     * @return array keys are the $keys, values are the found values
+     */
+    public function getMultiple(array $keys) : array
+    {
+        $data = [];
+
+        foreach($keys as $key) {
+            $val = $this->get($key);
+
+            if($val !== 0 && empty($val)) {
+                $val = null;
+            }
+
+            $data[$key] = $val;
+        }
+
+        return $data;
     }
 
     /**
