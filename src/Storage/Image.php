@@ -38,4 +38,35 @@ class Image extends SimpleImage
         throw new \Exception("File not found: $file", self::ERR_FILE_NOT_FOUND);
     }
 
+    /**
+     * Create a thumbnail for an image
+     *
+     * @param string $src path to source
+     * @param string $dest path where thumbnail should be stored
+     * @param int    $width wanted with of thumbnail in px. Default: 600
+     * @param string $mime mime of thumbnail. Default: image/jpeg
+     * @param int    $quality quality of thumbnail 0-100. Default: 80
+     *
+     * @return bool
+     */
+    public static function createThumbnail(string $src,
+                                           string $dest,
+                                           int $width = 600,
+                                           string $mime = "image/jpeg",
+                                           int $quality = 80) : bool
+    {
+        try {
+            $tn = new SimpleImage();
+            $tn->fromFile($src)
+                ->bestFit($width, $width)
+                ->thumbnail($width, $width)
+                ->toFile($dest, $mime, $quality);
+
+            return true;
+        } catch(\Exception $e) {
+
+        }
+        return false;
+    }
+
 }

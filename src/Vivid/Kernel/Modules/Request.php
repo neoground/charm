@@ -5,10 +5,12 @@
 
 namespace Charm\Vivid\Kernel\Modules;
 
+use Charm\Storage\Image;
 use Charm\Vivid\Base\Module;
 use Charm\Vivid\C;
 use Charm\Vivid\Elements\UploadedFile;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
+use claviska\SimpleImage;
 
 /**
  * Class Request
@@ -223,6 +225,79 @@ class Request extends Module implements ModuleInterface
         }
 
         return new UploadedFile($this->files[$name]);
+    }
+
+    /**
+     * Save an uploaded file
+     *
+     * Multiple files must be handled manually, also due to filenames etc.
+     *
+     * @param string $name name of field of the uploaded file
+     * @param string     $destination absolute path where the file should be stored
+     * @param bool $override override file if existing? Default: true
+     *
+     * @return bool true if saved false on error
+     */
+    public function saveFile($name, $destination, $override = true) : bool
+    {
+        $file = $this->getFile($name);
+        if($file) {
+            $dir = dirname($destination);
+            C::Storage()->createDirectoriesIfNotExisting($dir);
+
+            try {
+                $file->saveAs($destination, $override);
+            } catch(\Exception $e) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Save and resize / compress an image
+     *
+     * @param string $name name of field of the uploaded file
+     * @param string $destination absolute path where the file should be stored
+     * @param bool   $override override file if existing? Default: true
+     * @param int    $width width of image to resize to. Set to 0 for no resizing
+     * @param string $mime save file as this mime. leave empty to use the source's mime
+     * @param int    $quality
+     *
+     * @return bool
+     */
+    public function saveAndResizeImage(string $name,
+                                        string $destination,
+                                        bool $override = true,
+                                        int $width = 1920,
+                                        string $mime = "image/jpeg",
+                                        int $quality = 90) : bool {
+
+        if($this->saveFile($name, $destination, $override)) {
+
+            if(empty($mime)) {
+                $mime = mime_content_type($destination);
+            }
+
+            try {
+                $img = new Image();
+                $img->fromFile($destination)
+                    ->autoOrient();
+
+                if($width > 0) {
+                    $img = $img->resize($width);
+                }
+
+                $img->toFile($destination, $mime, $quality);
+                return true;
+            } catch(\Exception $e) {
+                return false;
+            }
+
+        }
+
+        return false;
     }
 
     /**
