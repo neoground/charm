@@ -212,6 +212,20 @@ class Request extends Module implements ModuleInterface
     }
 
     /**
+     * Check if a file was uploaded successfully
+     *
+     * Just a wrapper for $this->gotUpload()
+     *
+     * @param string $name name field of uploaded file
+     *
+     * @return bool
+     */
+    public function hasFile($name)
+    {
+        return $this->gotUpload($name);
+    }
+
+    /**
      * Get uploaded file
      *
      * @param string $name name field of uploaded file
@@ -290,6 +304,53 @@ class Request extends Module implements ModuleInterface
                 }
 
                 $img->toFile($destination, $mime, $quality);
+                return true;
+            } catch(\Exception $e) {
+                return false;
+            }
+
+        }
+
+        return false;
+    }
+
+    /**
+     * Save an image as a thumbnail (cropped)
+     *
+     * @param string $name name of field of the uploaded file
+     * @param string $destination absolute path where the file should be stored
+     * @param bool   $override override file if existing? Default: true
+     * @param int    $width width of thumbnail
+     * @param int    $height height of thumbnail. Set to 0 (default) to use the width (square)
+     * @param string $mime save file as this mime. leave empty to use the source's mime
+     * @param int    $quality
+     *
+     * @return bool
+     */
+    public function saveImageAsThumbnail(string $name,
+                                         string $destination,
+                                         bool $override = true,
+                                         int $width = 600,
+                                         int $height = 0,
+                                         string $mime = "image/jpeg",
+                                         int $quality = 80) : bool {
+        if($this->saveFile($name, $destination, $override)) {
+
+            if(empty($mime)) {
+                $mime = mime_content_type($destination);
+            }
+
+            if(empty($height)) {
+                $height = $width;
+            }
+
+            try {
+                $img = new Image();
+                $img->fromFile($destination)
+                    ->autoOrient()
+                    ->bestFit($width, $height)
+                    ->thumbnail($width, $height)
+                    ->toFile($destination, $mime, $quality);
                 return true;
             } catch(\Exception $e) {
                 return false;
