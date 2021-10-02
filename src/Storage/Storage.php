@@ -350,4 +350,16 @@ class Storage extends Module implements ModuleInterface
         return file_exists($path) || mkdir($path, $mode, true);
     }
 
+    /**
+     * Delete a file if it exists
+     *
+     * @param string $file path to file
+     *
+     * @return bool true on deletion false on error or if not found
+     */
+    public function deleteFileIfExists(string $file) : bool
+    {
+        return (file_exists($file) && unlink($file));
+    }
+
 }
