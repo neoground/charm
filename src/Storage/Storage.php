@@ -287,15 +287,16 @@ class Storage extends Module implements ModuleInterface
      * Will exclude dotfiles
      *
      * @param string $dir absolute path to directory
+     * @param int $sorting_order optional sorting order. Default: ascending. Set to non-zero for descending
      *
      * @return array|false returns false on error
      */
-    public function scanDir($dir)
+    public function scanDir($dir, int $sorting_order = 0)
     {
         if(!file_exists($dir) || !is_dir($dir)) {
             return false;
         }
-        return array_diff(scandir($dir), ['.', '..']);
+        return array_diff(scandir($dir, $sorting_order), ['.', '..']);
     }
 
     /**
@@ -304,13 +305,14 @@ class Storage extends Module implements ModuleInterface
      * Will exclude dotfiles
      *
      * @param string $dir absolute path to directory
+     * @param int $sorting_order optional sorting order. Default: ascending. Set to non-zero for descending
      *
      * @return array|false returns false on error
      */
-    public function scanDirForDirectories($dir)
+    public function scanDirForDirectories($dir, int $sorting_order = 0)
     {
         $ret = [];
-        foreach($this->scanDir($dir) as $file) {
+        foreach($this->scanDir($dir, $sorting_order) as $file) {
             if(is_dir($dir . DS . $file)) {
                 $ret[] = $file;
             }
@@ -324,13 +326,14 @@ class Storage extends Module implements ModuleInterface
      * Will exclude dotfiles
      *
      * @param string $dir absolute path to directory
+     * @param int $sorting_order optional sorting order. Default: ascending. Set to non-zero for descending
      *
      * @return array|false returns false on error
      */
-    public function scanDirForFiles($dir)
+    public function scanDirForFiles($dir, int $sorting_order = 0)
     {
         $ret = [];
-        foreach($this->scanDir($dir) as $file) {
+        foreach($this->scanDir($dir, $sorting_order) as $file) {
             if(is_file($dir . DS . $file)) {
                 $ret[] = $file;
             }
