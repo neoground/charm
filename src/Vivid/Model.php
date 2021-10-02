@@ -5,6 +5,7 @@
 
 namespace Charm\Vivid;
 
+use Carbon\Carbon;
 use Charm\Cache\CacheEntry;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Eloquent\Builder;
@@ -389,5 +390,86 @@ class Model extends \Illuminate\Database\Eloquent\Model
     protected function asJson($value)
     {
         return json_encode($value, JSON_UNESCAPED_UNICODE);
+    }
+
+    /**
+     * Backup this model (table in database) to a backup file
+     *
+     * This will serialize the whole collection.
+     *
+     * You can restore it with the restoreBackup() method.
+     *
+     * @param null|string $destination optional absolute path to file. Leave empty for default handling
+     *
+     * @return int|false the number of bytes that were written to the file, or false on failure.
+     */
+    public static function backup(string|null $destination = null)
+    {
+        if(empty($destination)) {
+            $self = new static();
+            $filename = Carbon::now()->format('Y-m-d_H-i-s') . '_' . $self->table . '.bak';
+            $dir = C::Storage()->getVarPath() . DS . 'backup' . DS . 'models';
+        } else {
+            $dir = dirname($destination);
+            $filename = basename($destination);
+        }
+
+        C::Storage()->createDirectoriesIfNotExisting($dir);
+        return file_put_contents($dir . DS . $filename, serialize(static::all()));
+    }
+
+    /**
+     * Get a list of all available backups for this model
+     *
+     * @param null|string $dir optional path to directory where backups are stored
+     *
+     * @return array absolute paths to all backups in descending order (the latest entity first)
+     */
+    public static function availableBackups($dir = null)
+    {
+        if(empty($dir)) {
+            $dir = C::Storage()->getVarPath() . DS . 'backup' . DS . 'models';
+        }
+
+        $self = new static();
+
+        $bakfiles = [];
+        foreach(C::Storage()->scanDir($dir, 1) as $bakfile) {
+            if(str_contains($bakfile, '_' . $self->table . '.bak')) {
+                $bakfiles[] = $dir . DS . $bakfile;
+            }
+        }
+
+        return $bakfiles;
+    }
+
+    /**
+     * Restore a backup
+     *
+     * @param string $filename absolute path to the backup file or 'latest' to use the latest backup
+     */
+    public static function restoreBackup(string $filename = 'latest')
+    {
+        if($filename == 'latest') {
+            $available = static::availableBackups();
+            if(count($available) == 0) {
+                return false;
+            }
+
+            $filename = array_shift($available);
+        }
+
+        if(!file_exists($filename)) {
+            return false;
+        }
+
+        $collection = unserialize(file_get_contents($filename));
+
+        // Insert all entries
+        foreach($collection as $entity) {
+            $entity->save();
+        }
+
+        return true;
     }
 }
