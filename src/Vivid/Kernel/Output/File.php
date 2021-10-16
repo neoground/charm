@@ -147,9 +147,11 @@ class File implements OutputInterface
         $ct = 'application/octet-stream';
 
         // Find mime type
-        $mime_type = mime_content_type($this->path);
-        if($mime_type !== false) {
-            $ct = $mime_type;
+        if(!empty($this->path)) {
+            $mime_type = mime_content_type($this->path);
+            if($mime_type !== false) {
+                $ct = $mime_type;
+            }
         }
 
         $this->contenttype = $ct;
