@@ -61,17 +61,21 @@ class AppStorage extends Module implements ModuleInterface
      * Get something from the app storage
      *
      * @param string       $module   name of module
-     * @param string       $key      the key
+     * @param string       $key      the key or "*" for all keys in the module
      * @param string|null  $default  (opt.) the default value (null)
      *
-     * @return mixed|bool  false on error
+     * @return mixed  the value or $default
      */
     public function get($module, $key, $default = null)
     {
         if (!array_key_exists($module, $this->storage)
             || !array_key_exists($key, $this->storage[$module])
         ) {
-            return false;
+            return $default;
+        }
+
+        if($key == "*") {
+            return $this->storage[$module];
         }
 
         return C::Arrays()->get($this->storage[$module], $key, $default);
@@ -96,7 +100,7 @@ class AppStorage extends Module implements ModuleInterface
      * This will create or replace the stored element
      *
      * @param string  $module  name of module
-     * @param string  $key     the key
+     * @param string  $key     the key or "*" to replace whole data of module
      * @param mixed   $value    the value to store
      *
      * @return bool
@@ -105,6 +109,10 @@ class AppStorage extends Module implements ModuleInterface
     {
         if (!array_key_exists($module, $this->storage)) {
             $this->storage[$module] = [];
+        }
+
+        if($key == "*") {
+            return $this->storage[$module] = $value;
         }
 
         return $this->storage[$module][$key] = $value;
