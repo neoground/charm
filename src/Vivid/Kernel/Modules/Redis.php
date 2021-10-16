@@ -246,7 +246,11 @@ class Redis extends Module implements ModuleInterface
     public function __call($name, $arguments)
     {
         if(method_exists($this->redis_client, $name)) {
-            return $this->redis_client->$name($arguments);
+            if(count($arguments) == 1) {
+                return $this->redis_client->$name($arguments[0]);
+            } else {
+                return $this->redis_client->$name($arguments);
+            }
         }
 
         return false;
