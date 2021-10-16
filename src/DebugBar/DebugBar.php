@@ -51,6 +51,7 @@ class DebugBar extends Module implements ModuleInterface
         if(!C::Config()->get('main:debug.show_debugbar', false)
             || !class_exists("DebugBar\\StandardDebugBar")
         ) {
+            $this->enabled = false;
             return false;
         }
 
@@ -70,9 +71,9 @@ class DebugBar extends Module implements ModuleInterface
         return $this->enabled;
     }
 
-    public function getInstance() : StandardDebugBar
+    public function getInstance() : StandardDebugBar|false
     {
-        return $this->debugBar;
+        return ($this->isEnabled() ? $this->debugBar : false);
     }
 
     public function getRenderer() : JavascriptRenderer
