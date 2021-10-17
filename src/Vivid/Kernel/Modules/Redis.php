@@ -249,7 +249,7 @@ class Redis extends Module implements ModuleInterface
             if(count($arguments) == 1) {
                 return $this->redis_client->$name($arguments[0]);
             } else {
-                return $this->redis_client->$name($arguments);
+                return call_user_func($this->redis_client->$name, $arguments);
             }
         }
 
