@@ -139,13 +139,15 @@ class Session extends Module implements ModuleInterface
      */
     public function checkFingerprint() : bool
     {
-        $hash = md5($_SERVER['HTTP_USER_AGENT']);
+        if(isset($_SERVER['HTTP_USER_AGENT'])) {
+            $hash = md5($_SERVER['HTTP_USER_AGENT']);
 
-        if (isset($_SESSION['charm_fingerprint'])) {
-            return $_SESSION['charm_fingerprint'] === $hash;
+            if (isset($_SESSION['charm_fingerprint'])) {
+                return $_SESSION['charm_fingerprint'] === $hash;
+            }
+
+            $_SESSION['charm_fingerprint'] = $hash;
         }
-
-        $_SESSION['charm_fingerprint'] = $hash;
 
         return true;
     }
