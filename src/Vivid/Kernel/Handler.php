@@ -101,7 +101,8 @@ class Handler
                 'Session',
                 'Request',
                 '\\Charm\\Guard\\Token',
-                '\\Charm\\Guard\\Guard'
+                '\\Charm\\Guard\\Guard',
+                '\\Charm\\DebugBar\\DebugBar'
             ];
         }
 
