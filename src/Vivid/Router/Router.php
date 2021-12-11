@@ -11,7 +11,6 @@ use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Charm\Vivid\Kernel\Interfaces\OutputInterface;
 use Charm\Vivid\Router\Attributes\Route;
-use Phroute\Phroute\RouteCollector;
 
 /**
  * Class Router
@@ -22,7 +21,7 @@ use Phroute\Phroute\RouteCollector;
  */
 class Router extends Module implements ModuleInterface
 {
-    /** @var RouteCollector the route collector */
+    /** @var Collector the route collector */
     protected $route;
 
     /**
@@ -46,14 +45,14 @@ class Router extends Module implements ModuleInterface
     public function init()
     {
         // Get router instance from cache
-        if (C::AppStorage()->has('Routes', 'RouteCollector')
+        if (C::AppStorage()->has('Routes', 'Collector')
             && C::AppStorage()->has('Routes', 'RoutesData')
         ) {
-            $this->route = C::AppStorage()->get('Routes', 'RouteCollector');
+            $this->route = C::AppStorage()->get('Routes', 'Collector');
             return true;
         }
 
-        $router = new RouteCollector();
+        $router = new Collector();
 
         // Require all route files so routes are collected
         $this->collectAllRoutes();
@@ -78,8 +77,8 @@ class Router extends Module implements ModuleInterface
 
         $this->addAttributeRoutesToRouter($router, $routes);
 
-        // Cache RouteCollector instance + routes array
-        C::AppStorage()->set('Routes', 'RouteCollector', $router);
+        // Cache Collector instance + routes array
+        C::AppStorage()->set('Routes', 'Collector', $router);
         C::AppStorage()->set('Routes', 'RoutesData', $routes);
 
         // Set for whole class
@@ -90,7 +89,7 @@ class Router extends Module implements ModuleInterface
     /**
      * Add attribute routes if existing
      *
-     * @param RouteCollector $router
+     * @param Collector $router
      * @param array $routes
      */
     private function addAttributeRoutesToRouter($router, &$routes)
@@ -385,7 +384,7 @@ class Router extends Module implements ModuleInterface
         $relative_url = str_replace(
             $this->getRelativeUrl(),
             '',
-            parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)
+            (string) parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)
         );
 
         // Get route data from cache

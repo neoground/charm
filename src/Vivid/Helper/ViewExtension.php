@@ -232,7 +232,7 @@ class ViewExtension extends AbstractExtension
      */
     public function str_replace($search, $replace, $input)
     {
-        return str_replace($search, $replace, $input);
+        return (empty($input)) ? '' : str_replace($search, $replace, $input);
     }
 
     /**

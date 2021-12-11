@@ -64,12 +64,14 @@ class Token extends Module implements ModuleInterface
             $auth_header = C::Request()->getHeader('x-authorization');
         }
 
-        $matches = [];
-        preg_match('/usertoken="(.*?)"/', $auth_header, $matches);
-        if(isset($matches[1])){
-            $token = $matches[1];
-            $this->token = $token;
-            return $token;
+        if(!empty($auth_header)) {
+            $matches = [];
+            preg_match('/usertoken="(.*?)"/', $auth_header, $matches);
+            if (isset($matches[1])) {
+                $token = $matches[1];
+                $this->token = $token;
+                return $token;
+            }
         }
 
         return false;

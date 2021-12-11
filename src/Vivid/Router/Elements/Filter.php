@@ -16,7 +16,7 @@ use Opis\Closure\SerializableClosure;
  *
  * @package Charm\Vivid\Router\Elements
  */
-class Filter implements RouterElement, \Serializable
+class Filter implements RouterElement
 {
     protected $name;
 
