@@ -84,6 +84,8 @@ class File implements OutputInterface
             return $this->content;
         }
 
+        header("Content-Length: " . filesize($this->path));
+
         if($this->in_chunks) {
             // Return file in chunks
             $this->readfile_chunked($this->path);
