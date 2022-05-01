@@ -89,14 +89,12 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
     /**
      * Detailed debug information.
      *
-     * @param  string  $message The log message
-     * @param  array   $context The log context
-     * 
-     * @return bool    Whether the record has been processed
+     * @param \Stringable|string $message The log message
+     * @param array              $context The log context
      */
-    public function debug($message, array $context = [])
+    public function debug(\Stringable|string $message, array $context = []) : void
     {
-        return $this->log('debug', $message, $context);
+        $this->log('debug', $message, $context);
     }
 
     /**
@@ -104,12 +102,10 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
      *
      * @param  string  $message The log message
      * @param  array   $context The log context
-     *
-     * @return bool    Whether the record has been processed
      */
-    public function emergency($message, array $context = [])
+    public function emergency(\Stringable|string $message, array $context = []) : void
     {
-        return $this->log('emergency', $message, $context);
+        $this->log('emergency', $message, $context);
     }
 
     /**
@@ -118,14 +114,12 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
      * Example: Entire website down, database unavailable, etc. This should
      * trigger the SMS alerts and wake you up.
      *
-     * @param  string  $message The log message
-     * @param  array   $context The log context
-     *
-     * @return bool    Whether the record has been processed
+     * @param \Stringable|string $message The log message
+     * @param array              $context The log context
      */
-    public function alert($message, array $context = [])
+    public function alert(\Stringable|string $message, array $context = []) : void
     {
-        return $this->log('alert', $message, $context);
+        $this->log('alert', $message, $context);
     }
 
     /**
@@ -133,28 +127,24 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
      *
      * Example: Application component unavailable, unexpected exception.
      *
-     * @param  string  $message The log message
-     * @param  array   $context The log context
-     *
-     * @return bool    Whether the record has been processed
+     * @param \Stringable|string $message The log message
+     * @param array              $context The log context
      */
-    public function critical($message, array $context = [])
+    public function critical(\Stringable|string $message, array $context = []) : void
     {
-        return $this->log('critical', $message, $context);
+        $this->log('critical', $message, $context);
     }
 
     /**
      * Runtime errors that do not require immediate action but should typically
      * be logged and monitored.
      *
-     * @param  string  $message The log message
-     * @param  array   $context The log context
-     *
-     * @return bool    Whether the record has been processed
+     * @param \Stringable|string $message The log message
+     * @param array              $context The log context
      */
-    public function error($message, array $context = [])
+    public function error(\Stringable|string $message, array $context = []) : void
     {
-        return $this->log('error', $message, $context);
+        $this->log('error', $message, $context);
     }
 
     /**
@@ -163,27 +153,23 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
      * Example: Use of deprecated APIs, poor use of an API, undesirable things
      * that are not necessarily wrong.
      *
-     * @param  string  $message The log message
-     * @param  array   $context The log context
-     *
-     * @return bool    Whether the record has been processed
+     * @param \Stringable|string $message The log message
+     * @param array              $context The log context
      */
-    public function warning($message, array $context = [])
+    public function warning(\Stringable|string $message, array $context = []) : void
     {
-        return $this->log('warning', $message, $context);
+        $this->log('warning', $message, $context);
     }
 
     /**
      * Normal but significant events.
      *
-     * @param  string  $message The log message
-     * @param  array   $context The log context
-     *
-     * @return bool    Whether the record has been processed
+     * @param \Stringable|string $message The log message
+     * @param array              $context The log context
      */
-    public function notice($message, array $context = [])
+    public function notice(\Stringable|string $message, array $context = []) : void
     {
-        return $this->log('notice', $message, $context);
+        $this->log('notice', $message, $context);
     }
 
     /**
@@ -191,29 +177,25 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
      *
      * Example: User logs in, SQL logs.
      *
-     * @param  string  $message The log message
-     * @param  array   $context The log context
-     *
-     * @return bool    Whether the record has been processed
+     * @param \Stringable|string $message The log message
+     * @param array              $context The log context
      */
-    public function info($message, array $context = [])
+    public function info(\Stringable|string $message, array $context = []) : void
     {
-        return $this->log('info', $message, $context);
+        $this->log('info', $message, $context);
     }
 
     /**
      * Logs with an arbitrary level.
      *
-     * @param  mixed   $level   The log level
-     * @param  string  $message The log message
-     * @param  array   $context The log context
-     *
-     * @return bool    Whether the record has been processed
+     * @param mixed              $level   The log level
+     * @param \Stringable|string $message The log message
+     * @param array              $context The log context
      */
-    public function log($level, $message, array $context = [])
+    public function log($level, \Stringable|string $message, array $context = []) : void
     {
         if(!$this->enabled) {
-            return false;
+            return;
         }
 
         $level = strtolower($level);
@@ -227,6 +209,6 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
             $db['messages']->$level($message);
         }
 
-        return $this->logger->addRecord(Logger::toMonologLevel($level), $message, $context);
+        $this->logger->addRecord(Logger::toMonologLevel($level), $message, $context);
     }
 }
