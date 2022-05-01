@@ -51,7 +51,7 @@ class Formatter extends Module implements ModuleInterface
             return '';
         }
 
-        return $date->formatLocalized(C::Config()->get('main:local.timestamps.date'));
+        return $date->isoFormat(C::Config()->get('main:local.timestamps.date'));
     }
 
     /**
@@ -69,7 +69,7 @@ class Formatter extends Module implements ModuleInterface
             }
 
             try {
-                return Carbon::parse($data)->formatLocalized(C::Config()->get('main:local.timestamps.dateshort'));
+                return Carbon::parse($data)->isoFormat(C::Config()->get('main:local.timestamps.dateshort'));
             } catch (\Exception $e) {
                 return '';
             }
@@ -92,7 +92,7 @@ class Formatter extends Module implements ModuleInterface
             }
 
             try {
-                return Carbon::parse($data)->formatLocalized(C::Config()->get('main:local.timestamps.datetimeshort'));
+                return Carbon::parse($data)->isoFormat(C::Config()->get('main:local.timestamps.datetimeshort'));
             } catch (\Exception $e) {
                 return '';
             }
