@@ -16,9 +16,9 @@ class ViewException extends \Exception
 {
     protected $code = 3011;
 
-    protected $file = '';
+    protected string $file = '';
 
-    protected $line = '';
+    protected int $line = 0;
 
     public function __construct($file, $line, $message = "", $code = 3011, Throwable $previous = null)
     {
