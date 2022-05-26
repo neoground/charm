@@ -83,9 +83,8 @@ class Handler
     private function initSystem(): void
     {
         // Include functions
-        require_once __DIR__ . DIRECTORY_SEPARATOR . 'Globals.php';
-        require_once __DIR__ . DS . 'BaseFunctions.php';
-        require_once __DIR__ . DS . 'HelperFunctions.php';
+        require_once __DIR__ . DIRECTORY_SEPARATOR . 'BaseFunctions.php';
+        require_once __DIR__ . DIRECTORY_SEPARATOR . 'HelperFunctions.php';
 
         // Init the base system
         $h = Handler::getInstance();

@@ -1,7 +1,11 @@
 <?php
 /**
- * This file contains charm's own functions
+ * This file contains charm's own functions and globals
  */
+
+if(!defined('DS')) {
+    define('DS', DIRECTORY_SEPARATOR);
+}
 
 if(!function_exists('cPath')) {
 

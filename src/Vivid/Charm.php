@@ -6,6 +6,7 @@
 namespace Charm\Vivid;
 
 use Charm\Cache\Cache;
+use Charm\Database\Database;
 use Charm\DebugBar\DebugBar;
 use Charm\Events\EventProvider;
 use Charm\Guard\Guard;
@@ -15,6 +16,7 @@ use Charm\Storage\Storage;
 use Charm\Vivid\Kernel\EngineManager;
 use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
+use JetBrains\PhpStorm\NoReturn;
 
 /**
  * Class Charm
@@ -24,7 +26,7 @@ use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
  * @method static Kernel\Modules\AppStorage AppStorage
  * @method static Kernel\Modules\Arrays Arrays
  * @method static Kernel\Modules\Config Config
- * @method static \Charm\Database\Database Database
+ * @method static Database Database
  * @method static Kernel\Modules\Debug Debug
  * @method static Kernel\Modules\Formatter Formatter
  * @method static Kernel\Modules\Logging Logging
@@ -47,16 +49,18 @@ use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 class Charm
 {
     /** @var string the version of charm */
-    public const VERSION = "1.0";
+    public const VERSION = "1.0.0";
 
     /**
      * Get a loaded module
      *
      * @param string $name module name
      *
-     * @return mixed
+     * @return ModuleInterface
+     *
+     * @throws Exceptions\ModuleNotFoundException
      */
-    public static function get($name)
+    public static function get(string $name) : object
     {
         $handler = Handler::getInstance();
         return $handler->getModule($name);
@@ -67,7 +71,7 @@ class Charm
      *
      * @return object[]
      */
-    public static function getAllModules()
+    public static function getAllModules(): array
     {
         $handler = Handler::getInstance();
         return $handler->getAllModules();
@@ -80,7 +84,7 @@ class Charm
      *
      * @return bool
      */
-    public static function has($name)
+    public static function has(string $name): bool
     {
         $handler = Handler::getInstance();
         return $handler->hasModule($name);
@@ -91,7 +95,7 @@ class Charm
      *
      * @return self
      */
-    public static function getInstance()
+    public static function getInstance() : self
     {
         return new self;
     }
@@ -103,8 +107,10 @@ class Charm
      * @param $arguments
      *
      * @return ModuleInterface
+     *
+     * @throws Exceptions\ModuleNotFoundException
      */
-    public static function __callStatic($name, $arguments)
+    public static function __callStatic($name, $arguments) : object
     {
         return self::get($name);
     }
@@ -116,8 +122,10 @@ class Charm
      * @param $arguments
      *
      * @return ModuleInterface
+     *
+     * @throws Exceptions\ModuleNotFoundException
      */
-    public function __call($name, $arguments)
+    public function __call($name, $arguments) : object
     {
         return self::get($name);
     }
@@ -125,9 +133,9 @@ class Charm
     /**
      * Shutdown the application
      *
-     * Use this to gracefully shutdown the application instead of die() or exit()
+     * Use this to gracefully shut down the application instead of die() or exit()
      */
-    public static function shutdown()
+    #[NoReturn] public static function shutdown(): void
     {
         Handler::getInstance()->shutdown();
     }

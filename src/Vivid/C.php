@@ -8,6 +8,8 @@ namespace Charm\Vivid;
 /**
  * Class C
  *
+ * The magic magnet
+ *
  * Alternative syntax for Charm class calls
  *
  * @see Charm

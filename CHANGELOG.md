@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## [0.2.0]
+## [1.0.0]
 ### Added
 - Get all available cron jobs via `C::Crown()->getAllCronJobs()`
 - Summary of database migrations as console output
@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - `C::Database()->getRedisClient()` (use `C::Redis()->getClient()` instead)
 - Deprecated `PathFinder` class
 - Dependency on DbDumper, we will create a native one via `mysqldump` soon
+- Deprecated `in_string()` function, use built-in `str_contains()` instead
 
 ---
 

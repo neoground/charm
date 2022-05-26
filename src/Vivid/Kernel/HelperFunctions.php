@@ -3,35 +3,6 @@
  * This file contains charm's helper functions for string, arrays and so on
  */
 
-if(!function_exists('in_string')) {
-
-    /**
-     * Check if a string contains a specific substring
-     *
-     * @deprecated use php's own str_contains() instead
-     *
-     * @param string $needle   what we look for
-     * @param string $haystack what we have
-     *
-     * @return bool
-     */
-    function in_string($needle, $haystack)
-    {
-        // Use built-in function if available
-        if(function_exists('str_contains')) {
-            return str_contains($haystack, $needle);
-        }
-
-        // Ignore arrays!
-        if (is_array($needle) || is_array($haystack) || empty($needle)) {
-            return false;
-        }
-
-        return strpos($haystack, $needle) !== false;
-    }
-
-}
-
 if(!function_exists('is_json')) {
 
     /**
