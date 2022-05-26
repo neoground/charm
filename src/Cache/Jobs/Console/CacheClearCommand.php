@@ -3,7 +3,7 @@
  * This file contains a console command.
  */
 
-namespace Charm\Bob\Jobs\Console;
+namespace Charm\Cache\Jobs\Console;
 
 use Charm\Vivid\C;
 use Symfony\Component\Console\Command\Command;
@@ -14,8 +14,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Class CacheClearCommand
  *
  * Handling general cache clearing
- *
- * @package Charm\Bob\Jobs\Console
  */
 class CacheClearCommand extends Command
 {

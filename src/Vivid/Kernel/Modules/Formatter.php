@@ -101,16 +101,16 @@ class Formatter extends Module implements ModuleInterface
     }
 
     /**
-     * Format money / currencies
+     * Format a number for displaying
      *
-     * @param string  $cash      input value
+     * @param string|int|float  $cash      input value
      * @param int     $decimals  (opt.) the decimals (default: 2)
-     * @param string  $decimal   (opt.) decimal separator
-     * @param string  $thousands (opt.) thousands separator
+     * @param string|null  $decimal   (opt.) decimal separator
+     * @param string|null  $thousands (opt.) thousands separator
      *
      * @return int|string
      */
-    public function formatMoney($cash, $decimals = 2, $decimal = null, $thousands = null)
+    public function formatNumber($cash, $decimals = 2, $decimal = null, $thousands = null)
     {
         if($decimal === null) {
             $decimal = C::Config()->get('main:local.formatting.decimal');

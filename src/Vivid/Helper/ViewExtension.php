@@ -86,21 +86,6 @@ class ViewExtension extends AbstractExtension
     }
 
     /**
-     * Build URL based on route
-     *
-     * Providing the same method name for easier usage.
-     *
-     * @param string         $name  name of route
-     * @param array|string   $args  (optional) array with values for all variables in route
-     *
-     * @return string
-     */
-    public function buildUrl($name, $args = [])
-    {
-        return $this->getUrl($name, $args);
-    }
-
-    /**
      * Get the current full url
      *
      * @return string
@@ -195,7 +180,7 @@ class ViewExtension extends AbstractExtension
     }
 
     /**
-     * Format money / currencies
+     * Format a number for displaying
      *
      * @param string  $data      input value
      * @param int     $decimals  (opt.) the decimals (default: 2)
@@ -204,9 +189,9 @@ class ViewExtension extends AbstractExtension
      *
      * @return int|string
      */
-    public function formatMoney($data, $decimals = 2, $decimal = null, $thousands = null)
+    public function formatNumber($data, $decimals = 2, $decimal = null, $thousands = null)
     {
-        return C::Formatter()->formatMoney($data, $decimals, $decimal, $thousands);
+        return C::Formatter()->formatNumber($data, $decimals, $decimal, $thousands);
     }
 
     /**
@@ -256,21 +241,6 @@ class ViewExtension extends AbstractExtension
     }
 
     /**
-     * In string method
-     *
-     * @deprecated Legacy support. Use str_contains instead
-     *
-     * @param string $needle   what we look for
-     * @param string $haystack what we have
-     *
-     * @return bool
-     */
-    public function in_string($needle, $haystack)
-    {
-        return str_contains($haystack, $needle);
-    }
-
-    /**
      * String contains method
      *
      * @param string $haystack what we have
@@ -278,7 +248,7 @@ class ViewExtension extends AbstractExtension
      *
      * @return bool
      */
-    public function str_contains($haystack, $needle)
+    public function str_contains(string $haystack, string $needle): bool
     {
         return str_contains($haystack, $needle);
     }
@@ -292,7 +262,7 @@ class ViewExtension extends AbstractExtension
      *
      * @return string
      */
-    public function getTemplateByName(string $name)
+    public function getTemplateByName(string $name): string
     {
         return View::getTemplateByName($name);
     }
@@ -357,7 +327,7 @@ class ViewExtension extends AbstractExtension
      *
      * @return string
      */
-    public function __(string $key, array $vars = [], mixed $default = null)
+    public function __(string $key, array $vars = [], mixed $default = null): string
     {
         return C::Formatter()->translate($key, $vars, $default);
     }
@@ -367,9 +337,21 @@ class ViewExtension extends AbstractExtension
      *
      * @return string
      */
-    public function getLanguage()
+    public function getLanguage(): string
     {
         return C::Formatter()->getLanguage();
+    }
+
+    /**
+     * Get base path to a module
+     *
+     * @param string $module the module's name
+     *
+     * @return string
+     */
+    public function getModuleUrl(string $module) : string
+    {
+        return C::Storage()->pathToUrl(C::Storage()->getModulePath($module));
     }
 
 }

@@ -6,12 +6,12 @@
 namespace Charm\Crown;
 
 use Carbon\Carbon;
-use Charm\Crown\Exceptions\InvalidCronjobException;
 use Charm\Vivid\Base\Module;
 use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Cron\CronExpression;
+use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -24,7 +24,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Crown extends Module implements ModuleInterface
 {
     /** @var OutputInterface */
-    private $output;
+    private OutputInterface $output;
+
+    /**
+     * Constructor
+     *
+     * Set null output as default to make output accessible
+     */
+    public function __construct()
+    {
+        $this->output = new NullOutput();
+    }
 
     /**
      * Load the module
@@ -56,9 +66,29 @@ class Crown extends Module implements ModuleInterface
         }
 
         C::Logging()->debug('Running cron jobs');
-        if($this->output) {
-            $this->output->writeln('<info>Runninig cron jobs</info>');
+        $this->output->writeln('<info>Running cron jobs</info>');
+
+        // Collect jobs
+        $all_jobs = $this->getAllCronJobs();
+
+        // Check if due
+        foreach($all_jobs as $job) {
+            $cron = new CronExpression($job->getExpression());
+            if ($cron->isDue()) {
+                // Yup. Run it!
+                $this->executeCronJob($job);
+            }
         }
+    }
+
+    /**
+     * Get all cron jobs
+     *
+     * @return Cronjob[] each element is a Cronjob class instance
+     */
+    public function getAllCronJobs(): array
+    {
+        $all_jobs = [];
 
         // Go through all modules
         $handler = Handler::getInstance();
@@ -66,11 +96,18 @@ class Crown extends Module implements ModuleInterface
             try {
                 $mod = $handler->getModule($name);
                 if (is_object($mod) && method_exists($mod, 'getReflectionClass')) {
+
+                    // Check if module has Cron dir, if so, load jobs from there
                     $dir = $mod->getBaseDirectory() . DS . 'Jobs' . DS . 'Cron';
                     $namespace = $mod->getReflectionClass()->getNamespaceName() . "\\Jobs\\Cron";
 
+                    $module_jobs = [];
                     if (file_exists($dir)) {
-                        $this->checkCronJobs($dir, $namespace);
+                        $module_jobs = $this->loadCronjobs($dir, $namespace);
+                    }
+
+                    foreach($module_jobs as $mj) {
+                        $all_jobs[] = $mj;
                     }
                 }
             } catch (\Exception $e) {
@@ -78,18 +115,21 @@ class Crown extends Module implements ModuleInterface
                 // Just continue, it's logged...
             }
         }
+
+        return $all_jobs;
     }
 
     /**
-     * Check cron jobs of a module and execute them
+     * Load cron jobs in a single directory
      *
-     * @param string $dir the directory where cron jobs are found
-     * @param string $namespace the namespace of the cron jobs
+     * @param string $dir       absolute path to directory
+     * @param string $namespace the namespace in this directory
      *
-     * @throws InvalidCronjobException
+     * @return array
      */
-    private function checkCronJobs($dir, $namespace)
+    private function loadCronjobs(string $dir, string $namespace): array
     {
+        $jobs = [];
         // Go through all cron jobs
         foreach (C::Storage()->scanDir($dir) as $file) {
             $fullpath = $dir . DS . $file;
@@ -100,12 +140,8 @@ class Crown extends Module implements ModuleInterface
 
             // Job existing?
             if (!class_exists($class)) {
-                // Job (class) not existing!
-                C::Logging()->notice('[CROWN] Got invalid job. Class not existing: ' . $class);
-                if ($this->output) {
-                    $this->output->writeln('<error>Got invalid job. Class not existing: ' . $class . '</error>');
-                }
-
+                // Job (class) not existing, so ignore entry
+                $this->output->writeln('Invalid cronjob class: ' . $class, OutputInterface::VERBOSITY_VERBOSE);
                 continue;
             }
 
@@ -114,35 +150,27 @@ class Crown extends Module implements ModuleInterface
 
             // Job must extend Cronjob
             if (!is_subclass_of($job, Cronjob::class)) {
-                throw new InvalidCronjobException("Job must extend the Cronjob class");
+                $this->output->writeln('Job must extend the Cronjob class: ' . $class, OutputInterface::VERBOSITY_VERBOSE);
+                continue;
             }
 
             // Get and validate cron expression
             $expression = $job->getExpression();
             if(empty($expression) || !CronExpression::isValidExpression($expression)) {
-
-                if(is_object($this->output)) {
-                    $this->output->writeln('Invalid cronjob expression: ' . $expression
-                        . ' for job: ' . $job->getName(),
-                        OutputInterface::VERBOSITY_VERBOSE);
-                }
-
+                $this->output->writeln('Invalid cronjob expression: ' . $expression
+                    . ' for job: ' . $job->getName(),
+                    OutputInterface::VERBOSITY_VERBOSE);
                 continue;
             }
 
-            if(is_object($this->output)) {
-                $this->output->writeln('Checking cronjob for run: ' . $job->getName()
-                    . '. Expression: ' . $expression,
-                    OutputInterface::VERBOSITY_VERBOSE);
-            }
+            $this->output->writeln('Loading cronjob: ' . $job->getName()
+                . '. Expression: ' . $expression,
+                OutputInterface::VERBOSITY_VERBOSE);
 
-            // Is job due in this minute?
-            $cron = new CronExpression($job->getExpression());
-            if ($cron->isDue()) {
-                // Yup. Run it!
-                $this->executeCronJob($job);
-            }
+            $jobs[] = $job;
         }
+
+        return $jobs;
     }
 
     /**

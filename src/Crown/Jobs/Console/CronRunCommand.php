@@ -3,7 +3,7 @@
  * This file contains a console command.
  */
 
-namespace Charm\Bob\Jobs\Console;
+namespace Charm\Crown\Jobs\Console;
 
 use Charm\Crown\Crown;
 use Charm\Vivid\C;
@@ -15,8 +15,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Class CronRunCommand
  *
  * Handling cron job running
- *
- * @package Charm\Bob\Jobs\Console
  */
 class CronRunCommand extends Command
 {
@@ -37,8 +35,6 @@ class CronRunCommand extends Command
      * @param OutputInterface  $output
      *
      * @return int
-     *
-     * @throws \Charm\Crown\Exceptions\InvalidCronjobException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
