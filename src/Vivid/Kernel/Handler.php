@@ -14,44 +14,39 @@ use Charm\Vivid\Kernel\Interfaces\OutputInterface;
 use Charm\Vivid\Kernel\Output\Json;
 use Charm\Vivid\Kernel\Output\View;
 use Charm\Vivid\Kernel\Traits\SingletonTrait;
+use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use JetBrains\PhpStorm\NoReturn;
 use Phroute\Phroute\Exception\HttpMethodNotAllowedException;
 use Phroute\Phroute\Exception\HttpRouteNotFoundException;
 use Symfony\Component\Console\Application;
 use Twig\Error\Error;
-use Twig\Error\RuntimeError;
 
 /**
  * Class Handler
  *
  * Handling system init, execution, shutdown.
- *
- * @package Charm\Vivid\Kernel
  */
 class Handler
 {
     use SingletonTrait;
 
-    /**
-     * @var object[] All module instances
-     */
-    protected $modules = [];
+    /** @var object[] All module instances */
+    protected array $modules = [];
 
-    /**
-     * @var array All module class names for easy access
-     */
-    protected $module_classes = [];
+    /** @var array All module class names for easy access */
+    protected array $module_classes = [];
 
     /** @var array All modules which should be loaded */
-    protected $modules_to_load;
+    protected array $modules_to_load;
 
     /** @var array List with all blacklisted modules */
-    protected $modules_blacklist;
+    protected array $modules_blacklist;
 
     /**
      * Handler init for singleton
      */
-    protected function init()
+    protected function init(): void
     {
         // Default modules
         $this->modules_to_load = [
@@ -67,7 +62,7 @@ class Handler
             'DebugBar' => '\\Charm\\DebugBar\\DebugBar',
             'Session',
             'Redis',
-            'Database',
+            'Database' => '\\Charm\\Database\\Database',
             'Request',
             'Formatter',
             'Cache' => '\\Charm\\Cache\\Cache',
@@ -85,14 +80,14 @@ class Handler
     /**
      * Init the system
      */
-    private function initSystem()
+    private function initSystem(): void
     {
         // Include functions
         require_once __DIR__ . DIRECTORY_SEPARATOR . 'Globals.php';
         require_once __DIR__ . DS . 'BaseFunctions.php';
         require_once __DIR__ . DS . 'HelperFunctions.php';
 
-        // Let's init the base system
+        // Init the base system
         $h = Handler::getInstance();
 
         // Blacklist modules that aren't needed in cli
@@ -118,7 +113,7 @@ class Handler
      *
      * This method starts the whole system.
      */
-    public function start()
+    public function start(): void
     {
         // Save time for performance measurements
         $start_time = microtime(true);
@@ -153,7 +148,7 @@ class Handler
     /**
      * Execute post init hooks of all modules
      */
-    private function callPostInitHooks()
+    private function callPostInitHooks(): void
     {
         foreach($this->getModuleClasses() as $name => $class) {
             try {
@@ -191,7 +186,7 @@ class Handler
      *
      * This method starts the whole console system.
      */
-    public function startConsole()
+    public function startConsole(): void
     {
         // Init the whole system
         $this->initSystem();
@@ -213,7 +208,7 @@ class Handler
                         $this->addConsoleCommands($app, $dir, $namespace);
                     }
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // Console command not existing?
                 // Just continue...
             }
@@ -222,7 +217,7 @@ class Handler
         // Start the console
         try {
             $app->run();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             echo "Got exception: " . $e->getMessage();
         }
 
@@ -233,11 +228,11 @@ class Handler
     /**
      * Add console commands
      *
-     * @param Application $app console application instance
-     * @param string $dir full path to the directory where the commands are stored
-     * @param string $namespace the namespace for all commands
+     * @param Application $app       console application instance
+     * @param string      $dir       full path to the directory where the commands are stored
+     * @param string      $namespace the namespace for all commands
      */
-    private function addConsoleCommands(&$app, $dir, $namespace)
+    private function addConsoleCommands(Application &$app, string $dir, string $namespace): void
     {
         $files = array_diff(scandir($dir), ['..', '.']);
 
@@ -262,12 +257,12 @@ class Handler
      *
      * @return bool
      */
-    private function addDependendModules($module = 'App')
+    private function addDependendModules(string $module = 'App'): bool
     {
         // Get all modules defined in app config
         try {
             $modules = C::Config()->get($module . '#modules:modules');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Invalid, so no dependency.
             return false;
         }
@@ -297,7 +292,7 @@ class Handler
      *
      * @param string $name class name of module with full namespace
      */
-    public function addModule($name)
+    public function addModule(string $name): void
     {
         if (!in_array($name, $this->modules_to_load)) {
             $this->modules_to_load[] = $name;
@@ -307,7 +302,7 @@ class Handler
     /**
      * Load all modules
      */
-    public function loadModules()
+    public function loadModules(): void
     {
         // Load all modules
         foreach ($this->modules_to_load as $name => $class) {
@@ -318,12 +313,12 @@ class Handler
     /**
      * Load a module
      *
-     * @param string $name name of module
+     * @param string $name  name of module
      * @param string $class class of module
      *
      * @return bool
      */
-    public function loadModule($name, $class)
+    public function loadModule(string $name, string $class): bool
     {
         // Class blacklisted?
         if (in_array($class, $this->modules_blacklist)) {
@@ -369,7 +364,7 @@ class Handler
      *
      * @throws ModuleNotFoundException
      */
-    public function getModule($name)
+    public function getModule(string $name): object
     {
         if (!is_array($this->modules) || !array_key_exists($name, $this->modules)) {
             throw new ModuleNotFoundException('Module "' . $name . '" could not be found.');
@@ -383,7 +378,7 @@ class Handler
      *
      * @return object[]
      */
-    public function getAllModules()
+    public function getAllModules(): array
     {
         return $this->modules;
     }
@@ -393,7 +388,7 @@ class Handler
      *
      * @return array
      */
-    public function getModuleClasses()
+    public function getModuleClasses(): array
     {
         return $this->module_classes;
     }
@@ -405,7 +400,7 @@ class Handler
      *
      * @return bool
      */
-    public function hasModule($name)
+    public function hasModule(string $name): bool
     {
         return in_array($name, $this->module_classes) || in_array($name, array_keys($this->module_classes));
     }
@@ -415,9 +410,9 @@ class Handler
      *
      * @return bool
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    private function output()
+    private function output(): bool
     {
         // Call router dispatcher
         try {
@@ -441,7 +436,7 @@ class Handler
         } catch (ModelNotFoundException $e) {
             // Searched model was not found (firstOrFail / findOrFail)
             return $this->outputError($e->getMessage(), 404);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Other exception
             return $this->outputError($e->getMessage(), 500);
         }
@@ -462,7 +457,7 @@ class Handler
         try {
             echo $response->render();
             return true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Pretty exception for twig views
             if($this->shouldOutputException() && $e instanceof Error) {
                 throw new ViewException($e->getFile(), $e->getLine(), $e->getMessage());
@@ -484,7 +479,7 @@ class Handler
      *
      * @throws ModuleNotFoundException
      */
-    private function shouldOutputException()
+    private function shouldOutputException(): bool
     {
         $error_style = $this->getModule('Config')->get('main:output.error_style', 'default');
 
@@ -498,14 +493,14 @@ class Handler
     /**
      * Output an error
      *
-     * @param string  $msg         error message
-     * @param int     $statuscode  HTTP status code
+     * @param string $msg        error message
+     * @param int    $statuscode HTTP status code
      *
      * @return false
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    private function outputError($msg, $statuscode = 500)
+    private function outputError(string $msg, int $statuscode = 500): bool
     {
         if( $this->shouldOutputException() ) {
             throw new OutputException($msg);
@@ -535,7 +530,7 @@ class Handler
     /**
      * Shutdown the application because we're done!
      */
-    public function shutdown()
+    #[NoReturn] public function shutdown(): void
     {
         // Fire shutdown event
         if(C::has('Event')) {

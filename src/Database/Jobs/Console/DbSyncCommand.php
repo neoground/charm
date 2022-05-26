@@ -3,9 +3,9 @@
  * This file contains the console command for database migration of all modules.
  */
 
-namespace Charm\Bob\Jobs\Console;
+namespace Charm\Database\Jobs\Console;
 
-use Charm\Vivid\C;
+use Charm\Database\DatabaseMigrator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -45,11 +45,15 @@ class DbSyncCommand extends Command
     {
         $action = $input->getOption('action');
 
+        $dm = new DatabaseMigrator($output);
+
         if ($action == 'down') {
-            C::Database()->runAllMigrations('down', $output);
+            $dm->runAllMigrations('down', $output);
         } else {
-            C::Database()->runAllMigrations('up', $output);
+            $dm->runAllMigrations('up', $output);
         }
+
+        $dm->outputStats();
 
         $output->writeln('<info>Done!</info>');
         return Command::SUCCESS;

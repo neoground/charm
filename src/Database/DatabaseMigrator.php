@@ -1,0 +1,293 @@
+<?php
+/**
+ * This file contains the DatabaseMigrator class.
+ */
+
+namespace Charm\Database;
+
+use Charm\Vivid\C;
+use Illuminate\Database\Schema\Builder;
+use Symfony\Component\Console\Output\NullOutput;
+use Symfony\Component\Console\Output\OutputInterface;
+
+/**
+ * Class DatabaseMigrator
+ *
+ * Handling database migrations
+ */
+class DatabaseMigrator
+{
+    protected OutputInterface $output;
+
+    protected array $synced_tables = [];
+
+    /**
+     * Constructor.
+     *
+     * @param OutputInterface|null $output set optional output for console output
+     */
+    public function __construct(OutputInterface|null $output = null)
+    {
+        if(!is_object($output)) {
+            $output = new NullOutput();
+        }
+
+        $this->output = $output;
+
+        $this->synced_tables = [
+            'dropped' => [],
+            'created' => [],
+            'altered' => [],
+            'ignored' => [],
+            'processed' => 0
+        ];
+    }
+
+    /**
+     * Run all database migrations of a module
+     *
+     * @param string          $method method to call (up / down)
+     * @param string          $file   optional filename (part) for single migration
+     * @param string          $module optional module name which should be migrated
+     */
+    public function runMigrations(string $method, $file = null, $module = "App")
+    {
+        // Get needed data from module
+        $mod = C::get($module);
+
+        // Defaults
+        $path = C::Storage()->getAppPath() . DS . 'System' . DS . 'Migrations';
+        $namespace = "\\App\\System\\Migrations";
+
+        // Module specific
+        if(is_object($mod) && method_exists($mod, 'getReflectionClass')) {
+            $path = C::get($module)->getBaseDirectory() . DS . 'System' . DS . 'Migrations';
+
+            $namespace = $mod->getReflectionClass()->getNamespaceName() . "\\System\\Migrations";
+        }
+
+        // Get all migration files
+        if(!file_exists($path)) {
+            $this->output->writeln('No migrations found for module: ' . $module, OutputInterface::VERBOSITY_VERBOSE);
+        }
+
+        $files = glob($path . DS . '*.php');
+
+        // Descending order for down
+        if ($method == 'down') {
+            $files = array_reverse($files);
+        }
+
+        // Is $file set? Single migration?
+        if (!empty($file)) {
+            $this->output->writeln('Single migration of: ' . $file);
+
+            // Remove every file which is not like the wanted name!
+            foreach ($files as $k => $m) {
+                if (!str_contains($m, $file)) {
+                    // Remove from array
+                    unset($files[$k]);
+                }
+            }
+        }
+
+        // Go through each php file and run migration
+        foreach ($files as $m) {
+            require_once($m);
+
+            // Get class name based on filename without prefix and suffix
+            $class_raw = basename($m, '.php');
+            $class_parts = explode("_", $class_raw);
+
+            // Remove all numeric prefixes
+            while(is_numeric($class_parts[0])) {
+                array_shift($class_parts);
+            }
+
+            // Create class name with namespace
+            $class = $namespace . "\\" . implode("",  array_map("ucfirst", $class_parts));
+
+            if(!class_exists($class)) {
+
+                // Append table suffix. Some people like that.
+                $class = $class . 'Table';
+
+                if(!class_exists($class)) {
+                    // Still not found. Ignore.
+                    $this->output->writeln('<error>Invalid class in: ' . $class_raw
+                        . '. Expected: ' . $class . '</error>');
+                    continue;
+                }
+            }
+
+            $migration = new $class;
+
+            $this->output->writeln('Migrating: ' . $class);
+
+            if($method == 'up') {
+                $migration->up();
+            } else {
+                $migration->down();
+            }
+        }
+
+        // Run migrations in models
+        $this->output->writeln('<info>Running ' . $method . ' migrations in models</info>');
+        $this->runModelMigrations($method, $module);
+    }
+
+    /**
+     * Run all database migrations of all modules
+     *
+     * @param string           $method  method to call (up / down)
+     */
+    public function runAllMigrations($method)
+    {
+        foreach(C::getAllModules() as $name => $module) {
+            $this->output->writeln('<info>Running ' . $method . ' migrations for module: ' . $name . '</info>');
+
+            $this->runMigrations($method, null, $name);
+        }
+
+        $this->runMigrations($method, null, "App");
+    }
+
+    /**
+     * Run migrations of all model files of a module
+     *
+     * @param string $method migration method (up / down)
+     * @param string $module wanted module
+     */
+    private function runModelMigrations($method, $module = "App")
+    {
+        $this->output->writeln('Model Migration ' . $method . ': ' . $module, OutputInterface::VERBOSITY_NORMAL);
+        try {
+            $mod = C::get($module);
+
+            if(is_object($mod)) {
+                $models_dir = $mod->getBaseDirectory() . DS . 'Models';
+                $namespace = $mod->getReflectionClass()->getNamespaceName() . "\\Models";
+
+                $schema_builder = $this->getDatabaseConnection()->getSchemaBuilder();
+
+                if(file_exists($models_dir)) {
+                    $this->scanDirForModelMigration($models_dir, $method, $schema_builder, $namespace);
+                }
+            }
+        } catch(\Exception $e) {
+            // Invalid module or file -> ignore.
+        }
+
+    }
+
+    /**
+     * Scan a dir for model migrations recursively and execute migrations
+     *
+     * @param string          $dir            absolute path to dir
+     * @param string          $method         wanted method up / down
+     * @param Builder         $schema_builder schema buiilder object
+     * @param string          $namespace      namespace of classes in this dir
+     */
+    private function scanDirForModelMigration(string $dir, string $method, Builder $schema_builder, string $namespace)
+    {
+        foreach(C::Storage()->scanDir($dir) as $file) {
+            $fullpath = $dir . DS . $file;
+            $pathinfo = pathinfo($fullpath);
+
+            $class = $namespace . "\\" . $pathinfo['filename'];
+
+            if(is_dir($fullpath)) {
+                $this->output->writeln('Checking sub directory: ' . $fullpath, OutputInterface::VERBOSITY_VERBOSE);
+                $this->scanDirForModelMigration($fullpath, $method, $schema_builder, $class);
+
+                // This is a dir -> don't process. Go to next file.
+                continue;
+            }
+
+            $this->output->writeln('Checking model file: ' . $fullpath, OutputInterface::VERBOSITY_VERBOSE);
+
+            require_once($fullpath);
+
+            if(method_exists($class, "getTableStructure")) {
+                $this->synced_tables['processed']++;
+
+                // If class is already declared (in most cases due to classic migration), remove this
+
+                $obj = new $class;
+                $tablename = $obj->getTable();
+
+                if($method == 'down') {
+
+                    // DOWN migration
+                    $this->output->writeln('Dropping table: ' . $tablename);
+                    if (!$schema_builder->hasTable($tablename)) {
+                        $schema_builder->drop($tablename);
+                        $this->synced_tables['dropped'][] = $tablename;
+                    } else {
+                        $this->output->writeln('Ignoring non-existing table: ' . $tablename);
+                        $this->synced_tables['ignored'][] = $tablename;
+                    }
+
+                } else {
+
+                    // UP migration
+                    if (!$schema_builder->hasTable($tablename)) {
+                        $this->output->writeln('Creating table: ' . $tablename);
+                        $schema_builder->create($tablename, $obj::getTableStructure());
+                        $this->synced_tables['created'][] = $tablename;
+                    } else {
+                        $this->output->writeln('Ignoring existing table: ' . $tablename);
+                        $this->synced_tables['ignored'][] = $tablename;
+
+                        // TODO Check if fields changed / added / removed and alter them
+                    }
+
+                }
+            }
+
+        }
+    }
+
+    /**
+     * Output model migration stats via $this->output
+     *
+     * @return void
+     */
+    public function outputStats() : void
+    {
+        $counter_processed = str_pad($this->synced_tables['processed'], 4, ' ', STR_PAD_LEFT);
+        $counter_created = str_pad(count($this->synced_tables['created']), 4, ' ', STR_PAD_LEFT);
+        $counter_dropped = str_pad(count($this->synced_tables['dropped']), 4, ' ', STR_PAD_LEFT);
+        $counter_ignored = str_pad(count($this->synced_tables['ignored']), 4, ' ', STR_PAD_LEFT);
+
+        $this->output->writeln('+-------------------------------------------------------------------------+');
+        $this->output->writeln('|                                                                         |');
+        $this->output->writeln('|                           <info>S  U  M  M  A  R  Y</info>                           |');
+        $this->output->writeln('|                                                                         |');
+        $this->output->writeln('+-------------------------------------------------------------------------+');
+        $this->output->writeln('|                                                                         |');
+        $this->output->writeln('| Processed tables:  <info>' . $counter_processed . '</info>                                                 |');
+        $this->output->writeln('| Created   tables:  <info>' . $counter_created . '</info>                                                 |');
+        $this->output->writeln('| Dropped   tables:  <info>' . $counter_dropped . '</info>                                                 |');
+        $this->output->writeln('| Ignored   tables:  <info>' . $counter_ignored . '</info>                                                 |');
+        $this->output->writeln('|                                                                         |');
+        $this->output->writeln('+-------------------------------------------------------------------------+');
+        $this->output->writeln(' ');
+
+        if($counter_created > 0) {
+            $this->output->writeln(' ');
+            $this->output->writeln('<info>Created:</info>');
+            $this->output->writeln(implode($this->synced_tables['created'], ', '));
+            $this->output->writeln(' ');
+
+        }
+
+        if($counter_dropped > 0) {
+            $this->output->writeln(' ');
+            $this->output->writeln('<info>Dropped:</info>');
+            $this->output->writeln(implode($this->synced_tables['dropped'], ', '));
+            $this->output->writeln(' ');
+
+        }
+    }
+}

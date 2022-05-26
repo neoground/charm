@@ -3,9 +3,9 @@
  * This file contains the console command for database migration.
  */
 
-namespace Charm\Bob\Jobs\Console;
+namespace Charm\Database\Jobs\Console;
 
-use Charm\Vivid\C;
+use Charm\Database\DatabaseMigrator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -49,6 +49,8 @@ class DbMigrateCommand extends Command
         $file = $input->getOption('file');
         $module = $input->getOption('module');
 
+        $dm = new DatabaseMigrator($output);
+
         if (!empty($file)) {
             // Single migration
             $output->writeln('<info>Starting single migration</info>');
@@ -60,10 +62,10 @@ class DbMigrateCommand extends Command
 
         if ($action == 'up') {
             $output->writeln('<info>Running UP migrations</info>');
-            C::Database()->runMigrations('up', $file, $module, $output);
+            $dm->runMigrations('up', $file, $module, $output);
         } elseif ($action == 'down') {
             $output->writeln('<info>Running DOWN migrations</info>');
-            C::Database()->runMigrations('down', $file, $module, $output);
+            $dm->runMigrations('down', $file, $module, $output);
         }
 
         $output->writeln('<info>Done!</info>');

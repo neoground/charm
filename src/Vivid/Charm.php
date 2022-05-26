@@ -24,7 +24,7 @@ use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
  * @method static Kernel\Modules\AppStorage AppStorage
  * @method static Kernel\Modules\Arrays Arrays
  * @method static Kernel\Modules\Config Config
- * @method static Kernel\Modules\Database Database
+ * @method static \Charm\Database\Database Database
  * @method static Kernel\Modules\Debug Debug
  * @method static Kernel\Modules\Formatter Formatter
  * @method static Kernel\Modules\Logging Logging

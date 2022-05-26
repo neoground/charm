@@ -9,9 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.2.0]
 ### Added
 - Get all available cron jobs via `C::Crown()->getAllCronJobs()`
+- Summary of database migrations as console output
 
 ### Changed
 - Moved console jobs to according module
+- Moved database migration to own `DatabaseMigrator` class
+- Moved database code to own module outside the Kernel
 
 ### Removed
 - Deprecated view Methods (ViewExtension)
@@ -21,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Deprecated methods
   - `C::Formatter()->formatMoney()` (use `C::Formatter()->formatNumber()` instead)
   - `C::Router()->buildUrl()` (use `C::Router()->getUrl()` instead)
+  - `C::Database()->getRedisClient()` (use `C::Redis()->getClient()` instead)
 - Deprecated `PathFinder` class
 - Dependency on DbDumper, we will create a native one via `mysqldump` soon
 
