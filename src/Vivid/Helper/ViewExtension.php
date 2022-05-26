@@ -82,7 +82,7 @@ class ViewExtension extends AbstractExtension
      */
     public function getUrl($name, $args = [])
     {
-        return C::Router()->buildUrl($name, $args);
+        return C::Router()->getUrl($name, $args);
     }
 
     /**
