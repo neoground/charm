@@ -193,7 +193,7 @@ class Handler
         // Post init hooks
         $this->callPostInitHooks();
 
-        $app = new Application('Bob from Charm', C::VERSION);
+        $app = new Application('C::BOB', C::VERSION);
 
         // Add commands from all modules (including the app itself)
         foreach($this->getModuleClasses() as $name => $module) {
@@ -238,6 +238,14 @@ class Handler
         // Go through all files
         foreach ($files as $file) {
             $fullpath = $dir . DS . $file;
+
+            // Process subdirs
+            if(is_dir($fullpath)) {
+                $this->addConsoleCommands($app, $fullpath, $namespace . "\\" . $file);
+                continue;
+            }
+
+            // Add console command if present in file
             $pathinfo = pathinfo($fullpath);
             require_once($fullpath);
 

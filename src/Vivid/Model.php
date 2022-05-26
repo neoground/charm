@@ -282,11 +282,11 @@ class Model extends \Illuminate\Database\Eloquent\Model
     /**
      * Use a query for this model, fetch, format and paginate data
      *
-     * @param Builder $x
+     * @param Builder $x the SQL query
      *
      * @return array
      */
-    public static function getPaginatedData($x)
+    public static function getPaginatedData(Builder $x): array
     {
         // Pagination
         $page = (int) C::Request()->get('page', 1);
@@ -334,6 +334,8 @@ class Model extends \Illuminate\Database\Eloquent\Model
         foreach($x as $entry) {
             if(method_exists($entry, 'formatToArray')) {
                 $results[] = $entry->formatToArray();
+            } elseif(method_exists($entry, 'formatAsArray')) {
+                $results[] = $entry->formatAsArray();
             } else {
                 $results[] = $entry->toArray();
             }

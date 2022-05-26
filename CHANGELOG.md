@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Get all available cron jobs via `C::Crown()->getAllCronJobs()`
 - Summary of database migrations as console output
+- Console commands can now also be in subdirectories of `app/Jobs/Console`
 
 ### Changed
 - Moved console jobs to according module
