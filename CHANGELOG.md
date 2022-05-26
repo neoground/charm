@@ -17,9 +17,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Deprecated view Methods (ViewExtension)
   - `buildUrl()` (use `getUrl()` instead)
   - `formatMoney()` (use `formatNumber()` instead)
+  - `str_replace()` (use twig's built-in `|replace()` filter instead)
 - Deprecated methods
   - `C::Formatter()->formatMoney()` (use `C::Formatter()->formatNumber()` instead)
+  - `C::Router()->buildUrl()` (use `C::Router()->getUrl()` instead)
+- Deprecated `PathFinder` class
+- Dependency on DbDumper, we will create a native one via `mysqldump` soon
 
+---
 
 ## [0.1.0]
 ### Added

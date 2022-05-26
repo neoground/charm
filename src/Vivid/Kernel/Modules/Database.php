@@ -7,13 +7,10 @@ namespace Charm\Vivid\Kernel\Modules;
 
 use Charm\Vivid\Base\Module;
 use Charm\Vivid\C;
-use Charm\Vivid\Exceptions\LogicException;
 use Charm\Vivid\Helper\EloquentDebugbar;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\Schema\Builder;
-use Spatie\DbDumper\Databases\MySql;
-use Spatie\DbDumper\Databases\PostgreSql;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -347,62 +344,17 @@ class Database extends Module implements ModuleInterface
     /**
      * Create a database dump
      *
-     * @param string $name optional connection name
+     * @param string $file absolute path to file in which the dump will be stored
+     * @param string $tables optional table name, 'all' for full database (default)
+     * @param string $connection optional connection name
      *
-     * @return MySql|PostgreSql
-     *
-     * @throws LogicException
+     * @return bool true on success, false on failure
      */
-    public function createDump($name = 'default')
+    public function createDump(string $file, string $tables = 'all', string $connection = 'default') : bool
     {
-        // Get database config
-        $db_type = false;
-        $db_username = false;
-        $db_password = false;
-        $db_name = false;
-
-        // Single database (default)
-        $config = C::Config()->get('connections:database');
-
-        if(is_array($config) && $name == 'default') {
-            // Got wanted entry
-            $db_type = $config['driver'];
-            $db_username = $config['username'];
-            $db_password = $config['password'];
-            $db_name = $config['database'];
-        }
-
-        // Multiple databases
-        $config = C::Config()->get('connections:databases');
-
-        if(is_array($config)) {
-            foreach($config as $confname => $dbvals) {
-                if(is_array($dbvals) && $confname == $name) {
-                    // Got wanted entry
-                    $db_type = $dbvals['driver'];
-                    $db_username = $dbvals['username'];
-                    $db_password = $dbvals['password'];
-                    $db_name = $dbvals['database'];
-                }
-            }
-        }
-
-        switch($db_type) {
-            case 'mysql':
-                return MySql::create()
-                    ->setDbName($db_name)
-                    ->setUserName($db_username)
-                    ->setPassword($db_password);
-                break;
-            case 'postgresql':
-                return PostgreSql::create()
-                    ->setDbName($db_name)
-                    ->setUserName($db_username)
-                    ->setPassword($db_password);
-                break;
-        }
-
-        throw new LogicException("Valid database connection not found");
+        // TODO Add logic with symfony/process and native mysqldump
+        // TODO Also add option to backup a single table
+        return true;
     }
 
 }

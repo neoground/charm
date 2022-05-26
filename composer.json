@@ -15,7 +15,6 @@
     "ext-fileinfo": "*",
     "ext-openssl": "*",
     "phroute/phroute": "^2.1",
-    "spatie/db-dumper": "^3.2",
     "illuminate/database": "^9.5",
     "symfony/console": "^6.0",
     "twig/twig": "^3.3",

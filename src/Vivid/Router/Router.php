@@ -230,14 +230,14 @@ class Router extends Module implements ModuleInterface
      * TODO: Add support for controller + method name instead of route name
      *
      * @param string $name name of route or absolute url
-     * @param array|string $args (optional) array with values for all variables in route
+     * @param array|string $args (optional) array with values for all variables in route or single string for single value
      *
-     * @return string|null null if no route name was given
+     * @return string empty string if no route name was given
      */
-    public function buildUrl(string $name, $args = [])
+    public function getUrl(string $name, array|string $args = []): string
     {
         if(empty($name)) {
-            return null;
+            return '';
         }
 
         // Got URL?
