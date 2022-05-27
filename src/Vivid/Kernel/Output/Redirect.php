@@ -87,7 +87,7 @@ class Redirect implements OutputInterface
             $this->destination = $val;
         } else {
             // Got route
-            $this->destination = C::Router()->buildUrl($val, $args);
+            $this->destination = C::Router()->getUrl($val, $args);
         }
 
         return $this;
