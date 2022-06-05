@@ -76,11 +76,11 @@ class ViewExtension extends AbstractExtension
      * Build URL based on route
      *
      * @param string         $name  name of route
-     * @param array|string   $args  (optional) array with values for all variables in route
+     * @param array|string|null   $args  (optional) array with values for all variables in route
      *
      * @return string
      */
-    public function getUrl($name, $args = [])
+    public function getUrl(string $name, array|string|null $args = [])
     {
         return C::Router()->getUrl($name, $args);
     }

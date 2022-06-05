@@ -234,7 +234,7 @@ class Router extends Module implements ModuleInterface
      *
      * @return string empty string if no route name was given
      */
-    public function getUrl(string $name, array|string $args = []): string
+    public function getUrl(string $name, array|string|null $args = []): string
     {
         if(empty($name)) {
             return '';
@@ -259,7 +259,11 @@ class Router extends Module implements ModuleInterface
 
         // Allow non array args if only one parameter
         if (!is_array($args)) {
-            $args = [$args];
+            if(empty($args)) {
+                $args = [];
+            } else {
+                $args = [$args];
+            }
         }
 
         $route = $this->route->route($name, $args);

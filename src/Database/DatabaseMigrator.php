@@ -168,7 +168,7 @@ class DatabaseMigrator
                 $models_dir = $mod->getBaseDirectory() . DS . 'Models';
                 $namespace = $mod->getReflectionClass()->getNamespaceName() . "\\Models";
 
-                $schema_builder = $this->getDatabaseConnection()->getSchemaBuilder();
+                $schema_builder = C::Database()->getDatabaseConnection()->getSchemaBuilder();
 
                 if(file_exists($models_dir)) {
                     $this->scanDirForModelMigration($models_dir, $method, $schema_builder, $namespace);
@@ -260,6 +260,7 @@ class DatabaseMigrator
         $counter_dropped = str_pad(count($this->synced_tables['dropped']), 4, ' ', STR_PAD_LEFT);
         $counter_ignored = str_pad(count($this->synced_tables['ignored']), 4, ' ', STR_PAD_LEFT);
 
+        $this->output->writeln(' ');
         $this->output->writeln('+-------------------------------------------------------------------------+');
         $this->output->writeln('|                                                                         |');
         $this->output->writeln('|                           <info>S  U  M  M  A  R  Y</info>                           |');
@@ -277,7 +278,7 @@ class DatabaseMigrator
         if($counter_created > 0) {
             $this->output->writeln(' ');
             $this->output->writeln('<info>Created:</info>');
-            $this->output->writeln(implode($this->synced_tables['created'], ', '));
+            $this->output->writeln(implode(', ', $this->synced_tables['created']));
             $this->output->writeln(' ');
 
         }
@@ -285,7 +286,7 @@ class DatabaseMigrator
         if($counter_dropped > 0) {
             $this->output->writeln(' ');
             $this->output->writeln('<info>Dropped:</info>');
-            $this->output->writeln(implode($this->synced_tables['dropped'], ', '));
+            $this->output->writeln(implode(', ', $this->synced_tables['dropped']));
             $this->output->writeln(' ');
 
         }
