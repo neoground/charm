@@ -462,7 +462,12 @@ class Handler
 
         // Output!
         try {
-            echo $response->render();
+            // Render, but only output if we got any
+            // (to prevent problems with non-standard output like file streams)
+            $render_output = $response->render();
+            if(!empty($render_output)) {
+                echo $render_output;
+            }
             return true;
         } catch (Exception $e) {
             // Pretty exception for twig views

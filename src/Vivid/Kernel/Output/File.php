@@ -125,7 +125,6 @@ class File implements OutputInterface
             }
             $data = fread($this->stream, $bytesToRead);
             echo $data;
-            ob_flush();
             flush();
             $i += $bytesToRead;
         }
