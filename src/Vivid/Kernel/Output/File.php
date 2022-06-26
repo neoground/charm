@@ -41,6 +41,9 @@ class File implements OutputInterface
     /** @var int File seek end */
     protected $end;
 
+    /** @var int|float expires in this amount of seconds */
+    protected int|float $expires_in;
+
     /**
      * Output factory
      *
@@ -159,6 +162,12 @@ class File implements OutputInterface
         $end   = $size - 1;
 
         header("Accept-Ranges: 0-".$end);
+        header("Last-Modified: ".gmdate('D, d M Y H:i:s', @filemtime($this->path)) . ' GMT' );
+
+        if(!empty($this->expires_in)) {
+            header("Cache-Control: max-age=" . $this->expires_in . ", public");
+            header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + $this->expires_in));
+        }
 
         // Seek file if wanted and content present as file
         if (C::Server()->has('HTTP_RANGE')) {
@@ -301,6 +310,21 @@ class File implements OutputInterface
     public function asAttachment()
     {
         $this->disposition = 'attachment';
+        return $this;
+    }
+
+    /**
+     * Set expiration of file in this amount of seconds
+     *
+     * Will set Cache-Control + Expires headers
+     *
+     * @param int|float $seconds
+     *
+     * @return $this
+     */
+    public function expiresIn(int|float $seconds)
+    {
+        $this->expires_in = $seconds;
         return $this;
     }
 
