@@ -98,11 +98,9 @@ class File implements OutputInterface
 
         // Read file and return in chunks or specified part
         $this->stream = fopen($this->path, 'rb');
-
         if ($this->stream === false) {
             return false;
         }
-
         $this->setHeadersSeekFile();
         $this->streamFile();
 
@@ -141,7 +139,6 @@ class File implements OutputInterface
     private function setGeneralHeaders()
     {
         header("Content-Type: " . $this->contenttype);
-
         $dispo = $this->disposition;
         if(empty($dispo)) {
             $dispo = 'attachment';
@@ -202,6 +199,8 @@ class File implements OutputInterface
             header("Content-Range: bytes $this->start-$this->end/".$size);
         } else {
             header("Content-Length: ".$size);
+            $this->start = $start;
+            $this->end = $end;
         }
     }
 
