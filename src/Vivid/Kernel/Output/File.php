@@ -32,8 +32,14 @@ class File implements OutputInterface
     /** @var string content disposition */
     protected $disposition;
 
-    /** @var bool output file in chunks? Useful for big files. Default: false */
-    protected bool $in_chunks = false;
+    /** @var resource|false file stream */
+    protected $stream;
+
+    /** @var int File seek start */
+    protected $start;
+
+    /** @var int File seek end */
+    protected $end;
 
     /**
      * Output factory
@@ -52,10 +58,19 @@ class File implements OutputInterface
     /**
      * Build the final output which will be sent to the browser
      *
+     * Will read the file in chunks and return the specified parts
+     *
+     * @see https://stackoverflow.com/a/6914978/6026136
+     * @see https://stackoverflow.com/a/39897872/6026136
+     *
      * @return string
      */
     public function render()
     {
+        // Clean environment and give enough time (1hr)
+        ob_get_clean();
+        set_time_limit(3600);
+
         // Fire event
         C::Event()->fire('File', 'renderStart');
 
@@ -65,12 +80,65 @@ class File implements OutputInterface
             $this->autoContentType();
         }
 
-        header("Content-Type: " . $this->contenttype);
-
         // Filename
         if(empty($this->filename)) {
             $this->filename = basename($this->path);
         }
+
+        $this->setGeneralHeaders();
+
+        // Return content if set
+        if(!empty($this->content)) {
+            header("Content-Length: " . mb_strlen($this->content, '8bit'));
+            return $this->content;
+        }
+
+        // Read file and return in chunks or specified part
+        $this->stream = fopen($this->path, 'rb');
+
+        if ($this->stream === false) {
+            return false;
+        }
+
+        $this->setHeadersSeekFile();
+        $this->streamFile();
+
+        fclose($this->stream);
+
+        // Return empty content after that so the handler continues nicely
+        return "";
+    }
+
+    /**
+     * Stream the file and output it to the browser
+     *
+     * @return void
+     */
+    private function streamFile()
+    {
+        $chunk_size = 1024*1024;
+        $i = $this->start;
+        while(!feof($this->stream) && $i <= $this->end) {
+            $bytesToRead = $chunk_size;
+            if(($i+$bytesToRead) > $this->end) {
+                $bytesToRead = $this->end - $i + 1;
+            }
+            $data = fread($this->stream, $bytesToRead);
+            echo $data;
+            ob_flush();
+            flush();
+            $i += $bytesToRead;
+        }
+    }
+
+    /**
+     * Set all basic headers. For seeking additional headers might be added below.
+     *
+     * @return void
+     */
+    private function setGeneralHeaders()
+    {
+        header("Content-Type: " . $this->contenttype);
 
         $dispo = $this->disposition;
         if(empty($dispo)) {
@@ -78,66 +146,55 @@ class File implements OutputInterface
         }
 
         header("Content-Disposition: " . $dispo . "; filename=\"" . $this->filename . "\"");
-
-        // Return content if set
-        if(!empty($this->content)) {
-            return $this->content;
-        }
-
-        header("Content-Length: " . filesize($this->path));
-
-        if($this->in_chunks) {
-            // Return file in chunks
-            $this->readfile_chunked($this->path);
-
-            // Return empty content after that so the handler continues nicely
-            return "";
-        }
-
-        // Return file content
-        return file_get_contents($this->path);
     }
 
     /**
-     * Read a file in chunks
+     * Set all needed headers and seek file if needed
      *
-     * @see https://stackoverflow.com/a/6914978/6026136
-     *
-     * @param string $filename absolute path to file
-     * @param bool $retbytes
-     *
-     * @return bool|int
+     * @return void
      */
-    public function readfile_chunked($filename, $retbytes = TRUE) {
-        // Size of file chunks in bytes
-        $chunk_size = 1024*1024;
+    private function setHeadersSeekFile()
+    {
+        $start = 0;
+        $size  = filesize($this->path);
+        $end   = $size - 1;
 
-        $buffer = '';
-        $cnt    = 0;
-        $handle = fopen($filename, 'rb');
+        header("Accept-Ranges: 0-".$end);
 
-        if ($handle === false) {
-            return false;
-        }
+        // Seek file if wanted and content present as file
+        if (C::Server()->has('HTTP_RANGE')) {
+            $c_end = $end;
 
-        while (!feof($handle)) {
-            $buffer = fread($handle, $chunk_size);
-            echo $buffer;
-            ob_flush();
-            flush();
-
-            if ($retbytes) {
-                $cnt += strlen($buffer);
+            [, $range] = explode('=', C::Server()->get('HTTP_RANGE'), 2);
+            if (str_contains($range, ',')) {
+                header('HTTP/1.1 416 Requested Range Not Satisfiable');
+                header("Content-Range: bytes $start-$end/$size");
+                exit;
             }
+            if ($range == '-') {
+                $c_start = $size - substr($range, 1);
+            }else{
+                $range = explode('-', $range);
+                $c_start = $range[0];
+
+                $c_end = (isset($range[1]) && is_numeric($range[1])) ? $range[1] : $c_end;
+            }
+            $c_end = ($c_end > $end) ? $end : $c_end;
+            if ($c_start > $c_end || $c_start > $size - 1 || $c_end >= $size) {
+                header('HTTP/1.1 416 Requested Range Not Satisfiable');
+                header("Content-Range: bytes $start-$end/$size");
+                exit;
+            }
+            $this->start = $c_start;
+            $this->end = $c_end;
+            $length = $this->end - $this->start + 1;
+            fseek($this->stream, $this->start);
+            header('HTTP/1.1 206 Partial Content');
+            header("Content-Length: ".$length);
+            header("Content-Range: bytes $this->start-$this->end/".$size);
+        } else {
+            header("Content-Length: ".$size);
         }
-
-        $status = fclose($handle);
-
-        if ($retbytes && $status) {
-            return $cnt; // return num. bytes delivered like readfile() does.
-        }
-
-        return $status;
     }
 
     /**
@@ -245,17 +302,6 @@ class File implements OutputInterface
     public function asAttachment()
     {
         $this->disposition = 'attachment';
-        return $this;
-    }
-
-    /**
-     * Output file in chunks. This is useful for big files.
-     *
-     * @return $this
-     */
-    public function inChunks()
-    {
-        $this->in_chunks = true;
         return $this;
     }
 
