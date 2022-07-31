@@ -98,6 +98,66 @@ class Database extends Module implements ModuleInterface
     }
 
     /**
+     * Get an array of all available databases
+     *
+     * @return array
+     */
+    public function getAllDatabases() : array
+    {
+        $dbs = $this->getDatabaseConnection()->select('SHOW DATABASES');
+        $db_list = [];
+        foreach($dbs as $db) {
+            $db_list[] = $db->Database;
+        }
+        return $db_list;
+    }
+
+    /**
+     * Get an array of all available tables from database
+     *
+     * @return array
+     */
+    public function getAllTables() : array
+    {
+        $tables = $this->getDatabaseConnection()->select('SHOW TABLES');
+        $key = 'Tables_in_' . C::Config()->get('connections:database.database');
+
+        $arr = [];
+        foreach($tables as $table) {
+            $arr[] = $table->$key;
+        }
+
+        return $arr;
+    }
+
+    /**
+     * Get the structure of a table from database
+     *
+     * @param string $table_name the table name (without prefix)
+     *
+     * @return array sub-arrays have these keys: field, type, nullable, key, default, extra
+     */
+    public function getTableStructure(string $table_name)
+    {
+        $prefix = C::Config()->get('connections:database.prefix');
+        $structure = $this->getDatabaseConnection()->select('DESCRIBE ' . $prefix . $table_name);
+
+        $arr = [];
+        foreach($structure as $str) {
+            $arr[] = [
+                'field' => $str->Field,
+                'type' => $str->Type,
+                'nullable' => $str->Null == 'YES',
+                'key' => $str->Key,
+                'default' => $str->Default,
+                'extra' => $str->Extra
+            ];
+        }
+
+        return $arr;
+    }
+
+    /**
      * Create a database dump
      *
      * @param string $file absolute path to file in which the dump will be stored
