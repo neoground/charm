@@ -199,6 +199,8 @@ class Request extends Module implements ModuleInterface
     /**
      * Check if a file was uploaded successfully
      *
+     * Note: This does only work for classic file uploads, not for base64 strings etc.
+     *
      * @param string $name name field of uploaded file
      *
      * @return bool
@@ -235,10 +237,19 @@ class Request extends Module implements ModuleInterface
     public function getFile($name)
     {
         if (!$this->gotUpload($name)) {
+            // Check for base64 string
+            $req = $this->get($name);
+            if(!empty($req)) {
+                $upload = UploadedFile::fromBase64($req);
+                if($upload !== false) {
+                    return $upload;
+                }
+            }
+
             return false;
         }
 
-        return new UploadedFile($this->files[$name]);
+        return UploadedFile::fromFile($this->files[$name]);
     }
 
     /**

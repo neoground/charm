@@ -20,21 +20,64 @@ class UploadedFile
     /** @var array  the uploaded file array */
     protected $file;
 
-    /** @var array  the path info */
-    protected $path_info;
+    protected int $file_size = 0;
+    protected string $file_tmp_name = '';
+    protected string $file_mime = '';
+    protected string $file_name = '';
+    protected string $file_extension = '';
+    protected string $file_content = '';
 
     /**
-     * UploadedFile constructor.
+     * Create instance by uploaded file ($_FILES)
      *
-     * @param array $file the uploaded file array
+     * @param array $file $_FILES['name'] array
+     *
+     * @return static
      */
-    public function __construct($file)
+    public static function fromFile(array $file) : self
     {
-        // Set file
-        $this->file = $file;
+        $x = new self();
 
-        // Get path info
-        $this->path_info = pathinfo($this->file['name']);
+        $path_info = pathinfo($file['name']);
+
+        $x->file_extension = $path_info['extension'];
+        $x->file_name = $path_info['filename'];
+
+        if(array_key_exists('size', $file)) {
+            $x->file_size = $file['size'];
+        }
+
+        if(array_key_exists('type', $file)) {
+            $x->file_mime = $file['type'];
+        }
+
+        $x->file_tmp_name = $file['tmp_name'];
+
+        return $x;
+    }
+
+    /**
+     * Create instance by base64 file string
+     *
+     * @param string $base64
+     *
+     * @return false|static returns false if base64 is invalid
+     */
+    public static function fromBase64(string $base64) : self|false
+    {
+        $x = new self();
+
+        $base64_parts = explode(";", $base64);
+        $mime = str_replace('data:', '', $base64_parts[0]);
+
+        $x->file_content = base64_decode(str_replace('base64,', '', $base64_parts[1]));
+        $x->file_mime = $mime;
+
+        if($x->file_content === false) {
+            return false;
+        }
+
+        return $x;
     }
 
     /**
@@ -42,9 +85,9 @@ class UploadedFile
      *
      * @return string
      */
-    public function getExtension()
+    public function getExtension() : string
     {
-        return $this->path_info['extension'];
+        return $this->file_extension;
     }
 
     /**
@@ -52,9 +95,9 @@ class UploadedFile
      *
      * @return string
      */
-    public function getFilename()
+    public function getFilename() : string
     {
-        return $this->path_info['filename'];
+        return $this->file_name;
     }
 
     /**
@@ -62,41 +105,29 @@ class UploadedFile
      *
      * @return int
      */
-    public function getSize()
+    public function getSize() : int
     {
-        if (!array_key_exists('size', $this->file)) {
-            return 0;
-        }
-
-        return $this->file['size'];
+        return $this->file_size;
     }
 
     /**
      * Get mime type of this file
      *
-     * @return bool|string mime type of false if none detected
+     * @return string
      */
-    public function getMime()
+    public function getMime(): string
     {
-        if (!array_key_exists('type', $this->file)) {
-            return false;
-        }
-
-        return $this->file['type'];
+        return $this->file_mime;
     }
 
     /**
      * Get absolute path to temp file
      *
-     * @return string|false absolute path or false on error
+     * @return string
      */
-    public function getTempName()
+    public function getTempName(): string
     {
-        if (!array_key_exists('tmp_name', $this->file)) {
-            return false;
-        }
-
-        return $this->file['tmp_name'];
+        return $this->file_tmp_name;
     }
 
     /**
@@ -109,15 +140,19 @@ class UploadedFile
      *
      * @throws FileSystemException
      */
-    public function saveAs($dest, $override = true)
+    public function saveAs(string $dest, bool $override = true): void
     {
         if (file_exists($dest) && $override) {
             unlink($dest);
         }
 
-        if (!move_uploaded_file($this->getTempName(), $dest)) {
-            // Was not successful. Show error
-            throw new FileSystemException("File upload failed");
+        if(!empty($this->file_content)) {
+            file_put_contents($dest, $this->file_content);
+        } else {
+            if (!move_uploaded_file($this->getTempName(), $dest)) {
+                // Was not successful. Show error
+                throw new FileSystemException("File upload failed");
+            }
         }
     }
 }
