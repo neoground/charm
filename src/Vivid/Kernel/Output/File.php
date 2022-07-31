@@ -70,9 +70,8 @@ class File implements OutputInterface
      */
     public function render()
     {
-        // Clean environment and give enough time (1hr)
+        // Clean environment
         ob_get_clean();
-        set_time_limit(3600);
 
         // Fire event
         C::Event()->fire('File', 'renderStart');

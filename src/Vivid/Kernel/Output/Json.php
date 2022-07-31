@@ -136,7 +136,7 @@ class Json implements OutputInterface, HttpCodes
      * Add an value to the return data array
      *
      * @param string $key the key
-     * @param string $value the value
+     * @param mixed $value the value
      *
      * @return $this
      */

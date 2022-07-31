@@ -302,6 +302,7 @@ class Guard extends Module implements ModuleInterface
             C::Session()->set('rememberme', true);
 
             // Set remember me cookies (token + uid)
+            // TODO Set random token in user and use this instead of base64 of uid for better security
             // Expiration in 90 days
             $expire = time() + 3600 * 24 * 90;
             $session = C::Config()->get('main:session.name');
