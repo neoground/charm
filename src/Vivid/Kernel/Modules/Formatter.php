@@ -101,16 +101,41 @@ class Formatter extends Module implements ModuleInterface
     }
 
     /**
+     * Format a date as human diff (relative, e.g. 3 months ago)
+     *
+     * Will return the date (see formatDate()) if longer ago than $date_after_days days
+     *
+     * @param string|Carbon $date            input date as string or carbon object
+     * @param int           $date_after_days return date instead of diff if older than this. Set 0 to disable
+     *
+     * @return string
+     */
+    public function formatDateDiff(Carbon|string $date, int $date_after_days = 365) : string
+    {
+        if(!is_object($date)) {
+            $date = Carbon::parse($date);
+        }
+
+        $diff = $date->diffInDays();
+
+        if($diff > 365 && $date_after_days != 0) {
+            return $this->formatDateShort($date);
+        }
+
+        return $date->diffForHumans();
+    }
+
+    /**
      * Format a number for displaying
      *
-     * @param string|int|float  $cash      input value
-     * @param int     $decimals  (opt.) the decimals (default: 2)
+     * @param numeric      $no        input value
+     * @param int          $decimals  (opt.) the decimals (default: 2)
      * @param string|null  $decimal   (opt.) decimal separator
      * @param string|null  $thousands (opt.) thousands separator
      *
      * @return int|string
      */
-    public function formatNumber($cash, $decimals = 2, $decimal = null, $thousands = null)
+    public function formatNumber($no, $decimals = 2, $decimal = null, $thousands = null)
     {
         if($decimal === null) {
             $decimal = C::Config()->get('main:local.formatting.decimal');
@@ -119,8 +144,8 @@ class Formatter extends Module implements ModuleInterface
             $thousands = C::Config()->get('main:local.formatting.thousands');
         }
 
-        if (!empty($cash)) {
-            return number_format((float)$cash, $decimals, $decimal, $thousands);
+        if (!empty($no)) {
+            return number_format((float)$no, $decimals, $decimal, $thousands);
         }
         return 0;
     }

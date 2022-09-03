@@ -180,6 +180,21 @@ class ViewExtension extends AbstractExtension
     }
 
     /**
+     * Format a date as human diff (relative, e.g. 3 months ago)
+     *
+     * Will return the date (see formatDate()) if longer ago than $date_after_days days
+     *
+     * @param $date
+     * @param int $date_after_days return date instead of diff if older than this. Set 0 to disable
+     *
+     * @return string
+     */
+    public function formatDateDiff($date, $date_after_days = 365)
+    {
+        return C::Formatter()->formatDateDiff($date, $date_after_days);
+    }
+
+    /**
      * Format a number for displaying
      *
      * @param string  $data      input value
