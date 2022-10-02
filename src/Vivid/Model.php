@@ -302,8 +302,10 @@ class Model extends \Illuminate\Database\Eloquent\Model
         $order_by = C::Request()->get('order_by');
         $order_dir = C::Request()->get('order_dir');
         if(!empty($order_by)) {
-            if(empty($order_dir)) {
-                // No order dir -> try order by _ASC / _DESC
+            // Support for multiple orders
+            $parts = explode(";", $order_by);
+            foreach($parts as $part) {
+                $order_by = $part;
                 if(str_contains($order_by, "_ASC")) {
                     $order_dir = 'ASC';
                     $order_by = str_replace("_ASC", "", $order_by);
@@ -311,16 +313,16 @@ class Model extends \Illuminate\Database\Eloquent\Model
                     $order_dir = 'DESC';
                     $order_by = str_replace("_DESC", "", $order_by);
                 }
-            }
 
-            if(strtoupper($order_dir) !== "ASC") {
-                $order_dir = 'DESC';
-            }
+                if(strtoupper($order_dir) !== "ASC") {
+                    $order_dir = 'DESC';
+                }
 
-            if($order_by == 'random') {
-                $x = $x->inRandomOrder();
-            } else {
-                $x = $x->orderBy($order_by, $order_dir);
+                if($order_by == 'random') {
+                    $x = $x->inRandomOrder();
+                } else {
+                    $x = $x->orderBy($order_by, $order_dir);
+                }
             }
         }
 
