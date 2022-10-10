@@ -355,7 +355,7 @@ class Router extends Module implements ModuleInterface
      */
     public function getCurrentUrl() : string
     {
-        $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
+        $protocol = C::Request()->isHttpsRequest() ? 'https://' : 'http://';
         return $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
     }
 

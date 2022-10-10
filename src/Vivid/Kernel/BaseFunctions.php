@@ -3,6 +3,8 @@
  * This file contains charm's own functions and globals
  */
 
+use Charm\Vivid\C;
+
 if(!defined('DS')) {
     define('DS', DIRECTORY_SEPARATOR);
 }
@@ -33,7 +35,7 @@ if(!function_exists('cPath')) {
             $path = dirname(realpath(CLI_PATH));
         }
 
-        // Append sub directory
+        // Append subdirectory
         $path .= '/' . ltrim($subdir, '/');
 
         return rtrim($path, '/');
@@ -52,11 +54,11 @@ if(!function_exists('cBaseUrl')) {
     function cBaseUrl()
     {
         $pathInfo = pathinfo($_SERVER['PHP_SELF']);
-        $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
+        $protocol = C::Request()->isHttpsRequest() ? 'https://' : 'http://';
 
-        // TODO: Irgendwie dynamisieren
         if (!array_key_exists('HTTP_HOST', $_SERVER)) {
-            return 'https://example.com';
+            // Rare case of unset HTTP_HOST, use fallback
+            return C::Config()->get('main:request.base_url', '');
         }
 
         return rtrim($protocol . $_SERVER['HTTP_HOST'] . $pathInfo['dirname'], '/');
@@ -73,7 +75,7 @@ if(!function_exists('cCurrentUrl')) {
      */
     function cCurrentUrl()
     {
-        $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
+        $protocol = C::Request()->isHttpsRequest() ? 'https://' : 'http://';
         return $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
     }
 

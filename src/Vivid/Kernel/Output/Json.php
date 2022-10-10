@@ -88,7 +88,7 @@ class Json implements OutputInterface, HttpCodes
         $prev_page_url = null;
         $next_page_url = null;
 
-        $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
+        $protocol = C::Request()->isHttpsRequest() ? 'https://' : 'http://';
 
         if ($page > 1) {
             // We have prev page!
