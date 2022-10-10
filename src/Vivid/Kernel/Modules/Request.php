@@ -433,4 +433,18 @@ class Request extends Module implements ModuleInterface
             || C::Config()->get('main:request.force_https', false);
     }
 
+    /**
+     * Does the browser accept this content type?
+     *
+     * Checks HTTP_ACCEPT header
+     *
+     * @param string $str the content type
+     *
+     * @return bool
+     */
+    public function accepts(string $str) : bool
+    {
+        return array_key_exists('HTTP_ACCEPT', $_SERVER) && str_contains($_SERVER['HTTP_ACCEPT'], $str);
+    }
+
 }
