@@ -420,5 +420,17 @@ class Request extends Module implements ModuleInterface
         return $ip;
     }
 
+    /**
+     * Is the current request via HTTPS?
+     *
+     * @return bool
+     */
+    public function isHttpsRequest() : bool
+    {
+        return isset($_SERVER['HTTPS'])
+            || (array_key_exists('HTTP_X_FORWARDED_PROTO', $_SERVER) && str_contains($_SERVER['HTTP_X_FORWARDED_PROTO'], 'https'))
+            || (array_key_exists('HTTP_CF_VISITOR', $_SERVER) && str_contains($_SERVER['HTTP_CF_VISITOR'], 'https'))
+            || C::Config()->get('main:request.force_https', false);
+    }
 
 }

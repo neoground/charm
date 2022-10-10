@@ -334,7 +334,7 @@ class Router extends Module implements ModuleInterface
      */
     public function getBaseUrl() : string
     {
-        $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
+        $protocol = C::Request()->isHttpsRequest() ? 'https://' : 'http://';
         return rtrim($protocol . $_SERVER['HTTP_HOST'] . $this->getRelativeUrl(), '/');
     }
 
