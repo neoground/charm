@@ -334,8 +334,13 @@ class Router extends Module implements ModuleInterface
      */
     public function getBaseUrl() : string
     {
-        $protocol = C::Request()->isHttpsRequest() ? 'https://' : 'http://';
-        return rtrim($protocol . $_SERVER['HTTP_HOST'] . $this->getRelativeUrl(), '/');
+        if(array_key_exists('HTTP_HOST', $_SERVER)) {
+            $protocol = C::Request()->isHttpsRequest() ? 'https://' : 'http://';
+            return rtrim($protocol . $_SERVER['HTTP_HOST'] . $this->getRelativeUrl(), '/');
+        }
+
+        // No HTTP_HOST set, so probably CLI. Use base URL from config
+        return rtrim(C::Config()->get('main:request.base_url'), '/');
     }
 
     /**

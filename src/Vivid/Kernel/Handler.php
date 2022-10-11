@@ -93,7 +93,6 @@ class Handler
         if (defined('CLI_PATH')) {
             $this->modules_blacklist = [
                 'Session',
-                'Request',
                 '\\Charm\\Guard\\Token',
                 '\\Charm\\Guard\\Guard',
                 '\\Charm\\DebugBar\\DebugBar'
@@ -520,8 +519,7 @@ class Handler
 
         // Output JSON for API
         $error_style = $this->getModule('Config')->get('main:output.error_style', 'default');
-        $http_accept = $this->getModule('Request')->get('HTTP_ACCEPT');
-        if(str_contains($http_accept, 'json') || $error_style == 'json') {
+        if($this->getModule('Request')->accepts('json') || $error_style == 'json') {
             $output = Json::makeErrorMessage($msg, $statuscode);
             echo $output->render();
 
