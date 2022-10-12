@@ -22,14 +22,21 @@ class Redirect implements OutputInterface
      *
      * @var string
      */
-    protected $destination;
+    protected string $destination;
 
     /**
      * Optional message
      *
      * @var string
      */
-    protected $message;
+    protected string $message;
+
+    /**
+     * The status code to return
+     *
+     * @var int
+     */
+    protected int $status_code = 302;
 
     /**
      * Output factory
@@ -66,7 +73,7 @@ class Redirect implements OutputInterface
         }
 
         // Set redirect header
-        header("Location: " . $this->destination);
+        header("Location: " . $this->destination, true, $this->status_code);
 
         // No content to return
         return "";
@@ -144,6 +151,17 @@ class Redirect implements OutputInterface
     public static function to($destination, $args = [])
     {
         return self::make($destination, $args);
+    }
+
+    /**
+     * Make this redirect a permanent redirect (status code 301)
+     *
+     * @return $this
+     */
+    public function permanentRedirect()
+    {
+        $this->status_code = 301;
+        return $this;
     }
 
 }
