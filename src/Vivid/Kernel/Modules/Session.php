@@ -80,19 +80,15 @@ class Session extends Module implements ModuleInterface
     /**
      * Get a session value
      *
-     * @param string  $key
+     * @param string     $key
+     * @param mixed|null $default default value to return if $key is not found
      *
      * @return mixed
      */
-    public function get($key)
+    public function get(string $key, mixed $default = null): mixed
     {
         $val = C::Arrays()->get($_SESSION, $key, null);
-
-        if(empty($val)) {
-            return null;
-        }
-
-        return from_string($val);
+        return ($val === null) ? $default : from_string($val);
     }
 
     /**
@@ -102,7 +98,7 @@ class Session extends Module implements ModuleInterface
      *
      * @return bool
      */
-    public function has($key) : bool
+    public function has(string $key) : bool
     {
         return C::Arrays()->has($_SESSION, $key);
     }
@@ -113,7 +109,7 @@ class Session extends Module implements ModuleInterface
      * @param string  $key
      * @param mixed   $value
      */
-    public function set($key, $value)
+    public function set(string $key, mixed $value)
     {
         // We need a string as value
         $value = to_string($value);

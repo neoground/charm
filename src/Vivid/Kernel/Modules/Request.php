@@ -447,4 +447,24 @@ class Request extends Module implements ModuleInterface
         return array_key_exists('HTTP_ACCEPT', $_SERVER) && str_contains($_SERVER['HTTP_ACCEPT'], $str);
     }
 
+    /**
+     * Save all request input values in session
+     *
+     * @return void
+     */
+    public function saveAllInSession() : void
+    {
+        C::Session()->set('charm_request_input', $this->getAll());
+    }
+
+    /**
+     * Get all request input values which are stored in session
+     *
+     * @return array|bool the array or false if none was found
+     */
+    public function getAllFromSession() : array|bool
+    {
+        return C::Session()->get('charm_request_input', false);
+    }
+
 }
