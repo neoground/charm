@@ -386,7 +386,7 @@ class Request extends Module implements ModuleInterface
 
         // Looping through all files
         for($i = 0; $i < $total; $i++){
-            $arr[] = new UploadedFile([
+            $arr[] = UploadedFile::fromFile([
                 'name' => $this->files[$name]['name'][$i],
                 'type' => $this->files[$name]['type'][$i],
                 'size' => $this->files[$name]['size'][$i],
