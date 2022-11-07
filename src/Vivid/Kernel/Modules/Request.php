@@ -384,15 +384,17 @@ class Request extends Module implements ModuleInterface
         $arr = [];
         $total = count($this->files[$name]['name']);
 
-        // Looping through all files
+        // Looping through all files and add existing ones (ignore empty array elements)
         for($i = 0; $i < $total; $i++){
-            $arr[] = UploadedFile::fromFile([
-                'name' => $this->files[$name]['name'][$i],
-                'type' => $this->files[$name]['type'][$i],
-                'size' => $this->files[$name]['size'][$i],
-                'tmp_name' => $this->files[$name]['tmp_name'][$i],
-                'error' => $this->files[$name]['error'][$i],
-            ]);
+            if(!empty($this->files[$name]['tmp_name'][$i])) {
+                $arr[] = UploadedFile::fromFile([
+                    'name' => $this->files[$name]['name'][$i],
+                    'type' => $this->files[$name]['type'][$i],
+                    'size' => $this->files[$name]['size'][$i],
+                    'tmp_name' => $this->files[$name]['tmp_name'][$i],
+                    'error' => $this->files[$name]['error'][$i],
+                ]);
+            }
         }
 
         return $arr;
