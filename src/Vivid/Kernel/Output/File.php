@@ -112,13 +112,17 @@ class File implements OutputInterface
     /**
      * Stream the file and output it to the browser
      *
-     * @return void
+     * @return bool
      */
-    private function streamFile()
+    private function streamFile(): bool
     {
         $chunk_size = 1024*1024;
         $i = $this->start;
         while(!feof($this->stream) && $i <= $this->end) {
+            if(connection_aborted()) {
+                // Aborted -> stop!
+                return false;
+            }
             $bytesToRead = $chunk_size;
             if(($i+$bytesToRead) > $this->end) {
                 $bytesToRead = $this->end - $i + 1;
@@ -128,6 +132,8 @@ class File implements OutputInterface
             flush();
             $i += $bytesToRead;
         }
+
+        return true;
     }
 
     /**
