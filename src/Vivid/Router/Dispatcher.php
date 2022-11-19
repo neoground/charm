@@ -67,7 +67,8 @@ class Dispatcher {
     {
         list($handler, $filters, $vars) = $this->dispatchRoute($httpMethod, trim($uri, '/'));
 
-        list($beforeFilter, $afterFilter) = $this->parseFilters($filters);
+        $beforeFilter = (isset($filters[Route::BEFORE])) ? $filters[Route::BEFORE] : [];
+        $afterFilter = (isset($filters[Route::AFTER])) ? $filters[Route::AFTER] : [];
 
         // Save route meta data
         $route_name = null;
@@ -140,32 +141,6 @@ class Dispatcher {
         }
 
         return $response;
-    }
-
-    /**
-     * Normalise the array filters attached to the route and merge with any global filters.
-     *
-     * @param $filters
-     * @return array
-     */
-    private function parseFilters($filters)
-    {
-        $beforeFilter = array();
-        $afterFilter = array();
-
-        if(isset($filters[Route::BEFORE]))
-        {
-            // $beforeFilter = array_intersect_key($this->filters, array_flip((array) $filters[Route::BEFORE]));
-            $beforeFilter = $filters[Route::BEFORE];
-        }
-
-        if(isset($filters[Route::AFTER]))
-        {
-            // $afterFilter = array_intersect_key($this->filters, array_flip((array) $filters[Route::AFTER]));
-            $afterFilter = $filters[Route::AFTER];
-        }
-
-        return array($beforeFilter, $afterFilter);
     }
 
     /**

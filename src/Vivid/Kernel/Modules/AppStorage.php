@@ -9,6 +9,7 @@ use Charm\Vivid\Base\Module;
 use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
+use Charm\Vivid\Router\Router;
 
 /**
  * Class AppStorage
@@ -221,8 +222,16 @@ class AppStorage extends Module implements ModuleInterface
      */
     public function generateCache()
     {
-        // Get all config files so they are stored in the appstorage as well
+        // Get all config files, so they are stored in the appstorage as well
         $this->addAllConfigFiles();
+
+        // Same for routes data
+        if(!C::has('Router')) {
+            $router = new Router();
+            $router->init();
+        } else {
+            C::Router()->init();
+        }
 
         // Generate cache, override file
         file_put_contents($this->cache_file, serialize($this->storage));

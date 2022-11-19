@@ -50,8 +50,6 @@ class Guard extends Module implements ModuleInterface
     /**
      * Check authentication and if user can access this specific page
      *
-     * TODO: Add permissions system
-     *
      * @return null|Redirect
      */
     public static function checkAuth()
@@ -65,7 +63,7 @@ class Guard extends Module implements ModuleInterface
     }
 
     /**
-     * Get the logged in user
+     * Get the logged-in user
      *
      * @return object|false  the user object or false if guard is disabled
      */
