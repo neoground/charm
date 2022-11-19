@@ -58,7 +58,7 @@ class ViewExtension extends AbstractExtension
     }
 
     /**
-     * Get the logged in user
+     * Get the logged-in user
      *
      * @return object|false  the user object or false if guard is disabled
      */

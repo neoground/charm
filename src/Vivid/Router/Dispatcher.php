@@ -124,8 +124,15 @@ class Dispatcher {
                 $param = implode(";", $parts);
             }
 
+            if(!array_key_exists($filter, $this->filters)) {
+                // Invalid filter provided
+                return null;
+            }
+
+            $filter_method = $this->filters[$filter];
+
             // Get and call handler
-            $handler = $this->handlerResolver->resolve($filter);
+            $handler = $this->handlerResolver->resolve($filter_method);
             if(($filteredResponse = call_user_func($handler, $param)) !== null)
             {
                 return $filteredResponse;
@@ -148,12 +155,14 @@ class Dispatcher {
 
         if(isset($filters[Route::BEFORE]))
         {
-            $beforeFilter = array_intersect_key($this->filters, array_flip((array) $filters[Route::BEFORE]));
+            // $beforeFilter = array_intersect_key($this->filters, array_flip((array) $filters[Route::BEFORE]));
+            $beforeFilter = $filters[Route::BEFORE];
         }
 
         if(isset($filters[Route::AFTER]))
         {
-            $afterFilter = array_intersect_key($this->filters, array_flip((array) $filters[Route::AFTER]));
+            // $afterFilter = array_intersect_key($this->filters, array_flip((array) $filters[Route::AFTER]));
+            $afterFilter = $filters[Route::AFTER];
         }
 
         return array($beforeFilter, $afterFilter);

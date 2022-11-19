@@ -145,7 +145,7 @@ class Arrays extends Module implements ModuleInterface
     {
         uasort($arr, function ($a, $b) use ($key1, $key2, $order) {
 
-            if ($order == 'asc') {
+            if (strtolower($order) == 'asc') {
                 $a_tmp = $a;
                 $a = $b;
                 $b = $a_tmp;

@@ -17,16 +17,16 @@ class Route {
     public string $method;
     public string $url;
     public string $name;
-    public string $filter_before;
-    public string $filter_after;
+    public string|array $filter_before;
+    public string|array $filter_after;
     public string $call_class;
     public string $call_method;
 
     public function __construct(string $method,
                                 string $url,
                                 string $name = '',
-                                string $filter_before = '',
-                                string $filter_after = '')
+                                string|array $filter_before = '',
+                                string|array $filter_after = '')
     {
         $this->method = $method;
         $this->url = $url;
