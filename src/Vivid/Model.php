@@ -196,6 +196,14 @@ class Model extends \Illuminate\Database\Eloquent\Model
         $model = new static();
         $x = self::where($model->getKeyName(), '>', 0);
 
+        // Add soft delete filters
+        if(C::Request()->has('trashed') && C::Request()->get('trashed')) {
+            $x->withTrashed();
+        }
+        if(C::Request()->has('onlytrashed') && C::Request()->get('onlytrashed')) {
+            $x->onlyTrashed();
+        }
+
         if(property_exists($model, 'filter_attributes')) {
             // Go through all set filter attributes
             foreach ($model->filter_attributes as $k => $v) {
