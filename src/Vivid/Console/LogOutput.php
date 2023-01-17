@@ -6,6 +6,8 @@
 namespace Charm\Vivid\Console;
 
 use Charm\Vivid\C;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 use Symfony\Component\Console\Formatter\NullOutputFormatter;
 use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -23,8 +25,10 @@ class LogOutput implements OutputInterface
 
     protected string $channel;
 
+    protected Logger $logger;
+
     /**
-     * Set logging channel (name of log file, see monolog for more info)
+     * Set logging channel (name of log file)
      *
      * @param string $name
      *
@@ -155,14 +159,51 @@ class LogOutput implements OutputInterface
      *
      * @return void
      */
-    public function log($msg): void
+    public function log($msg, $level = 'info'): void
     {
         if(empty($this->channel)) {
-            C::Logging()->info($msg);
+            C::Logging()->$level($msg);
         } else {
-            C::Logging()
-                ->withName($this->channel)
-                ->info($msg);
+            $this->getLogger()->$level($msg);
         }
     }
+
+    /**
+     * Get monolog logger instance
+     *
+     * @return Logger
+     */
+    public function getLogger(): Logger
+    {
+        if(empty($this->logger)) {
+            $path = C::Storage()->getLogPath() . DS . date("Y-m-d") . '-' . $this->channel . '.log';
+            $logger = new Logger('Task');
+            $loglevel = Logger::toMonologLevel('info');
+            $permissions = C::Config()->get('main:logging.file_permission', 0664);
+            $logger->pushHandler(new StreamHandler($path, $loglevel, true, $permissions));
+
+            $this->logger = $logger;
+        }
+
+        return $this->logger;
+    }
+
+    /**
+     * Magic methods from logger
+     *
+     * @param $name
+     * @param $arguments
+     *
+     * @return mixed|false
+     */
+    public function __call($name, $arguments)
+    {
+        if(is_object($this->logger) && method_exists($this->logger, $name)) {
+            return call_user_func_array([$this->logger, $name], $arguments);
+        }
+
+        return false;
+    }
+
+
 }
