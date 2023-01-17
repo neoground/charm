@@ -21,6 +21,21 @@ class LogOutput implements OutputInterface
 {
     private $formatter;
 
+    protected string $channel;
+
+    /**
+     * Set logging channel (name of log file, see monolog for more info)
+     *
+     * @param string $name
+     *
+     * @return $this
+     */
+    public function toChannel(string $name) : self
+    {
+        $this->channel = $name;
+        return $this;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -112,10 +127,10 @@ class LogOutput implements OutputInterface
     {
         if(is_iterable($messages)) {
             foreach($messages as $msg) {
-                C::Logging()->info($msg);
+                $this->log($msg);
             }
         } else {
-            C::Logging()->info($messages);
+            $this->log($messages);
         }
     }
 
@@ -126,10 +141,28 @@ class LogOutput implements OutputInterface
     {
         if(is_iterable($messages)) {
             foreach($messages as $msg) {
-                C::Logging()->info($msg);
+                $this->log($msg);
             }
         } else {
-            C::Logging()->info($messages);
+            $this->log($messages);
+        }
+    }
+
+    /**
+     * Add a messsage to the log file
+     *
+     * @param $msg
+     *
+     * @return void
+     */
+    public function log($msg): void
+    {
+        if(empty($this->channel)) {
+            C::Logging()->info($msg);
+        } else {
+            C::Logging()
+                ->withName($this->channel)
+                ->info($msg);
         }
     }
 }
