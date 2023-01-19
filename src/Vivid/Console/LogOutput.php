@@ -157,15 +157,35 @@ class LogOutput implements OutputInterface
      *
      * @param $msg
      *
-     * @return void
+     * @return bool true on success, false if empty or invalid
      */
-    public function log($msg, $level = 'info'): void
+    public function log($msg, $level = 'info'): bool
     {
+        // Replace square brackets for better parsing
+        $msg = str_replace("[", "(", $msg);
+        $msg = str_replace("]", ")", $msg);
+
+        if($level == 'info') {
+            if(str_contains($msg, '<error>')) {
+                $level = 'error';
+            }
+        }
+
+        // Also strip tags (no formatting)
+        $msg = strip_tags($msg);
+
+        $msg = trim($msg);
+
+        if(empty($msg)) {
+            return false;
+        }
+
         if(empty($this->channel)) {
             C::Logging()->$level($msg);
         } else {
             $this->getLogger()->$level($msg);
         }
+        return true;
     }
 
     /**
