@@ -179,7 +179,7 @@ class Router extends Module implements ModuleInterface
      * Find and add attribute routes in a directory with controller classes
      *
      * @param string $dir
-     * @param object $mod
+     * @param Module $mod
      * @param array $attribute_routes
      *
      * @return mixed
@@ -194,9 +194,16 @@ class Router extends Module implements ModuleInterface
                 $attribute_routes = $this->findAndAddAttributeRoutes($dir . DS . $file, $mod, $attribute_routes);
             } else {
                 // Got controller file
-                $classname = str_replace(".php", "", $file);
+                // Get class name with namespace based on relative path in module
+                $basedir = $mod->getBaseDirectory();
+                $relpath = str_replace($basedir, '', $dir . DS . $file);
+                $classname = str_replace(".php", "", $relpath);
+                $classname = str_replace(DS, "\\", $classname);
+
                 $refobject = new \ReflectionObject($mod);
-                $class = $refobject->getNamespaceName() . "\\Controllers\\" . $classname;
+
+                $class = $refobject->getNamespaceName() . $classname;
+
                 if(class_exists($class)) {
                     $reflection = new \ReflectionClass($class);
 

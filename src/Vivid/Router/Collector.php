@@ -11,6 +11,8 @@ use Phroute\Phroute\RouteCollector;
 use Phroute\Phroute\RouteDataArray;
 use Phroute\Phroute\RouteDataProviderInterface;
 use Phroute\Phroute\RouteParser;
+use ReflectionClass;
+use ReflectionMethod;
 
 /**
  * Class Collector
