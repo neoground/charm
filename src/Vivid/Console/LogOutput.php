@@ -129,12 +129,20 @@ class LogOutput implements OutputInterface
      */
     public function writeln($messages, int $options = self::OUTPUT_NORMAL)
     {
+        $level = 'info';
+        if($options == self::VERBOSITY_VERBOSE
+            || $options == self::VERBOSITY_VERY_VERBOSE
+            || $options == self::VERBOSITY_DEBUG) {
+            // Debug message
+            $level = 'debug';
+        }
+
         if(is_iterable($messages)) {
             foreach($messages as $msg) {
-                $this->log($msg);
+                $this->log($msg, $level);
             }
         } else {
-            $this->log($messages);
+            $this->log($messages, $level);
         }
     }
 
@@ -143,13 +151,7 @@ class LogOutput implements OutputInterface
      */
     public function write($messages, bool $newline = false, int $options = self::OUTPUT_NORMAL)
     {
-        if(is_iterable($messages)) {
-            foreach($messages as $msg) {
-                $this->log($msg);
-            }
-        } else {
-            $this->log($messages);
-        }
+        $this->writeln($messages, $options);
     }
 
     /**
@@ -198,7 +200,7 @@ class LogOutput implements OutputInterface
         if(empty($this->logger)) {
             $path = C::Storage()->getLogPath() . DS . date("Y-m-d") . '-' . $this->channel . '.log';
             $logger = new Logger('Task');
-            $loglevel = Logger::toMonologLevel('info');
+            $loglevel = Logger::toMonologLevel(C::Config()->gt('main:logging.logoutput.level', 'info'));
             $permissions = C::Config()->get('main:logging.file_permission', 0664);
             $logger->pushHandler(new StreamHandler($path, $loglevel, true, $permissions));
 
