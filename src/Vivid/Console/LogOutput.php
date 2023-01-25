@@ -200,7 +200,7 @@ class LogOutput implements OutputInterface
         if(empty($this->logger)) {
             $path = C::Storage()->getLogPath() . DS . date("Y-m-d") . '-' . $this->channel . '.log';
             $logger = new Logger('Task');
-            $loglevel = Logger::toMonologLevel(C::Config()->gt('main:logging.logoutput.level', 'info'));
+            $loglevel = Logger::toMonologLevel(C::Config()->get('main:logging.logoutput.level', 'info'));
             $permissions = C::Config()->get('main:logging.file_permission', 0664);
             $logger->pushHandler(new StreamHandler($path, $loglevel, true, $permissions));
 
