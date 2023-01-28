@@ -346,4 +346,9 @@ class Formatter extends Module implements ModuleInterface
         return $text;
     }
 
+    public function percentageChange($old_price, $new_price): float|int
+    {
+        return ($new_price - $old_price) / $old_price * 100;
+    }
+
 }
