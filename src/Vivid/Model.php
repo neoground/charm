@@ -40,6 +40,13 @@ class Model extends \Illuminate\Database\Eloquent\Model
     protected array $search_attributes = [];
 
     /**
+     * The attributes which should be updated by updateOrCreate by default
+     *
+     * @var string[]
+     */
+    protected array $update_fields = [];
+
+    /**
      * Disable population of created_by / updated_by fields for an entry
      *
      * @return $this
@@ -484,4 +491,59 @@ class Model extends \Illuminate\Database\Eloquent\Model
 
         return true;
     }
+
+    /**
+     * Add or update an entity
+     *
+     * ID values (in both fields) can have "id-" prepended as values for better sorting,
+     * this will be stripped from the values. Matches on id field in search fields and update fields
+     * which contain "_id".
+     *
+     * Model will persist, no need to save manually.
+     *
+     * @param mixed|null $search_fields array of fields to match for entity (see eloquent's updateOrCreate) or id value or null for id request field
+     * @param mixed|null $update_values array with table field names as key and new value as value or null to use "update_fields" array in class
+     *
+     * @return mixed the object of the entity, returns value of eloquent's updateOrCreate
+     */
+    public static function addOrUpdate(mixed $search_fields = null, $update_values = null)
+    {
+        $x = new static();
+        if(!$update_values) {
+            $update_values = C::Request()->getMultiple($x->update_fields);
+        }
+
+        if(!is_array($search_fields)) {
+            if(is_numeric($search_fields)) {
+                $id = $search_fields;
+            } else {
+                $id = C::Request()->get('id');
+            }
+
+            $id = str_replace("id-", "", $id);
+            if(empty($id)) {
+                $id = null;
+            }
+
+            $search_fields = [
+                'id' => $id
+            ];
+        }
+
+        // Remove "id-" from values of id fields, might be prepended for better sorting
+        foreach($update_values as $k => $v) {
+            if(str_contains($k, '_id')) {
+                $val = str_replace("id-", "", $v);
+
+                if(empty($val)) {
+                    $val = null;
+                }
+
+                $update_values[$k] = $val;
+            }
+        }
+
+        return static::updateOrCreate($search_fields, $update_values);
+    }
+
 }
