@@ -229,6 +229,11 @@ class Model extends \Illuminate\Database\Eloquent\Model
                     continue;
                 }
 
+                // Remove "id-" prefix from id fields
+                if(str_contains($k, '_id')) {
+                    $val = str_replace("id-", "", $val);
+                }
+
                 // Add value to query
                 switch ($v) {
                     case 'string':
