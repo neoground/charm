@@ -272,6 +272,8 @@ class Guard extends Module implements ModuleInterface
     /**
      * Execute the login process
      *
+     * This will log in this user. This won't check the password or anything!
+     *
      * @param object  $u           the user object
      * @param bool    $rememberme  remember user?
      *
@@ -432,6 +434,18 @@ class Guard extends Module implements ModuleInterface
 
             $r->hset('loginattempts', $iphash, $counter);
         }
+    }
+
+    /**
+     * Hash a password
+     *
+     * @param string $password
+     *
+     * @return string
+     */
+    public function hashPassword(string $password) : string
+    {
+        return password_hash($password, PASSWORD_DEFAULT);
     }
 
 

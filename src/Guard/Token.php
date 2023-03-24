@@ -20,16 +20,16 @@ use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 class Token extends Module implements ModuleInterface
 {
     /** @var string  the token */
-    protected $token;
+    protected string $token;
 
     /** @var string  the token location */
-    protected $token_location;
+    protected string $token_location;
 
     /** @var string  the client token */
-    protected $client_token;
+    protected string $client_token;
 
     /** @var string  the user class */
-    protected $user_class;
+    protected string $user_class;
 
     /**
      * Load the module
@@ -51,7 +51,7 @@ class Token extends Module implements ModuleInterface
      *
      * @return bool|string  the token / false if no token is found
      */
-    public function getToken()
+    public function getToken(): bool|string
     {
         if(!empty($this->token)) {
             return $this->token;
@@ -72,6 +72,12 @@ class Token extends Module implements ModuleInterface
                 $this->token = $token;
                 return $token;
             }
+
+            // Second try: Bearer token
+            if(str_contains($auth_header, 'Bearer')) {
+                $parts = explode("Bearer");
+                return trim($parts[1]);
+            }
         }
 
         return false;
@@ -82,7 +88,7 @@ class Token extends Module implements ModuleInterface
      *
      * @return bool
      */
-    public function hasToken()
+    public function hasToken(): bool
     {
         return !empty($this->token);
     }
@@ -92,7 +98,7 @@ class Token extends Module implements ModuleInterface
      *
      * @return bool|string  the token / false if no token is found
      */
-    public function getClientToken()
+    public function getClientToken(): bool|string
     {
         $auth_header = C::Request()->getHeader('authorization');
 
@@ -108,11 +114,11 @@ class Token extends Module implements ModuleInterface
     }
 
     /**
-     * Check if an app token is provided
+     * Check if an client (app) token is provided
      *
      * @return bool
      */
-    public function hasClientToken()
+    public function hasClientToken(): bool
     {
         return !empty($this->client_token);
     }
@@ -132,7 +138,7 @@ class Token extends Module implements ModuleInterface
                 ->first();
 
             if(is_object($token_class)) {
-                return $this->user_class::findWithCache($token_class->user_id);
+                return $this->user_class::find($token_class->user_id);
             }
 
             return false;
@@ -153,7 +159,7 @@ class Token extends Module implements ModuleInterface
         if(C::has('Redis')) {
             $user_id = C::Redis()->getClient()->hget('api_user', $this->token);
             if(!empty($user_id)) {
-                $user = $this->user_class::findWithCache($user_id);
+                $user = $this->user_class::find($user_id);
                 if(is_object($user)) {
                     return $user;
                 }
@@ -182,7 +188,7 @@ class Token extends Module implements ModuleInterface
      *
      * @return bool
      */
-    public function isLoggedIn()
+    public function isLoggedIn(): bool
     {
         if(!empty($this->token)) {
             // Check redis
@@ -206,16 +212,21 @@ class Token extends Module implements ModuleInterface
      *
      * @return string
      */
-    public function createToken($bytes = 16, $apitoken = false)
+    public function createToken(int $bytes = 16, bool $apitoken = false): string
     {
         $token = base64_encode(openssl_random_pseudo_bytes($bytes));
         $token = str_replace(['+', '/', '='], "", $token);
 
         // Check if token in database. If so, generate new one!
         if($apitoken) {
-            while ($this->user_class::where('api_token', $token)->count() > 0) {
-                $token = base64_encode(openssl_random_pseudo_bytes($bytes));
-                $token = str_replace(['+', '/', '='], "", $token);
+            if(class_exists($this->token_location)) {
+                $this->token_location::getUniqueToken('api');
+            } else {
+                // Find in user table
+                while ($this->user_class::where($this->token_location, $token)->count() > 0) {
+                    $token = base64_encode(openssl_random_pseudo_bytes($bytes));
+                    $token = str_replace(['+', '/', '='], "", $token);
+                }
             }
         }
 
@@ -228,11 +239,11 @@ class Token extends Module implements ModuleInterface
      * Please note: This will change the token from every code executed after this command.
      *              This will not change the detected token in the charm init procedure.
      *
-     * @param string|int $token new token
+     * @param int|string $token new token
      *
      * @return $this
      */
-    public function setToken($token)
+    public function setToken(int|string $token): static
     {
         $this->token = $token;
 
