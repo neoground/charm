@@ -169,7 +169,7 @@ class CharmCreator extends Module implements ModuleInterface
 
         return match ($type) {
             'controller' => $dir . DS . 'Templates' . DS . 'Controllers',
-            'methods' => $dir . DS . 'Templates' . DS . 'Methods',
+            'method' => $dir . DS . 'Templates' . DS . 'Methods',
             'model' => $dir . DS . 'Templates' . DS . 'Models',
             'migration' => $dir . DS . 'Templates' . DS . 'Migrations',
             default => false,

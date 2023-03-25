@@ -1,0 +1,8 @@
+# Types to create
+types:
+  model:
+    name: model
+    name_field: MODEL_NAME
+    namespace: App\Models
+    relative_dir: Models
+    file_suffix: php
