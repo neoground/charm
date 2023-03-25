@@ -54,13 +54,7 @@ class CharmCreator extends Module implements ModuleInterface
             return false;
         }
 
-        // Extract YAML frontmatter
-        $parts = explode("---\n", $tpl);
-        $yaml = $parts[1];
-        unset($parts[1]);
-        $tpl = implode("---\n", $parts);
-
-        $yaml_arr = Yaml::parse($yaml);
+        $tpl = $this->extract($tpl, 'content');
 
         // Replace placeholders
         foreach($data as $key => $value) {
@@ -75,6 +69,20 @@ class CharmCreator extends Module implements ModuleInterface
         }
 
         return file_put_contents($path, $controller);
+    }
+
+    private function extract($tpl, string $type = 'yaml'): string
+    {
+        $parts = explode("---\n", $tpl);
+        $yaml = $parts[1];
+        unset($parts[1]);
+        $tpl = implode("---\n", $parts);
+
+        if($type == 'yaml') {
+            return $yaml;
+        }
+
+        return $tpl;
     }
 
     /**
@@ -139,10 +147,10 @@ class CharmCreator extends Module implements ModuleInterface
 
         // TODO Add support for template in own App namespace (app's var/templates/...)
 
-        $tpl = $path . DS . $name . '.php';
+        $tpl = $path . DS . $name . '.tpl';
 
         if(!file_exists($tpl)) {
-            $tpl = $path . DS . $name . '.tpl';
+            // TODO Handle invalid file...
         }
 
         return file_get_contents($tpl);
@@ -184,6 +192,9 @@ class CharmCreator extends Module implements ModuleInterface
         if(empty($tpl) || file_exists($path)) {
             return false;
         }
+
+        // Extract template itself (remove yaml)
+        $tpl = $this->extract($tpl, 'content');
 
         // Replace placeholders
         foreach($data as $key => $value) {

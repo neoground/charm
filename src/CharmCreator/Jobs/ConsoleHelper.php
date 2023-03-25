@@ -75,7 +75,7 @@ class ConsoleHelper
     public function outputAsciiBox(string $text, string $align = 'left'): void
     {
         // Determine the box width
-        $boxWidth = 60;
+        $boxWidth = 42;
 
         // Split the text into words
         $words = explode(' ', $text);
@@ -101,7 +101,7 @@ class ConsoleHelper
 
             // If the line is too long, wrap it to the next line
             if ($lineLength > $boxWidth) {
-                $this->output->writeln(sprintf('| %-57s |', $outputString));
+                $this->output->writeln(sprintf('| %-' . ($boxWidth - 3) . 's |', $outputString));
                 $outputString = $word;
                 $lineLength = strlen($outputString);
             } else {
@@ -127,9 +127,14 @@ class ConsoleHelper
         return $x;
     }
 
-    public static function createAndHandle($input, $output, $questionhelper, $type): bool|ConsoleHelper
+    public static function createAndHandle($input, $output, $questionhelper, $type, $header = false): bool|ConsoleHelper
     {
         $ch = self::create($input, $output, $questionhelper, $type);
+        if($header) {
+            $ch->outputCharmHeader();
+            $ch->outputAsciiBox($header);
+            $output->writeln(' ');
+        }
         $ch->askForTemplateAndData();
 
         $data = $ch->getData();

@@ -40,15 +40,14 @@ class CreateController extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $ch = ConsoleHelper::createAndHandle($input, $output, $this->getHelper('question'), 'controller');
+        $ch = ConsoleHelper::createAndHandle($input, $output,
+            $this->getHelper('question'),
+            'controller',
+        'Creating a new controller');
 
         if($ch === false) {
             return self::FAILURE;
         }
-
-        $ch->outputCharmHeader();
-        $ch->outputAsciiBox('Creating a new controller');
-        $output->writeln(' ');
 
         C::CharmCreator()->createController($ch->getAbsolutePath(), $ch->getData(), $ch->getTemplate());
 
