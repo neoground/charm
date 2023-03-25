@@ -66,13 +66,15 @@ class ConsoleHelper
 
     public function outputCharmHeader()
     {
-        $this->output->writeln(' ');
-        $this->output->writeln(' ██████ ██   ██  █████  ██████  ███    ███ ');
-        $this->output->writeln('██      ██   ██ ██   ██ ██   ██ ████  ████ ');
-        $this->output->writeln('██      ███████ ███████ ██████  ██ ████ ██ ');
-        $this->output->writeln('██      ██   ██ ██   ██ ██   ██ ██  ██  ██ ');
-        $this->output->writeln(' ██████ ██   ██ ██   ██ ██   ██ ██      ██ ');
-        $this->output->writeln(' ');
+        $logo = "\n";
+        $logo .= ' ██████ ██   ██  █████  ██████  ███    ███ ' . "\n";
+        $logo .= '██      ██   ██ ██   ██ ██   ██ ████  ████ ' . "\n";
+        $logo .= '██      ███████ ███████ ██████  ██ ████ ██ ' . "\n";
+        $logo .= '██      ██   ██ ██   ██ ██   ██ ██  ██  ██ ' . "\n";
+        $logo .= ' ██████ ██   ██ ██   ██ ██   ██ ██      ██ ' . "\n";
+        $logo .= "\n";
+
+        $this->outputRainbow($logo);
     }
 
     public function outputAsciiBox(string $text, string $align = 'left'): void
@@ -100,6 +102,37 @@ class ConsoleHelper
         }
 
         $this->output->writeln($border_str);
+    }
+
+    public function outputRainbow(string $text)
+    {
+        $colors = [
+            "#FFB6C1", // LightPink
+            "#FFA07A", // LightSalmon
+            "#FFD700", // Gold
+            "#00FA9A", // MediumSpringGreen
+            "#00BFFF", // DeepSkyBlue
+            "#6A5ACD", // SlateBlue
+            "#FF00FF"  // Magenta
+        ];
+
+        $rows = explode(PHP_EOL, $text);
+
+        for ($i = 0; $i < count($rows); $i++) {
+            $row = $rows[$i];
+            $color = $colors[$i % count($colors)];
+            $line = '';
+
+            for ($j = 0; $j < strlen($row); $j++) {
+                $line .= "<fg=$color>{$row[$j]}</>";
+                $color++;
+                if ($color > end($colors)) {
+                    $color = reset($colors);
+                }
+            }
+
+            $this->output->writeln($line);
+        }
     }
 
     public static function create($input, $output, $questionhelper, $type)
