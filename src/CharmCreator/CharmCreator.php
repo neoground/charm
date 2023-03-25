@@ -35,13 +35,12 @@ class CharmCreator extends Module implements ModuleInterface
      * @param string $path absolute path to the controller file (including file extension)
      * @param array $data the data for replacing placeholders (keys are the placeholder names)
      * @param string $tplname (opt.) name of controller template
-     * @param null|OutputInterface optional output interface
      *
-     * @return bool|int false if template / controller is not found, return of file_put_contents on success
+     * @return bool|int false if method exists or template is not found, return of file_put_contents on success
      */
-    public function addMethodToController($path, $data = [], $tplname = 'Default', $output = null)
+    public function addMethodToController($path, $data = [], $tplname = 'Default')
     {
-        $tpl = $this->getTemplate('controller', $tplname);
+        $tpl = $this->getTemplate('methods', $tplname);
 
         // Stop if template or controller is not found
         if(empty($tpl) || !file_exists($path)) {
@@ -51,21 +50,8 @@ class CharmCreator extends Module implements ModuleInterface
         // Stop if method already exists in controller
         $controller = file_get_contents($path);
         if(str_contains($controller, $data['METHOD_NAME'])) {
-            if(is_object($output)) {
-                $output->writeln('[IGNORE] Method exists: ' . $data['METHOD_NAME']);
-            }
             return false;
         }
-
-        if(is_object($output)) {
-            $output->writeln('[ADDING] Method: ' . $data['METHOD_NAME']);
-        }
-
-        // Get method template
-        $method_tpl_parts = explode("#METHOD-START", $tpl);
-        $method_tpl_parts = $method_tpl_parts[1];
-        $method_tpl_parts = explode("#METHOD-END", $method_tpl_parts);
-        $tpl = $method_tpl_parts[0];
 
         // Replace placeholders
         foreach($data as $key => $value) {
@@ -73,16 +59,13 @@ class CharmCreator extends Module implements ModuleInterface
         }
 
         // Append to controller
+        $controller = preg_replace('/}\s*$/', $tpl . "\n}", $controller, -1, $count);
 
-        // Remove closing "}" of class
-        $parts = explode("}", $controller);
-        array_pop($parts);
+        if ($count === 0) {
+            return false;
+        }
 
-        $new_controller = implode("}", $parts);
-        $new_controller .= $tpl;
-        $new_controller .= "\n}";
-
-        return @file_put_contents($path, $new_controller);
+        return file_put_contents($path, $controller);
     }
 
     /**
@@ -96,23 +79,11 @@ class CharmCreator extends Module implements ModuleInterface
      */
     public function createController($path, $data = [], $tplname = 'Default')
     {
-        $tpl = $this->getTemplate('controller', $tplname);
-
-        // Stop if template is not found or file already exists
-        if(empty($tpl) || file_exists($path)) {
-            return false;
-        }
-
-        // Replace placeholders
-        foreach($data as $key => $value) {
-            $tpl = str_replace($key, $value, $tpl);
-        }
-
-        // Strip default method
-        $tpl = preg_replace('/#METHOD-START[\s\S]+?#METHOD-END/', '', $tpl);
-
-        // Create file with this template
-        return file_put_contents($path, $tpl);
+        $data = [
+            'CLASSNAMESPACE' => 'App\\Controllers',
+            ...$data
+        ];
+        return $this->createFile('controller', $path, $data, $tplname);
     }
 
     /**
@@ -125,20 +96,7 @@ class CharmCreator extends Module implements ModuleInterface
      * @return bool|int false if template is not found or controller already exists, return of file_put_contents on success
      */
     public function createModel($path, $data = [], $tplname = 'Default') {
-        $tpl = $this->getTemplate('model', $tplname);
-
-        // Stop if template is not found or file already exists
-        if(empty($tpl) || file_exists($path)) {
-            return false;
-        }
-
-        // Replace placeholders
-        foreach($data as $key => $value) {
-            $tpl = str_replace($key, $value, $tpl);
-        }
-
-        // Create file with this template
-        return file_put_contents($path, $tpl);
+        return $this->createFile('model', $path, $data, $tplname);
     }
 
     /**
@@ -151,7 +109,61 @@ class CharmCreator extends Module implements ModuleInterface
      * @return bool|int false if template is not found or controller already exists, return of file_put_contents on success
      */
     public function createMigration($path, $data = [], $tplname = 'Default') {
-        $tpl = $this->getTemplate('migration', $tplname);
+        return $this->createFile('migration', $path, $data, $tplname);
+    }
+
+    /**
+     * Get a template
+     *
+     * @param string $type type of template (e.g. controller)
+     * @param string $name (opt.) name of template
+     *
+     * @return bool|string false if template is not found
+     */
+    public function getTemplate($type, $name = 'Default')
+    {
+        $path = $this->getTemplatesDirectoryFor($type);
+
+        if(!$path || !file_exists($path)) {
+            return false;
+        }
+
+        // TODO Add support for template in own App namespace (app's var/templates/...)
+
+        return file_get_contents($path);
+    }
+
+    public function getAvailableTemplates($type): array
+    {
+        $dir = $this->getTemplatesDirectoryFor($type);
+        if($dir) {
+            $files = C::Storage()->scanDir($dir);
+            return array_map(fn($file) => pathinfo($file, PATHINFO_FILENAME), $files);
+        }
+
+        return [];
+    }
+
+    public function getTemplatesDirectoryFor($type): bool|string
+    {
+        try {
+            $dir = self::getBaseDirectory();
+        } catch (\ReflectionException $e) {
+            return false;
+        }
+
+        return match ($type) {
+            'controller' => $dir . DS . 'Templates' . DS . 'Controllers',
+            'methods' => $dir . DS . 'Templates' . DS . 'Methods',
+            'model' => $dir . DS . 'Templates' . DS . 'Models',
+            'migration' => $dir . DS . 'Templates' . DS . 'Migrations',
+            default => false,
+        };
+    }
+
+    public function createFile($type, $path, $data, $tplname): bool|int
+    {
+        $tpl = $this->getTemplate($type, $tplname);
 
         // Stop if template is not found or file already exists
         if(empty($tpl) || file_exists($path)) {
@@ -165,41 +177,6 @@ class CharmCreator extends Module implements ModuleInterface
 
         // Create file with this template
         return file_put_contents($path, $tpl);
-    }
-
-    /**
-     * Get a template
-     *
-     * @param string $type type of template (e.g. controller)
-     * @param string $name (opt.) name of template
-     *
-     * @return bool|string false if template is not found
-     */
-    public function getTemplate($type, $name = 'Default')
-    {
-        try {
-
-            switch($type) {
-                case 'controller':
-                    $path = self::getBaseDirectory() . DS . 'Templates' . DS . 'Controllers' . DS . $name . '.php';
-                    break;
-                case 'model':
-                    $path = self::getBaseDirectory() . DS . 'Templates' . DS . 'Models' . DS . $name . '.php';
-                    break;
-                case 'migration':
-                    $path = self::getBaseDirectory() . DS . 'Templates' . DS . 'Migrations' . DS . $name . '.php';
-                    break;
-            }
-
-        } catch (\ReflectionException $e) {
-            return false;
-        }
-
-        if(!file_exists($path)) {
-            return false;
-        }
-
-        return file_get_contents($path);
     }
 
 }

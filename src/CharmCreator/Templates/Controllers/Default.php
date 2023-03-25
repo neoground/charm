@@ -3,10 +3,10 @@
  * This file contains the CLASSNAME class
  */
 
-namespace App\Controllers;
+namespace CLASSNAMESPACE;
 
 use Charm\Vivid\Controller;
-use Charm\Vivid\Kernel\Output\View;
+use Charm\Vivid\Router\Attributes\Route;
 
 /**
  * Class CLASSNAME
@@ -17,24 +17,5 @@ use Charm\Vivid\Kernel\Output\View;
  */
 class CLASSNAME extends Controller
 {
-    #METHOD-START
-    /**
-     * METHOD_TITLE
-     *
-     * @route METHOD_HTTP METHOD_ROUTE
-     *
-     * METHOD_ARGS
-     *
-     * @return View
-     */
-    public function METHOD_NAME($METHOD_ARGS)
-    {
-        // TODO Implement.
-
-        return View::make('METHOD_ROUTE')->with([
-
-        ]);
-    }
-    #METHOD-END
 
 }
