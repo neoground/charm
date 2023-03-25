@@ -71,10 +71,11 @@ class CharmCreator extends Module implements ModuleInterface
         return file_put_contents($path, $controller);
     }
 
-    private function extract($tpl, string $type = 'yaml'): string
+    public function extract($tpl, string $type = 'yaml'): string
     {
         $parts = explode("---\n", $tpl);
         $yaml = $parts[1];
+        unset($parts[0]);
         unset($parts[1]);
         $tpl = implode("---\n", $parts);
 
