@@ -190,10 +190,11 @@ class ConsoleHelper
     {
         // Ask for template
         $available_templates = C::CharmCreator()->getAvailableTemplates($this->type['name']);
-        $this->template = $this->choice($this->input, $this->output, 'Select wanted template:', $available_templates, 'Default');
 
         // Extract template from text
-        $this->template = $this->extractFromBrackets($this->template);
+        $this->template = $this->extractFromBrackets(
+            $this->choice($this->input, $this->output, 'Select wanted template:', $available_templates, 'Default')
+        );
 
         // Get custom fields from chosen tpl
         $tpl = C::CharmCreator()->getTemplate($this->type['name'], $this->template);
