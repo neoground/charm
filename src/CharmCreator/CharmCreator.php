@@ -165,9 +165,10 @@ class CharmCreator extends Module implements ModuleInterface
             $arr = [];
 
             foreach($files as $file) {
-                $tpl_content = $this->getTemplate($type, str_replace(".tpl", "", $file));
+                $filename = str_replace(".tpl", "", $file);
+                $tpl_content = $this->getTemplate($type, $filename);
                 $yaml = Yaml::parse($this->extract($tpl_content, 'yaml'));
-                $arr[] = $yaml['name'] . ' [' . $file . ']';
+                $arr[] = $yaml['name'] . ' [' . $filename . ']';
             }
 
 

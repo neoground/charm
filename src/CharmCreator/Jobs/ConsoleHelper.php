@@ -186,11 +186,6 @@ class ConsoleHelper
         return $ch;
     }
 
-    private function extractFromBrackets(string $string): ?string {
-        preg_match('/\[(\w+)\]/', $string, $matches);
-        return $matches[1] ?? null;
-    }
-
     public function askForTemplateAndData(): void
     {
         // Ask for template
