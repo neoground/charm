@@ -57,7 +57,9 @@ class CreateModel extends Command
 
         C::CharmCreator()->createModel($ch->getAbsolutePath(), $ch->getData(), $ch->getTemplate());
 
-        $output->writeln('✅ Created model ' . $ch->getName());
+        $output->writeln(' ');
+        $ch->success('✅ Created model ' . $ch->getName());
+        $output->writeln(' ');
 
         return self::SUCCESS;
     }

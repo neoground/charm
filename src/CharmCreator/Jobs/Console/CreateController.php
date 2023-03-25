@@ -51,7 +51,9 @@ class CreateController extends Command
 
         C::CharmCreator()->createController($ch->getAbsolutePath(), $ch->getData(), $ch->getTemplate());
 
-        $output->writeln('✅ Created controller ' . $ch->getName());
+        $output->writeln(' ');
+        $ch->success('✅ Created controller ' . $ch->getName());
+        $output->writeln(' ');
 
         return self::SUCCESS;
     }

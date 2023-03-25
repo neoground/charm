@@ -45,33 +45,26 @@ class CreateControllerMethod extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        // Ask for template + custom fields
+        $ch = ConsoleHelper::create($input, $output, $this->getHelper('question'), 'method');
+        $ch->outputCharmHeader();
+        $ch->outputAsciiBox('Creating a new controller method');
+        $output->writeln(' ');
+
+        // Ask for controller
         $controllerName = $input->getOption('ctrl');
         if (empty($controllerName)) {
-            // TODO Allow selection for better UX
+            // TODO Allow selection for better UX and without needing validation
             $controllerName = $this->ask($input, $output, 'Enter the name of the controller class: ');
         }
 
-        // Validate selected controller
-        $controllerName = trim(str_replace(".php", "", $controllerName));
-        if (empty($controllerName)) {
-            $output->writeln('<error>Invalid controller name provided!</error>');
-            return self::FAILURE;
-        }
-
-        $path = C::Storage()->getAppPath() . DS . 'Controllers' . DS . str_replace(".", DS, $controllerName) . '.php';
-
-        if (!file_exists($path)) {
-            $output->writeln('<error>Controller file not existing!</error>');
-            return self::FAILURE;
-        }
-
-        // Ask for template + custom fields
-        $ch = ConsoleHelper::create($input, $output, $this->getHelper('question'), 'method');
         $ch->askForTemplateAndData();
 
-        C::CharmCreator()->addMethodToController($path, $ch->getData(), $ch->getTemplate());
+        C::CharmCreator()->addMethodToController($ch->getAbsolutePath(), $ch->getData(), $ch->getTemplate());
 
-        $output->writeln('✅ Added method ' . $ch->getData()['METHOD_NAME'] . ' to controller ' . $controllerName);
+        $output->writeln(' ');
+        $ch->success('✅ Added method ' . $ch->getName() . ' to controller ' . $controllerName);
+        $output->writeln(' ');
 
         return self::SUCCESS;
     }

@@ -8,6 +8,7 @@ namespace Charm\CharmCreator\Jobs;
 use Charm\Vivid\C;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -21,6 +22,7 @@ class ConsoleHelper
 
     protected $input;
     protected $output;
+    protected SymfonyStyle $symfonyStyle;
 
     protected array $data;
     protected string $template;
@@ -59,6 +61,7 @@ class ConsoleHelper
     {
         $this->types = C::Config()->get('CharmCreator#types:types', []);
         $this->setIO($input, $output);
+        $this->initSymfonyStyle();
     }
 
     public function outputCharmHeader()
@@ -74,49 +77,29 @@ class ConsoleHelper
 
     public function outputAsciiBox(string $text, string $align = 'left'): void
     {
-        // Determine the box width
-        $boxWidth = 42;
+        $width = 42;
+        $inner_width = $width - 4;
 
-        // Split the text into words
-        $words = explode(' ', $text);
+        $border_str = '+' . str_repeat('-', $inner_width) . '+';
 
-        // Initialize the output string
-        $outputString = '';
+        $this->output->writeln($border_str);
 
-        // Initialize the line length
-        $lineLength = 0;
-
-        // Loop through the words and build the lines
-        foreach ($words as $word) {
-            // Add a space before the word if necessary
-            if ($lineLength > 0) {
-                $word = ' ' . $word;
-            }
-
-            // Add the word to the current line
-            $outputLine = $outputString . $word;
-
-            // Determine the length of the line
-            $lineLength = strlen($outputLine);
-
-            // If the line is too long, wrap it to the next line
-            if ($lineLength > $boxWidth) {
-                $this->output->writeln(sprintf('| %-' . ($boxWidth - 3) . 's |', $outputString));
-                $outputString = $word;
-                $lineLength = strlen($outputString);
-            } else {
-                $outputString = $outputLine;
-            }
+        // Format lines
+        $lines = explode("\n", $text);
+        $arr = [];
+        foreach($lines as $line) {
+            $arr += str_split($line, $inner_width);
         }
 
-        $this->output->writeln('+----------------------------------------+');
-
-        // Output the final line
-        if (!empty($outputString)) {
-            $this->output->writeln(sprintf('| %-57s |', $outputString));
+        foreach($arr as $renderline) {
+            if(strlen($renderline) < $inner_width) {
+                // Fill up to inner width
+                $renderline = str_pad($renderline, $inner_width, ' ');
+            }
+            $this->output->writeln('| ' . $renderline . ' |');
         }
 
-        $this->output->writeln('+----------------------------------------+');
+        $this->output->writeln($border_str);
     }
 
     public static function create($input, $output, $questionhelper, $type)
@@ -272,6 +255,52 @@ class ConsoleHelper
     {
         $cq = new ChoiceQuestion($question, $arr, $default);
         return $this->questionhelper->ask($input, $output, $cq);
+    }
+
+    private function initSymfonyStyle(): void
+    {
+        $this->symfonyStyle = new SymfonyStyle($this->input, $this->output);
+    }
+
+    // Wrapper methods for public methods of SymfonyStyle
+    public function title(string $message): void {
+        $this->symfonyStyle->title(message: $message);
+    }
+
+    public function section(string $message): void {
+        $this->symfonyStyle->section(message: $message);
+    }
+
+    public function listing(array $elements): void {
+        $this->symfonyStyle->listing(elements: $elements);
+    }
+
+    public function text(string $message): void {
+        $this->symfonyStyle->text(message: $message);
+    }
+
+    public function comment(string $message): void {
+        $this->symfonyStyle->comment(message: $message);
+    }
+
+    public function success(string $message): void {
+        $this->symfonyStyle->success(message: $message);
+    }
+
+    public function error(string $message): void {
+        $this->symfonyStyle->error(message: $message);
+    }
+
+    public function warning(string $message): void {
+        $this->symfonyStyle->warning(message: $message);
+    }
+
+    public function caution(string $message): void {
+        $this->symfonyStyle->caution(message: $message);
+    }
+
+    public function table(array $headers, array $rows): void {
+        $this->symfonyStyle->table(headers: $headers, rows: $rows);
     }
 
 }
