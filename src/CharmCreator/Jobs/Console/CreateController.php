@@ -10,8 +10,6 @@ use Charm\Vivid\C;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
-use Symfony\Component\Console\Question\Question;
 
 /**
  * Class CreateController
@@ -40,16 +38,17 @@ class CreateController extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $type = 'controller';
         $ch = ConsoleHelper::createAndHandle($input, $output,
             $this->getHelper('question'),
-            'controller',
-        'Creating a new controller');
+            $type,
+            'Creating a new controller');
 
-        if($ch === false) {
+        if ($ch === false) {
             return self::FAILURE;
         }
 
-        C::CharmCreator()->createController($ch->getAbsolutePath(), $ch->getData(), $ch->getTemplate());
+        C::CharmCreator()->createFile($type, $ch->getAbsolutePath(), $ch->getData(), $ch->getTemplate());
 
         $output->writeln(' ');
         $ch->success('✅ Created controller ' . $ch->getName());

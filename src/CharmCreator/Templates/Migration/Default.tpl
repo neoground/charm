@@ -1,3 +1,14 @@
+---
+name: Default migration
+fields:
+  CLASS_NAME:
+    name: Name of class
+    type: input
+  TABLENAME:
+    name: Name of table
+    type: input
+---
+
 <?php
 /**
  * This file contains a database table migration.
@@ -11,7 +22,7 @@ use Illuminate\Database\Schema\Blueprint;
 /**
  * Migration class
  */
-class TABLECLASSNAME extends Migration
+class CLASS_NAME extends Migration
 {
     /** @var string the table name */
     protected $tablename = 'TABLENAME';
@@ -25,7 +36,7 @@ class TABLECLASSNAME extends Migration
             $this->database->create($this->tablename, function (Blueprint $table) {
                 $table->increments('id');
 
-
+                // TODO Add table schema
 
                 $table->timestamps();
                 $table->softDeletes();

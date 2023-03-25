@@ -24,6 +24,12 @@ types:
     namespace: App\Views
     relative_dir: Views
     file_suffix: php
+  migration:
+    name: migration
+    name_field: CLASS_NAME
+    namespace: App\System\Migrations
+    relative_dir: System/Migrations
+    file_suffix: php
   cron:
     name: cron
     name_field: JOB_NAME

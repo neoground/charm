@@ -5,30 +5,27 @@
 
 namespace Charm\CharmCreator\Jobs\Console;
 
-use Charm\Bob\Command;
 use Charm\CharmCreator\Jobs\ConsoleHelper;
 use Charm\Vivid\C;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class CreateModelCommand
+ * Class CreateCronjob
  *
- * Creating model files
- *
- * @package Charm\CharmCreator\Jobs\Console
+ * Creating cron job file
  */
-class CreateModel extends Command
+class CreateCronjob extends Command
 {
-
     /**
      * The configuration
      */
     protected function configure()
     {
-        $this->setName("c:m")
-            ->setDescription("Creating a model")
-            ->setHelp('This command allows you to add a new model.');
+        $this->setName("c:cj")
+            ->setDescription("Creating a cron job")
+            ->setHelp('This command allows you to add a new cron job.');
     }
 
     /**
@@ -41,9 +38,11 @@ class CreateModel extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $type = 'model';
-        $ch = ConsoleHelper::createAndHandle($input, $output, $this->getHelper('question'), $type,
-            'Creating a new model');
+        $type = 'cron';
+        $ch = ConsoleHelper::createAndHandle($input, $output,
+            $this->getHelper('question'),
+            $type,
+            'Creating a new cron job');
 
         if ($ch === false) {
             return self::FAILURE;
@@ -52,7 +51,7 @@ class CreateModel extends Command
         C::CharmCreator()->createFile($type, $ch->getAbsolutePath(), $ch->getData(), $ch->getTemplate());
 
         $output->writeln(' ');
-        $ch->success('✅ Created model ' . $ch->getName());
+        $ch->success('✅ Created cron job ' . $ch->getName());
         $output->writeln(' ');
 
         return self::SUCCESS;

@@ -8,7 +8,6 @@ namespace Charm\CharmCreator;
 use Charm\Vivid\Base\Module;
 use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -33,31 +32,31 @@ class CharmCreator extends Module implements ModuleInterface
     /**
      * Add a method to an existing controller
      *
-     * @param string $path absolute path to the controller file (including file extension)
-     * @param array $data the data for replacing placeholders (keys are the placeholder names)
+     * @param string $path    absolute path to the controller file (including file extension)
+     * @param array  $data    the data for replacing placeholders (keys are the placeholder names)
      * @param string $tplname (opt.) name of controller template
      *
      * @return bool|int false if method exists or template is not found, return of file_put_contents on success
      */
-    public function addMethodToController($path, $data = [], $tplname = 'Default')
+    public function addMethodToController(string $path, array $data = [], string $tplname = 'Default'): bool|int
     {
         $tpl = $this->getTemplate('methods', $tplname);
 
         // Stop if template or controller is not found
-        if(empty($tpl) || !file_exists($path)) {
+        if (empty($tpl) || !file_exists($path)) {
             return false;
         }
 
         // Stop if method already exists in controller
         $controller = file_get_contents($path);
-        if(str_contains($controller, $data['METHOD_NAME'])) {
+        if (str_contains($controller, $data['METHOD_NAME'])) {
             return false;
         }
 
         $tpl = $this->extract($tpl, 'content');
 
         // Replace placeholders
-        foreach($data as $key => $value) {
+        foreach ($data as $key => $value) {
             $tpl = str_replace($key, $value, $tpl);
         }
 
@@ -71,7 +70,15 @@ class CharmCreator extends Module implements ModuleInterface
         return file_put_contents($path, $controller);
     }
 
-    public function extract($tpl, string $type = 'yaml'): string
+    /**
+     * Extract yaml / content part from template file content
+     *
+     * @param string $tpl  template file content
+     * @param string $type extraction type: yaml / content
+     *
+     * @return string
+     */
+    public function extract(string $tpl, string $type = 'yaml'): string
     {
         $parts = explode("---\n", $tpl);
         $yaml = $parts[1];
@@ -79,55 +86,11 @@ class CharmCreator extends Module implements ModuleInterface
         unset($parts[1]);
         $tpl = implode("---\n", $parts);
 
-        if($type == 'yaml') {
+        if ($type == 'yaml') {
             return $yaml;
         }
 
         return $tpl;
-    }
-
-    /**
-     * Create a new controller
-     *
-     * @param string $path absolute path to the new controller file (including file extension)
-     * @param array $data the data for replacing placeholders (keys are the placeholder names)
-     * @param string $tplname (opt.) name of controller template
-     *
-     * @return bool|int false if template is not found or controller already exists, return of file_put_contents on success
-     */
-    public function createController($path, $data = [], $tplname = 'Default')
-    {
-        $data = [
-            'CLASSNAMESPACE' => 'App\\Controllers',
-            ...$data
-        ];
-        return $this->createFile('controller', $path, $data, $tplname);
-    }
-
-    /**
-     * Create a new model file
-     *
-     * @param string $path absolute path to the new file (including file extension)
-     * @param array $data the data for replacing placeholders (keys are the placeholder names)
-     * @param string $tplname (opt.) name of template
-     *
-     * @return bool|int false if template is not found or controller already exists, return of file_put_contents on success
-     */
-    public function createModel($path, $data = [], $tplname = 'Default') {
-        return $this->createFile('model', $path, $data, $tplname);
-    }
-
-    /**
-     * Create a new migration file
-     *
-     * @param string $path absolute path to the new file (including file extension)
-     * @param array $data the data for replacing placeholders (keys are the placeholder names)
-     * @param string $tplname (opt.) name of template
-     *
-     * @return bool|int false if template is not found or controller already exists, return of file_put_contents on success
-     */
-    public function createMigration($path, $data = [], $tplname = 'Default') {
-        return $this->createFile('migration', $path, $data, $tplname);
     }
 
     /**
@@ -138,11 +101,11 @@ class CharmCreator extends Module implements ModuleInterface
      *
      * @return bool|string false if template is not found
      */
-    public function getTemplate($type, $name = 'Default')
+    public function getTemplate(string $type, string $name = 'Default'): bool|string
     {
         $path = $this->getTemplatesDirectoryFor($type);
 
-        if(!$path || !file_exists($path)) {
+        if (!$path || !file_exists($path)) {
             return false;
         }
 
@@ -150,22 +113,29 @@ class CharmCreator extends Module implements ModuleInterface
 
         $tpl = $path . DS . str_replace('.tpl', '', $name) . '.tpl';
 
-        if(!file_exists($tpl)) {
+        if (!file_exists($tpl)) {
             // TODO Handle invalid file...
         }
 
         return file_get_contents($tpl);
     }
 
-    public function getAvailableTemplates($type): array
+    /**
+     * Get all available templates
+     *
+     * @param string $type wanted type
+     *
+     * @return array
+     */
+    public function getAvailableTemplates(string $type): array
     {
         $dir = $this->getTemplatesDirectoryFor($type);
-        if($dir) {
+        if ($dir) {
             $files = C::Storage()->scanDir($dir);
 
             $arr = [];
 
-            foreach($files as $file) {
+            foreach ($files as $file) {
                 $filename = str_replace(".tpl", "", $file);
                 $tpl_content = $this->getTemplate($type, $filename);
                 $yaml = Yaml::parse($this->extract($tpl_content, 'yaml'));
@@ -179,7 +149,14 @@ class CharmCreator extends Module implements ModuleInterface
         return [];
     }
 
-    public function getTemplatesDirectoryFor($type): bool|string
+    /**
+     * Get the template directory for a specific type
+     *
+     * @param string $type wanted type
+     *
+     * @return bool|string path or false if not found
+     */
+    public function getTemplatesDirectoryFor(string $type): bool|string
     {
         try {
             $dir = self::getBaseDirectory();
@@ -187,21 +164,30 @@ class CharmCreator extends Module implements ModuleInterface
             return false;
         }
 
-        return match ($type) {
-            'controller' => $dir . DS . 'Templates' . DS . 'Controllers',
-            'method' => $dir . DS . 'Templates' . DS . 'Methods',
-            'model' => $dir . DS . 'Templates' . DS . 'Models',
-            'migration' => $dir . DS . 'Templates' . DS . 'Migrations',
-            default => false,
-        };
+        $config = C::Config()->get('CharmCreator#types:types.' . $type);
+        if (!is_array($config)) {
+            return false;
+        }
+
+        return $dir . DS . 'Templates' . DS . ucfirst($config['name']);
     }
 
-    public function createFile($type, $path, $data, $tplname): bool|int
+    /**
+     * Create a new file
+     *
+     * @param string $type    wanted type
+     * @param string $path    absolute path
+     * @param array  $data    variables array
+     * @param string $tplname name of template
+     *
+     * @return bool|int false on error
+     */
+    public function createFile(string $type, string $path, array $data, string $tplname): bool|int
     {
         $tpl = $this->getTemplate($type, $tplname);
 
         // Stop if template is not found or file already exists
-        if(empty($tpl) || file_exists($path)) {
+        if (empty($tpl) || file_exists($path)) {
             return false;
         }
 
@@ -209,7 +195,7 @@ class CharmCreator extends Module implements ModuleInterface
         $tpl = $this->extract($tpl, 'content');
 
         // Replace placeholders
-        foreach($data as $key => $value) {
+        foreach ($data as $key => $value) {
             $tpl = str_replace($key, $value, $tpl);
         }
 

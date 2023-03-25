@@ -10,8 +10,8 @@ fields:
   METHOD_HTTP:
     name: Request type
     type: choice
-    choices: GET, POST, PUT, DELETE
-    default: GET
+    choices: GET,POST,PUT,DELETE
+    default: 0
   METHOD_URL:
     name: Relative URL
     type: input

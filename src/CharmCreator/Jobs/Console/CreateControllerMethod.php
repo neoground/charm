@@ -55,10 +55,11 @@ class CreateControllerMethod extends Command
         $controllerName = $input->getOption('ctrl');
         if (empty($controllerName)) {
             // TODO Allow selection for better UX and without needing validation
-            $controllerName = $this->ask($input, $output, 'Enter the name of the controller class: ');
+            $controllerName = $this->ask($input, $output, 'Name of controller class: ');
         }
 
         $ch->askForTemplateAndData();
+        $ch->setDirAndNamespace();
 
         C::CharmCreator()->addMethodToController($ch->getAbsolutePath(), $ch->getData(), $ch->getTemplate());
 

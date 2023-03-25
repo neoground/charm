@@ -142,7 +142,7 @@ class ConsoleHelper
             while($new_color == $last_color) {
                 $new_color = rand(0, count($colors) - 1);
             }
-
+            $last_color = $new_color;
             $this->output->writeln($colors[$new_color] . $line . "\033[37m");
         }
     }
@@ -212,7 +212,12 @@ class ConsoleHelper
         $this->data = [];
         foreach($yaml_arr['fields'] as $name => $field) {
             if($field['type'] == 'input') {
-                $this->data[$name] = $this->ask($this->input, $this->output, $field['name'] . ': ');
+                $default = null;
+                if(array_key_exists('default', $field)) {
+                    $default = $field['default'];
+                }
+
+                $this->data[$name] = $this->ask($this->input, $this->output, $field['name'] . ': ', $default);
             } elseif($field['type'] == 'choice') {
                 $this->data[$name] = $this->choice($this->input, $this->output, $field['name'] . ': ', explode(",", $field['choices']), $field['default']);
             }
@@ -292,9 +297,9 @@ class ConsoleHelper
         $this->output = $output;
     }
 
-    public function ask($input, $output, $question)
+    public function ask($input, $output, $question, mixed $default = null)
     {
-        return $this->questionhelper->ask($input, $output, new Question($question));
+        return $this->questionhelper->ask($input, $output, new Question($question, $default));
     }
 
     public function choice($input, $output, $question, $arr, $default = null)
