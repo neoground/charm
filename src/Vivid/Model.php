@@ -551,4 +551,20 @@ class Model extends \Illuminate\Database\Eloquent\Model
         return static::updateOrCreate($search_fields, $update_values);
     }
 
+    /**
+     * Format values to an array
+     *
+     * Looks for formatToArray() in model and uses Collection native toArray() as fallback.
+     *
+     * @return array
+     */
+    public function arr() : array
+    {
+        if(method_exists($this, 'formatToArray')) {
+            return $this->formatToArray();
+        }
+
+        return $this->toArray();
+    }
+
 }
