@@ -137,21 +137,8 @@ class ConsoleHelper
         $lines = explode(PHP_EOL, $text);
 
         foreach ($lines as $line) {
-            $formattedLine = '';
-
-            for ($i = 0; $i < mb_strlen($line); $i++) {
-                $char = mb_substr($line, $i, 1);
-
-                if ($char === ' ') {
-                    $formattedLine .= ' ';
-                } else {
-                    $formattedLine .= $colors[rand(0, count($colors) - 1)] . $char;
-                }
-            }
-
-            $this->output->writeln($formattedLine);
+            $this->output->writeln($colors[rand(0, count($colors) - 1)] . $line . "\033[37m");
         }
-
     }
 
     public static function create($input, $output, $questionhelper, $type)
@@ -167,7 +154,7 @@ class ConsoleHelper
         $ch = self::create($input, $output, $questionhelper, $type);
         if($header) {
             $ch->outputCharmHeader();
-            $ch->outputAsciiBox($header, 'left', true);
+            $ch->outputAsciiBox($header);
             $output->writeln(' ');
         }
         $ch->askForTemplateAndData();
@@ -210,9 +197,9 @@ class ConsoleHelper
         $available_templates = C::CharmCreator()->getAvailableTemplates($this->type['name']);
 
         // Extract template from text
-        $this->template = $this->extractFromBrackets(
-            $this->choice($this->input, $this->output, 'Select wanted template:', $available_templates, 'Default')
-        );
+        $tplstring = $this->choice($this->input, $this->output, 'Select wanted template:', $available_templates, 'Default');
+        $tplparts = explode("[", $tplstring);
+        $this->template = rtrim($tplparts[1], "]");
 
         // Get custom fields from chosen tpl
         $tpl = C::CharmCreator()->getTemplate($this->type['name'], $this->template);
