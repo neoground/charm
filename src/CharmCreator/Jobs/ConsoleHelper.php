@@ -82,7 +82,7 @@ class ConsoleHelper
         $width = 42;
         $inner_width = $width - 4;
 
-        $border_str = '+' . str_repeat('-', $width-2) . '+';
+        $border_str = "\033[36m" . '+' . str_repeat('-', $width-2) . '+' . "\033[37m";
 
         $output_str = '';
 
@@ -100,7 +100,7 @@ class ConsoleHelper
                 // Fill up to inner width
                 $renderline = str_pad($renderline, $inner_width, ' ');
             }
-            $output_str .= '| ' . $renderline . ' |' . "\n";
+            $output_str .= "\033[36m" . '| ' . "\033[37m" . $renderline . "\033[36m" . ' |' . "\n\033[37m";
         }
 
         $output_str .= $border_str . "\n";
@@ -135,9 +135,15 @@ class ConsoleHelper
         ];
 
         $lines = explode(PHP_EOL, $text);
+        $last_color = null;
 
         foreach ($lines as $line) {
-            $this->output->writeln($colors[rand(0, count($colors) - 1)] . $line . "\033[37m");
+            $new_color = rand(0, count($colors) - 1);
+            while($new_color == $last_color) {
+                $new_color = rand(0, count($colors) - 1);
+            }
+
+            $this->output->writeln($colors[$new_color] . $line . "\033[37m");
         }
     }
 
