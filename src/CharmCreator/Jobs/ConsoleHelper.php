@@ -107,13 +107,14 @@ class ConsoleHelper
     public function outputRainbow(string $text)
     {
         $colors = [
-            "#FFB6C1", // LightPink
-            "#FFA07A", // LightSalmon
-            "#FFD700", // Gold
-            "#00FA9A", // MediumSpringGreen
-            "#00BFFF", // DeepSkyBlue
-            "#6A5ACD", // SlateBlue
-            "#FF00FF"  // Magenta
+            'red',
+            'green',
+            'yellow',
+            'blue',
+            'magenta',
+            'cyan',
+            'white',
+            'gray',
         ];
 
         $rows = explode(PHP_EOL, $text);
