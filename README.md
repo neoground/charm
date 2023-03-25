@@ -7,6 +7,11 @@ The hassle-free php environment for the real world.
 Now including: The magnet! Just entry and explore 
 this entire world by starting with C::
 
+This framework is still in early Beta. Thanks to our success with this framework on own projects,
+but also the sponsors and donators are helping us to put more energy into this awesome project.
+
+Soon we'll move to Charm 3.0 - the first stable and complete release of the charm framework!
+
 ## ToDo's
 - Own routing engine based on phroute with serialization support
   (route filters can't be a closure right now when you cache the

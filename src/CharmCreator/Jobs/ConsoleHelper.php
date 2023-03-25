@@ -31,7 +31,29 @@ class ConsoleHelper
 
     protected $questionhelper;
 
-    protected array $types = [];
+    protected $types = [
+        'model' => [
+            'name' => 'model',
+            'name_field' => 'MODEL_NAME',
+            'namespace' => "App\\Models",
+            'relative_dir' => 'Models',
+            'file_suffix' => 'php'
+        ],
+        'controller' => [
+            'name' => 'controller',
+            'name_field' => 'CONTROLLER_NAME',
+            'namespace' => "App\\Controllers",
+            'relative_dir' => 'Controllers',
+            'file_suffix' => 'php'
+        ],
+        'method' => [
+            'name' => 'method',
+            'name_field' => 'METHOD_NAME',
+            'namespace' => "App\\Controllers",
+            'relative_dir' => 'Controllers',
+            'file_suffix' => 'php'
+        ],
+    ];
 
     public function __construct($input, $output)
     {
