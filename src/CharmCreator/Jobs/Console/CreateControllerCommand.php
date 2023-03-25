@@ -52,7 +52,7 @@ class CreateControllerCommand extends Command
 
         $available_templates = C::CharmCreator()->getAvailableTemplates('controller');
 
-        $question = new ChoiceQuestion('Select wanted template:', $available_templates);
+        $question = new ChoiceQuestion('Select wanted template:', $available_templates, 'Default');
         $template = $this->getHelper('question')->ask($input, $output, $question);
 
         $namespace = "App\\Controllers";

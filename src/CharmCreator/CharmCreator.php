@@ -130,7 +130,7 @@ class CharmCreator extends Module implements ModuleInterface
 
         // TODO Add support for template in own App namespace (app's var/templates/...)
 
-        return file_get_contents($path);
+        return file_get_contents($path . DS . $name . '.php');
     }
 
     public function getAvailableTemplates($type): array
