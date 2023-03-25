@@ -80,7 +80,7 @@ class ConsoleHelper
         $width = 42;
         $inner_width = $width - 4;
 
-        $border_str = '+' . str_repeat('-', $inner_width) . '+';
+        $border_str = '+' . str_repeat('-', $width-2) . '+';
 
         $this->output->writeln($border_str);
 
@@ -147,20 +147,25 @@ class ConsoleHelper
         return $ch;
     }
 
+    private function extractFromBrackets(string $string): ?string {
+        preg_match('/\[(\w+)\]/', $string, $matches);
+        return $matches[1] ?? null;
+    }
+
     public function askForTemplateAndData(): void
     {
         // Ask for template
-        // TODO: Display template name instead of filename in selection
         $available_templates = C::CharmCreator()->getAvailableTemplates($this->type['name']);
         $this->template = $this->choice($this->input, $this->output, 'Select wanted template:', $available_templates, 'Default');
+
+        // Extract template from text
+        $this->template = $this->extractFromBrackets($this->template);
 
         // Get custom fields from chosen tpl
         $tpl = C::CharmCreator()->getTemplate($this->type['name'], $this->template);
 
         // Extract YAML frontmatter
-        $parts = explode("---\n", $tpl);
-        $yaml = $parts[1];
-
+        $yaml = C::CharmCreator()->extract($tpl, 'yaml');
         $yaml_arr = Yaml::parse($yaml);
 
         $this->data = [];
@@ -297,10 +302,6 @@ class ConsoleHelper
 
     public function caution(string $message): void {
         $this->symfonyStyle->caution(message: $message);
-    }
-
-    public function table(array $headers, array $rows): void {
-        $this->symfonyStyle->table(headers: $headers, rows: $rows);
     }
 
 }

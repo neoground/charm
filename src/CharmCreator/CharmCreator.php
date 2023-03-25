@@ -161,7 +161,17 @@ class CharmCreator extends Module implements ModuleInterface
         $dir = $this->getTemplatesDirectoryFor($type);
         if($dir) {
             $files = C::Storage()->scanDir($dir);
-            return array_map(fn($file) => pathinfo($file, PATHINFO_FILENAME), $files);
+
+            $arr = [];
+
+            foreach($files as $file) {
+                $tpl_content = $this->getTemplate($type, $file);
+                $yaml = Yaml::parse($this->extract($tpl_content, 'yaml'));
+                $arr[] = $yaml['name'] . ' [' . $file . ']';
+            }
+
+
+            return $arr;
         }
 
         return [];

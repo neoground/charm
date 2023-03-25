@@ -15,6 +15,31 @@ types:
   method:
     name: method,
     name_field: METHOD_NAME
-    amespace: App\Controllers
+    namespace: App\Controllers
     relative_dir: Controllers
     file_suffix: php
+  view:
+    name: view,
+    name_field: VIEW_NAME
+    namespace: App\Views
+    relative_dir: Views
+    file_suffix: php
+  cron:
+    name: cron,
+    name_field: JOB_NAME
+    namespace: App\Jobs\Cron
+    relative_dir: Jobs/Cron
+    file_suffix: php
+  console:
+    name: console,
+    name_field: JOB_NAME
+    namespace: App\Jobs\Console
+    relative_dir: Jobs/Console
+    file_suffix: php
+  evlistener:
+    name: evlistener,
+    name_field: EVL_NAME
+    namespace: App\System\EventListener
+    relative_dir: System/EventListener
+    file_suffix: php
+
