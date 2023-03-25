@@ -77,14 +77,16 @@ class ConsoleHelper
         $this->outputRainbow($logo);
     }
 
-    public function outputAsciiBox(string $text, string $align = 'left'): void
+    public function outputAsciiBox(string $text, string $align = 'left', bool $as_rainbow = false): void
     {
         $width = 42;
         $inner_width = $width - 4;
 
         $border_str = '+' . str_repeat('-', $width-2) . '+';
 
-        $this->output->writeln($border_str);
+        $output_str = '';
+
+        $output_str .= $border_str . "\n";
 
         // Format lines
         $lines = explode("\n", $text);
@@ -98,10 +100,18 @@ class ConsoleHelper
                 // Fill up to inner width
                 $renderline = str_pad($renderline, $inner_width, ' ');
             }
-            $this->output->writeln('| ' . $renderline . ' |');
+            $output_str .= '| ' . $renderline . ' |' . "\n";
         }
 
-        $this->output->writeln($border_str);
+        $output_str .= $border_str . "\n";
+
+        if($as_rainbow) {
+            $this->outputRainbow($output_str);
+        } else {
+            foreach(explode("\n", $output_str) as $row) {
+                $this->output->writeln($row);
+            }
+        }
     }
 
     public function outputRainbow(string $text)
@@ -127,7 +137,6 @@ class ConsoleHelper
         $lines = explode(PHP_EOL, $text);
 
         foreach ($lines as $line) {
-            $colorIndex = 0;
             $formattedLine = '';
 
             for ($i = 0; $i < mb_strlen($line); $i++) {
@@ -136,8 +145,7 @@ class ConsoleHelper
                 if ($char === ' ') {
                     $formattedLine .= ' ';
                 } else {
-                    $formattedLine .= $colors[$colorIndex++] . $char;
-                    $colorIndex %= count($colors);
+                    $formattedLine .= $colors[rand(0, count($colors) - 1)] . $char;
                 }
             }
 
@@ -159,7 +167,7 @@ class ConsoleHelper
         $ch = self::create($input, $output, $questionhelper, $type);
         if($header) {
             $ch->outputCharmHeader();
-            $ch->outputAsciiBox($header);
+            $ch->outputAsciiBox($header, 'left', true);
             $output->writeln(' ');
         }
         $ch->askForTemplateAndData();
