@@ -45,15 +45,12 @@ class CreateModel extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $ch = ConsoleHelper::createAndHandle($input, $output, $this->getHelper('question'), 'model');
+        $ch = ConsoleHelper::createAndHandle($input, $output, $this->getHelper('question'), 'model',
+        'Creating a new model');
 
         if($ch === false) {
             return self::FAILURE;
         }
-
-        $ch->outputCharmHeader();
-        $ch->outputAsciiBox('Creating a new model');
-        $output->writeln(' ');
 
         C::CharmCreator()->createModel($ch->getAbsolutePath(), $ch->getData(), $ch->getTemplate());
 
