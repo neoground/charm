@@ -12,6 +12,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Class CreateControllerMethodCommand
@@ -42,7 +43,7 @@ class CreateControllerMethodCommand extends Command
      * @param InputInterface  $input
      * @param OutputInterface $output
      *
-     * @return bool
+     * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -66,45 +67,32 @@ class CreateControllerMethodCommand extends Command
         }
 
         // Ask for method details
-
         $available_templates = C::CharmCreator()->getAvailableTemplates('methods');
         $template = $this->choice($input, $output, 'Select wanted template:', $available_templates, 'Default');
 
-        $method_name = $this->ask($input, $output, 'Enter the name of the method class: ');
-        $method_args = $this->ask($input, $output, 'Enter its arguments in PHP-style: ');
-        $method_route = $this->ask($input, $output, 'Enter the name of the route: ');
-        $method_url = $this->ask($input, $output, 'Enter the relative URL: ');
-        $method_http = strtoupper($this->choice($input, $output, 'Select HTTP method:', ['GET', 'POST', 'PUT', 'DELETE'], 0));
+        // TODO Get custom fields from chosen tpl
+        $tpl = C::CharmCreator()->getTemplate('method', $template);
 
-        // Get filters. Can be single one or multiple with commas separated, make it the right form
-        $method_filter = $this->ask($input, $output, 'Enter the wanted route filters (e.g. guard:auth): ');
-        if (!str_contains($method_filter, ',')) {
-            // Single one
-            $method_filter_str = '"' . $method_filter . '"';
-        } else {
-            $method_filter_str = '[';
-            foreach (explode(",", $method_filter) as $mf) {
-                $method_filter_str .= '"' . trim($mf) . '",';
+        // Extract YAML frontmatter
+        $parts = explode("---\n", $tpl);
+        $yaml = $parts[1];
+
+        $yaml_arr = Yaml::parse($yaml);
+
+        $data = [];
+        foreach($yaml_arr['fields'] as $name => $field) {
+            if($field['type'] == 'input') {
+                $data[$name] = $this->ask($input, $output, $field['name'] . ': ');
+            } elseif($field['type'] == 'choice') {
+                $data[$name] = $this->choice($input, $output, $field['name'] . ': ', explode(",", $field['choices']), $field['default']);
             }
-            $method_filter_str = rtrim($method_filter_str, ",") . ']';
         }
-
-        // TODO Allow custom fields depending on template
-
-        $data = [
-            'METHOD_NAME' => $method_name,
-            '$METHOD_ARGS' => $method_args,
-            'METHOD_ROUTE' => $method_route,
-            'METHOD_URL' => $method_url,
-            'METHOD_HTTP' => $method_http,
-            'METHOD_FILTER' => $method_filter_str,
-        ];
 
         C::CharmCreator()->addMethodToController($path, $data, $template);
 
         $output->writeln('✅ Added method ' . $data['METHOD_NAME'] . ' to controller ' . $controllerName);
 
-        return true;
+        return self::SUCCESS;
     }
 
     private function ask($input, $output, $question)

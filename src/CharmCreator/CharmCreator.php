@@ -9,6 +9,7 @@ use Charm\Vivid\Base\Module;
 use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Class CharmCreator
@@ -52,6 +53,14 @@ class CharmCreator extends Module implements ModuleInterface
         if(str_contains($controller, $data['METHOD_NAME'])) {
             return false;
         }
+
+        // Extract YAML frontmatter
+        $parts = explode("---\n", $tpl);
+        $yaml = $parts[1];
+        unset($parts[1]);
+        $tpl = implode("---\n", $parts);
+
+        $yaml_arr = Yaml::parse($yaml);
 
         // Replace placeholders
         foreach($data as $key => $value) {
@@ -130,7 +139,13 @@ class CharmCreator extends Module implements ModuleInterface
 
         // TODO Add support for template in own App namespace (app's var/templates/...)
 
-        return file_get_contents($path . DS . $name . '.php');
+        $tpl = $path . DS . $name . '.php';
+
+        if(!file_exists($tpl)) {
+            $tpl = $path . DS . $name . '.tpl';
+        }
+
+        return file_get_contents($tpl);
     }
 
     public function getAvailableTemplates($type): array

@@ -35,7 +35,7 @@ class CreateControllerCommand extends Command
      * @param InputInterface  $input
      * @param OutputInterface $output
      *
-     * @return bool
+     * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -88,6 +88,6 @@ class CreateControllerCommand extends Command
 
         $output->writeln('✅ Created model ' . $filename);
 
-        return true;
+        return self::SUCCESS;
     }
 }
