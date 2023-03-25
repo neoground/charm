@@ -147,7 +147,7 @@ class CharmCreator extends Module implements ModuleInterface
 
         // TODO Add support for template in own App namespace (app's var/templates/...)
 
-        $tpl = $path . DS . $name . '.tpl';
+        $tpl = $path . DS . str_replace('.tpl', '', $name) . '.tpl';
 
         if(!file_exists($tpl)) {
             // TODO Handle invalid file...
