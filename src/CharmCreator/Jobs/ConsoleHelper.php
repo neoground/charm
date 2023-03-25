@@ -107,33 +107,43 @@ class ConsoleHelper
     public function outputRainbow(string $text)
     {
         $colors = [
-            'red',
-            'green',
-            'yellow',
-            'blue',
-            'magenta',
-            'cyan',
-            'white',
-            'gray',
+            "\033[31m", // red
+            "\033[32m", // green
+            "\033[33m", // yellow
+            "\033[34m", // blue
+            "\033[35m", // magenta
+            "\033[36m", // cyan
+            "\033[37m", // white
+            "\033[90m", // gray
+            "\033[91m", // bright-red
+            "\033[92m", // bright-green
+            "\033[93m", // bright-yellow
+            "\033[94m", // bright-blue
+            "\033[95m", // bright-magenta
+            "\033[96m", // bright-cyan
+            "\033[97m", // bright-white
         ];
 
-        $rows = explode(PHP_EOL, $text);
+        $lines = explode(PHP_EOL, $text);
 
-        for ($i = 0; $i < count($rows); $i++) {
-            $row = $rows[$i];
-            $color = $colors[$i % count($colors)];
-            $line = '';
+        foreach ($lines as $line) {
+            $colorIndex = 0;
+            $formattedLine = '';
 
-            for ($j = 0; $j < strlen($row); $j++) {
-                $line .= "<fg=$color>{$row[$j]}</>";
-                $color++;
-                if ($color > end($colors)) {
-                    $color = reset($colors);
+            for ($i = 0; $i < mb_strlen($line); $i++) {
+                $char = mb_substr($line, $i, 1);
+
+                if ($char === ' ') {
+                    $formattedLine .= ' ';
+                } else {
+                    $formattedLine .= $colors[$colorIndex++] . $char;
+                    $colorIndex %= count($colors);
                 }
             }
 
-            $this->output->writeln($line);
+            $this->output->writeln($formattedLine);
         }
+
     }
 
     public static function create($input, $output, $questionhelper, $type)
