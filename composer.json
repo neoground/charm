@@ -32,7 +32,8 @@
     "opis/closure": "^3.6",
     "spatie/db-dumper": "^3.3",
     "claviska/simpleimage": "^4.0",
-    "illuminate/database": "^10.4"
+    "illuminate/database": "^10.4",
+    "kint-php/kint-twig": "^5.0"
   },
   "suggest": {
     "ext-redis": "For native redis support instead of using predis"
