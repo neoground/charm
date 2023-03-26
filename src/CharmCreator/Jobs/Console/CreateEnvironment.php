@@ -10,6 +10,7 @@ use Charm\Vivid\C;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Yaml\Yaml;
@@ -29,7 +30,7 @@ class CreateEnvironment extends Command
         $this->setName("c:env")
             ->setDescription("Creating a new config environment")
             ->setHelp('This command allows you to add a new config environment.')
-            ->addArgument('name', InputArgument::OPTIONAL, 'Optional name of new config environment');
+            ->addOption('name', InputOption::VALUE_OPTIONAL, 'Optional name of new config environment');
     }
 
     /**
@@ -44,7 +45,7 @@ class CreateEnvironment extends Command
     {
         $ch = new ConsoleHelper($input, $output);
 
-        $name = $input->getArgument('name');
+        $name = $input->getOption('name');
         if(empty($name)) {
             $name = $ch->ask($input, $output, 'Name of environment: ');
         }
