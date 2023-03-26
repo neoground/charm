@@ -306,6 +306,16 @@ class ViewExtension extends AbstractExtension
     }
 
     /**
+     * Get the charm version
+     *
+     * @return string
+     */
+    public function getCharmVersion() : string
+    {
+        return C::VERSION;
+    }
+
+    /**
      * Get max size of an upload
      *
      * Thanks to: https://www.kavoir.com/2010/02/php-get-the-file-uploading-limit-max-file-size-allowed-to-upload.html
