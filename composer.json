@@ -3,7 +3,7 @@
   "description": "Charm Framework",
   "homepage": "https://neoground.com/projects/charm",
   "license": "MIT",
-  "version": "3.1",
+  "version": "3.0",
   "authors": [
     {
       "name": "Sven Reifschneider",
@@ -15,23 +15,24 @@
     "ext-json": "*",
     "ext-fileinfo": "*",
     "ext-openssl": "*",
-    "phroute/phroute": "^2.1",
-    "illuminate/database": "^9.34",
-    "symfony/console": "^6.1",
-    "twig/twig": "^3.4",
-    "filp/whoops": "^2.14",
-    "kint-php/kint": "^4.2",
-    "kint-php/kint-twig": "^4.0",
-    "claviska/simpleimage": "^3.7",
-    "nesbot/carbon": "^2.62",
-    "symfony/yaml": "^6.1",
-    "maximebf/debugbar": "^1.18",
-    "phpmailer/phpmailer": "^6.6",
+    "monolog/monolog": "^3.3",
+    "nesbot/carbon": "^2.66",
+    "symfony/console": "^6.2",
+    "twig/twig": "^3.5",
+    "phroute/phroute": "^2.2",
+    "predis/predis": "^2.1",
+    "symfony/yaml": "^6.2",
     "dragonmantank/cron-expression": "^3.3",
-    "league/flysystem": "^3.0",
+    "phpmailer/phpmailer": "^6.8",
+    "league/flysystem": "^3.12",
+    "filp/whoops": "^2.15",
+    "maximebf/debugbar": "^1.18",
+    "kint-php/kint": "^5.0",
+    "phpunit/phpunit": "^10.0",
     "opis/closure": "^3.6",
-    "predis/predis": "^2.0",
-    "monolog/monolog": "^3.2"
+    "spatie/db-dumper": "^3.3",
+    "claviska/simpleimage": "^4.0",
+    "illuminate/database": "^10.4"
   },
   "suggest": {
     "ext-redis": "For native redis support instead of using predis"
@@ -40,8 +41,5 @@
     "psr-4": {
       "Charm\\": "src/"
     }
-  },
-  "require-dev": {
-    "phpunit/phpunit": "^9.5"
   }
 }

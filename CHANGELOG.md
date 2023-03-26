@@ -6,7 +6,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## [1.0.0]
+## [3.0]
+### Added
+- CharmCreator commands and handling
+- Way more documentation
+- Suiting, modern charm-wireframe
+- Support for global `bob` command
+
+### Changed
+- Structure of many modules have been changed
+
+---
+
+## [2.0]
 ### Added
 - Get all available cron jobs via `C::Crown()->getAllCronJobs()`
 - Summary of database migrations as console output
@@ -32,6 +44,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## [0.1.0]
+## [1.0]
 ### Added
 - First public initial commit of base system
