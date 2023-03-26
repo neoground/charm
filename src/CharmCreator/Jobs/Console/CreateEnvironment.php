@@ -30,7 +30,7 @@ class CreateEnvironment extends Command
         $this->setName("c:env")
             ->setDescription("Creating a new config environment")
             ->setHelp('This command allows you to add a new config environment.')
-            ->addOption('name', InputOption::VALUE_OPTIONAL, 'Optional name of new config environment');
+            ->addOption('name', InputOption::VALUE_OPTIONAL, null, 'Optional name of new config environment');
     }
 
     /**
