@@ -83,7 +83,7 @@ An extensive getting started guide right here will follow soon.
 ## :warning: Beta Notice
 
 Please note that Charm is currently in beta.
-We are hard at work on version 3.0, which will be the first stable release. 
+We are hard at work on version 4.0, which will be the first stable release. 
 As with any beta software, please use Charm with caution and be prepared for 
 potential changes as we continue to refine and enhance the framework.
 
@@ -93,7 +93,7 @@ potential changes as we continue to refine and enhance the framework.
 
 We're committed to making Charm the best PHP framework out there, 
 and we could use your help! By becoming a sponsor or making a donation, 
-you can help us accelerate the development process and bring Charm 3.0 to life. 
+you can help us accelerate the development process and bring Charm 4.0 to life. 
 Your support allows us to dedicate more time and resources to the project, 
 ensuring that Charm continues to evolve and improve.
 
