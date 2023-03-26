@@ -58,11 +58,14 @@ class ConsoleHelper
         ],
     ];
 
-    public function __construct($input, $output)
+    public function __construct($input, $output, $questionhelper = false)
     {
         $this->types = C::Config()->get('CharmCreator#types:types', []);
         $this->setIO($input, $output);
         $this->initSymfonyStyle();
+        if($questionhelper) {
+            $this->questionhelper = $questionhelper;
+        }
     }
 
     public function outputCharmHeader()
@@ -199,7 +202,7 @@ class ConsoleHelper
         $available_templates = C::CharmCreator()->getAvailableTemplates($this->type['name']);
 
         // Extract template from text
-        $tplstring = $this->choice($this->input, $this->output, 'Select wanted template:', $available_templates, 'Default');
+        $tplstring = $this->choice('Select wanted template:', $available_templates, 'Default');
         $tplparts = explode("[", $tplstring);
         $this->template = rtrim($tplparts[1], "]");
 
@@ -218,9 +221,9 @@ class ConsoleHelper
                     $default = $field['default'];
                 }
 
-                $this->data[$name] = $this->ask($this->input, $this->output, $field['name'] . ': ', $default);
+                $this->data[$name] = $this->ask($field['name'] . ': ', $default);
             } elseif($field['type'] == 'choice') {
-                $this->data[$name] = $this->choice($this->input, $this->output, $field['name'] . ': ', explode(",", $field['choices']), $field['default']);
+                $this->data[$name] = $this->choice($field['name'] . ': ', explode(",", $field['choices']), $field['default']);
             }
         }
     }
@@ -298,12 +301,7 @@ class ConsoleHelper
         $this->output = $output;
     }
 
-    public function ask($input, $output, $question, mixed $default = null)
-    {
-        return $this->questionhelper->ask($input, $output, new Question($question, $default));
-    }
-
-    public function askQuestion($question, mixed $default = null)
+    public function ask($question, mixed $default = null)
     {
         return $this->questionhelper->ask($this->input, $this->output, new Question($question, $default));
     }
@@ -313,13 +311,7 @@ class ConsoleHelper
         return $this->questionhelper->ask($this->input, $this->output, new ConfirmationQuestion($question, $default));
     }
 
-    public function choice($input, $output, $question, $arr, $default = null)
-    {
-        $cq = new ChoiceQuestion($question, $arr, $default);
-        return $this->questionhelper->ask($input, $output, $cq);
-    }
-
-    public function askChoice($question, $arr, $default = null)
+    public function choice($question, $arr, $default = null)
     {
         $cq = new ChoiceQuestion($question, $arr, $default);
         return $this->questionhelper->ask($this->input, $this->output, $cq);

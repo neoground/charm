@@ -41,11 +41,11 @@ class CreateEnvironment extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $ch = new ConsoleHelper($input, $output);
+        $ch = new ConsoleHelper($input, $output, $this->getHelper('question'));
 
         $name = $input->getArgument('name');
         if(empty($name)) {
-            $name = $ch->ask($input, $output, 'Name of environment: ');
+            $name = $ch->ask('Name of environment: ');
         }
 
         $output->writeln(sprintf('Creating environment "%s"...', $name));
@@ -69,9 +69,9 @@ class CreateEnvironment extends Command
         $data = [
             'ENVIRONMENT_NAME' => $name,
             'BASE_PATH' => C::Storage()->getBasePath(),
-            'DEBUG_MODE' => $ch->askChoice('Enable dev and debug mode?', ['true', 'false'], 0),
-            'ERROR_STYLE' => $ch->askChoice('How should errors be returned?', ['default', 'view', 'json', 'exception'], 0),
-            'BASE_URL' => $ch->askQuestion('URL to app index (used as fallback): '),
+            'DEBUG_MODE' => $ch->choice('Enable dev and debug mode?', ['true', 'false'], 0),
+            'ERROR_STYLE' => $ch->choice('How should errors be returned?', ['default', 'view', 'json', 'exception'], 0),
+            'BASE_URL' => $ch->ask('URL to app index (used as fallback): '),
         ];
 
         C::CharmCreator()->createFile('config', $mainFile, $data, 'main_env');
@@ -97,11 +97,11 @@ class CreateEnvironment extends Command
             $data = [
                 ...$data,
                 'DATABASE_ENABLED' => 'true',
-                'DB_DRIVER' => $ch->choice($input, $output, 'Select the database driver: ', ['mysql', 'pgsql', 'sqlite', 'sqlsrv'], 0),
-                'DB_DATABASE' => $ch->askQuestion('Database name: '),
-                'DB_HOST' => $ch->askQuestion('Database hostname: ', 'localhost'),
-                'DB_USER' => $ch->askQuestion('Database username: '),
-                'DB_PASS' => $ch->askQuestion('Database password: '),
+                'DB_DRIVER' => $ch->choice('Select the database driver: ', ['mysql', 'pgsql', 'sqlite', 'sqlsrv'], 0),
+                'DB_DATABASE' => $ch->ask('Database name: '),
+                'DB_HOST' => $ch->ask('Database hostname: ', 'localhost'),
+                'DB_USER' => $ch->ask('Database username: '),
+                'DB_PASS' => $ch->ask('Database password: '),
             ];
         }
 
@@ -109,9 +109,9 @@ class CreateEnvironment extends Command
             $data = [
                 ...$data,
                 'REDIS_ENABLED' => 'true',
-                'REDIS_HOST' => $ch->askQuestion('Redis hostname: ', '127.0.0.1'),
-                'REDIS_PORT' => $ch->askQuestion('Redis port: ', '6379'),
-                'REDIS_PASS' => $ch->askQuestion('Redis password: '),
+                'REDIS_HOST' => $ch->ask('Redis hostname: ', '127.0.0.1'),
+                'REDIS_PORT' => $ch->ask('Redis port: ', '6379'),
+                'REDIS_PASS' => $ch->ask('Redis password: '),
             ];
         }
 
@@ -128,13 +128,9 @@ class CreateEnvironment extends Command
         } else {
             $currentEnv = file_exists($envFile) ? trim(file_get_contents($envFile)) : 'dev';
             if ($currentEnv !== $name) {
-                $helper = $this->getHelper('question');
-                $question = new ChoiceQuestion(
-                    sprintf('Current environment is "%s". Change to "%s"?', $currentEnv, $name),
+                $answer = $ch->choice( sprintf('Current environment is "%s". Change to "%s"?', $currentEnv, $name),
                     ['yes', 'no'],
-                    0
-                );
-                $answer = $helper->ask($input, $output, $question);
+                    0);
 
                 if ($answer === 'yes') {
                     file_put_contents($envFile, $name);
