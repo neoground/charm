@@ -49,7 +49,7 @@ use JetBrains\PhpStorm\NoReturn;
 class Charm
 {
     /** @var string the version of charm */
-    public const VERSION = "1.0.0";
+    public const VERSION = "3.0";
 
     /**
      * Get a loaded module
