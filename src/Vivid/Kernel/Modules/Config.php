@@ -22,10 +22,10 @@ use Symfony\Component\Yaml\Yaml;
 class Config extends Module implements ModuleInterface
 {
     /** @var string  the module delimiter */
-    protected $module_delimiter = "#";
+    protected string $module_delimiter = "#";
 
     /** @var string  the filename delimiter */
-    protected $file_delimiter = ":";
+    protected string $file_delimiter = ":";
 
     /**
      * Module init
@@ -47,12 +47,12 @@ class Config extends Module implements ModuleInterface
      * Get config value
      *
      * @param string     $key     the key
-     * @param null|mixed $default (optional) default value to return. Default: null
+     * @param mixed|null $default (optional) default value to return. Default: null
      * @param bool       $cache   (optional) use cache for configuration? Default: true
      *
      * @return mixed
      */
-    public function get($key, $default = null, $cache = true)
+    public function get(string $key, mixed $default = null, bool $cache = true): mixed
     {
         // Separate wanted array key from whole string
 
@@ -63,7 +63,7 @@ class Config extends Module implements ModuleInterface
         $module = 'App';
 
         // Got custom module?
-        if(count($mod_parts) == 2) {
+        if (count($mod_parts) == 2) {
             // Set module and remove from string
             $module = array_shift($mod_parts);
             $key = implode($this->module_delimiter, $mod_parts);
@@ -76,7 +76,7 @@ class Config extends Module implements ModuleInterface
 
         // Get from app storage if stored
         $cache_key = 'CF-' . $module . '-' . $filename;
-        if($cache && C::AppStorage()->has('Config', $cache_key)) {
+        if ($cache && C::AppStorage()->has('Config', $cache_key)) {
             return C::AppStorage()->aget('Config', $cache_key, $wanted_key, $default);
         }
 
@@ -84,7 +84,7 @@ class Config extends Module implements ModuleInterface
         $file = $this->getConfigFile($key, false, $module);
 
         // Return default if file is not existing
-        if(!file_exists($file)) {
+        if (!file_exists($file)) {
             return $default;
         }
 
@@ -95,7 +95,7 @@ class Config extends Module implements ModuleInterface
 
         // Get environment config file
         $envfile = $this->getConfigFile($key, true, $module);
-        if(file_exists($envfile)) {
+        if (file_exists($envfile)) {
             // File existing. Get data
             $envcontent = file_get_contents($envfile);
 
@@ -123,16 +123,16 @@ class Config extends Module implements ModuleInterface
      *
      * @param string     $key     the key
      * @param array      $values  (optional) values to insert by vsprintf
-     * @param null|mixed $default (optional) default value to return. Default: null
+     * @param mixed|null $default (optional) default value to return. Default: null
      * @param bool       $cache   (optional) use cache for configuration? Default: true
      *
-     * @return string|null
+     * @return mixed
      */
-    public function getf($key, $values = [], $default = null, $cache = true)
+    public function getf(string $key, array $values = [], mixed $default = null, bool $cache = true): mixed
     {
         $get = $this->get($key, null, $cache);
 
-        if($get === null) {
+        if ($get === null) {
             return $default;
         }
 
@@ -144,7 +144,7 @@ class Config extends Module implements ModuleInterface
      *
      * @return bool
      */
-    public function inDebugMode()
+    public function inDebugMode(): bool
     {
         return $this->get('main:debug.debugmode') == true;
     }
@@ -190,21 +190,21 @@ class Config extends Module implements ModuleInterface
     /**
      * Get the absolute path to the config file
      *
-     * @param string  $key     config key
-     * @param bool    $env     (opt.) get path to environment specific config file? Default: false
-     * @param string  $module  (opt.) name of module where the config file is located
+     * @param string $key    config key
+     * @param bool   $env    (opt.) get path to environment specific config file? Default: false
+     * @param string $module (opt.) name of module where the config file is located
      *
      * @return string
      *
      * @throws LogicException
      */
-    private function getConfigFile($key, $env = false, $module = 'App')
+    private function getConfigFile(string $key, bool $env = false, string $module = 'App'): string
     {
         // Default case: app config
         $path = C::get($module)->getBaseDirectory() . DS . 'Config';
 
         // Get filename
-        if(!str_contains($key, $this->file_delimiter)) {
+        if (!str_contains($key, $this->file_delimiter)) {
             throw new LogicException("No config file supplied for config: " . $key);
         }
 
@@ -212,7 +212,7 @@ class Config extends Module implements ModuleInterface
         $filename = array_shift($parts);
 
         // Local path?
-        if($env) {
+        if ($env) {
             $path .= DS . 'Environments' . DS . C::App()->getEnvironment();
         }
 

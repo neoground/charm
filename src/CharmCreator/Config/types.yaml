@@ -48,4 +48,10 @@ types:
     namespace: App\System\EventListener
     relative_dir: System/EventListener
     file_suffix: php
+  config:
+    name: config
+    name_field: ENVIRONMENT_NAME
+    namespace: App\Config
+    relative_dir: App/Config
+    file_suffix: yaml
 

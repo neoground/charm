@@ -61,7 +61,7 @@ class Debug extends Module implements ModuleInterface
 
         $handle->addDataTableCallback('charm', [self::class, 'getWhoopsMetadata']);
 
-        $root_path = C::Config()->get('main:debug.base_path', false);
+        $root_path = C::Storage()->getBasePath();
         if($root_path !== false) {
             $handle->setApplicationRootPath($root_path);
         }

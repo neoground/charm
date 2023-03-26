@@ -7,6 +7,7 @@ namespace Charm\CharmCreator\Jobs;
 
 use Charm\Vivid\C;
 use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Yaml\Yaml;
@@ -302,10 +303,26 @@ class ConsoleHelper
         return $this->questionhelper->ask($input, $output, new Question($question, $default));
     }
 
+    public function askQuestion($question, mixed $default = null)
+    {
+        return $this->questionhelper->ask($this->input, $this->output, new Question($question, $default));
+    }
+
+    public function confirm($question, $default = false)
+    {
+        return $this->questionhelper->ask($this->input, $this->output, new ConfirmationQuestion($question, $default));
+    }
+
     public function choice($input, $output, $question, $arr, $default = null)
     {
         $cq = new ChoiceQuestion($question, $arr, $default);
         return $this->questionhelper->ask($input, $output, $cq);
+    }
+
+    public function askChoice($question, $arr, $default = null)
+    {
+        $cq = new ChoiceQuestion($question, $arr, $default);
+        return $this->questionhelper->ask($this->input, $this->output, $cq);
     }
 
     private function initSymfonyStyle(): void
