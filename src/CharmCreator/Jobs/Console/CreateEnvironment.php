@@ -69,7 +69,7 @@ class CreateEnvironment extends Command
         $data = [
             'ENVIRONMENT_NAME' => $name,
             'BASE_PATH' => C::Storage()->getBasePath(),
-            'DEBUG_MODE' => $ch->choice('Enable dev and debug mode?', ['true', 'false'], 0),
+            'DEBUG_MODE' => $ch->choice('Enable dev and debug mode?', ['false', 'true'], 1),
             'ERROR_STYLE' => $ch->choice('How should errors be returned?', ['default', 'view', 'json', 'exception'], 0),
             'BASE_URL' => $ch->ask('URL to app index (used as fallback): '),
         ];
@@ -93,7 +93,7 @@ class CreateEnvironment extends Command
             'REDIS_PASS' => '',
         ];
 
-        if($ch->confirm('Add a database connection?')) {
+        if($ch->confirm('Add a database connection? y/n: ')) {
             $data = [
                 ...$data,
                 'DATABASE_ENABLED' => 'true',
@@ -105,7 +105,7 @@ class CreateEnvironment extends Command
             ];
         }
 
-        if($ch->confirm('Add a redis connection?')) {
+        if($ch->confirm('Add a redis connection? y/n: ')) {
             $data = [
                 ...$data,
                 'REDIS_ENABLED' => 'true',
@@ -117,14 +117,14 @@ class CreateEnvironment extends Command
 
         C::CharmCreator()->createFile('config', $connectionsFile, $data, 'connections_env');
 
-        $output->writeln(sprintf('Environment "%s" created and config files updated.', $name));
+        $output->writeln(sprintf('✅ Environment "%s" created and config files updated.', $name));
 
         // Check if the current environment is different from the new environment
         $envFile = C::Storage()->getAppPath() . DS . 'app.env';
         if(!file_exists($envFile)) {
             // No environment yet -> use this as default
             file_put_contents($envFile, $name);
-            $output->writeln(sprintf('Environment changed to "%s".', $name));
+            $output->writeln(sprintf('✅ Environment changed to "%s".', $name));
         } else {
             $currentEnv = file_exists($envFile) ? trim(file_get_contents($envFile)) : 'dev';
             if ($currentEnv !== $name) {
@@ -134,7 +134,7 @@ class CreateEnvironment extends Command
 
                 if ($answer === 'yes') {
                     file_put_contents($envFile, $name);
-                    $output->writeln(sprintf('Environment changed to "%s".', $name));
+                    $output->writeln(sprintf('✅ Environment changed to "%s".', $name));
                 } else {
                     $output->writeln('Environment not changed.');
                 }
