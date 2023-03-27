@@ -60,7 +60,7 @@ class CreateEnvironment extends Command
 
         // Create environment folder and copy main.yaml and connections.yaml files
         C::Storage()->createDirectoriesIfNotExisting($envFolder);
-        $output->writeln(sprintf('✅ Created environment folder "%s".', $envFolder));
+        $output->writeln('✅ Created environment folder');
 
         $mainFile = $envFolder . DS . 'main.yaml';
         $connectionsFile = $envFolder . DS . 'connections.yaml';
@@ -117,14 +117,14 @@ class CreateEnvironment extends Command
 
         C::CharmCreator()->createFile('config', $connectionsFile, $data, 'connections_env');
 
-        $output->writeln(sprintf('✅ Environment "%s" created and config files updated.', $name));
+        $output->writeln(sprintf('✅ Environment "%s" created and config files updated', $name));
 
         // Check if the current environment is different from the new environment
         $envFile = C::Storage()->getAppPath() . DS . 'app.env';
         if(!file_exists($envFile)) {
             // No environment yet -> use this as default
             file_put_contents($envFile, $name);
-            $output->writeln(sprintf('✅ Environment changed to "%s".', $name));
+            $output->writeln(sprintf('✅ Environment changed to "%s"', $name));
         } else {
             $currentEnv = file_exists($envFile) ? trim(file_get_contents($envFile)) : 'dev';
             if ($currentEnv !== $name) {
@@ -134,9 +134,9 @@ class CreateEnvironment extends Command
 
                 if ($answer === 'yes') {
                     file_put_contents($envFile, $name);
-                    $output->writeln(sprintf('✅ Environment changed to "%s".', $name));
+                    $output->writeln(sprintf('✅ Environment changed to "%s"', $name));
                 } else {
-                    $output->writeln('Environment not changed.');
+                    $output->writeln('Environment not changed');
                 }
             }
         }
