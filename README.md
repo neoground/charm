@@ -1,8 +1,12 @@
 # Charm Framework
 
----
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/neoground/charm?sort=semver)
+![GitHub license](https://img.shields.io/github/license/neoground/charm)
+![Packagist Downloads](https://img.shields.io/packagist/dt/neoground/charm)
+![GitHub issues](https://img.shields.io/github/issues/neoground/charm)
+![GitHub stars](https://img.shields.io/github/stars/neoground/charm?style=social)
 
-## Introduction to the Charm Framework: A Galactic Adventure in PHP Web Development
+## 🚀 A Galactic Adventure in PHP Web Development
 
 In a galaxy far, far away, there was a PHP web framework that 
 changed the way developers explored the vast universe of web development.
@@ -33,9 +37,8 @@ for a brighter future in the galaxy of web development.
 
 May the Force be with you, always.
 
----
 
-## About
+## 🌐 About
 
 Charm is a blazing-fast PHP framework optimized for building business web 
 applications and APIs. With its lightweight design and fast router, 
@@ -65,31 +68,78 @@ With its slim, optimized design and powerful features,
 Charm is the ideal choice for developers who want to build fast, 
 scalable, and maintainable applications with ease.
 
----
 
-## Getting started
+##  🎉 Getting Started
 
 Please see our [official documentation](https://neoground.com/docs/charm/index)
-and its included getting started guide.
+and its included [Getting Started Guide](https://neoground.com/docs/charm/start.installation).
 
-If you want to dive right in with a new project, check out Bob, 
-our [Binary Operations Butler](https://github.com/neoground/charm-toolkit) which helps you to create and manage
-your Charm projects.
+### Requirements: Fuel for Your Galactic Adventure
 
-An extensive getting started guide right here will follow soon.
+To ensure a smooth journey with the Charm Framework, make sure your system meets the following requirements:
 
----
+- PHP 8.0 or later (8.1 / 8.2 preferred, ideally with Redis module)
+- Composer
+- Depending on your app:
+    - Database: MariaDB, MySQL, SQLite, PostgreSQL or SQL Server
+    - Redis
 
-## :warning: Beta Notice
+### Installation: As Easy as the Kessel Run
+
+To install the Charm Framework, you first need to install Bob toolkit on your machine.
+
+In a galaxy not so far away, Bob (short for Binary Operations Butler) was created
+to serve as the ultimate command-line companion for Charm Framework developers.
+
+Run the following command to install Bob:
+
+```bash
+curl -fSsL -o bob https://raw.githubusercontent.com/neoground/charm-toolkit/main/bob && chmod +x bob
+sudo mv bob /usr/local/bin/bob
+```
+
+For more information on this, see the [Bob documentation](https://github.com/neoground/charm-toolkit).
+
+Once installed, run the following command to create a new project:
+
+```bash
+bob new GalacticArchive
+```
+
+This command will generate a new project called `GalacticArchive` based on the [charm-wireframe](https://github.com/neoground/charm-wireframe)
+template and put it in the new created directory `GalacticArchive`. The wireframe serves as
+a foundation for all Charm Framework applications, empowering you to build incredible
+web applications in the universe.
+
+The setup assistant then guides you through the process.
+
+### Configuration: Fine-Tuning the Hyperdrive
+
+Now that your project is set up, you can check and adjust the global configuration
+by navigating to the `app/Config` directory. For environment-specific settings,
+explore the `app/Config/Environments/Local` directory.
+
+The active environment is determined by the `app/app.env` file, which contains
+the name of the environment in use. The auto setup process takes care of this for you.
+
+### Web Server Setup: Powering Up the Millennium Falcon
+
+To get your web server up and running, you might need to adjust its configuration.
+The charm-wireframe comes with a sample `.htaccess` and `nginx.conf` file to help you get started.
+
+For a local development server, simply type `bob serve` in the project directory, and you'll be good to go!
+
+May the Force guide you, young Jedi!
+
+
+## 🚧 Beta Notice
 
 Please note that Charm is currently in beta.
 We are hard at work on version 4.0, which will be the first stable release. 
 As with any beta software, please use Charm with caution and be prepared for 
 potential changes as we continue to refine and enhance the framework.
 
----
-
-### Support Charm's Development
+## ☕ Support Charm's Development
 
 We're committed to making Charm the best PHP framework out there, 
 and we could use your help! By becoming a sponsor or making a donation, 
