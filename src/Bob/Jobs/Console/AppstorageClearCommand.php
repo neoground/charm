@@ -5,8 +5,8 @@
 
 namespace Charm\Bob\Jobs\Console;
 
+use Charm\Bob\Command;
 use Charm\Vivid\C;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
