@@ -81,7 +81,7 @@ class ModuleInstall extends Command
         $manifest = Yaml::parseFile($module_manifest_path);
 
         $output->writeln('✅ Detected module: ' . $manifest['name'] . ' ' . $manifest['version']);
-        $output->writeln('                     ' . $manifest['summary']);
+        $output->writeln('                    ' . $manifest['summary']);
 
         // Add link in modules.yaml
         $myaml_path = C::Storage()->getAppPath() . DS . 'Config' . DS . 'modules.yaml';

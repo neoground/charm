@@ -131,7 +131,7 @@ class ConsoleHelper
         $available_templates = C::CharmCreator()->getAvailableTemplates($this->type['name']);
 
         // Extract template from text
-        $tplstring = $this->choice('Select wanted template:', $available_templates, 'Default');
+        $tplstring = $this->choice('Select wanted template', $available_templates, 0);
         $tplparts = explode("[", $tplstring);
         $this->template = rtrim($tplparts[1], "]");
 
@@ -150,9 +150,9 @@ class ConsoleHelper
                     $default = $field['default'];
                 }
 
-                $this->data[$name] = $this->ask($field['name'] . ': ', $default);
+                $this->data[$name] = $this->ask($field['name'], $default);
             } elseif($field['type'] == 'choice') {
-                $this->data[$name] = $this->choice($field['name'] . ': ', explode(",", $field['choices']), $field['default']);
+                $this->data[$name] = $this->choice($field['name'], explode(",", $field['choices']), $field['default']);
             }
         }
     }
