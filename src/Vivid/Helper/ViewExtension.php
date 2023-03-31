@@ -6,10 +6,9 @@
 namespace Charm\Vivid\Helper;
 
 use Carbon\Carbon;
+use Charm\Vivid\Base\BasicViewExtension;
 use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Output\View;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
 
 /**
  * Class ViewExtension
@@ -18,40 +17,8 @@ use Twig\TwigFunction;
  *
  * @package Charm\Vivid\Helper
  */
-class ViewExtension extends AbstractExtension
+class ViewExtension extends BasicViewExtension
 {
-    /**
-     * Set array of all functions to add to twig
-     *
-     * @return array|TwigFunction[]
-     */
-    public function getFunctions()
-    {
-        // Get all functions in this class
-        $methods = get_class_methods($this);
-
-        // Methods to ignore (from parent)
-        $ignore = [
-            'getTokenParsers',
-            'getNodeVisitors',
-            'getFilters',
-            'getTests',
-            'getFunctions',
-            'getOperators'
-        ];
-
-        $arr = [];
-
-        // Build array, remove twig methods
-        foreach($methods as $method) {
-            if(!in_array($method, $ignore)) {
-                $arr[$method] = new TwigFunction($method, [$this, $method]);
-            }
-        }
-
-        return $arr;
-    }
-
     /**
      * Get the asset URL
      *
