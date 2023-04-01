@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [3.1]
+### Added
+- CommandHelper class with handy commands to easily style input / output of console commands
+
+### Changed
+- ViewExtensions are now a lot easier to create and have a common base class
+
+### Fixed
+- Choice display in charm creator
+- Funding comment which made problems with packagist
+
+---
+
 ## [3.0]
 ### Added
 - CharmCreator commands and handling
