@@ -8,14 +8,13 @@ namespace Charm\Vivid\Kernel\Output;
 use Charm\Cache\CacheEntry;
 use Charm\Vivid\C;
 use Charm\Vivid\Helper\ViewExtension;
+use Charm\Vivid\Helper\ViewLoader;
 use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\HttpCodes;
 use Charm\Vivid\Kernel\Interfaces\OutputInterface;
 use Kint\Twig\TwigExtension;
 use Twig\Environment;
-use Twig\Extension\OptimizerExtension;
 use Twig\Extension\StringLoaderExtension;
-use Twig\Loader\FilesystemLoader;
 
 /**
  * Class View
@@ -99,7 +98,7 @@ class View implements OutputInterface, HttpCodes
      */
     private function initTwig()
     {
-        $loader = new FilesystemLoader(C::Storage()->getAppPath() . DS . 'Views');
+        $loader = new ViewLoader(C::Storage()->getAppPath() . DS . 'Views');
 
         // Add views of modules (except App) with module's name as namespace
         foreach(Handler::getInstance()->getModuleClasses() as $name => $module) {
