@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Charm\Vivid\Base\Module;
 use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
+use Illuminate\Database\QueryException;
 
 /**
  * Class Token
@@ -74,8 +75,8 @@ class Token extends Module implements ModuleInterface
             }
 
             // Second try: Bearer token
-            if(str_contains($auth_header, 'Bearer')) {
-                $parts = explode("Bearer");
+            if(str_starts_with($auth_header, 'Bearer')) {
+                $parts = explode("Bearer", $auth_header);
                 return trim($parts[1]);
             }
         }
@@ -145,7 +146,11 @@ class Token extends Module implements ModuleInterface
         }
 
         // Got field
-        return $this->user_class::where($this->token_location, $this->token)->first();
+        try {
+            return $this->user_class::where($this->token_location, $this->token)->first();
+        } catch(QueryException $e) {
+            return false;
+        }
     }
 
     /**
