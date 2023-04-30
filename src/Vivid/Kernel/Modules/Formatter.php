@@ -314,6 +314,36 @@ class Formatter extends Module implements ModuleInterface
     }
 
     /**
+     * Automatically set language based on detection
+     */
+    public function setAutoLanguage()
+    {
+        // Not set -> detect and set language
+        if(!C::Session()->has('charm_lang')) {
+            // Default
+            $language = C::Config()->get('main:session.default_language', 'en');
+
+            $lang_header = C::Request()->getHeader('Accept-Language');
+            if(!empty($lang_header)) {
+                foreach(C::Config()->get('main:session.available_languages', []) as $lang) {
+                    if(str_contains($lang_header, $lang)) {
+                        $language = $lang;
+                        break;
+                    }
+                }
+            }
+
+            $this->setLanguage($language);
+        }
+
+        // Manual override
+        $lang = C::Request()->get('lang');
+        if(!empty($lang) && in_array($lang, C::Config()->get('main:session.available_languages', []))) {
+            $this->setLanguage($lang);
+        }
+    }
+
+    /**
      * Translate a text string
      *
      * The text can include variables, like {name}. Key needs to be lowercase.
