@@ -313,13 +313,13 @@ class ViewExtension extends BasicViewExtension
      *
      * If text was not found, $default will be used. Variables will be applied as well.
      *
-     * @param string     $key
-     * @param array      $vars
-     * @param mixed $default
+     * @param string  $key
+     * @param array   $vars
+     * @param string  $default
      *
      * @return string
      */
-    public function __(string $key, array $vars = [], mixed $default = null): string
+    public function __(string $key, array $vars = [], mixed $default = ''): string
     {
         return C::Formatter()->translate($key, $vars, $default);
     }
