@@ -360,7 +360,7 @@ class Formatter extends Module implements ModuleInterface
      * @param array $vars
      * @param null|mixed  $default
      *
-     * @return string
+     * @return mixed
      */
     public function translate(string $key, $vars = [], $default = null)
     {
@@ -369,8 +369,10 @@ class Formatter extends Module implements ModuleInterface
             $default
         );
 
-        foreach($vars as $k => $v) {
-            $text = str_replace('{' . strtolower($k) . '}', $v, $text);
+        if(is_string($text)) {
+            foreach ($vars as $k => $v) {
+                $text = str_replace('{' . strtolower($k) . '}', $v, $text);
+            }
         }
 
         return $text;

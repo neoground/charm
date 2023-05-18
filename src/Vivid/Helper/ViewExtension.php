@@ -317,9 +317,9 @@ class ViewExtension extends BasicViewExtension
      * @param array   $vars
      * @param string  $default
      *
-     * @return string
+     * @return mixed
      */
-    public function __(string $key, array $vars = [], mixed $default = ''): string
+    public function __(string $key, array $vars = [], mixed $default = ''): mixed
     {
         return C::Formatter()->translate($key, $vars, $default);
     }
