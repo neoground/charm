@@ -296,7 +296,12 @@ class Formatter extends Module implements ModuleInterface
      */
     public function getLanguage()
     {
-        $lang = C::Session()->get('charm_lang');
+        $lang = null;
+
+        if(C::has('Session')) {
+            $lang = C::Session()->get('charm_lang');
+        }
+
         if(empty($lang)) {
             $lang = C::Config()->get('main:session.default_language', 'en');
         }
