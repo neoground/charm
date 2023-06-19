@@ -290,13 +290,13 @@ class Formatter extends Module implements ModuleInterface
     }
 
     /**
-     * Get language string for translation
+     * Get language name string for translation (e.g. "en" or "de")
      *
      * @return string
      */
-    public function getLanguage()
+    public function getLanguage(): string
     {
-        $lang = null;
+        $lang = C::Request()->get('charm_lang');
 
         if(C::has('Session')) {
             $lang = C::Session()->get('charm_lang');
@@ -311,11 +311,14 @@ class Formatter extends Module implements ModuleInterface
     /**
      * Set the language
      *
-     * @param string $lang language string
+     * @param string $lang language string, e.g. "en" or "de"
      */
-    public function setLanguage($lang)
+    public function setLanguage(string $lang): void
     {
-        C::Session()->set('charm_lang', $lang);
+        if(C::has('Session')) {
+            C::Session()->set('charm_lang', $lang);
+        }
+        C::Request()->set('charm_lang', $lang);
     }
 
     /**
