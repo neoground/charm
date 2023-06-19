@@ -236,6 +236,24 @@ class ViewExtension extends BasicViewExtension
     }
 
     /**
+     * Truncate a string
+     *
+     * @param string $str    input string
+     * @param int    $length wanted length
+     * @param string $append optional string to append
+     *
+     * @return string
+     */
+    public function truncate(string $str, int $length, string $append = '…')
+    {
+        if(mb_strlen($str) <= $length) {
+            return $str;
+        }
+
+        return mb_substr($str, 0, $length) . $append;
+    }
+
+    /**
      * Get template path for usage in twig iself
      *
      * Contains support for modules
