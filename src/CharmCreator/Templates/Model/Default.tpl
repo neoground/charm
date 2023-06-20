@@ -17,6 +17,7 @@ namespace TPL_NAMESPACE;
 
 use Charm\Vivid\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Schema\Blueprint;
 
 /**
  * Class MODEL_NAME
