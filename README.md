@@ -1,5 +1,9 @@
 # Charm Framework
 
+![Header Banner](https://neoground.com/data/projects/charm/assets/banner.jpg)
+
+---
+
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/neoground/charm?sort=semver)
 ![GitHub license](https://img.shields.io/github/license/neoground/charm)
 ![Packagist Downloads](https://img.shields.io/packagist/dt/neoground/charm)
