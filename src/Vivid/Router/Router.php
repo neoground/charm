@@ -430,4 +430,38 @@ class Router extends Module implements ModuleInterface
         return C::AppStorage()->get('Routes', 'RoutesData');
     }
 
+    /**
+     * Construct a URL
+     *
+     * @param string $url the input URL, can include query parameters and more
+     * @param array  $params an array with query parameters to add (key => value), will override existing ones
+     *                       and append new ones
+     *
+     * @return string the new URL
+     */
+    public function constructUrl(string $url, array $params): string
+    {
+        $urlComponents = parse_url($url);
+
+        $existingParams = [];
+        if (isset($urlComponents['query'])) {
+            parse_str($urlComponents['query'], $existingParams);
+        }
+
+        // Merge the new parameters with existing ones, overwriting if necessary
+        $mergedParams = array_merge($existingParams, $params);
+
+        // Build the new query string
+        $urlComponents['query'] = http_build_query($mergedParams);
+
+        // Recreate the URL
+        return (isset($urlComponents['scheme']) ? $urlComponents['scheme'] . '://' : '')
+            . (isset($urlComponents['user']) ? $urlComponents['user'] . (isset($urlComponents['pass']) ? ':' . $urlComponents['pass'] : '') . '@' : '')
+            . ($urlComponents['host'] ?? '')
+            . ($urlComponents['port'] ?? '')
+            . ($urlComponents['path'] ?? '')
+            . '?' . $urlComponents['query']
+            . ($urlComponents['fragment'] ?? '');
+    }
+
 }

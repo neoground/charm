@@ -53,6 +53,20 @@ class ViewExtension extends BasicViewExtension
     }
 
     /**
+     * Construct a URL
+     *
+     * @param string $url the input URL, can include query parameters and more
+     * @param array  $params an array with query parameters to add (key => value), will override existing ones
+     *                       and append new ones
+     *
+     * @return string the new URL
+     */
+    public function constructUrl(string $url, array $params): string
+    {
+        return C::Router()->constructUrl($url, $params);
+    }
+
+    /**
      * Get the current full url
      *
      * @return string
