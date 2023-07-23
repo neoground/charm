@@ -124,7 +124,7 @@ class Route implements RouterElement
      */
     public function beforeFilters($filters)
     {
-        if(!is_array($filters)) {
+        if (!is_array($filters)) {
             $filters = [$filters];
         }
 
@@ -141,7 +141,7 @@ class Route implements RouterElement
      */
     public function afterFilters($filters)
     {
-        if(!is_array($filters)) {
+        if (!is_array($filters)) {
             $filters = [$filters];
         }
 
@@ -165,7 +165,7 @@ class Route implements RouterElement
     /**
      * Group constructor.
      *
-     * @param null $name (optional) group name
+     * @param null $name         (optional) group name
      * @param bool $inside_group (optional) is route inside a group? Default: false
      */
     public function __construct($name = null, $inside_group = false)
@@ -173,7 +173,7 @@ class Route implements RouterElement
         $this->name = $name;
         $this->filters = ['before' => [], 'after' => []];
 
-        if(!$inside_group) {
+        if (!$inside_group) {
             C::AppStorage()->append('Routes', 'Routes', $this);
         }
     }
@@ -309,7 +309,7 @@ class Route implements RouterElement
      * Add element to router
      *
      * @param \Phroute\Phroute\RouteCollector $router
-     * @param array $routes data of all routes
+     * @param array                           $routes data of all routes
      *
      * @return bool
      *
@@ -320,11 +320,11 @@ class Route implements RouterElement
         // Call: Controller.method
         $call_parts = explode(".", $this->call);
 
-        if(count($call_parts) != 2) {
+        if (count($call_parts) != 2) {
             throw new LogicException('Invalid controller call name: ' . $this->call);
         }
 
-        if(!str_contains($call_parts[0], "\\")) {
+        if (!str_contains($call_parts[0], "\\")) {
             // No namespace present. Prepend app namespace!
             $call_parts[0] = "\\App\\Controllers\\" . $call_parts[0];
         }
@@ -339,7 +339,7 @@ class Route implements RouterElement
             'name' => $this->name,
             'call_class' => $call_parts[0],
             'call_method' => $call_parts[1],
-            'filters' => $this->filters
+            'filters' => $this->filters,
         ];
 
         return true;

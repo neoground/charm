@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [3.2]
+### Added
+- Handy ViewExtension default functions
+- Router()->constructUrl(...) method to create custom URLs with parameters
+
+### Changed
+- Improved security of DebugBar
+- Formatter()->translate(...) now returns mixed data, including arrays
+
+### Fixed
+- Small bug fixes due to wrong return types
+
+---
+
 ## [3.1]
 ### Added
 - CommandHelper class with handy commands to easily style input / output of console commands

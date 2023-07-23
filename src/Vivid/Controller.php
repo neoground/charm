@@ -36,7 +36,7 @@ class Controller
     public function __construct()
     {
         // Add logged in user if guard is enabled
-        if(Charm::Config()->get('main:guard.enabled', true)) {
+        if (Charm::Config()->get('main:guard.enabled', true)) {
             $this->user = Charm::Guard()->getUser();
         }
 

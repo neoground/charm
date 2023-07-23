@@ -46,7 +46,8 @@ class View implements OutputInterface, HttpCodes
     /**
      * View constructor.
      *
-     * @param string    $tpl        Template name without extension (folder separated by '.', prepend optional package with ':')
+     * @param string    $tpl        Template name without extension (folder separated by '.', prepend optional package
+     *                              with ':')
      * @param int|array $statuscode HTTP status code or optional with() parameters
      */
     function __construct($tpl, $statuscode = 200)
@@ -55,7 +56,7 @@ class View implements OutputInterface, HttpCodes
         $this->twig = $this->initTwig();
 
         // Set status code or content depending on type
-        if(is_array($statuscode)) {
+        if (is_array($statuscode)) {
             $this->content = $statuscode;
         } else {
             $this->statuscode = $statuscode;
@@ -67,8 +68,9 @@ class View implements OutputInterface, HttpCodes
     /**
      * Make a new view response
      *
-     * @param string    $tpl           The template name without extension (folder separated by '.', prepend optional package with ':')
-     * @param int|array $statuscode    status code, default: 200 or optional with() parameters
+     * @param string    $tpl        The template name without extension (folder separated by '.', prepend optional
+     *                              package with ':')
+     * @param int|array $statuscode status code, default: 200 or optional with() parameters
      *
      * @return View
      */
@@ -80,8 +82,8 @@ class View implements OutputInterface, HttpCodes
     /**
      * Make a new error view response
      *
-     * @param string $message the error message
-     * @param int $statuscode (opt.) the status code, default: 500
+     * @param string $message    the error message
+     * @param int    $statuscode (opt.) the status code, default: 500
      *
      * @return View
      */
@@ -101,16 +103,16 @@ class View implements OutputInterface, HttpCodes
         $loader = new ViewLoader(C::Storage()->getAppPath() . DS . 'Views');
 
         // Add views of modules (except App) with module's name as namespace
-        foreach(Handler::getInstance()->getModuleClasses() as $name => $module) {
+        foreach (Handler::getInstance()->getModuleClasses() as $name => $module) {
             $mod = Handler::getInstance()->getModule($name);
-            if(is_object($mod) && $name != 'App' && method_exists($mod, 'getBaseDirectory')) {
+            if (is_object($mod) && $name != 'App' && method_exists($mod, 'getBaseDirectory')) {
                 // Depending on module type, the base dir path might be in app dir or not. We support both cases.
                 $dir = $mod->getBaseDirectory() . DS . 'app' . DS . 'Views';
                 $alt_dir = $mod->getBaseDirectory() . DS . 'Views';
 
-                if(file_exists($dir)) {
+                if (file_exists($dir)) {
                     $loader->addPath($dir, $name);
-                } elseif(file_exists($alt_dir)) {
+                } else if (file_exists($alt_dir)) {
                     $loader->addPath($alt_dir, $name);
                 }
             }
@@ -121,7 +123,7 @@ class View implements OutputInterface, HttpCodes
         // Init environment
         $twig = new Environment($loader, [
             'cache' => C::Storage()->getCachePath() . DS . 'views',
-            'debug' => $debug_mode
+            'debug' => $debug_mode,
         ]);
 
         // Add extensions
@@ -132,13 +134,13 @@ class View implements OutputInterface, HttpCodes
         $twig->addExtension(new ViewExtension());
 
         // Add own / custom twig functions from all modules (including app's ViewExtension)
-        foreach(Handler::getInstance()->getModuleClasses() as $name => $module) {
+        foreach (Handler::getInstance()->getModuleClasses() as $name => $module) {
             try {
                 $mod = Handler::getInstance()->getModule($name);
-                if(is_object($mod) && method_exists($mod, 'getReflectionClass')) {
+                if (is_object($mod) && method_exists($mod, 'getReflectionClass')) {
                     $class = $mod->getReflectionClass()->getNamespaceName() . "\\System\\ViewExtension";
 
-                    if(class_exists($class)) {
+                    if (class_exists($class)) {
                         $twig->addExtension(new $class);
                     }
                 }
@@ -193,10 +195,10 @@ class View implements OutputInterface, HttpCodes
         $this->setCharmData();
 
         // Return cached view?
-        if($this->cache_output > 0) {
+        if ($this->cache_output > 0) {
             $key = 'View_' . $this->tpl;
-            if(C::has('Cache')) {
-                if(C::Cache()->has($key)) {
+            if (C::has('Cache')) {
+                if (C::Cache()->has($key)) {
                     return C::Cache()->get($key);
                 } else {
                     // Store in cache
@@ -231,7 +233,7 @@ class View implements OutputInterface, HttpCodes
     {
         $tpl_str = $tpl;
         $package_parts = explode(self::$module_delimiter, $tpl_str);
-        if(count($package_parts) > 1) {
+        if (count($package_parts) > 1) {
             $package = $package_parts[0];
             $tpl = $package_parts[1];
 
@@ -252,25 +254,25 @@ class View implements OutputInterface, HttpCodes
         $head = C::AppStorage()->get('View', 'add_head', []);
         $body = C::AppStorage()->get('View', 'add_body', []);
 
-        if(!is_array($head)) {
+        if (!is_array($head)) {
             $head = [];
         }
-        if(!is_array($body)) {
+        if (!is_array($body)) {
             $body = [];
         }
 
         $head_content = '';
         $body_content = '';
 
-        foreach($head as $n => $head_entry) {
-            if(C::Config()->inDebugMode()) {
+        foreach ($head as $n => $head_entry) {
+            if (C::Config()->inDebugMode()) {
                 $head_content .= '<!-- [MODULE] ' . $n . ' -->' . "\n";
             }
             $head_content .= $head_entry . "\n";
         }
 
-        foreach($body as $n => $body_entry) {
-            if(C::Config()->inDebugMode()) {
+        foreach ($body as $n => $body_entry) {
+            if (C::Config()->inDebugMode()) {
                 $body_content .= '<!-- [MODULE] ' . $n . ' -->' . "\n";
             }
             $body_content .= $body_entry . "\n";
@@ -278,11 +280,11 @@ class View implements OutputInterface, HttpCodes
 
         $this->content['charm'] = [
             'head' => $head_content,
-            'body' => $body_content
+            'body' => $body_content,
         ];
 
         // Add optional message
-        if(C::Session()->has('charm_message')) {
+        if (C::Session()->has('charm_message')) {
             $this->content['charm']['message'] = C::Session()->get('charm_message');
             C::Session()->delete('charm_message');
         }
@@ -303,9 +305,9 @@ class View implements OutputInterface, HttpCodes
 
     /**
      * Add data to <head> part of view
-     * 
+     *
      * @param string $name name of data
-     * @param string $val data (most likely your html)
+     * @param string $val  data (most likely your html)
      */
     public static function addHead($name, $val)
     {
@@ -318,7 +320,7 @@ class View implements OutputInterface, HttpCodes
      * Add data to the end of the <body> part of view
      *
      * @param string $name name of data
-     * @param string $val data (most likely your html)
+     * @param string $val  data (most likely your html)
      */
     public static function addBody($name, $val)
     {
@@ -336,8 +338,8 @@ class View implements OutputInterface, HttpCodes
      */
     public static function clearCache($view = null)
     {
-        if(C::has('Cache')) {
-            if(empty($view)) {
+        if (C::has('Cache')) {
+            if (empty($view)) {
                 C::Cache()->removeByTag('View_Cache');
             } else {
                 C::Cache()->remove('View_' . $view);

@@ -31,8 +31,8 @@ class Json implements OutputInterface, HttpCodes
     /**
      * Output factory
      *
-     * @param array $val content to output as json
-     * @param int $statuscode (opt.) http status code (default: 200)
+     * @param array $val        content to output as json
+     * @param int   $statuscode (opt.) http status code (default: 200)
      *
      * @return self
      */
@@ -44,7 +44,7 @@ class Json implements OutputInterface, HttpCodes
 
         // Default settings
         $x->settings = [
-            'status_on_body' => false
+            'status_on_body' => false,
         ];
 
         return $x;
@@ -53,15 +53,15 @@ class Json implements OutputInterface, HttpCodes
     /**
      * Create an error message to return
      *
-     * @param string $message the error message
-     * @param int $statuscode (opt.) the status code (default: 500)
+     * @param string $message    the error message
+     * @param int    $statuscode (opt.) the status code (default: 500)
      *
      * @return self
      */
     public static function makeErrorMessage($message, $statuscode = 500)
     {
         return self::make([
-            "message" => $message
+            "message" => $message,
         ], $statuscode)
             ->withStatusOnBody();
     }
@@ -72,8 +72,8 @@ class Json implements OutputInterface, HttpCodes
      * This will move every content provided as $data to a 'data' key in the
      * returned JSON.
      *
-     * @param int $total total entities
-     * @param int $per_page entities per page
+     * @param int   $total       total entities
+     * @param int   $per_page    entities per page
      * @param array $custom_data (opt.) custom data to add to pagination array
      *
      * @return $this
@@ -81,7 +81,7 @@ class Json implements OutputInterface, HttpCodes
     public function withPagination($total, $per_page, $custom_data = [])
     {
         $get = $_GET;
-        $page = (int) C::Request()->get('page', 1);
+        $page = (int)C::Request()->get('page', 1);
 
         $total_pages = ceil($total / $per_page);
 
@@ -109,10 +109,10 @@ class Json implements OutputInterface, HttpCodes
             'last_page' => $total_pages,
             'next_page_url' => $next_page_url,
             'prev_page_url' => $prev_page_url,
-            'data' => $this->data
+            'data' => $this->data,
         ];
 
-        if(!empty($custom_data)) {
+        if (!empty($custom_data)) {
             $arr['custom_data'] = $custom_data;
         }
 
@@ -135,8 +135,8 @@ class Json implements OutputInterface, HttpCodes
     /**
      * Add an value to the return data array
      *
-     * @param string $key the key
-     * @param mixed $value the value
+     * @param string $key   the key
+     * @param mixed  $value the value
      *
      * @return $this
      */

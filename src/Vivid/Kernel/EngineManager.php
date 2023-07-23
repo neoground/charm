@@ -45,7 +45,7 @@ class EngineManager extends Module
     {
         // Use manually set environment from the app.env file
         $appenv = C::Storage()->getAppPath() . DS . 'app.env';
-        if(file_exists($appenv) && !$this->set_via_file) {
+        if (file_exists($appenv) && !$this->set_via_file) {
             $this->environment = trim(file_get_contents($appenv));
             $this->set_via_file = true;
         }
@@ -59,7 +59,7 @@ class EngineManager extends Module
      * Will only update parameters provided in config array,
      * not replacing the whole array.
      *
-     * @param array  $arr  the config array
+     * @param array $arr the config array
      */
     public function setConfig($arr)
     {
@@ -69,8 +69,8 @@ class EngineManager extends Module
     /**
      * Get the config
      *
-     * @param string      $key      config key
-     * @param null|mixed  $default  default value to return
+     * @param string     $key     config key
+     * @param null|mixed $default default value to return
      *
      * @return mixed
      */
@@ -89,7 +89,7 @@ class EngineManager extends Module
      */
     public function enablePreflightHandling()
     {
-        if(C::Server()->get('REQUEST_METHOD') == "OPTIONS") {
+        if (C::Server()->get('REQUEST_METHOD') == "OPTIONS") {
             // Basic headers are provided by nginx. No Access-Control needed again...
             header("Content-Length: 0");
             header("Content-Type: text/plain");

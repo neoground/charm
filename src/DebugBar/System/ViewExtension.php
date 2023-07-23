@@ -5,13 +5,6 @@
 
 namespace Charm\DebugBar\System;
 
-use App\Models\File;
-use App\Models\Note;
-use App\Models\Notification;
-use App\Models\Setting;
-use Carbon\Carbon;
-use Charm\Vivid\C;
-use Charm\Vivid\Kernel\Handler;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -42,7 +35,7 @@ class ViewExtension extends AbstractExtension
             'getTests',
             'getFunctions',
             'getOperators',
-            'getAdminMenu'
+            'getAdminMenu',
         ];
 
         $arr = [];
@@ -55,26 +48,6 @@ class ViewExtension extends AbstractExtension
         }
 
         return $arr;
-    }
-
-    /**
-     * Get the logged in user
-     *
-     * @return object|false  the user object or false if guard is disabled
-     */
-    public function getCurrentUser()
-    {
-        return C::Guard()->getUser();
-    }
-
-    /**
-     * Check if user is logged in
-     *
-     * @return bool
-     */
-    public function isLoggedIn()
-    {
-        return C::Guard()->isLoggedIn();
     }
 
 }

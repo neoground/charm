@@ -7,6 +7,7 @@ namespace Charm\DebugBar\Controllers;
 
 use Charm\Vivid\C;
 use Charm\Vivid\Controller;
+use Charm\Vivid\Kernel\Output\View;
 use DebugBar\OpenHandler;
 
 /**
@@ -23,9 +24,13 @@ class DebugbarController extends Controller
      */
     public function getHandler()
     {
-        $openHandler = new OpenHandler(C::DebugBar()->getInstance());
-        $openHandler->handle();
-        C::shutdown();
+        if(C::Config()->get('main:debug.show_debugbar', false) && C::Config()->inDebugMode()) {
+            $openHandler = new OpenHandler(C::DebugBar()->getInstance());
+            $openHandler->handle();
+            C::shutdown();
+        }
+
+        return View::makeError('NotFound', 404);
     }
 
 }

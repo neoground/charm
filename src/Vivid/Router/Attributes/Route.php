@@ -13,7 +13,8 @@ namespace Charm\Vivid\Router\Attributes;
  * @package Charm\Vivid\Router
  */
 #[\Attribute]
-class Route {
+class Route
+{
     public string $method;
     public string $url;
     public string $name;
@@ -22,9 +23,9 @@ class Route {
     public string $call_class;
     public string $call_method;
 
-    public function __construct(string $method,
-                                string $url,
-                                string $name = '',
+    public function __construct(string       $method,
+                                string       $url,
+                                string       $name = '',
                                 string|array $filter_before = '',
                                 string|array $filter_after = '')
     {

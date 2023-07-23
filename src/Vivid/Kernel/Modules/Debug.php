@@ -33,7 +33,7 @@ class Debug extends Module implements ModuleInterface
     public function loadModule()
     {
         // Only init debug modules if we're in debug mode
-        if(C::Config()->get('main:debug.debugmode', false)) {
+        if (C::Config()->get('main:debug.debugmode', false)) {
             $this->initWhoops();
         } else {
             // No debug mode -> production!
@@ -50,9 +50,9 @@ class Debug extends Module implements ModuleInterface
      *
      * @return bool
      */
-    private function initWhoops() : bool
+    private function initWhoops(): bool
     {
-        if(!class_exists("Whoops\\Run")) {
+        if (!class_exists("Whoops\\Run")) {
             return false;
         }
 
@@ -62,12 +62,12 @@ class Debug extends Module implements ModuleInterface
         $handle->addDataTableCallback('charm', [self::class, 'getWhoopsMetadata']);
 
         $root_path = C::Storage()->getBasePath();
-        if($root_path !== false) {
+        if ($root_path !== false) {
             $handle->setApplicationRootPath($root_path);
         }
 
         $editor = C::Config()->get('main:debug.editor', false);
-        if($editor !== false) {
+        if ($editor !== false) {
             $handle->setEditor($editor);
         }
 
@@ -82,8 +82,8 @@ class Debug extends Module implements ModuleInterface
         // Output depending on CLI / AJAX Request / default view
         if (is_cli()) {
             $whoops->pushHandler(new PlainTextHandler());
-        } elseif (Misc::isAjaxRequest()) {
-                $whoops->pushHandler(new JsonResponseHandler);
+        } else if (Misc::isAjaxRequest()) {
+            $whoops->pushHandler(new JsonResponseHandler);
         } else {
             $whoops->pushHandler($handle);
         }
@@ -98,17 +98,17 @@ class Debug extends Module implements ModuleInterface
      *
      * @return array
      */
-    public static function getWhoopsMetadata() : array
+    public static function getWhoopsMetadata(): array
     {
         $route = null;
-        if(C::has('Router')) {
+        if (C::has('Router')) {
             $route = C::Router()->getCurrentRouteData();
         }
 
         return [
             'framework' => 'Charm',
             'version' => C::VERSION,
-            'route' => $route
+            'route' => $route,
         ];
     }
 
@@ -117,7 +117,7 @@ class Debug extends Module implements ModuleInterface
      *
      * @return Run
      */
-    public function getWhoopsInstance() : Run
+    public function getWhoopsInstance(): Run
     {
         return $this->whoops;
     }

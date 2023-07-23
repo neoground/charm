@@ -29,7 +29,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
 
     /** @var Logging[] stored custom log instances */
     protected $logger_instances = [];
-    
+
     /**
      * Load the module
      */
@@ -37,7 +37,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
     {
         // Logging disabled?
         $this->enabled = C::Config()->get('main:logging.enabled', true);
-        if(!$this->enabled) {
+        if (!$this->enabled) {
             return false;
         }
 
@@ -57,7 +57,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
         $this->logger = $logger;
 
         // Also redirect stderr to custom log file?
-        if(C::Config()->get('main:logging.errors', true)) {
+        if (C::Config()->get('main:logging.errors', true)) {
             ini_set('error_log', C::Storage()->getLogPath() . DS . date("Y-m-d") . "-errors.log");
         }
 
@@ -75,7 +75,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
      */
     public function withName($name)
     {
-        if(array_key_exists($name, $this->logger_instances)) {
+        if (array_key_exists($name, $this->logger_instances)) {
             return $this->logger_instances[$name];
         }
 
@@ -92,7 +92,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
      * @param \Stringable|string $message The log message
      * @param array              $context The log context
      */
-    public function debug(\Stringable|string $message, array $context = []) : void
+    public function debug(\Stringable|string $message, array $context = []): void
     {
         $this->log('debug', $message, $context);
     }
@@ -100,10 +100,10 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
     /**
      * System is unusable.
      *
-     * @param  string  $message The log message
-     * @param  array   $context The log context
+     * @param string $message The log message
+     * @param array  $context The log context
      */
-    public function emergency(\Stringable|string $message, array $context = []) : void
+    public function emergency(\Stringable|string $message, array $context = []): void
     {
         $this->log('emergency', $message, $context);
     }
@@ -117,7 +117,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
      * @param \Stringable|string $message The log message
      * @param array              $context The log context
      */
-    public function alert(\Stringable|string $message, array $context = []) : void
+    public function alert(\Stringable|string $message, array $context = []): void
     {
         $this->log('alert', $message, $context);
     }
@@ -130,7 +130,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
      * @param \Stringable|string $message The log message
      * @param array              $context The log context
      */
-    public function critical(\Stringable|string $message, array $context = []) : void
+    public function critical(\Stringable|string $message, array $context = []): void
     {
         $this->log('critical', $message, $context);
     }
@@ -142,7 +142,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
      * @param \Stringable|string $message The log message
      * @param array              $context The log context
      */
-    public function error(\Stringable|string $message, array $context = []) : void
+    public function error(\Stringable|string $message, array $context = []): void
     {
         $this->log('error', $message, $context);
     }
@@ -156,7 +156,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
      * @param \Stringable|string $message The log message
      * @param array              $context The log context
      */
-    public function warning(\Stringable|string $message, array $context = []) : void
+    public function warning(\Stringable|string $message, array $context = []): void
     {
         $this->log('warning', $message, $context);
     }
@@ -167,7 +167,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
      * @param \Stringable|string $message The log message
      * @param array              $context The log context
      */
-    public function notice(\Stringable|string $message, array $context = []) : void
+    public function notice(\Stringable|string $message, array $context = []): void
     {
         $this->log('notice', $message, $context);
     }
@@ -180,7 +180,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
      * @param \Stringable|string $message The log message
      * @param array              $context The log context
      */
-    public function info(\Stringable|string $message, array $context = []) : void
+    public function info(\Stringable|string $message, array $context = []): void
     {
         $this->log('info', $message, $context);
     }
@@ -192,19 +192,19 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
      * @param \Stringable|string $message The log message
      * @param array              $context The log context
      */
-    public function log($level, \Stringable|string $message, array $context = []) : void
+    public function log($level, \Stringable|string $message, array $context = []): void
     {
-        if(!$this->enabled) {
+        if (!$this->enabled) {
             return;
         }
 
         $level = strtolower($level);
 
-        if(C::has('Event')) {
+        if (C::has('Event')) {
             C::Event()->fire('Logging', $level);
         }
 
-        if(C::has('DebugBar') && C::DebugBar()->isEnabled()) {
+        if (C::has('DebugBar') && C::DebugBar()->isEnabled()) {
             $db = C::DebugBar()->getInstance();
             $db['messages']->$level($message);
         }

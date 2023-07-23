@@ -40,7 +40,7 @@ class Session extends Module implements ModuleInterface
         session_start();
 
         // Check fingerprint on every page load
-        if(!$this->checkFingerprint()) {
+        if (!$this->checkFingerprint()) {
             // Invalid fingerprint.
             // Destroy session!
             $this->destroy();
@@ -52,7 +52,7 @@ class Session extends Module implements ModuleInterface
      *
      * @return bool
      */
-    public function destroy() : bool
+    public function destroy(): bool
     {
         // Return false if we don't have a session
         if (session_status() != PHP_SESSION_ACTIVE) {
@@ -72,7 +72,7 @@ class Session extends Module implements ModuleInterface
      *
      * @return bool
      */
-    public function refresh() : bool
+    public function refresh(): bool
     {
         return session_regenerate_id(true);
     }
@@ -94,11 +94,11 @@ class Session extends Module implements ModuleInterface
     /**
      * Check if the session contains this key
      *
-     * @param string  $key
+     * @param string $key
      *
      * @return bool
      */
-    public function has(string $key) : bool
+    public function has(string $key): bool
     {
         return C::Arrays()->has($_SESSION, $key);
     }
@@ -106,8 +106,8 @@ class Session extends Module implements ModuleInterface
     /**
      * Set a session value
      *
-     * @param string  $key
-     * @param mixed   $value
+     * @param string $key
+     * @param mixed  $value
      */
     public function set(string $key, mixed $value)
     {
@@ -133,9 +133,9 @@ class Session extends Module implements ModuleInterface
      *
      * @return bool
      */
-    public function checkFingerprint() : bool
+    public function checkFingerprint(): bool
     {
-        if(isset($_SERVER['HTTP_USER_AGENT'])) {
+        if (isset($_SERVER['HTTP_USER_AGENT'])) {
             $hash = md5($_SERVER['HTTP_USER_AGENT']);
 
             if (isset($_SESSION['charm_fingerprint'])) {
@@ -153,7 +153,7 @@ class Session extends Module implements ModuleInterface
      *
      * @return array
      */
-    public function all() : array
+    public function all(): array
     {
         return $_SESSION;
     }

@@ -34,9 +34,9 @@ class AppStorage extends Module implements ModuleInterface
         $this->storage = [
             'View' => [
                 'Head' => [],
-                'Body' => []
+                'Body' => [],
             ],
-            'Routes' => []
+            'Routes' => [],
         ];
 
         // Set path to cache file
@@ -61,9 +61,9 @@ class AppStorage extends Module implements ModuleInterface
     /**
      * Get something from the app storage
      *
-     * @param string       $module   name of module
-     * @param string       $key      the key or "*" for all keys in the module
-     * @param string|null  $default  (opt.) the default value (null)
+     * @param string      $module  name of module
+     * @param string      $key     the key or "*" for all keys in the module
+     * @param string|null $default (opt.) the default value (null)
      *
      * @return mixed  the value or $default
      */
@@ -75,7 +75,7 @@ class AppStorage extends Module implements ModuleInterface
             return $default;
         }
 
-        if($key == "*") {
+        if ($key == "*") {
             return $this->storage[$module];
         }
 
@@ -85,8 +85,8 @@ class AppStorage extends Module implements ModuleInterface
     /**
      * Check if a key exists
      *
-     * @param string  $module  name of module
-     * @param string  $key     the key
+     * @param string $module name of module
+     * @param string $key    the key
      *
      * @return bool
      */
@@ -100,9 +100,9 @@ class AppStorage extends Module implements ModuleInterface
      *
      * This will create or replace the stored element
      *
-     * @param string  $module  name of module
-     * @param string  $key     the key or "*" to replace whole data of module
-     * @param mixed   $value    the value to store
+     * @param string $module name of module
+     * @param string $key    the key or "*" to replace whole data of module
+     * @param mixed  $value  the value to store
      *
      * @return bool
      */
@@ -112,7 +112,7 @@ class AppStorage extends Module implements ModuleInterface
             $this->storage[$module] = [];
         }
 
-        if($key == "*") {
+        if ($key == "*") {
             return $this->storage[$module] = $value;
         }
 
@@ -122,9 +122,9 @@ class AppStorage extends Module implements ModuleInterface
     /**
      * Append a value
      *
-     * @param string  $module  name of module
-     * @param string  $key     the key
-     * @param mixed   $value   the value to append
+     * @param string $module name of module
+     * @param string $key    the key
+     * @param mixed  $value  the value to append
      *
      * @return bool
      */
@@ -165,10 +165,10 @@ class AppStorage extends Module implements ModuleInterface
     /**
      * Get something from an array in the app storage
      *
-     * @param string       $module   name of module
-     * @param string       $arrname  name of array
-     * @param string       $key      the key
-     * @param string|null  $default  (opt.) the default value (null)
+     * @param string      $module  name of module
+     * @param string      $arrname name of array
+     * @param string      $key     the key
+     * @param string|null $default (opt.) the default value (null)
      *
      * @return mixed|bool  false on error
      */
@@ -187,10 +187,10 @@ class AppStorage extends Module implements ModuleInterface
      *
      * This will create or replace the stored element
      *
-     * @param string  $module   name of module
-     * @param string  $arrname  name of array
-     * @param string  $key      the key
-     * @param mixed   $value    the value to store
+     * @param string $module  name of module
+     * @param string $arrname name of array
+     * @param string $key     the key
+     * @param mixed  $value   the value to store
      *
      * @return bool
      */
@@ -212,7 +212,7 @@ class AppStorage extends Module implements ModuleInterface
      */
     public function clearCache()
     {
-        if(file_exists($this->cache_file)) {
+        if (file_exists($this->cache_file)) {
             unlink($this->cache_file);
         }
     }
@@ -226,7 +226,7 @@ class AppStorage extends Module implements ModuleInterface
         $this->addAllConfigFiles();
 
         // Same for routes data
-        if(!C::has('Router')) {
+        if (!C::has('Router')) {
             $router = new Router();
             $router->init();
         } else {
@@ -242,7 +242,7 @@ class AppStorage extends Module implements ModuleInterface
      */
     public function loadInitStorage()
     {
-        if(file_exists($this->cache_file)) {
+        if (file_exists($this->cache_file)) {
             $this->storage = unserialize(file_get_contents($this->cache_file));
         }
     }
@@ -264,8 +264,8 @@ class AppStorage extends Module implements ModuleInterface
                         // Load all files inside the Config dir except directories
                         $files = array_diff(scandir($dir), ['..', '.']);
 
-                        foreach($files as $file) {
-                            if(str_contains($file, '.yaml')) {
+                        foreach ($files as $file) {
+                            if (str_contains($file, '.yaml')) {
                                 $conf_name = str_replace('.yaml', '', $file);
 
                                 // Get something from config file so it gets stored in the appstorage

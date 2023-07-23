@@ -10,7 +10,6 @@ use Charm\Vivid\Base\Module;
 use Charm\Vivid\C;
 use Charm\Vivid\Elements\UploadedFile;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
-use claviska\SimpleImage;
 
 /**
  * Class Request
@@ -52,7 +51,7 @@ class Request extends Module implements ModuleInterface
 
         // Data from put requests and so on?
         parse_str(file_get_contents("php://input"), $putdata);
-        $this->vars = array_merge($this->vars, (array) $putdata);
+        $this->vars = array_merge($this->vars, (array)$putdata);
     }
 
     /**
@@ -60,14 +59,15 @@ class Request extends Module implements ModuleInterface
      *
      * @param $key      string        the wanted key, arrays separated by .
      * @param $default  null|mixed    (optional) default parameter
-     * @param $sanitize bool|callable (optional) sanitize request value (will strip tags if set to true or use your own sanitizing function)
+     * @param $sanitize bool|callable (optional) sanitize request value (will strip tags if set to true or use your own
+     *                  sanitizing function)
      *
      * @return null|string|array
      */
     public function get($key, $default = null, $sanitize = false)
     {
-        if($sanitize !== false) {
-            if(is_callable($sanitize)) {
+        if ($sanitize !== false) {
+            if (is_callable($sanitize)) {
                 return $sanitize(C::Arrays()->get($this->vars, $key, $default));
             }
             return strip_tags(C::Arrays()->get($this->vars, $key, $default));
@@ -83,7 +83,7 @@ class Request extends Module implements ModuleInterface
      *
      * @return bool
      */
-    public function has($key) : bool
+    public function has($key): bool
     {
         return C::Arrays()->has($this->vars, $key);
     }
@@ -95,11 +95,11 @@ class Request extends Module implements ModuleInterface
      * for internal calling of other controller methods and so on.
      *
      * @param string $key
-     * @param mixed $value
+     * @param mixed  $value
      *
      * @return true
      */
-    public function set($key, $value) : bool
+    public function set($key, $value): bool
     {
         $this->vars[$key] = $value;
         return true;
@@ -112,13 +112,13 @@ class Request extends Module implements ModuleInterface
      * for internal calling of other controller methods and so on.
      *
      * @param string $key
-     * @param mixed $value
+     * @param mixed  $value
      *
      * @return bool true if set, false if existing
      */
-    public function setIfEmpty($key, $value) : bool
+    public function setIfEmpty($key, $value): bool
     {
-        if(!$this->has($key) || empty($this->get($key))) {
+        if (!$this->has($key) || empty($this->get($key))) {
             $this->set($key, $value);
             return true;
         }
@@ -132,14 +132,14 @@ class Request extends Module implements ModuleInterface
      *
      * @return array keys are the $keys, values are the found values
      */
-    public function getMultiple(array $keys) : array
+    public function getMultiple(array $keys): array
     {
         $data = [];
 
-        foreach($keys as $key) {
+        foreach ($keys as $key) {
             $val = $this->get($key);
 
-            if($val !== 0 && empty($val)) {
+            if ($val !== 0 && empty($val)) {
                 $val = null;
             }
 
@@ -182,7 +182,7 @@ class Request extends Module implements ModuleInterface
     /**
      * Get specific header value
      *
-     * @param string $key header key
+     * @param string     $key     header key
      * @param null|mixed $default (optional) default parameter
      *
      * @return null|string
@@ -239,9 +239,9 @@ class Request extends Module implements ModuleInterface
         if (!$this->gotUpload($name)) {
             // Check for base64 string
             $req = $this->get($name);
-            if(!empty($req)) {
+            if (!empty($req)) {
                 $upload = UploadedFile::fromBase64($req);
-                if($upload !== false) {
+                if ($upload !== false) {
                     return $upload;
                 }
             }
@@ -257,22 +257,22 @@ class Request extends Module implements ModuleInterface
      *
      * Multiple files must be handled manually, also due to filenames etc.
      *
-     * @param string $name name of field of the uploaded file
-     * @param string     $destination absolute path where the file should be stored
-     * @param bool $override override file if existing? Default: true
+     * @param string $name        name of field of the uploaded file
+     * @param string $destination absolute path where the file should be stored
+     * @param bool   $override    override file if existing? Default: true
      *
      * @return bool true if saved false on error
      */
-    public function saveFile($name, $destination, $override = true) : bool
+    public function saveFile($name, $destination, $override = true): bool
     {
         $file = $this->getFile($name);
-        if($file) {
+        if ($file) {
             $dir = dirname($destination);
             C::Storage()->createDirectoriesIfNotExisting($dir);
 
             try {
                 $file->saveAs($destination, $override);
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 return false;
             }
         }
@@ -283,25 +283,26 @@ class Request extends Module implements ModuleInterface
     /**
      * Save and resize / compress an image
      *
-     * @param string $name name of field of the uploaded file
+     * @param string $name        name of field of the uploaded file
      * @param string $destination absolute path where the file should be stored
-     * @param bool   $override override file if existing? Default: true
-     * @param int    $width width of image to resize to. Set to 0 for no resizing
-     * @param string $mime save file as this mime. leave empty to use the source's mime
+     * @param bool   $override    override file if existing? Default: true
+     * @param int    $width       width of image to resize to. Set to 0 for no resizing
+     * @param string $mime        save file as this mime. leave empty to use the source's mime
      * @param int    $quality
      *
      * @return bool
      */
     public function saveAndResizeImage(string $name,
-                                        string $destination,
-                                        bool $override = true,
-                                        int $width = 1920,
-                                        string $mime = "image/jpeg",
-                                        int $quality = 90) : bool {
+                                       string $destination,
+                                       bool   $override = true,
+                                       int    $width = 1920,
+                                       string $mime = "image/jpeg",
+                                       int    $quality = 90): bool
+    {
 
-        if($this->saveFile($name, $destination, $override)) {
+        if ($this->saveFile($name, $destination, $override)) {
 
-            if(empty($mime)) {
+            if (empty($mime)) {
                 $mime = mime_content_type($destination);
             }
 
@@ -310,13 +311,13 @@ class Request extends Module implements ModuleInterface
                 $img->fromFile($destination)
                     ->autoOrient();
 
-                if($width > 0) {
+                if ($width > 0) {
                     $img = $img->resize($width);
                 }
 
                 $img->toFile($destination, $mime, $quality);
                 return true;
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 return false;
             }
 
@@ -328,30 +329,31 @@ class Request extends Module implements ModuleInterface
     /**
      * Save an image as a thumbnail (cropped)
      *
-     * @param string $name name of field of the uploaded file
+     * @param string $name        name of field of the uploaded file
      * @param string $destination absolute path where the file should be stored
-     * @param bool   $override override file if existing? Default: true
-     * @param int    $width width of thumbnail
-     * @param int    $height height of thumbnail. Set to 0 (default) to use the width (square)
-     * @param string $mime save file as this mime. leave empty to use the source's mime
+     * @param bool   $override    override file if existing? Default: true
+     * @param int    $width       width of thumbnail
+     * @param int    $height      height of thumbnail. Set to 0 (default) to use the width (square)
+     * @param string $mime        save file as this mime. leave empty to use the source's mime
      * @param int    $quality
      *
      * @return bool
      */
     public function saveImageAsThumbnail(string $name,
                                          string $destination,
-                                         bool $override = true,
-                                         int $width = 600,
-                                         int $height = 0,
+                                         bool   $override = true,
+                                         int    $width = 600,
+                                         int    $height = 0,
                                          string $mime = "image/jpeg",
-                                         int $quality = 80) : bool {
-        if($this->saveFile($name, $destination, $override)) {
+                                         int    $quality = 80): bool
+    {
+        if ($this->saveFile($name, $destination, $override)) {
 
-            if(empty($mime)) {
+            if (empty($mime)) {
                 $mime = mime_content_type($destination);
             }
 
-            if(empty($height)) {
+            if (empty($height)) {
                 $height = $width;
             }
 
@@ -363,7 +365,7 @@ class Request extends Module implements ModuleInterface
                     ->thumbnail($width, $height)
                     ->toFile($destination, $mime, $quality);
                 return true;
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 return false;
             }
 
@@ -385,8 +387,8 @@ class Request extends Module implements ModuleInterface
         $total = count($this->files[$name]['name']);
 
         // Looping through all files and add existing ones (ignore empty array elements)
-        for($i = 0; $i < $total; $i++){
-            if(!empty($this->files[$name]['tmp_name'][$i])) {
+        for ($i = 0; $i < $total; $i++) {
+            if (!empty($this->files[$name]['tmp_name'][$i])) {
                 $arr[] = UploadedFile::fromFile([
                     'name' => $this->files[$name]['name'][$i],
                     'type' => $this->files[$name]['type'][$i],
@@ -411,9 +413,9 @@ class Request extends Module implements ModuleInterface
         $cf_ip = $this->getHeader('CF-Connecting-IP');
         if (!empty($cf_ip)) {
             return $cf_ip;
-        } elseif (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+        } else if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
             $ip = $_SERVER['HTTP_CLIENT_IP'];
-        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        } else if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
         } else {
             $ip = $_SERVER['REMOTE_ADDR'];
@@ -427,7 +429,7 @@ class Request extends Module implements ModuleInterface
      *
      * @return bool
      */
-    public function isHttpsRequest() : bool
+    public function isHttpsRequest(): bool
     {
         return isset($_SERVER['HTTPS'])
             || (array_key_exists('HTTP_X_FORWARDED_PROTO', $_SERVER) && str_contains($_SERVER['HTTP_X_FORWARDED_PROTO'], 'https'))
@@ -444,7 +446,7 @@ class Request extends Module implements ModuleInterface
      *
      * @return bool
      */
-    public function accepts(string $str) : bool
+    public function accepts(string $str): bool
     {
         return array_key_exists('HTTP_ACCEPT', $_SERVER) && str_contains($_SERVER['HTTP_ACCEPT'], $str);
     }
@@ -454,7 +456,7 @@ class Request extends Module implements ModuleInterface
      *
      * @return void
      */
-    public function saveAllInSession() : void
+    public function saveAllInSession(): void
     {
         C::Session()->set('charm_request_input', $this->getAll());
     }
@@ -464,7 +466,7 @@ class Request extends Module implements ModuleInterface
      *
      * @return array|bool the array or false if none was found
      */
-    public function getAllFromSession() : array|bool
+    public function getAllFromSession(): array|bool
     {
         return C::Session()->get('charm_request_input', false);
     }

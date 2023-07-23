@@ -41,11 +41,11 @@ class Redis extends Module implements ModuleInterface
             // Prevent socket timeout
             ini_set("default_socket_timeout", -1);
 
-            if($driver == 'phpredis' && class_exists("\\Redis")) {
+            if ($driver == 'phpredis' && class_exists("\\Redis")) {
                 // Use native redis driver
                 $redis = new \Redis();
 
-                if($persistent) {
+                if ($persistent) {
                     $redis->pconnect($host, $port);
                 } else {
                     $redis->connect($host, $port);
@@ -60,7 +60,7 @@ class Redis extends Module implements ModuleInterface
                 // Set timeout
                 $redis->setOption(\Redis::OPT_READ_TIMEOUT, -1);
 
-                if(!empty($pw)) {
+                if (!empty($pw)) {
                     $redis->auth($pw);
                 }
 
@@ -77,7 +77,7 @@ class Redis extends Module implements ModuleInterface
             // Set redis password
             if (!empty($pw)) {
                 $options['parameters'] = [
-                    'password' => $pw
+                    'password' => $pw,
                 ];
             }
 
@@ -86,7 +86,7 @@ class Redis extends Module implements ModuleInterface
                 'scheme' => 'tcp',
                 'host' => $host,
                 'port' => $port,
-                'persistent' => $persistent
+                'persistent' => $persistent,
             ], $options);
 
             return true;
@@ -112,11 +112,11 @@ class Redis extends Module implements ModuleInterface
      */
     public function getPredisClient()
     {
-        if($this->redis_client instanceof Client) {
+        if ($this->redis_client instanceof Client) {
             return $this->redis_client;
         }
 
-        if($this->custom_client instanceof Client) {
+        if ($this->custom_client instanceof Client) {
             return $this->custom_client;
         }
 
@@ -134,7 +134,7 @@ class Redis extends Module implements ModuleInterface
         // Set redis password
         if (!empty($pw)) {
             $options['parameters'] = [
-                'password' => $pw
+                'password' => $pw,
             ];
         }
 
@@ -143,7 +143,7 @@ class Redis extends Module implements ModuleInterface
             'scheme' => 'tcp',
             'host' => $host,
             'port' => $port,
-            'persistent' => $persistent
+            'persistent' => $persistent,
         ], $options);
 
         return $this->custom_client;
@@ -158,11 +158,11 @@ class Redis extends Module implements ModuleInterface
      */
     public function del($keys)
     {
-        if(!is_array($keys)) {
+        if (!is_array($keys)) {
             $keys = [$keys];
         }
 
-        if(extension_loaded('redis') && $this->redis_client instanceof \Redis) {
+        if (extension_loaded('redis') && $this->redis_client instanceof \Redis) {
             // phpredis
             return $this->redis_client->delete($keys);
         }
@@ -182,14 +182,14 @@ class Redis extends Module implements ModuleInterface
      */
     public function hdel($key, $values)
     {
-        if(!is_array($values)) {
+        if (!is_array($values)) {
             $values = [$values];
         }
 
-        if(extension_loaded('redis') && $this->redis_client instanceof \Redis) {
+        if (extension_loaded('redis') && $this->redis_client instanceof \Redis) {
             // phpredis
             $ret = true;
-            foreach($values as $val) {
+            foreach ($values as $val) {
                 $ret &= $this->redis_client->hDel($key, $val);
             }
             return $ret;
@@ -204,19 +204,19 @@ class Redis extends Module implements ModuleInterface
      * Adds the string values to the tail (right) of the list. Creates the list if the key didn't exist.
      * If the key exists and is not a list, FALSE is returned.
      *
-     * @param string $key
+     * @param string       $key
      * @param string|array $value
      *
      * @return int|bool     The new length of the list in case of success, FALSE in case of Failure.
      */
     public function rpush($key, $value)
     {
-        if(extension_loaded('redis') && $this->redis_client instanceof \Redis) {
+        if (extension_loaded('redis') && $this->redis_client instanceof \Redis) {
             // phpredis
 
-            if(is_array($value)) {
+            if (is_array($value)) {
                 $ret = 0;
-                foreach($value as $val) {
+                foreach ($value as $val) {
                     $ret = $this->redis_client->rpush($key, $val);
                 }
                 return $ret;
@@ -225,7 +225,7 @@ class Redis extends Module implements ModuleInterface
             return $this->redis_client->rpush($key, $value);
         }
 
-        if(!is_array($value)) {
+        if (!is_array($value)) {
             $value = [$value];
         }
 
@@ -245,8 +245,8 @@ class Redis extends Module implements ModuleInterface
      */
     public function __call($name, $arguments)
     {
-        if(method_exists($this->redis_client, $name)) {
-            if(count($arguments) == 1) {
+        if (method_exists($this->redis_client, $name)) {
+            if (count($arguments) == 1) {
                 return $this->redis_client->$name($arguments[0]);
             } else {
                 return call_user_func($this->redis_client->$name, $arguments);

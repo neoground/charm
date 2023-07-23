@@ -61,7 +61,7 @@ class DataTable implements OutputInterface
     /**
      * Set the model
      *
-     * @param string  $model  model class
+     * @param string $model model class
      *
      * @return $this
      */
@@ -76,29 +76,29 @@ class DataTable implements OutputInterface
      *
      * This will merge all existing where conditions
      *
-     * @param string|array  $where  where array or key if $val is specified
-     * @param null|string   $val    the value if where is the wanted key
-     * @param null|string   $val2   another value in the wall
+     * @param string|array $where where array or key if $val is specified
+     * @param null|string  $val   the value if where is the wanted key
+     * @param null|string  $val2  another value in the wall
      *
      * @return $this
      */
     public function where($where, $val = null, $val2 = null)
     {
-        if(!empty($val) && !empty($val2)) {
+        if (!empty($val) && !empty($val2)) {
             // Support for classic eloquent where's ("field", ">", "10")
 
-            if(is_array($val2)) {
+            if (is_array($val2)) {
                 $val2 = implode("||", $val2);
             }
 
             $where = [$where => $val . " " . $val2];
-        } elseif (!empty($val)) {
+        } else if (!empty($val)) {
             // Value set for normal where condition
             $where = [$where => $val];
-        } elseif(is_array($where)) {
-            $where  = [];
+        } else if (is_array($where)) {
+            $where = [];
             // Separate multiple where's
-            foreach($where as $k => $v) {
+            foreach ($where as $k => $v) {
                 $this->wheres[] = [$k => $v];
             }
             // Already return because already added items
@@ -106,7 +106,7 @@ class DataTable implements OutputInterface
         }
 
         // Support for simple text
-        if(!is_array($where)) {
+        if (!is_array($where)) {
             $where = [$where];
         }
 
@@ -117,7 +117,7 @@ class DataTable implements OutputInterface
     /**
      * Set order columns
      *
-     * @param array  $columns  the order columns
+     * @param array $columns the order columns
      *
      * @return $this
      */
@@ -130,7 +130,7 @@ class DataTable implements OutputInterface
     /**
      * Set search columns
      *
-     * @param array  $columns  the search columns
+     * @param array $columns the search columns
      *
      * @return $this
      */
@@ -145,7 +145,7 @@ class DataTable implements OutputInterface
      *
      * This lambda function will format all the data for returning
      *
-     * @param callable  $callable
+     * @param callable $callable
      *
      * @return $this
      */
@@ -186,10 +186,10 @@ class DataTable implements OutputInterface
         $order_dir = $order[0]['dir'];
         $order_column = $order[0]['column'];
 
-        if(empty($order_dir)) {
+        if (empty($order_dir)) {
             $order_dir = 'ASC';
         }
-        if(empty($order_column)) {
+        if (empty($order_column)) {
             $order_column = 0;
         }
 
@@ -224,7 +224,7 @@ class DataTable implements OutputInterface
                     } else {
                         $entities->where($k, 'LIKE', '%' . implode(" ", $parts) . '%');
                     }
-                } elseif ($parts[0] == 'IN') {
+                } else if ($parts[0] == 'IN') {
                     // Where In
                     $entries = explode("||", $parts[1]);
 
@@ -234,7 +234,7 @@ class DataTable implements OutputInterface
                         $entities->whereIn($k, $entries);
                     }
 
-                } elseif ($w == 'onlyTrashed') {
+                } else if ($w == 'onlyTrashed') {
 
                     if (!$entities) {
                         $entities = $model::onlyTrashed();
@@ -242,7 +242,7 @@ class DataTable implements OutputInterface
                         $entities->onlyTrashed();
                     }
 
-                } elseif ($w == 'withTrashed') {
+                } else if ($w == 'withTrashed') {
 
                     if (!$entities) {
                         $entities = $model::withTrashed();
@@ -250,7 +250,7 @@ class DataTable implements OutputInterface
                         $entities->withTrashed();
                     }
 
-                } elseif ($parts[0] == 'NOT') {
+                } else if ($parts[0] == 'NOT') {
                     array_shift($parts);
 
                     if (!$entities) {
@@ -259,7 +259,7 @@ class DataTable implements OutputInterface
                         $entities->where($k, '<>', implode(" ", $parts));
                     }
 
-                } elseif ($parts[0] == 'NOTNULL') {
+                } else if ($parts[0] == 'NOTNULL') {
                     array_shift($parts);
 
                     if (!$entities) {
@@ -268,7 +268,7 @@ class DataTable implements OutputInterface
                         $entities->whereNotNull(implode(" ", $parts));
                     }
 
-                } elseif (in_array($parts[0], ['>', '>=', '<', '<=']) && count($parts) > 1) {
+                } else if (in_array($parts[0], ['>', '>=', '<', '<=']) && count($parts) > 1) {
                     if (!$entities) {
                         $entities = $model::where($k, $parts[0], $parts[1]);
                     } else {
@@ -322,7 +322,7 @@ class DataTable implements OutputInterface
                 // Like
                 array_shift($parts);
                 $entities->where($k, 'LIKE', '%' . implode(" ", $parts) . '%');
-            } elseif ($parts[0] == 'IN') {
+            } else if ($parts[0] == 'IN') {
                 // Where In
                 $entries = explode("||", $parts[1]);
 
@@ -332,17 +332,17 @@ class DataTable implements OutputInterface
                     $entities->whereIn($k, $entries);
                 }
 
-            } elseif ($parts[0] == 'onlyTrashed') {
+            } else if ($parts[0] == 'onlyTrashed') {
                 $entities->onlyTrashed();
-            } elseif ($parts[0] == 'withTrashed') {
+            } else if ($parts[0] == 'withTrashed') {
                 $entities->withTrashed();
-            } elseif ($parts[0] == 'NOTNULL') {
+            } else if ($parts[0] == 'NOTNULL') {
                 array_shift($parts);
                 $entities->whereNotNull(implode(" ", $parts));
-            } elseif ($parts[0] == 'NOT') {
+            } else if ($parts[0] == 'NOT') {
                 array_shift($parts);
                 $entities->where($k, '<>', implode(" ", $parts));
-            } elseif (in_array($parts[0], ['>', '>=', '<', '<=']) && count($parts) > 1) {
+            } else if (in_array($parts[0], ['>', '>=', '<', '<=']) && count($parts) > 1) {
                 $entities->where($k, $parts[0], $parts[1]);
             } else {
                 // Normal where
@@ -356,10 +356,10 @@ class DataTable implements OutputInterface
         $filtered = $entities->count();
 
         // Get wanted amount
-        if($length == -1) {
+        if ($length == -1) {
             // -1 -> get all
             // Length can be overridden by $this->max_length
-            if(!empty($this->max_length)) {
+            if (!empty($this->max_length)) {
                 $entities = $entities->skip($start)->take($this->max_length)->get();
             } else {
                 // Get 1.000 entities to prevent a too large set
@@ -379,7 +379,7 @@ class DataTable implements OutputInterface
             'draw' => $draw,
             'recordsTotal' => $total,
             'recordsFiltered' => $filtered,
-            'data' => $e_data
+            'data' => $e_data,
         ];
     }
 

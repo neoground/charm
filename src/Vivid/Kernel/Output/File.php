@@ -77,20 +77,20 @@ class File implements OutputInterface
         C::Event()->fire('File', 'renderStart');
 
         // Send content type
-        if(empty($this->contenttype)) {
+        if (empty($this->contenttype)) {
             // Auto set content type based on file extension
             $this->autoContentType();
         }
 
         // Filename
-        if(empty($this->filename)) {
+        if (empty($this->filename)) {
             $this->filename = basename($this->path);
         }
 
         $this->setGeneralHeaders();
 
         // Return content if set
-        if(!empty($this->content)) {
+        if (!empty($this->content)) {
             header("Content-Length: " . mb_strlen($this->content, '8bit'));
             return $this->content;
         }
@@ -116,15 +116,15 @@ class File implements OutputInterface
      */
     private function streamFile(): bool
     {
-        $chunk_size = 1024*1024;
+        $chunk_size = 1024 * 1024;
         $i = $this->start;
-        while(!feof($this->stream) && $i <= $this->end) {
-            if(connection_aborted()) {
+        while (!feof($this->stream) && $i <= $this->end) {
+            if (connection_aborted()) {
                 // Aborted -> stop!
                 return false;
             }
             $bytesToRead = $chunk_size;
-            if(($i+$bytesToRead) > $this->end) {
+            if (($i + $bytesToRead) > $this->end) {
                 $bytesToRead = $this->end - $i + 1;
             }
             $data = fread($this->stream, $bytesToRead);
@@ -145,7 +145,7 @@ class File implements OutputInterface
     {
         header("Content-Type: " . $this->contenttype);
         $dispo = $this->disposition;
-        if(empty($dispo)) {
+        if (empty($dispo)) {
             $dispo = 'attachment';
         }
 
@@ -160,15 +160,15 @@ class File implements OutputInterface
     private function setHeadersSeekFile()
     {
         $start = 0;
-        $size  = filesize($this->path);
-        $end   = $size - 1;
+        $size = filesize($this->path);
+        $end = $size - 1;
 
-        header("Accept-Ranges: 0-".$end);
-        header("Last-Modified: ".gmdate('D, d M Y H:i:s', @filemtime($this->path)) . ' GMT' );
+        header("Accept-Ranges: 0-" . $end);
+        header("Last-Modified: " . gmdate('D, d M Y H:i:s', @filemtime($this->path)) . ' GMT');
 
-        if(!empty($this->expires_in)) {
+        if (!empty($this->expires_in)) {
             header("Cache-Control: max-age=" . $this->expires_in . ", public");
-            header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + $this->expires_in));
+            header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + $this->expires_in));
         }
 
         // Seek file if wanted and content present as file
@@ -183,7 +183,7 @@ class File implements OutputInterface
             }
             if ($range == '-') {
                 $c_start = $size - substr($range, 1);
-            }else{
+            } else {
                 $range = explode('-', $range);
                 $c_start = $range[0];
 
@@ -200,10 +200,10 @@ class File implements OutputInterface
             $length = $this->end - $this->start + 1;
             fseek($this->stream, $this->start);
             header('HTTP/1.1 206 Partial Content');
-            header("Content-Length: ".$length);
-            header("Content-Range: bytes $this->start-$this->end/".$size);
+            header("Content-Length: " . $length);
+            header("Content-Range: bytes $this->start-$this->end/" . $size);
         } else {
-            header("Content-Length: ".$size);
+            header("Content-Length: " . $size);
             $this->start = $start;
             $this->end = $end;
         }
@@ -214,13 +214,14 @@ class File implements OutputInterface
      *
      * @return self
      */
-    public function autoContentType() {
+    public function autoContentType()
+    {
         $ct = 'application/octet-stream';
 
         // Find mime type
-        if(!empty($this->path)) {
+        if (!empty($this->path)) {
             $mime_type = mime_content_type($this->path);
-            if($mime_type !== false) {
+            if ($mime_type !== false) {
                 $ct = $mime_type;
             }
         }

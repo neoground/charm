@@ -12,8 +12,10 @@ namespace Charm\Vivid;
  *
  * Alternative syntax for Charm class calls
  *
- * @see Charm
+ * @see     Charm
  *
  * @package Charm\Vivid
  */
-class C extends Charm { }
+class C extends Charm
+{
+}

@@ -50,7 +50,7 @@ class Filter implements RouterElement
      * Add element to router
      *
      * @param \Phroute\Phroute\RouteCollector $router
-     * @param array $routes data of all routes
+     * @param array                           $routes data of all routes
      *
      * @return bool
      */
@@ -69,14 +69,14 @@ class Filter implements RouterElement
     {
         $cb = $this->callback;
 
-        if($cb instanceof \Closure) {
+        if ($cb instanceof \Closure) {
             $s = new SerializableClosure($cb);
             $cb = $s->serialize();
         }
 
         return serialize([
             'name' => $this->name,
-            'callback' => $cb
+            'callback' => $cb,
         ]);
     }
 
@@ -85,7 +85,7 @@ class Filter implements RouterElement
      *
      * Unserialize closure
      *
-     * @param mixed  $data
+     * @param mixed $data
      */
     public function unserialize($data)
     {
@@ -93,7 +93,7 @@ class Filter implements RouterElement
 
         $this->name = $us['name'];
 
-        if(!is_serialized($us['callback'])) {
+        if (!is_serialized($us['callback'])) {
             $this->callback = $us['callback'];
         } else {
             try {

@@ -5,11 +5,11 @@
 
 use Charm\Vivid\C;
 
-if(!defined('DS')) {
+if (!defined('DS')) {
     define('DS', DIRECTORY_SEPARATOR);
 }
 
-if(!function_exists('cPath')) {
+if (!function_exists('cPath')) {
 
     /**
      * Get the path to a project directory
@@ -25,12 +25,12 @@ if(!function_exists('cPath')) {
         $path = null;
 
         // Use script filename path by default
-        if(array_key_exists('SCRIPT_FILENAME', $_SERVER)) {
+        if (array_key_exists('SCRIPT_FILENAME', $_SERVER)) {
             $path = dirname($_SERVER['SCRIPT_FILENAME']);
         }
 
         // If you use command line the path can be relative. We need an absolute path!
-        if(defined('CLI_PATH')) {
+        if (defined('CLI_PATH')) {
             // Get absolute path provided by argv
             $path = dirname(realpath(CLI_PATH));
         }
@@ -42,7 +42,7 @@ if(!function_exists('cPath')) {
     }
 }
 
-if(!function_exists('cBaseUrl')) {
+if (!function_exists('cBaseUrl')) {
 
     /**
      * Get the base URL for URL generation.
@@ -66,7 +66,7 @@ if(!function_exists('cBaseUrl')) {
 
 }
 
-if(!function_exists('cCurrentUrl')) {
+if (!function_exists('cCurrentUrl')) {
 
     /**
      * Get the current URL

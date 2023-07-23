@@ -41,8 +41,8 @@ class Redirect implements OutputInterface
     /**
      * Output factory
      *
-     * @param null   $val   (optional) redirect destination
-     * @param array  $args  (optional) arguments for route building
+     * @param null  $val  (optional) redirect destination
+     * @param array $args (optional) arguments for route building
      *
      * @return self
      */
@@ -50,7 +50,7 @@ class Redirect implements OutputInterface
     {
         $x = new self;
 
-        if(!empty($val)) {
+        if (!empty($val)) {
             $x->withDestination($val, $args);
         }
 
@@ -82,14 +82,14 @@ class Redirect implements OutputInterface
     /**
      * Add the destination route / URL
      *
-     * @param string        $val
-     * @param array|string  $args  (optional) arguments for route building
+     * @param string       $val
+     * @param array|string $args (optional) arguments for route building
      *
      * @return self
      */
     public function withDestination($val, $args = [])
     {
-        if(str_contains($val, '://')) {
+        if (str_contains($val, '://')) {
             // Got URL
             $this->destination = $val;
         } else {
@@ -143,8 +143,8 @@ class Redirect implements OutputInterface
     /**
      * Redirect to a specific route / url
      *
-     * @param string         $destination  redirect destination (route / URL)
-     * @param array|string   $args         (optional) arguments for route building
+     * @param string       $destination redirect destination (route / URL)
+     * @param array|string $args        (optional) arguments for route building
      *
      * @return self
      */

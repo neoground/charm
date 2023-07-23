@@ -141,7 +141,7 @@ class Group implements RouterElement
      */
     public function beforeFilters($filters)
     {
-        if(!is_array($filters)) {
+        if (!is_array($filters)) {
             $filters = [$filters];
         }
 
@@ -158,7 +158,7 @@ class Group implements RouterElement
      */
     public function afterFilters($filters)
     {
-        if(!is_array($filters)) {
+        if (!is_array($filters)) {
             $filters = [$filters];
         }
 
@@ -192,7 +192,7 @@ class Group implements RouterElement
         $this->routes = [];
         $this->groups = [];
 
-        if(!$inside_group) {
+        if (!$inside_group) {
             C::AppStorage()->append('Routes', 'Groups', $this);
         }
     }
@@ -215,7 +215,7 @@ class Group implements RouterElement
      * Add element to router
      *
      * @param \Phroute\Phroute\RouteCollector $router
-     * @param array $routes data of all routes
+     * @param array                           $routes data of all routes
      *
      * @return bool
      *
@@ -227,7 +227,7 @@ class Group implements RouterElement
         // Only routes and routes of sub-groups.
 
         // Go through all sub-routes, prepend name + url, add them
-        foreach($this->routes as $route) {
+        foreach ($this->routes as $route) {
             $route->prependUrl($this->url);
             $route->prependName($this->name);
             $route->setFilters($this->filters);
@@ -235,7 +235,7 @@ class Group implements RouterElement
         }
 
         // Go through all sub-groups, prepend name + url, add them
-        foreach($this->groups as $group) {
+        foreach ($this->groups as $group) {
             $group->prependUrl($this->url);
             $group->prependName($this->name);
             $group->setFilters($this->filters);

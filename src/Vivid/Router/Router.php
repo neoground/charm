@@ -90,26 +90,26 @@ class Router extends Module implements ModuleInterface
      * Add attribute routes if existing
      *
      * @param Collector $router
-     * @param array $routes
+     * @param array     $routes
      */
     private function addAttributeRoutesToRouter($router, &$routes)
     {
         $attribute_routes = C::AppStorage()->get('Routes', 'AttributeRoutes');
-        if(is_array($attribute_routes)) {
+        if (is_array($attribute_routes)) {
             /** @var Route $attr_route */
-            foreach($attribute_routes as $attr_route) {
+            foreach ($attribute_routes as $attr_route) {
 
                 $method = $attr_route->method;
                 $url = $attr_route->url;
                 $name = $attr_route->name;
 
                 $filter_before = $attr_route->filter_before;
-                if(!is_array($filter_before)) {
+                if (!is_array($filter_before)) {
                     $filter_before = [$filter_before];
                 }
 
                 $filter_after = $attr_route->filter_after;
-                if(!is_array($filter_after)) {
+                if (!is_array($filter_after)) {
                     $filter_after = [$filter_after];
                 }
 
@@ -157,10 +157,10 @@ class Router extends Module implements ModuleInterface
                     }
 
                     // PHP8 Attribute routes
-                    if(version_compare(phpversion(), '8.0', '>=')) {
+                    if (version_compare(phpversion(), '8.0', '>=')) {
                         $dir = $mod->getBaseDirectory() . DS . 'Controllers';
 
-                        if(file_exists($dir)) {
+                        if (file_exists($dir)) {
                             $attribute_routes = $this->findAndAddAttributeRoutes($dir, $mod, $attribute_routes);
                         }
                     }
@@ -170,7 +170,7 @@ class Router extends Module implements ModuleInterface
             }
         }
 
-        if(count($attribute_routes) > 0) {
+        if (count($attribute_routes) > 0) {
             C::AppStorage()->set('Routes', 'AttributeRoutes', $attribute_routes);
         }
     }
@@ -180,7 +180,7 @@ class Router extends Module implements ModuleInterface
      *
      * @param string $dir
      * @param Module $mod
-     * @param array $attribute_routes
+     * @param array  $attribute_routes
      *
      * @return mixed
      * @throws \ReflectionException
@@ -189,7 +189,7 @@ class Router extends Module implements ModuleInterface
     {
         foreach (C::Storage()->scanDir($dir) as $file) {
 
-            if(is_dir($dir . DS . $file)) {
+            if (is_dir($dir . DS . $file)) {
                 // Check sub dir for files
                 $attribute_routes = $this->findAndAddAttributeRoutes($dir . DS . $file, $mod, $attribute_routes);
             } else {
@@ -204,7 +204,7 @@ class Router extends Module implements ModuleInterface
 
                 $class = $refobject->getNamespaceName() . $classname;
 
-                if(class_exists($class)) {
+                if (class_exists($class)) {
                     $reflection = new \ReflectionClass($class);
 
                     foreach ($reflection->getMethods() as $method) {
@@ -236,14 +236,15 @@ class Router extends Module implements ModuleInterface
      *
      * TODO: Add support for controller + method name instead of route name
      *
-     * @param string $name name of route or absolute url
-     * @param array|string $args (optional) array with values for all variables in route or single string for single value
+     * @param string       $name name of route or absolute url
+     * @param array|string $args (optional) array with values for all variables in route or single string for single
+     *                           value
      *
      * @return string empty string if no route name was given
      */
     public function getUrl(string $name, array|string|null $args = []): string
     {
-        if(empty($name)) {
+        if (empty($name)) {
             return '';
         }
 
@@ -266,7 +267,7 @@ class Router extends Module implements ModuleInterface
 
         // Allow non array args if only one parameter
         if (!is_array($args)) {
-            if(empty($args)) {
+            if (empty($args)) {
                 $args = [];
             } else {
                 $args = [$args];
@@ -282,19 +283,19 @@ class Router extends Module implements ModuleInterface
      *
      * This will return a string like ?foo=bar&a=b
      *
-     * @param array $params           an array with all parameters
+     * @param array $params    an array with all parameters
      * @param bool  $add_empty (opt.) also add parameter if value is empty? Default: false
      *
      * @return string
      */
-    public function buildGetParameters(array $params, bool $add_empty = false) : string
+    public function buildGetParameters(array $params, bool $add_empty = false): string
     {
         $str = '';
 
-        foreach($params as $k => $v) {
+        foreach ($params as $k => $v) {
 
-            if(!$add_empty) {
-                if(!empty($v)) {
+            if (!$add_empty) {
+                if (!empty($v)) {
                     $str .= '&' . $k . '=' . $v;
                 }
             } else {
@@ -315,7 +316,7 @@ class Router extends Module implements ModuleInterface
      *
      * @return bool
      */
-    public function hasRoute(string $name) : bool
+    public function hasRoute(string $name): bool
     {
         return $this->route->hasRoute($name);
     }
@@ -328,7 +329,7 @@ class Router extends Module implements ModuleInterface
      *
      * @return string
      */
-    public function getRelativeUrl() : string
+    public function getRelativeUrl(): string
     {
         $path_info = pathinfo($_SERVER['PHP_SELF']);
         return rtrim($path_info['dirname'], '/');
@@ -339,9 +340,9 @@ class Router extends Module implements ModuleInterface
      *
      * @return string
      */
-    public function getBaseUrl() : string
+    public function getBaseUrl(): string
     {
-        if(array_key_exists('HTTP_HOST', $_SERVER)) {
+        if (array_key_exists('HTTP_HOST', $_SERVER)) {
             $protocol = C::Request()->isHttpsRequest() ? 'https://' : 'http://';
             return rtrim($protocol . $_SERVER['HTTP_HOST'] . $this->getRelativeUrl(), '/');
         }
@@ -355,7 +356,7 @@ class Router extends Module implements ModuleInterface
      *
      * @return string
      */
-    public function getAssetsUrl() : string
+    public function getAssetsUrl(): string
     {
         return $this->getBaseUrl() . '/assets';
     }
@@ -365,7 +366,7 @@ class Router extends Module implements ModuleInterface
      *
      * @return string
      */
-    public function getCurrentUrl() : string
+    public function getCurrentUrl(): string
     {
         $protocol = C::Request()->isHttpsRequest() ? 'https://' : 'http://';
         return $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
@@ -384,7 +385,7 @@ class Router extends Module implements ModuleInterface
      *
      * @return array|bool array with data or false/null if not found
      */
-    public function getCurrentRouteData() : mixed
+    public function getCurrentRouteData(): mixed
     {
         return C::AppStorage()->get('Routes', 'CurrentRoute');
     }
@@ -400,7 +401,7 @@ class Router extends Module implements ModuleInterface
         $relative_url = str_replace(
             $this->getRelativeUrl(),
             '',
-            (string) parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)
+            (string)parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)
         );
 
         // Get route data from cache
@@ -433,7 +434,7 @@ class Router extends Module implements ModuleInterface
     /**
      * Construct a URL
      *
-     * @param string $url the input URL, can include query parameters and more
+     * @param string $url    the input URL, can include query parameters and more
      * @param array  $params an array with query parameters to add (key => value), will override existing ones
      *                       and append new ones
      *

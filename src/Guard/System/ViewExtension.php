@@ -5,13 +5,7 @@
 
 namespace Charm\Guard\System;
 
-use App\Models\File;
-use App\Models\Note;
-use App\Models\Notification;
-use App\Models\Setting;
-use Carbon\Carbon;
 use Charm\Vivid\C;
-use Charm\Vivid\Kernel\Handler;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -42,7 +36,7 @@ class ViewExtension extends AbstractExtension
             'getTests',
             'getFunctions',
             'getOperators',
-            'getAdminMenu'
+            'getAdminMenu',
         ];
 
         $arr = [];

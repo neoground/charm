@@ -18,7 +18,7 @@ interface RouterElement
      * Add element to router
      *
      * @param \Phroute\Phroute\RouteCollector $router
-     * @param array $routes data of all routes
+     * @param array                           $routes data of all routes
      *
      * @return bool
      */

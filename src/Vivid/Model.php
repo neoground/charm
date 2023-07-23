@@ -68,8 +68,8 @@ class Model extends \Illuminate\Database\Eloquent\Model
     /**
      * Normal self::find($id) function, but with integrated cache!
      *
-     * @param int  $id       id of entity
-     * @param int  $minutes  minutes after cache expires
+     * @param int $id      id of entity
+     * @param int $minutes minutes after cache expires
      *
      * @return mixed
      */
@@ -78,9 +78,9 @@ class Model extends \Illuminate\Database\Eloquent\Model
         $classname = str_replace("\\", ":", get_called_class());
         $key = "Model:" . $classname . ':' . $id;
 
-        if(C::has('Cache')) {
+        if (C::has('Cache')) {
             // Get from cache
-            if(C::Cache()->has($key)) {
+            if (C::Cache()->has($key)) {
                 return C::Cache()->get($key);
             }
 
@@ -134,7 +134,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
         $this->afterSave();
 
         // Update this instance. Flush cache
-        if(C::has('Cache')
+        if (C::has('Cache')
             && C::Config()->get('connections:database.caching', true)
             && $this->caching) {
 
@@ -156,9 +156,9 @@ class Model extends \Illuminate\Database\Eloquent\Model
     private function setByFields()
     {
         // Add created_by / updated_by only if guard is enabled
-        if(C::has('Guard') && $this->set_by) {
+        if (C::has('Guard') && $this->set_by) {
 
-            if($this->exists) {
+            if ($this->exists) {
                 // Updating
                 if (Capsule::schema()->hasColumn($this->table, 'updated_by')) {
                     $this->updated_by = C::Guard()->getUserId();
@@ -204,14 +204,14 @@ class Model extends \Illuminate\Database\Eloquent\Model
         $x = self::where($model->getKeyName(), '>', 0);
 
         // Add soft delete filters
-        if(C::Request()->has('trashed') && C::Request()->get('trashed')) {
+        if (C::Request()->has('trashed') && C::Request()->get('trashed')) {
             $x->withTrashed();
         }
-        if(C::Request()->has('onlytrashed') && C::Request()->get('onlytrashed')) {
+        if (C::Request()->has('onlytrashed') && C::Request()->get('onlytrashed')) {
             $x->onlyTrashed();
         }
 
-        if(property_exists($model, 'filter_attributes')) {
+        if (property_exists($model, 'filter_attributes')) {
             // Go through all set filter attributes
             foreach ($model->filter_attributes as $k => $v) {
 
@@ -230,7 +230,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
                 }
 
                 // Remove "id-" prefix from id fields
-                if(str_contains($k, '_id')) {
+                if (str_contains($k, '_id')) {
                     $val = str_replace("id-", "", $val);
                 }
 
@@ -254,10 +254,10 @@ class Model extends \Illuminate\Database\Eloquent\Model
                             if (!empty($val1) && !empty($val2)) {
                                 $x->whereBetween($k, [$val1, $val2]);
                             }
-                            if(!empty($val1) && empty($val2)) {
+                            if (!empty($val1) && empty($val2)) {
                                 // Only "from" value
                                 $x->where($k, ">=", $val1);
-                            } elseif(empty($val1) && !empty($val2)) {
+                            } else if (empty($val1) && !empty($val2)) {
                                 // Only "to" value
                                 $x->where($k, "<=", $val2);
                             }
@@ -274,10 +274,10 @@ class Model extends \Illuminate\Database\Eloquent\Model
 
         // Add search query
         $query = C::Request()->get('query', false);
-        if(!empty($query) && property_exists($model, 'search_attributes')) {
+        if (!empty($query) && property_exists($model, 'search_attributes')) {
             $search_att = $model->search_attributes;
-            $x->where(function($q) use ($search_att, $query) {
-                foreach($search_att as $val) {
+            $x->where(function ($q) use ($search_att, $query) {
+                foreach ($search_att as $val) {
                     $q->orWhere($val, 'LIKE', '%' . $query . '%');
                 }
             });
@@ -309,36 +309,36 @@ class Model extends \Illuminate\Database\Eloquent\Model
     public static function getPaginatedData(Builder $x): array
     {
         // Pagination
-        $page = (int) C::Request()->get('page', 1);
-        $amount = (int) C::Request()->get('amount', 25);
+        $page = (int)C::Request()->get('page', 1);
+        $amount = (int)C::Request()->get('amount', 25);
         $skip = ($page - 1) * $amount;
 
         // Prevent fetching too much data
-        if($amount > 1000) {
+        if ($amount > 1000) {
             $amount = 1000;
         }
 
         // Add order by
         $order_by = C::Request()->get('order_by');
         $order_dir = C::Request()->get('order_dir');
-        if(!empty($order_by)) {
+        if (!empty($order_by)) {
             // Support for multiple orders
             $parts = explode(";", $order_by);
-            foreach($parts as $part) {
+            foreach ($parts as $part) {
                 $order_by = $part;
-                if(str_contains($order_by, "_ASC")) {
+                if (str_contains($order_by, "_ASC")) {
                     $order_dir = 'ASC';
                     $order_by = str_replace("_ASC", "", $order_by);
-                } elseif(str_contains($order_by, "_DESC")) {
+                } else if (str_contains($order_by, "_DESC")) {
                     $order_dir = 'DESC';
                     $order_by = str_replace("_DESC", "", $order_by);
                 }
 
-                if(strtoupper($order_dir) !== "ASC") {
+                if (strtoupper($order_dir) !== "ASC") {
                     $order_dir = 'DESC';
                 }
 
-                if($order_by == 'random') {
+                if ($order_by == 'random') {
                     $x = $x->inRandomOrder();
                 } else {
                     $x = $x->orderBy($order_by, $order_dir);
@@ -353,10 +353,10 @@ class Model extends \Illuminate\Database\Eloquent\Model
 
         // Format results and build pagination array
         $results = [];
-        foreach($x as $entry) {
-            if(method_exists($entry, 'formatToArray')) {
+        foreach ($x as $entry) {
+            if (method_exists($entry, 'formatToArray')) {
                 $results[] = $entry->formatToArray();
-            } elseif(method_exists($entry, 'formatAsArray')) {
+            } else if (method_exists($entry, 'formatAsArray')) {
                 $results[] = $entry->formatAsArray();
             } else {
                 $results[] = $entry->toArray();
@@ -368,8 +368,8 @@ class Model extends \Illuminate\Database\Eloquent\Model
         $current_url = C::Router()->getCurrentUrl();
 
         $page_string = "page=" . $page;
-        if(!str_contains($current_url, '&page=') && !str_contains($current_url, '?page=')) {
-            if(str_contains($current_url, '?')) {
+        if (!str_contains($current_url, '&page=') && !str_contains($current_url, '?page=')) {
+            if (str_contains($current_url, '?')) {
                 $current_url .= '&' . $page_string;
             } else {
                 $current_url .= '?' . $page_string;
@@ -381,10 +381,10 @@ class Model extends \Illuminate\Database\Eloquent\Model
         $first_page_url = str_replace($page_string, "page=1", $current_url);
         $last_page_url = str_replace($page_string, "page=" . $last_page, $current_url);
 
-        if($page > 1) {
+        if ($page > 1) {
             $prev_page_url = str_replace($page_string, "page=" . ($page - 1), $current_url);
         }
-        if($page + 1 <= $last_page) {
+        if ($page + 1 <= $last_page) {
             $next_page_url = str_replace($page_string, "page=" . ($page + 1), $current_url);
         }
 
@@ -398,7 +398,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
             'next_page_url' => $next_page_url,
             'prev_page_url' => $prev_page_url,
             'custom_page_url' => $prev_page_url,
-            'data' => $results
+            'data' => $results,
         ];
     }
 
@@ -429,7 +429,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
      */
     public static function backup(string|null $destination = null)
     {
-        if(empty($destination)) {
+        if (empty($destination)) {
             $self = new static();
             $filename = Carbon::now()->format('Y-m-d_H-i-s') . '_' . $self->table . '.bak';
             $dir = C::Storage()->getVarPath() . DS . 'backup' . DS . 'models';
@@ -451,15 +451,15 @@ class Model extends \Illuminate\Database\Eloquent\Model
      */
     public static function availableBackups($dir = null)
     {
-        if(empty($dir)) {
+        if (empty($dir)) {
             $dir = C::Storage()->getVarPath() . DS . 'backup' . DS . 'models';
         }
 
         $self = new static();
 
         $bakfiles = [];
-        foreach(C::Storage()->scanDir($dir, 1) as $bakfile) {
-            if(str_contains($bakfile, '_' . $self->table . '.bak')) {
+        foreach (C::Storage()->scanDir($dir, 1) as $bakfile) {
+            if (str_contains($bakfile, '_' . $self->table . '.bak')) {
                 $bakfiles[] = $dir . DS . $bakfile;
             }
         }
@@ -474,23 +474,23 @@ class Model extends \Illuminate\Database\Eloquent\Model
      */
     public static function restoreBackup(string $filename = 'latest')
     {
-        if($filename == 'latest') {
+        if ($filename == 'latest') {
             $available = static::availableBackups();
-            if(count($available) == 0) {
+            if (count($available) == 0) {
                 return false;
             }
 
             $filename = array_shift($available);
         }
 
-        if(!file_exists($filename)) {
+        if (!file_exists($filename)) {
             return false;
         }
 
         $collection = unserialize(file_get_contents($filename));
 
         // Insert all entries
-        foreach($collection as $entity) {
+        foreach ($collection as $entity) {
             $entity->save();
         }
 
@@ -506,41 +506,43 @@ class Model extends \Illuminate\Database\Eloquent\Model
      *
      * Model will persist, no need to save manually.
      *
-     * @param mixed|null $search_fields array of fields to match for entity (see eloquent's updateOrCreate) or id value or null for id request field
-     * @param mixed|null $update_values array with table field names as key and new value as value or null to use "update_fields" array in class
+     * @param mixed|null $search_fields array of fields to match for entity (see eloquent's updateOrCreate) or id value
+     *                                  or null for id request field
+     * @param mixed|null $update_values array with table field names as key and new value as value or null to use
+     *                                  "update_fields" array in class
      *
      * @return mixed the object of the entity, returns value of eloquent's updateOrCreate
      */
     public static function addOrUpdate(mixed $search_fields = null, $update_values = null)
     {
         $x = new static();
-        if(!$update_values) {
+        if (!$update_values) {
             $update_values = C::Request()->getMultiple($x->update_fields);
         }
 
-        if(!is_array($search_fields)) {
-            if(is_numeric($search_fields)) {
+        if (!is_array($search_fields)) {
+            if (is_numeric($search_fields)) {
                 $id = $search_fields;
             } else {
                 $id = C::Request()->get('id');
             }
 
             $id = str_replace("id-", "", $id);
-            if(empty($id)) {
+            if (empty($id)) {
                 $id = null;
             }
 
             $search_fields = [
-                'id' => $id
+                'id' => $id,
             ];
         }
 
         // Remove "id-" from values of id fields, might be prepended for better sorting
-        foreach($update_values as $k => $v) {
-            if(str_contains($k, '_id')) {
+        foreach ($update_values as $k => $v) {
+            if (str_contains($k, '_id')) {
                 $val = str_replace("id-", "", $v);
 
-                if(empty($val)) {
+                if (empty($val)) {
                     $val = null;
                 }
 
@@ -558,9 +560,9 @@ class Model extends \Illuminate\Database\Eloquent\Model
      *
      * @return array
      */
-    public function arr() : array
+    public function arr(): array
     {
-        if(method_exists($this, 'formatToArray')) {
+        if (method_exists($this, 'formatToArray')) {
             return $this->formatToArray();
         }
 

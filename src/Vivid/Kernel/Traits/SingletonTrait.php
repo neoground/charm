@@ -40,11 +40,15 @@ trait SingletonTrait
     /**
      * Class init (like constructor)
      */
-    protected function init() {}
+    protected function init()
+    {
+    }
 
     /**
      * No cloning because of singleton
      */
-    private function __clone() {}
+    private function __clone()
+    {
+    }
 
 }

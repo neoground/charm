@@ -95,7 +95,7 @@ class Handler
                 'Session',
                 '\\Charm\\Guard\\Token',
                 '\\Charm\\Guard\\Guard',
-                '\\Charm\\DebugBar\\DebugBar'
+                '\\Charm\\DebugBar\\DebugBar',
             ];
         }
 
@@ -130,7 +130,7 @@ class Handler
         $this->callPostInitHooks();
 
         // Save measurements
-        if(C::Config()->inDebugMode()) {
+        if (C::Config()->inDebugMode()) {
             C::AppStorage()->set('Charm', 'time_start', $start_time);
             C::AppStorage()->set('Charm', 'time_init', $init_time);
             C::AppStorage()->set('Charm', 'time_routing', $routing_time);
@@ -148,13 +148,13 @@ class Handler
      */
     private function callPostInitHooks(): void
     {
-        foreach($this->getModuleClasses() as $name => $class) {
+        foreach ($this->getModuleClasses() as $name => $class) {
             try {
                 $mod = $this->getModule($name);
                 if (is_object($mod) && method_exists($mod, 'postInit')) {
                     $mod->postInit();
                 }
-            } catch(ModuleNotFoundException $e) {
+            } catch (ModuleNotFoundException $e) {
                 // Module not found -> ignore.
             }
         }
@@ -195,14 +195,14 @@ class Handler
         $app = new Application('C::BOB', C::VERSION);
 
         // Add commands from all modules (including the app itself)
-        foreach($this->getModuleClasses() as $name => $module) {
+        foreach ($this->getModuleClasses() as $name => $module) {
             try {
                 $mod = $this->getModule($name);
-                if(is_object($mod) && method_exists($mod, 'getReflectionClass')) {
+                if (is_object($mod) && method_exists($mod, 'getReflectionClass')) {
                     $dir = $mod->getBaseDirectory() . DS . 'Jobs' . DS . 'Console';
                     $namespace = $mod->getReflectionClass()->getNamespaceName() . "\\Jobs\\Console";
 
-                    if(file_exists($dir)) {
+                    if (file_exists($dir)) {
                         $this->addConsoleCommands($app, $dir, $namespace);
                     }
                 }
@@ -239,7 +239,7 @@ class Handler
             $fullpath = $dir . DS . $file;
 
             // Process subdirs
-            if(is_dir($fullpath)) {
+            if (is_dir($fullpath)) {
                 $this->addConsoleCommands($app, $fullpath, $namespace . "\\" . $file);
                 continue;
             }
@@ -426,7 +426,7 @@ class Handler
             $response = $this->getModule('Router')->dispatch();
 
             // Time measurement
-            if(C::Config()->inDebugMode()) {
+            if (C::Config()->inDebugMode()) {
                 C::AppStorage()->set('Charm', 'time_controller', microtime(true));
             }
 
@@ -454,7 +454,7 @@ class Handler
         }
 
         // Set current page as last for easier redirecting
-        if(C::has('Session')) {
+        if (C::has('Session')) {
             C::Session()->set('charm_forelast_page', C::Session()->get('charm_last_page'));
             C::Session()->set('charm_last_page', C::Router()->getCurrentUrl());
         }
@@ -464,18 +464,18 @@ class Handler
             // Render, but only output if we got any
             // (to prevent problems with non-standard output like file streams)
             $render_output = $response->render();
-            if(!empty($render_output)) {
+            if (!empty($render_output)) {
                 echo $render_output;
             }
             return true;
         } catch (Exception $e) {
             // Pretty exception for twig views
-            if($this->shouldOutputException() && $e instanceof Error) {
+            if ($this->shouldOutputException() && $e instanceof Error) {
                 throw new ViewException($e->getFile(), $e->getLine(), $e->getMessage());
             }
 
             // Handling of firstOrFail() / findOrFail()
-            if($e instanceof ModelNotFoundException) {
+            if ($e instanceof ModelNotFoundException) {
                 return $this->outputError($e->getMessage(), 404);
             }
 
@@ -513,13 +513,13 @@ class Handler
      */
     private function outputError(string $msg, int $statuscode = 500): bool
     {
-        if( $this->shouldOutputException() ) {
+        if ($this->shouldOutputException()) {
             throw new OutputException($msg);
         }
 
         // Output JSON for API
         $error_style = $this->getModule('Config')->get('main:output.error_style', 'default');
-        if($this->getModule('Request')->accepts('json') || $error_style == 'json') {
+        if ($this->getModule('Request')->accepts('json') || $error_style == 'json') {
             $output = Json::makeErrorMessage($msg, $statuscode);
             echo $output->render();
 
@@ -530,7 +530,7 @@ class Handler
         $tpl = $this->getModule('Config')->get('main:output.error_view', 'error');
         $view = View::make($tpl, $statuscode)->with([
             'error_message' => $msg,
-            'statuscode' => $statuscode
+            'statuscode' => $statuscode,
         ]);
 
         echo $view->render();
@@ -543,7 +543,7 @@ class Handler
     #[NoReturn] public function shutdown(): void
     {
         // Fire shutdown event
-        if(C::has('Event')) {
+        if (C::has('Event')) {
             C::Event()->fire('Charm', 'shutdown');
         }
 

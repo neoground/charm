@@ -3,7 +3,7 @@
  * This file contains charm's helper functions for string, arrays and so on
  */
 
-if(!function_exists('is_json')) {
+if (!function_exists('is_json')) {
 
     /**
      * Check if a string is valid json
@@ -12,9 +12,9 @@ if(!function_exists('is_json')) {
      *
      * @return bool
      */
-    function is_json($string) : bool
+    function is_json($string): bool
     {
-        if(is_array($string)) {
+        if (is_array($string)) {
             return false;
         }
 
@@ -25,7 +25,7 @@ if(!function_exists('is_json')) {
 }
 
 
-if(!function_exists('is_serialized')) {
+if (!function_exists('is_serialized')) {
 
     /**
      * Check if a string is serialized
@@ -34,13 +34,13 @@ if(!function_exists('is_serialized')) {
      *
      * @return bool
      */
-    function is_serialized($string) : bool
+    function is_serialized($string): bool
     {
         return (@unserialize($string) !== false);
     }
 }
 
-if(!function_exists('ddd') && class_exists("\\Kint")) {
+if (!function_exists('ddd') && class_exists("\\Kint")) {
 
     /**
      * Dump and die
@@ -50,13 +50,13 @@ if(!function_exists('ddd') && class_exists("\\Kint")) {
     function ddd(...$vars)
     {
         // Handling of query debugging
-        foreach($vars as $k => $v) {
-            if($v instanceof \Illuminate\Database\Eloquent\Builder) {
+        foreach ($vars as $k => $v) {
+            if ($v instanceof \Illuminate\Database\Eloquent\Builder) {
                 $vars[$k] = [
                     'query' => $v->toSql(),
                     'bindings' => $v->getBindings(),
                     'explain' => $v->explain(),
-                    'builder' => $v
+                    'builder' => $v,
                 ];
             }
         }
@@ -66,7 +66,7 @@ if(!function_exists('ddd') && class_exists("\\Kint")) {
     }
 }
 
-if(!function_exists('ddb')) {
+if (!function_exists('ddb')) {
 
     /**
      * Dump to DebugBar
@@ -79,7 +79,7 @@ if(!function_exists('ddb')) {
     }
 }
 
-if(!function_exists('to_string')) {
+if (!function_exists('to_string')) {
 
     /**
      * Objects / Array to string
@@ -91,12 +91,12 @@ if(!function_exists('to_string')) {
     function to_string($input)
     {
         // Serialize objects
-        if(is_object($input)) {
+        if (is_object($input)) {
             return serialize($input);
         }
 
         // Array -> JSON
-        if(is_array($input)) {
+        if (is_array($input)) {
             return json_encode($input);
         }
 
@@ -106,7 +106,7 @@ if(!function_exists('to_string')) {
 
 }
 
-if(!function_exists('from_string')) {
+if (!function_exists('from_string')) {
 
     /**
      * String (from to_string) to object / array / string
@@ -118,12 +118,12 @@ if(!function_exists('from_string')) {
     function from_string($input)
     {
         // Serialized -> Object
-        if(is_serialized($input)) {
+        if (is_serialized($input)) {
             return unserialize($input);
         }
 
         // JSON -> Array
-        if(is_json($input)) {
+        if (is_json($input)) {
             return json_decode($input, true);
         }
 
@@ -133,14 +133,14 @@ if(!function_exists('from_string')) {
 
 }
 
-if(!function_exists('is_cli')) {
+if (!function_exists('is_cli')) {
 
     /**
      * Check if script is executed on console (cli)
      *
      * @return bool
      */
-    function is_cli() : bool
+    function is_cli(): bool
     {
         return php_sapi_name() == 'cli';
     }
@@ -156,7 +156,7 @@ if (!function_exists('is_countable')) {
      *
      * @return bool
      */
-    function is_countable($c) : bool
+    function is_countable($c): bool
     {
         return is_array($c) || $c instanceof \Countable;
     }
@@ -169,15 +169,15 @@ if (!function_exists('str_contains_array')) {
      *
      * A combination of str_contains and in_array
      *
-     * @param string $haystack the string which should contain something
-     * @param array|string $needles an array of needles the string should contain
+     * @param string       $haystack the string which should contain something
+     * @param array|string $needles  an array of needles the string should contain
      *
      * @return bool
      */
-    function str_contains_array(string $haystack, array|string $needles) : bool
+    function str_contains_array(string $haystack, array|string $needles): bool
     {
-        if(is_array($needles)) {
-            foreach($needles as $n) {
+        if (is_array($needles)) {
+            foreach ($needles as $n) {
                 if (str_contains($haystack, $n)) {
                     return true;
                 }

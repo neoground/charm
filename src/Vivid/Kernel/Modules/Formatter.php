@@ -57,7 +57,7 @@ class Formatter extends Module implements ModuleInterface
     /**
      * Format a date localized in a short format specified in main.yaml
      *
-     * @param string|Carbon  $data  the date
+     * @param string|Carbon $data the date
      *
      * @return bool|string
      */
@@ -80,7 +80,7 @@ class Formatter extends Module implements ModuleInterface
     /**
      * Format a date with time localized in a short format specified in main.yaml
      *
-     * @param string|Carbon  $data  the date
+     * @param string|Carbon $data the date
      *
      * @return bool|string
      */
@@ -110,15 +110,15 @@ class Formatter extends Module implements ModuleInterface
      *
      * @return string
      */
-    public function formatDateDiff(Carbon|string $date, int $date_after_days = 365) : string
+    public function formatDateDiff(Carbon|string $date, int $date_after_days = 365): string
     {
-        if(!is_object($date)) {
+        if (!is_object($date)) {
             $date = Carbon::parse($date);
         }
 
         $diff = $date->diffInDays();
 
-        if($diff > 365 && $date_after_days != 0) {
+        if ($diff > 365 && $date_after_days != 0) {
             return $this->formatDateShort($date);
         }
 
@@ -128,19 +128,19 @@ class Formatter extends Module implements ModuleInterface
     /**
      * Format a number for displaying
      *
-     * @param numeric      $no        input value
-     * @param int          $decimals  (opt.) the decimals (default: 2)
-     * @param string|null  $decimal   (opt.) decimal separator
-     * @param string|null  $thousands (opt.) thousands separator
+     * @param numeric     $no        input value
+     * @param int         $decimals  (opt.) the decimals (default: 2)
+     * @param string|null $decimal   (opt.) decimal separator
+     * @param string|null $thousands (opt.) thousands separator
      *
      * @return int|string
      */
     public function formatNumber($no, $decimals = 2, $decimal = null, $thousands = null)
     {
-        if($decimal === null) {
+        if ($decimal === null) {
             $decimal = C::Config()->get('main:local.formatting.decimal');
         }
-        if($thousands === null) {
+        if ($thousands === null) {
             $thousands = C::Config()->get('main:local.formatting.thousands');
         }
 
@@ -155,14 +155,14 @@ class Formatter extends Module implements ModuleInterface
      *
      * Code from: http://jeffreysambells.com/2012/10/25/human-readable-filesize-php
      *
-     * @param int  $bytes      input bytes
-     * @param int  $precision  precision of return value
+     * @param int $bytes     input bytes
+     * @param int $precision precision of return value
      *
      * @return string
      */
     public function formatBytes($bytes, $precision = 0)
     {
-        $size = ['B','KB','MB','GB','TB','PB','EB','ZB','YB'];
+        $size = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
         $factor = floor((strlen($bytes) - 1) / 3);
         return sprintf("%.{$precision}f", $bytes / pow(1024, $factor)) . " " . @$size[$factor];
     }
@@ -170,7 +170,7 @@ class Formatter extends Module implements ModuleInterface
     /**
      * Sanitize an e-mail
      *
-     * @param string  $input  the e-mail
+     * @param string $input the e-mail
      *
      * @return string
      */
@@ -204,7 +204,7 @@ class Formatter extends Module implements ModuleInterface
      *
      * @return string
      */
-    public function slugify(string $text) : string
+    public function slugify(string $text): string
     {
         // Lowercase
         $text = strtolower($text);
@@ -263,7 +263,7 @@ class Formatter extends Module implements ModuleInterface
             // Latvian
             'Ā' => 'A', 'Ē' => 'E', 'Ģ' => 'G', 'Ī' => 'i', 'Ķ' => 'k', 'Ļ' => 'L', 'Ņ' => 'N', 'Ū' => 'u',
             'ā' => 'a', 'ē' => 'e', 'ģ' => 'g', 'ī' => 'i', 'ķ' => 'k', 'ļ' => 'l', 'ņ' => 'n',
-            'ū' => 'u'
+            'ū' => 'u',
         ];
 
         str_replace(array_keys($char_map), $char_map, $text);
@@ -272,7 +272,7 @@ class Formatter extends Module implements ModuleInterface
         $text = preg_replace('~[^\pL\d]+~u', '-', $text);
 
         // Transliterate if host supports it
-        if(function_exists('iconv')) {
+        if (function_exists('iconv')) {
             $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
         }
 
@@ -298,11 +298,11 @@ class Formatter extends Module implements ModuleInterface
     {
         $lang = C::Request()->get('charm_lang');
 
-        if(C::has('Session')) {
+        if (C::has('Session')) {
             $lang = C::Session()->get('charm_lang');
         }
 
-        if(empty($lang)) {
+        if (empty($lang)) {
             $lang = C::Config()->get('main:session.default_language', 'en');
         }
         return $lang;
@@ -315,26 +315,26 @@ class Formatter extends Module implements ModuleInterface
      */
     public function setLanguage(string $lang): void
     {
-        if(C::has('Session')) {
+        if (C::has('Session')) {
             C::Session()->set('charm_lang', $lang);
         }
         C::Request()->set('charm_lang', $lang);
     }
 
     /**
-     * Automatically set language based on detection
+     * Automatically set language based on request detection
      */
     public function setAutoLanguage()
     {
         // Not set -> detect and set language
-        if(!C::Session()->has('charm_lang')) {
+        if (!C::Session()->has('charm_lang')) {
             // Default
             $language = C::Config()->get('main:session.default_language', 'en');
 
             $lang_header = C::Request()->getHeader('Accept-Language');
-            if(!empty($lang_header)) {
-                foreach(C::Config()->get('main:session.available_languages', []) as $lang) {
-                    if(str_contains($lang_header, $lang)) {
+            if (!empty($lang_header)) {
+                foreach (C::Config()->get('main:session.available_languages', []) as $lang) {
+                    if (str_contains($lang_header, $lang)) {
                         $language = $lang;
                         break;
                     }
@@ -346,7 +346,7 @@ class Formatter extends Module implements ModuleInterface
 
         // Manual override
         $lang = C::Request()->get('lang');
-        if(!empty($lang) && in_array($lang, C::Config()->get('main:session.available_languages', []))) {
+        if (!empty($lang) && in_array($lang, C::Config()->get('main:session.available_languages', []))) {
             $this->setLanguage($lang);
         }
     }
@@ -364,20 +364,20 @@ class Formatter extends Module implements ModuleInterface
      * The language will be session key 'charm_lang',
      * if not set config main:session.default_language
      *
-     * @param string $key
-     * @param array $vars
-     * @param null|mixed  $default
+     * @param string     $key
+     * @param array      $vars
+     * @param mixed|null $default
      *
      * @return mixed
      */
-    public function translate(string $key, $vars = [], $default = null)
+    public function translate(string $key, array $vars = [], mixed $default = null): mixed
     {
         $text = C::Config()->get(
             'Lang/' . $this->getLanguage() . '/' . $key,
             $default
         );
 
-        if(is_string($text)) {
+        if (is_string($text)) {
             foreach ($vars as $k => $v) {
                 $text = str_replace('{' . strtolower($k) . '}', $v, $text);
             }
@@ -386,7 +386,15 @@ class Formatter extends Module implements ModuleInterface
         return $text;
     }
 
-    public function percentageChange($old_price, $new_price): float|int
+    /**
+     * Get the change between two numbers in percent
+     *
+     * @param numeric $old_price
+     * @param numeric $new_price
+     *
+     * @return float|int
+     */
+    public function percentageChange(float|int|string $old_price, float|int|string $new_price): float|int
     {
         return ($new_price - $old_price) / $old_price * 100;
     }

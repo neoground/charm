@@ -60,7 +60,7 @@ class Charm
      *
      * @throws Exceptions\ModuleNotFoundException
      */
-    public static function get(string $name) : object
+    public static function get(string $name): object
     {
         $handler = Handler::getInstance();
         return $handler->getModule($name);
@@ -95,7 +95,7 @@ class Charm
      *
      * @return self
      */
-    public static function getInstance() : self
+    public static function getInstance(): self
     {
         return new self;
     }
@@ -110,7 +110,7 @@ class Charm
      *
      * @throws Exceptions\ModuleNotFoundException
      */
-    public static function __callStatic($name, $arguments) : object
+    public static function __callStatic($name, $arguments): object
     {
         return self::get($name);
     }
@@ -125,7 +125,7 @@ class Charm
      *
      * @throws Exceptions\ModuleNotFoundException
      */
-    public function __call($name, $arguments) : object
+    public function __call($name, $arguments): object
     {
         return self::get($name);
     }

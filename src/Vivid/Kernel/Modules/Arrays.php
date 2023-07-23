@@ -36,7 +36,7 @@ class Arrays extends Module implements ModuleInterface
     /**
      * Check if array has value by key
      *
-     * @param array $arr input array
+     * @param array  $arr input array
      * @param string $key the key
      *
      * @return bool
@@ -49,8 +49,8 @@ class Arrays extends Module implements ModuleInterface
     /**
      * Get specific value from array
      *
-     * @param array $arr input array
-     * @param string $key the key
+     * @param array       $arr     input array
+     * @param string      $key     the key
      * @param null|string $default (optional) default value
      *
      * @return mixed
