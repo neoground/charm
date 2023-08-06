@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Improved security of DebugBar
 - Formatter()->translate(...) now returns mixed data, including arrays
+- Router()->getCurrentUrl($with_query_params) now has an optional parameter to decide if you want
+  the current URL with or without the query parameters
 
 ### Fixed
 - Small bug fixes due to wrong return types

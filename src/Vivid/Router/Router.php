@@ -364,13 +364,25 @@ class Router extends Module implements ModuleInterface
     /**
      * Get the current full url
      *
+     * @param bool $includeParams include all query params in the URL?
+     *
      * @return string
      */
-    public function getCurrentUrl(): string
+    public function getCurrentUrl(bool $includeParams = true): string
     {
-        $protocol = C::Request()->isHttpsRequest() ? 'https://' : 'http://';
-        return $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        $protocol = $_SERVER['HTTPS'] ??= 'off';
+        $protocol = $protocol === 'on' ? 'https://' : 'http://';
+        $url = $protocol . $_SERVER['HTTP_HOST'];
+
+        if ($includeParams) {
+            $url .= $_SERVER['REQUEST_URI'];
+        } else {
+            $url .= strtok($_SERVER['REQUEST_URI'], '?');
+        }
+
+        return $url;
     }
+
 
     /**
      * Get data of current route
