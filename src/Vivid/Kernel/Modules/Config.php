@@ -72,15 +72,15 @@ class Config extends Module implements ModuleInterface
 
         // Check for custom config override via C::Config()->set(...)
         $custom_cache_key = 'CustomConfig-' . $module . '-' . $key;
-        if(C::AppStorage()->has('Config', $custom_cache_key)) {
+        if (C::AppStorage()->has('Config', $custom_cache_key)) {
             return C::AppStorage()->get('Config', $custom_cache_key);
         }
 
         // App module can override config
         // So return config from App module if existing
-        if($module != 'App') {
+        if ($module != 'App') {
             $ret = $this->get($key);
-            if($ret !== $default) {
+            if ($ret !== $default) {
                 return $ret;
             }
         }

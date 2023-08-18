@@ -9,15 +9,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [3.2]
 ### Added
 - Handy ViewExtension default functions
-- Router()->constructUrl(...) method to create custom URLs with parameters
+- `C::Router()->constructUrl(...)` method to create custom URLs with parameters
 - Module specific config files can be overridden by the same config in the App (and its environment config file)
-- Add custom config values via Config()->set(...) which are stored in the AppStorage for runtime only
+- Add custom config values via `C::Config()->set(...)` which are stored in the AppStorage for runtime only
   (but can also be stored in AppStorage cache depending on user's app)
 
 ### Changed
 - Improved security of DebugBar
-- Formatter()->translate(...) now returns mixed data, including arrays
-- Router()->getCurrentUrl($with_query_params) now has an optional parameter to decide if you want
+- `C::Formatter()->translate(...)` now returns mixed data, including arrays
+- `C::Router()->getCurrentUrl($with_query_params)` now has an optional parameter to decide if you want
   the current URL with or without the query parameters
 
 ### Fixed
