@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Charm\Vivid\Base\Module;
 use Charm\Vivid\C;
 use Charm\Vivid\Exceptions\LogicException;
+use Charm\Vivid\Exceptions\ModuleNotFoundException;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Symfony\Component\Yaml\Yaml;
 
@@ -67,6 +68,21 @@ class Config extends Module implements ModuleInterface
             // Set module and remove from string
             $module = array_shift($mod_parts);
             $key = implode($this->module_delimiter, $mod_parts);
+        }
+
+        // Check for custom config override via C::Config()->set(...)
+        $custom_cache_key = 'CustomConfig-' . $module . '-' . $key;
+        if(C::AppStorage()->has('Config', $custom_cache_key)) {
+            return C::AppStorage()->get('Config', $custom_cache_key);
+        }
+
+        // App module can override config
+        // So return config from App module if existing
+        if($module != 'App') {
+            $ret = $this->get($key);
+            if($ret !== $default) {
+                return $ret;
+            }
         }
 
         // Filename and config
@@ -159,32 +175,20 @@ class Config extends Module implements ModuleInterface
      */
     public function set($key, $value)
     {
-        // TODO Implement.
-    }
+        $mod_parts = explode($this->module_delimiter, $key);
 
-    /**
-     * Add a config value
-     *
-     * @param string $key   the key
-     * @param mixed  $value the value
-     *
-     * @return bool
-     */
-    public function add($key, $value)
-    {
-        // TODO Implement.
-    }
+        // Default module: App
+        $module = 'App';
 
-    /**
-     * Delete a config entry
-     *
-     * @param string $key the key
-     *
-     * @return bool
-     */
-    public function delete($key)
-    {
-        // TODO Implement.
+        // Got custom module?
+        if (count($mod_parts) == 2) {
+            // Set module and remove from string
+            $module = array_shift($mod_parts);
+            $key = implode($this->module_delimiter, $mod_parts);
+        }
+
+        $cache_key = 'CustomConfig-' . $module . '-' . $key;
+        return C::AppStorage()->set('Config', $cache_key, $value);
     }
 
     /**
@@ -196,7 +200,7 @@ class Config extends Module implements ModuleInterface
      *
      * @return string
      *
-     * @throws LogicException
+     * @throws LogicException|ModuleNotFoundException
      */
     private function getConfigFile(string $key, bool $env = false, string $module = 'App'): string
     {

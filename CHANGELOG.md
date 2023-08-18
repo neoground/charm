@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Handy ViewExtension default functions
 - Router()->constructUrl(...) method to create custom URLs with parameters
+- Module specific config files can be overridden by the same config in the App (and its environment config file)
+- Add custom config values via Config()->set(...) which are stored in the AppStorage for runtime only
+  (but can also be stored in AppStorage cache depending on user's app)
 
 ### Changed
 - Improved security of DebugBar
