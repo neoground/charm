@@ -230,7 +230,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
                 }
 
                 // Custom callbacks (gets $x + $val as parameter)
-                if (is_callable($v)) {
+                if (is_callable($v) && !is_string($v)) {
                     $v($x, $val);
                 }
 
