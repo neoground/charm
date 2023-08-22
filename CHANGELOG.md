@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Module specific config files can be overridden by the same config in the App (and its environment config file)
 - Add custom config values via `C::Config()->set(...)` which are stored in the AppStorage for runtime only
   (but can also be stored in AppStorage cache depending on user's app)
+- Model's `filterBasedOnRequest()` can now also filter fields with custom callback, check for `isnull` / `notnull`
 
 ### Changed
 - Improved security of DebugBar
