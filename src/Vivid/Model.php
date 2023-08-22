@@ -158,21 +158,16 @@ class Model extends \Illuminate\Database\Eloquent\Model
         // Add created_by / updated_by only if guard is enabled
         if (C::has('Guard') && $this->set_by) {
 
-            if ($this->exists) {
-                // Updating
-                if (Capsule::schema()->hasColumn($this->table, 'updated_by')) {
-                    $this->updated_by = C::Guard()->getUserId();
-                }
-
-            } else {
+            if (!$this->exists) {
                 // Creating
                 if (Capsule::schema()->hasColumn($this->table, 'created_by')) {
                     $this->created_by = C::Guard()->getUserId();
                 }
-                // Add updated by
-                if (Capsule::schema()->hasColumn($this->table, 'updated_by')) {
-                    $this->updated_by = C::Guard()->getUserId();
-                }
+            }
+
+            // Add updated by
+            if (Capsule::schema()->hasColumn($this->table, 'updated_by')) {
+                $this->updated_by = C::Guard()->getUserId();
             }
         }
     }
@@ -204,10 +199,10 @@ class Model extends \Illuminate\Database\Eloquent\Model
         $x = self::where($model->getKeyName(), '>', 0);
 
         // Add soft delete filters
-        if (C::Request()->has('trashed') && C::Request()->get('trashed')) {
+        if (!empty(C::Request()->get('trashed'))) {
             $x->withTrashed();
         }
-        if (C::Request()->has('onlytrashed') && C::Request()->get('onlytrashed')) {
+        if (!empty(C::Request()->get('onlytrashed'))) {
             $x->onlyTrashed();
         }
 
@@ -232,6 +227,11 @@ class Model extends \Illuminate\Database\Eloquent\Model
                 // Remove "id-" prefix from id fields
                 if (str_contains($k, '_id')) {
                     $val = str_replace("id-", "", $val);
+                }
+
+                // Custom callbacks (gets $x + $val as parameter)
+                if (is_callable($v)) {
+                    $v($x, $val);
                 }
 
                 // Add value to query
@@ -266,6 +266,16 @@ class Model extends \Illuminate\Database\Eloquent\Model
                     case 'array':
                         if (is_array($val) || is_iterable($val)) {
                             $x->whereIn($k, $val);
+                        }
+                        break;
+                    case 'isnull':
+                        if (!empty($val)) {
+                            $x->whereNull($k);
+                        }
+                        break;
+                    case 'notnull':
+                        if (!empty($val)) {
+                            $x->whereNotNull($val);
                         }
                         break;
                 }
@@ -551,22 +561,6 @@ class Model extends \Illuminate\Database\Eloquent\Model
         }
 
         return static::updateOrCreate($search_fields, $update_values);
-    }
-
-    /**
-     * Format values to an array
-     *
-     * Looks for formatToArray() in model and uses Collection native toArray() as fallback.
-     *
-     * @return array
-     */
-    public function arr(): array
-    {
-        if (method_exists($this, 'formatToArray')) {
-            return $this->formatToArray();
-        }
-
-        return $this->toArray();
     }
 
 }
