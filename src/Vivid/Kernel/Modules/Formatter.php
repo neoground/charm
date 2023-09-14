@@ -135,7 +135,7 @@ class Formatter extends Module implements ModuleInterface
      *
      * @return string
      */
-    public function formatNumber(float|int|string $no, int $decimals = 2,
+    public function formatNumber(mixed $no, int $decimals = 2,
                                  string $decimal = null, string $thousands = null): string
     {
         if ($decimal === null) {
@@ -156,11 +156,11 @@ class Formatter extends Module implements ModuleInterface
      *
      * Also removes a trailing dot, so 8.0 -> 8
      *
-     * @param float|int|string $no the input number
+     * @param numeric $no the input number
      *
      * @return string the formatted number
      */
-    public function removeTrailingZeros(float|int|string $no): string
+    public function removeTrailingZeros(mixed $no): string
     {
         $formatted = (string) $no;
         $formatted = rtrim($formatted, '0');
