@@ -133,9 +133,10 @@ class Formatter extends Module implements ModuleInterface
      * @param string|null $decimal   (opt.) decimal separator
      * @param string|null $thousands (opt.) thousands separator
      *
-     * @return int|string
+     * @return string
      */
-    public function formatNumber($no, $decimals = 2, $decimal = null, $thousands = null)
+    public function formatNumber(float|int|string $no, int $decimals = 2,
+                                 string $decimal = null, string $thousands = null): string
     {
         if ($decimal === null) {
             $decimal = C::Config()->get('main:local.formatting.decimal');
@@ -147,7 +148,23 @@ class Formatter extends Module implements ModuleInterface
         if (!empty($no)) {
             return number_format((float)$no, $decimals, $decimal, $thousands);
         }
-        return 0;
+        return '0';
+    }
+
+    /**
+     * Remove trailing zeros from a number
+     *
+     * Also removes a trailing dot, so 8.0 -> 8
+     *
+     * @param float|int|string $no the input number
+     *
+     * @return string the formatted number
+     */
+    public function removeTrailingZeros(float|int|string $no): string
+    {
+        $formatted = (string) $no;
+        $formatted = rtrim($formatted, '0');
+        return rtrim($formatted, '.');
     }
 
     /**
