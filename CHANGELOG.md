@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   (but can also be stored in AppStorage cache depending on user's app)
 - Model's `filterBasedOnRequest()` can now also filter fields with custom callback, check for `isnull` / `notnull`
 - `C::Formatter()->removeTrailingZeros(...)` method which removes trailing zeros and dots
+- When using the `Smtp` driver in `Mailman` you can now directly access the `PHPMailer` instance and the mime message
+  as well
 
 ### Changed
 - Improved security of DebugBar

@@ -442,4 +442,26 @@ class Smtp implements MailmanDriverInterface
 
         return $this;
     }
+
+    /**
+     * Get the instance of the PHPMailer object
+     *
+     * @return PHPMailer
+     */
+    public function getMailerInstance(): PHPMailer
+    {
+        return $this->mail;
+    }
+
+    /**
+     * Returns the whole MIME message.
+     *  Includes complete headers and body.
+     *  Only valid post send().
+     *
+     * @return string
+     */
+    public function getSentMimeMessage(): string
+    {
+        return $this->mail->getSentMIMEMessage();
+    }
 }
