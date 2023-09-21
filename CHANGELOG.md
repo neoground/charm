@@ -17,12 +17,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `C::Formatter()->removeTrailingZeros(...)` method which removes trailing zeros and dots
 - When using the `Smtp` driver in `Mailman` you can now directly access the `PHPMailer` instance and the mime message
   as well
+- `C::Arrays()->from($array)` method which creates a `CArray` collection from the specified array
 
 ### Changed
 - Improved security of DebugBar
 - `C::Formatter()->translate(...)` now returns mixed data, including arrays
 - `C::Router()->getCurrentUrl($with_query_params)` now has an optional parameter to decide if you want
   the current URL with or without the query parameters
+- Refactoring of the `Arrays` module, including strict types and utilizing `CArray`
 
 ### Fixed
 - Small bug fixes due to wrong return types

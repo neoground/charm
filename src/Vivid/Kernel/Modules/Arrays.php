@@ -6,12 +6,18 @@
 namespace Charm\Vivid\Kernel\Modules;
 
 use Charm\Vivid\Base\Module;
+use Charm\Vivid\Elements\CArray;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 
 /**
  * Class Arrays
  *
  * Arrays module
+ *
+ * If a method doesn't exist here but in CArray you can also
+ * directly call it with the wanted array as the first parameter, e.g.:
+ *
+ * C::Arrays()->contains($array, $searchTerm);
  *
  * @package Charm\Vivid\Kernel\Modules
  */
@@ -22,26 +28,30 @@ class Arrays extends Module implements ModuleInterface
      */
     public function loadModule()
     {
-        $this->registerFunctions();
+        // Nothing to do here yet.
     }
 
     /**
-     * Register array functions
+     * Create a CArray from an array
+     *
+     * @param array $arr
+     *
+     * @return CArray
      */
-    private function registerFunctions()
+    public function from(array $arr): CArray
     {
-        // TODO: Add php functions for arrays (with !function_exist etc.)
+        return new CArray($arr);
     }
 
     /**
-     * Check if array has value by key
+     * Check if array has a non-empty value by key
      *
      * @param array  $arr input array
      * @param string $key the key
      *
      * @return bool
      */
-    public function has($arr, $key)
+    public function has(array $arr, mixed $key): bool
     {
         return !empty(self::get($arr, $key, false));
     }
@@ -49,13 +59,13 @@ class Arrays extends Module implements ModuleInterface
     /**
      * Get specific value from array
      *
-     * @param array       $arr     input array
-     * @param string      $key     the key
-     * @param null|string $default (optional) default value
+     * @param array          $arr     input array
+     * @param string|numeric $key     the key
+     * @param null|mixed     $default (optional) default value
      *
      * @return mixed
      */
-    public function get($arr, $key, $default = null)
+    public function get(array $arr, mixed $key, mixed $default = null): mixed
     {
         // Get key parts for multiple dimensions
         $keyparts = explode(".", $key);
@@ -76,13 +86,12 @@ class Arrays extends Module implements ModuleInterface
      * Get the last element of an array without removing it
      *
      * Works like array_pop without removing the last element.
-     * Idea from: http://stackoverflow.com/a/35957563/6026136
      *
-     * @param $arr
+     * @param array $arr
      *
      * @return mixed
      */
-    public function getLastElement($arr)
+    public function getLastElement(array $arr): mixed
     {
         $x = array_slice($arr, -1);
         return array_pop($x);
@@ -98,11 +107,8 @@ class Arrays extends Module implements ModuleInterface
      *
      * @return array
      */
-    public function array_merge_recursive(&$array1, &$array2)
+    public function array_merge_recursive(array &$array1, array &$array2): array
     {
-        $array1 = (array)$array1;
-        $array2 = (array)$array2;
-
         $merged = $array1;
 
         foreach ($array2 as $key => & $value) {
@@ -141,7 +147,7 @@ class Arrays extends Module implements ModuleInterface
      * @param string $key2  second key
      * @param string $order (opt.) sort direction (desc / asc). Default: desc
      */
-    public function sortByTwoKeys(&$arr, $key1, $key2, $order = 'desc')
+    public function sortByTwoKeys(array &$arr, mixed $key1, mixed $key2, string $order = 'desc'): void
     {
         uasort($arr, function ($a, $b) use ($key1, $key2, $order) {
 
@@ -164,13 +170,25 @@ class Arrays extends Module implements ModuleInterface
      *
      * Idea: http://stackoverflow.com/a/3145647
      *
-     * @param $array
+     * @param array $array
      *
      * @return bool
      */
-    public function hasDuplicates($array)
+    public function hasDuplicates(array $array): bool
     {
         return count($array) !== count(array_unique($array));
+    }
+
+    public function __call(string $name, array $arguments)
+    {
+        $array = array_shift($arguments);
+        $ca = $this->from($array);
+
+        if ($ca->hasMethod($name)) {
+            return call_user_func_array([$ca, $name], $arguments);
+        }
+
+        return false;
     }
 
 }
