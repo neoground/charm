@@ -11,6 +11,7 @@ use Charm\DebugBar\DebugBar;
 use Charm\Events\EventProvider;
 use Charm\Guard\Guard;
 use Charm\Guard\Token;
+use Charm\Http\Http;
 use Charm\Mailman\Mailman;
 use Charm\Storage\Storage;
 use Charm\Vivid\Kernel\EngineManager;
@@ -43,6 +44,7 @@ use JetBrains\PhpStorm\NoReturn;
  * @method static Storage Storage
  * @method static EngineManager App
  * @method static EventProvider Event
+ * @method static Http Http
  *
  * @package Charm\Vivid
  */

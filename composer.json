@@ -33,7 +33,8 @@
     "spatie/db-dumper": "^3.4",
     "claviska/simpleimage": "^4.0",
     "illuminate/database": "^10.24",
-    "kint-php/kint-twig": "^5.0"
+    "kint-php/kint-twig": "^5.0",
+    "guzzlehttp/guzzle": "^7.8"
   },
   "suggest": {
     "ext-redis": "For native redis support instead of using predis"

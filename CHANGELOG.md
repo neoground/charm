@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - When using the `Smtp` driver in `Mailman` you can now directly access the `PHPMailer` instance and the mime message
   as well
 - `C::Arrays()->from($array)` method which creates a `CArray` collection from the specified array
+- `C::Http()->...` for easy access to APIs. Simply make requests and work with responses. Built upon the
+  awesome [GuzzleHttp](https://docs.guzzlephp.org/en/stable/index.html) library.
 
 ### Changed
 - Improved security of DebugBar
