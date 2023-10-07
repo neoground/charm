@@ -13,8 +13,8 @@ use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\Ftp\FtpAdapter;
 use League\Flysystem\Ftp\FtpConnectionOptions;
 use League\Flysystem\Local\LocalFilesystemAdapter;
-use League\Flysystem\PhpseclibV2\SftpAdapter;
-use League\Flysystem\PhpseclibV2\SftpConnectionProvider;
+use League\Flysystem\PhpseclibV3\SftpAdapter;
+use League\Flysystem\PhpseclibV3\SftpConnectionProvider;
 
 /**
  * Class Storage
@@ -26,7 +26,7 @@ use League\Flysystem\PhpseclibV2\SftpConnectionProvider;
 class Storage extends Module implements ModuleInterface
 {
     /** @var array filesystem instances */
-    protected $filesystems = [];
+    protected array $filesystems = [];
 
     /**
      * Load the module
@@ -139,11 +139,6 @@ class Storage extends Module implements ModuleInterface
             ),
             C::Arrays()->get($config, 'path', '/')
         ));
-    }
-
-    public function addS3Filesystem($name, $config)
-    {
-        // TODO Add support for S3 storage
     }
 
     /**
