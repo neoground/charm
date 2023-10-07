@@ -185,15 +185,19 @@ class Formatter extends Module implements ModuleInterface
     }
 
     /**
-     * Sanitize an e-mail
+     * Sanitize an email
      *
-     * @param string $input the e-mail
+     * @param string $input the email
      *
-     * @return string
+     * @return string|false the sanitized email or false if email is invalid
      */
-    public function sanitizeEmail($input)
+    public function sanitizeEmail(string $input): string|false
     {
-        $input = filter_var($input, \FILTER_SANITIZE_EMAIL);
+        $input = filter_var($input, FILTER_SANITIZE_EMAIL);
+
+        if(!$input) {
+            return false;
+        }
 
         $input = trim($input);
 
@@ -201,6 +205,18 @@ class Formatter extends Module implements ModuleInterface
         $input = str_replace("@googlemail.", "@gmail.", $input);
 
         return strtolower($input);
+    }
+
+    /**
+     * Sanitize a URL
+     *
+     * @param string $input the input URL
+     *
+     * @return mixed
+     */
+    public function sanitizeUrl(string $input)
+    {
+        return filter_var($input, FILTER_SANITIZE_URL);
     }
 
     /**

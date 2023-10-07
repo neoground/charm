@@ -17,9 +17,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `C::Formatter()->removeTrailingZeros(...)` method which removes trailing zeros and dots
 - When using the `Smtp` driver in `Mailman` you can now directly access the `PHPMailer` instance and the mime message
   as well
+- `C::Formatter()->sanitizeUrl(...)` method now easily allows to sanitize a URL.
 - `C::Arrays()->from($array)` method which creates a `CArray` collection from the specified array
 - `C::Http()->...` for easy access to APIs. Simply make requests and work with responses. Built upon the
   awesome [GuzzleHttp](https://docs.guzzlephp.org/en/stable/index.html) library.
+- `C::Validator()->...` module for easy validation of strings and access to versatile validations based on
+  the awesome [Respect-Validation](https://respect-validation.readthedocs.io/en/latest/) package.
 
 ### Changed
 - Improved security of DebugBar
