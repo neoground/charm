@@ -30,15 +30,15 @@ class QueueClearCommand extends Command
             ->setDescription("Clearing the queue")
             ->setDefinition([
                 new InputOption('name', 'qn', InputOption::VALUE_REQUIRED,
-                    'Name of queue to run', '')
+                    'Name of queue to run', ''),
             ]);
     }
 
     /**
      * The execution
      *
-     * @param InputInterface   $input
-     * @param OutputInterface  $output
+     * @param InputInterface  $input
+     * @param OutputInterface $output
      *
      * @return bool
      */
@@ -54,8 +54,7 @@ class QueueClearCommand extends Command
         $output->writeln('<info>Clearing queue ' . $name . '</info>');
 
         // Execute bbq
-        $q = C::Queue();
-        $q->clear($name);
+        C::Queue()->clear($name);
 
         $output->writeln('<info>Done!</info>');
 

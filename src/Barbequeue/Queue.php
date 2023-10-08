@@ -32,10 +32,10 @@ class Queue extends Module implements ModuleInterface
      * Push a new job to the queue
      *
      * @param QueueEntry $entry the entry
-     * 
+     *
      * @return bool
      */
-    public function push(QueueEntry $entry)
+    public function push(QueueEntry $entry): bool
     {
         // Get queue
         $queue_name = $entry->getQueueName(true);
@@ -43,14 +43,14 @@ class Queue extends Module implements ModuleInterface
         // Set the job content
         $job_content = [
             'method' => $entry->getMethod(),
-            'args' => $entry->getArguments()
+            'args' => $entry->getArguments(),
         ];
 
         if (C::Config()->inDebugMode()) {
             C::Logging()->debug('[BBQ] Pushing job to queue: ' . $entry->getMethod());
         }
 
-        if(C::has('Event')) {
+        if (C::has('Event')) {
             C::Event()->fire('Queue', 'push');
         }
 
@@ -66,13 +66,13 @@ class Queue extends Module implements ModuleInterface
      *
      * @return bool
      */
-    public function run($name, $worker_id = 1)
+    public function run(string $name, int $worker_id = 1): bool
     {
         if (empty($worker_id) || !is_numeric($worker_id)) {
             $worker_id = 1;
         }
 
-        if(C::has('Event')) {
+        if (C::has('Event')) {
             C::Event()->fire('Queue', 'run');
         }
 
@@ -85,7 +85,7 @@ class Queue extends Module implements ModuleInterface
      *
      * @param string $name the queue's name
      */
-    public function clear($name)
+    public function clear(string $name): void
     {
         // Get prefix
         $prefix = C::Config()->get('main:bbq.name',
@@ -106,7 +106,7 @@ class Queue extends Module implements ModuleInterface
      * @param string $name      the queue name
      * @param int    $worker_id optional id of worker
      */
-    private function doWork($name, $worker_id = 1)
+    private function doWork(string $name, int $worker_id = 1): void
     {
         // Get prefix
         $prefix = C::Config()->get('main:bbq.name',
@@ -119,7 +119,7 @@ class Queue extends Module implements ModuleInterface
 
             $count = C::Redis()->getClient()->llen($queue);
 
-            if($count > 0) {
+            if ($count > 0) {
                 C::Logging()->info('[BBQ] Starting queue ' . $queue . ' - Got ' . $count . ' jobs');
             }
 
@@ -133,7 +133,7 @@ class Queue extends Module implements ModuleInterface
             }
         }
 
-        if(C::has('Event')) {
+        if (C::has('Event')) {
             C::Event()->fire('Queue', 'done');
         }
 
@@ -143,15 +143,15 @@ class Queue extends Module implements ModuleInterface
     /**
      * Execute a single job
      *
-     * @param  string  $job        json string of job
-     * @param  int     $worker_id  id of worker
+     * @param string $job       json string of job
+     * @param int    $worker_id id of worker
      */
-    private function executeJob($job, $worker_id)
+    private function executeJob(string $job, int $worker_id): void
     {
         C::Logging()->debug('[BBQ] [Worker ' . $worker_id . '] Running: ' . $job);
 
         // Get the job data
-        if(is_serialized($job)) {
+        if (is_serialized($job)) {
             $job = unserialize($job);
         }
 
@@ -160,7 +160,7 @@ class Queue extends Module implements ModuleInterface
         // Execute!
         try {
             $ret = null;
-            if(!empty($job_data['method'])) {
+            if (!empty($job_data['method'])) {
                 $ret = call_user_func_array($job_data['method'], $job_data['args']);
             }
 

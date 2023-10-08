@@ -32,15 +32,15 @@ class QueueRunCommand extends Command
                 new InputOption('name', 'qn', InputOption::VALUE_REQUIRED,
                     'Name of queue to run', ''),
                 new InputOption('worker', 'wn', InputOption::VALUE_OPTIONAL,
-                    'ID of worker', 1)
+                    'ID of worker', 1),
             ]);
     }
 
     /**
      * The execution
      *
-     * @param InputInterface   $input
-     * @param OutputInterface  $output
+     * @param InputInterface  $input
+     * @param OutputInterface $output
      *
      * @return bool
      */
@@ -61,8 +61,7 @@ class QueueRunCommand extends Command
         $output->writeln('<info>Starting queue ' . $name . ', worker ID: ' . $worker . '</info>');
 
         // Execute bbq
-        $q = C::Queue();
-        $q->run($name, $worker);
+        C::Queue()->run($name, $worker);
 
         $output->writeln('<info>Done!</info>');
 
