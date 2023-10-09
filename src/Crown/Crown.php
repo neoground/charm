@@ -51,7 +51,7 @@ class Crown extends Module implements ModuleInterface
      *
      * @param OutputInterface $output
      */
-    public function setConsoleOutput($output)
+    public function setConsoleOutput(OutputInterface $output): void
     {
         $this->output = $output;
     }
@@ -59,7 +59,7 @@ class Crown extends Module implements ModuleInterface
     /**
      * Run all due jobs
      */
-    public function run()
+    public function run(): void
     {
         if (C::has('Event')) {
             C::Event()->fire('Crown', 'run');
@@ -72,7 +72,7 @@ class Crown extends Module implements ModuleInterface
         $all_jobs = $this->getAllCronJobs();
 
         // Check if due
-        foreach($all_jobs as $job) {
+        foreach ($all_jobs as $job) {
             $cron = new CronExpression($job->getExpression());
             if ($cron->isDue()) {
                 // Yup. Run it!
@@ -106,7 +106,7 @@ class Crown extends Module implements ModuleInterface
                         $module_jobs = $this->loadCronjobs($dir, $namespace);
                     }
 
-                    foreach($module_jobs as $mj) {
+                    foreach ($module_jobs as $mj) {
                         $all_jobs[] = $mj;
                     }
                 }
@@ -156,7 +156,7 @@ class Crown extends Module implements ModuleInterface
 
             // Get and validate cron expression
             $expression = $job->getExpression();
-            if(empty($expression) || !CronExpression::isValidExpression($expression)) {
+            if (empty($expression) || !CronExpression::isValidExpression($expression)) {
                 $this->output->writeln('Invalid cronjob expression: ' . $expression
                     . ' for job: ' . $job->getName(),
                     OutputInterface::VERBOSITY_VERBOSE);
@@ -178,13 +178,11 @@ class Crown extends Module implements ModuleInterface
      *
      * @param Cronjob $job
      */
-    private function executeCronJob($job)
+    private function executeCronJob(Cronjob $job): void
     {
         C::Logging()->info('[CROWN] Running job: ' . get_class($job) . ' - ' . $job->getName());
 
-        if ($this->output) {
-            $this->output->writeln('[' . Carbon::now()->toDateTimeString() . '] Running: ' . $job->getName());
-        }
+        $this->output->writeln('[' . Carbon::now()->toDateTimeString() . '] Running: ' . $job->getName());
 
         try {
             $ret = $job->run();
@@ -192,17 +190,13 @@ class Crown extends Module implements ModuleInterface
             if (!$ret) {
                 // Job didn't run successful
                 C::Logging()->warning('[CROWN] Job exited with false: ' . $job->getName());
-                if ($this->output) {
-                    $this->output->writeln('<error>Job exited with false: ' . $job->getName() . '</error>');
-                }
+                $this->output->writeln('<error>Job exited with false: ' . $job->getName() . '</error>');
             }
 
         } catch (\Exception $e) {
             // Log exception
             C::Logging()->error('[CROWN] Exception', [$e->getMessage()]);
-            if ($this->output) {
-                $this->output->writeln('<error> Exception: ' . $e->getMessage() . '</error>');
-            }
+            $this->output->writeln('<error> Exception: ' . $e->getMessage() . '</error>');
         }
     }
 

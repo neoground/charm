@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `C::Router()->getCurrentUrl($with_query_params)` now has an optional parameter to decide if you want
   the current URL with or without the query parameters
 - Refactoring of the `Arrays` module, including strict types and utilizing `CArray`
+- Crown module now has strict type and return codes for run method (breaking changes, please adjust your cron jobs!)
 
 ### Fixed
 - Small bug fixes due to wrong return types

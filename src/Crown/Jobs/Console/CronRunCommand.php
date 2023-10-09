@@ -31,8 +31,8 @@ class CronRunCommand extends Command
     /**
      * The execution
      *
-     * @param InputInterface   $input
-     * @param OutputInterface  $output
+     * @param InputInterface  $input
+     * @param OutputInterface $output
      *
      * @return int
      */
@@ -42,6 +42,6 @@ class CronRunCommand extends Command
         $c = C::Crown();
         $c->setConsoleOutput($output);
         $c->run();
-        return Command::SUCCESS;
+        return self::SUCCESS;
     }
 }

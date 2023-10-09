@@ -5,7 +5,6 @@
 
 namespace Charm\Crown;
 
-
 /**
  * Class Cronjob
  *
@@ -23,11 +22,16 @@ class Cronjob
     const FRIDAY = 5;
     const SATURDAY = 6;
 
+    // Return codes
+    public const SUCCESS = 0;
+    public const FAILURE = 1;
+    public const INVALID = 2;
+
     /** @var string  name of cron job */
-    protected $name;
+    protected string $name;
 
     /** @var string  cron expression */
-    protected $expression;
+    protected string $expression;
 
     /**
      * Cronjob constructor.
@@ -41,18 +45,18 @@ class Cronjob
     /**
      * Configuration of the cron job
      */
-    protected function configure()
+    protected function configure(): void
     {
     }
 
     /**
      * Run that job
      *
-     * @return bool
+     * @return int
      */
-    public function run()
+    public function run(): int
     {
-        return false;
+        return self::INVALID;
     }
 
     /**
@@ -62,7 +66,7 @@ class Cronjob
      *
      * @return $this
      */
-    protected function setName($name)
+    protected function setName(string $name): self
     {
         $this->name = $name;
         return $this;
@@ -73,7 +77,7 @@ class Cronjob
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -83,7 +87,7 @@ class Cronjob
      *
      * @return string
      */
-    public function getExpression()
+    public function getExpression(): string
     {
         return $this->expression;
     }
@@ -91,11 +95,11 @@ class Cronjob
     /**
      * Set the cron expression
      *
-     * @param string  $expression  cron expression
+     * @param string $expression cron expression
      *
      * @return $this
      */
-    protected function setExpression($expression)
+    protected function setExpression(string $expression): self
     {
         $this->expression = $expression;
         return $this;
@@ -104,33 +108,33 @@ class Cronjob
     /**
      * Set schedule for this cron job
      *
-     * @param string|int|array  $min    (opt.) minute or array with minutes or minute expression
-     * @param string|int|array  $hour   (opt.) hour or array with hours or hour expression
-     * @param string|int|array  $dom    (opt.) day of month or array with days of month or day of month expression
-     * @param string|int|array  $month  (opt.) number of month or array with months or month expression
-     * @param string|int|array  $dow    (opt.) day of week or array with days of week or day of week expression
+     * @param string|int|array $min   (opt.) minute or array with minutes or minute expression
+     * @param string|int|array $hour  (opt.) hour or array with hours or hour expression
+     * @param string|int|array $dom   (opt.) day of month or array with days of month or day of month expression
+     * @param string|int|array $month (opt.) number of month or array with months or month expression
+     * @param string|int|array $dow   (opt.) day of week or array with days of week or day of week expression
      *
      * @return $this
      */
-    protected function setSchedule($min = '*', $hour = '*', $dom = '*', $month = '*', $dow = '*')
+    protected function setSchedule(mixed $min = '*', mixed $hour = '*', mixed $dom = '*', mixed $month = '*', mixed $dow = '*'): self
     {
-        if(is_array($min)) {
+        if (is_array($min)) {
             $min = implode(",", $min);
         }
 
-        if(is_array($hour)) {
+        if (is_array($hour)) {
             $hour = implode(",", $hour);
         }
 
-        if(is_array($dom)) {
+        if (is_array($dom)) {
             $dom = implode(",", $dom);
         }
 
-        if(is_array($month)) {
+        if (is_array($month)) {
             $month = implode(",", $month);
         }
 
-        if(is_array($dow)) {
+        if (is_array($dow)) {
             $dow = implode(",", $dow);
         }
 
@@ -145,12 +149,12 @@ class Cronjob
     /**
      * Run this job once every day
      *
-     * @param int|array  $hour  (opt.) the hour or array of hours (default: 0)
-     * @param int|array  $min   (opt.) the minute or array of minutes (default: 0)
+     * @param string|int|array $hour (opt.) the hour or array of hours (default: 0)
+     * @param string|int|array $min  (opt.) the minute or array of minutes (default: 0)
      *
      * @return $this
      */
-    protected function runDaily($hour = 0, $min = 0)
+    protected function runDaily(mixed $hour = 0, mixed $min = 0): self
     {
         return $this->setSchedule($min, $hour);
     }
@@ -158,11 +162,11 @@ class Cronjob
     /**
      * Run this job once every hour
      *
-     * @param int|array  $min   (opt.) the minute or array of minutes (default: 0)
+     * @param string|int|array $min (opt.) the minute or array of minutes (default: 0)
      *
      * @return $this
      */
-    protected function runHourly($min = 0)
+    protected function runHourly(mixed $min = 0): self
     {
         return $this->setSchedule($min);
     }
@@ -170,13 +174,13 @@ class Cronjob
     /**
      * Run this job every 30 minutes
      *
-     * @param int  $offset  (opt.) offset for minutes (called on minute 0 and 30 without offset)
+     * @param int $offset (opt.) offset for minutes (called on minute 0 and 30 without offset)
      *
      * @return $this
      */
-    protected function runEveryHalfHour($offset = 0)
+    protected function runEveryHalfHour(int $offset = 0): self
     {
-        $i = 0 + $offset;
+        $i = $offset;
         $j = 30 + $offset;
         return $this->setSchedule([$i, $j]);
     }
@@ -184,13 +188,13 @@ class Cronjob
     /**
      * Run this job every 15 minutes
      *
-     * @param int  $offset  (opt.) offset for minutes (called on minute 0, 15, 30, 45 without offset)
+     * @param int $offset (opt.) offset for minutes (called on minute 0, 15, 30, 45 without offset)
      *
      * @return $this
      */
-    protected function runEveryQuarterHour($offset = 0)
+    protected function runEveryQuarterHour(int $offset = 0): self
     {
-        $i = 0 + $offset;
+        $i = $offset;
         $j = 15 + $offset;
         $k = 30 + $offset;
         $l = 45 + $offset;
@@ -200,26 +204,26 @@ class Cronjob
     /**
      * Run this job once every week
      *
-     * @param int  $day   (opt.) the day of week or array with days (0 - sunday, 6 - saturday, default: 1)
-     * @param int  $hour  (opt.) the hour or array of hours (default: 0)
-     * @param int  $min   (opt.) the minute or array of minutes (default: 0)
+     * @param string|int|array $day  (opt.) the day of week or array with days (0 - sunday, 6 - saturday, default: 1)
+     * @param string|int|array $hour (opt.) the hour or array of hours (default: 0)
+     * @param string|int|array $min  (opt.) the minute or array of minutes (default: 0)
      *
      * @return $this
      */
-    protected function runWeekly($day = 1, $hour = 0, $min = 0)
+    protected function runWeekly(mixed $day = 1, mixed $hour = 0, mixed $min = 0): self
     {
-        return $this->setSchedule($min , $hour, '*', '*', $day);
+        return $this->setSchedule($min, $hour, '*', '*', $day);
     }
 
     /**
      * Run this job every monday
      *
-     * @param int|array  $hour  (opt.) the hour or array of hours (default: 0)
-     * @param int|array  $min   (opt.) the minute or array of minutes (default: 0)
+     * @param string|int|array $hour (opt.) the hour or array of hours (default: 0)
+     * @param string|int|array $min  (opt.) the minute or array of minutes (default: 0)
      *
      * @return $this
      */
-    protected function runEveryMonday($hour = 0, $min = 0)
+    protected function runEveryMonday(mixed $hour = 0, mixed $min = 0): self
     {
         return $this->runWeekly(self::MONDAY, $hour, $min);
     }
@@ -227,12 +231,12 @@ class Cronjob
     /**
      * Run this job every tuesday
      *
-     * @param int|array  $hour  (opt.) the hour or array of hours (default: 0)
-     * @param int|array  $min   (opt.) the minute or array of minutes (default: 0)
+     * @param string|int|array $hour (opt.) the hour or array of hours (default: 0)
+     * @param string|int|array $min  (opt.) the minute or array of minutes (default: 0)
      *
      * @return $this
      */
-    protected function runEveryTuesday($hour = 0, $min = 0)
+    protected function runEveryTuesday(mixed $hour = 0, mixed $min = 0): self
     {
         return $this->runWeekly(self::TUESDAY, $hour, $min);
     }
@@ -240,12 +244,12 @@ class Cronjob
     /**
      * Run this job every wednesday
      *
-     * @param int|array  $hour  (opt.) the hour or array of hours (default: 0)
-     * @param int|array  $min   (opt.) the minute or array of minutes (default: 0)
+     * @param string|int|array $hour (opt.) the hour or array of hours (default: 0)
+     * @param string|int|array $min  (opt.) the minute or array of minutes (default: 0)
      *
      * @return $this
      */
-    protected function runEveryWednesday($hour = 0, $min = 0)
+    protected function runEveryWednesday(mixed $hour = 0, mixed $min = 0): self
     {
         return $this->runWeekly(self::WEDNESDAY, $hour, $min);
     }
@@ -253,12 +257,12 @@ class Cronjob
     /**
      * Run this job every thursday
      *
-     * @param int|array  $hour  (opt.) the hour or array of hours (default: 0)
-     * @param int|array  $min   (opt.) the minute or array of minutes (default: 0)
+     * @param string|int|array $hour (opt.) the hour or array of hours (default: 0)
+     * @param string|int|array $min  (opt.) the minute or array of minutes (default: 0)
      *
      * @return $this
      */
-    protected function runEveryThursday($hour = 0, $min = 0)
+    protected function runEveryThursday(mixed $hour = 0, mixed $min = 0): self
     {
         return $this->runWeekly(self::THURSDAY, $hour, $min);
     }
@@ -266,12 +270,12 @@ class Cronjob
     /**
      * Run this job every friday
      *
-     * @param int|array  $hour  (opt.) the hour or array of hours (default: 0)
-     * @param int|array  $min   (opt.) the minute or array of minutes (default: 0)
+     * @param string|int|array $hour (opt.) the hour or array of hours (default: 0)
+     * @param string|int|array $min  (opt.) the minute or array of minutes (default: 0)
      *
      * @return $this
      */
-    protected function runEveryFriday($hour = 0, $min = 0)
+    protected function runEveryFriday(mixed $hour = 0, mixed $min = 0): self
     {
         return $this->runWeekly(self::FRIDAY, $hour, $min);
     }
@@ -279,12 +283,12 @@ class Cronjob
     /**
      * Run this job every saturday
      *
-     * @param int|array  $hour  (opt.) the hour or array of hours (default: 0)
-     * @param int|array  $min   (opt.) the minute or array of minutes (default: 0)
+     * @param string|int|array $hour (opt.) the hour or array of hours (default: 0)
+     * @param string|int|array $min  (opt.) the minute or array of minutes (default: 0)
      *
      * @return $this
      */
-    protected function runEverySaturday($hour = 0, $min = 0)
+    protected function runEverySaturday(mixed $hour = 0, mixed $min = 0): self
     {
         return $this->runWeekly(self::SATURDAY, $hour, $min);
     }
@@ -292,12 +296,12 @@ class Cronjob
     /**
      * Run this job every sunday
      *
-     * @param int|array  $hour  (opt.) the hour or array of hours (default: 0)
-     * @param int|array  $min   (opt.) the minute or array of minutes (default: 0)
+     * @param string|int|array $hour (opt.) the hour or array of hours (default: 0)
+     * @param string|int|array $min  (opt.) the minute or array of minutes (default: 0)
      *
      * @return $this
      */
-    protected function runEverySunday($hour = 0, $min = 0)
+    protected function runEverySunday(mixed $hour = 0, mixed $min = 0): self
     {
         return $this->runWeekly(self::SUNDAY, $hour, $min);
     }
@@ -305,13 +309,13 @@ class Cronjob
     /**
      * Run this job once every month
      *
-     * @param int  $day   (opt.) the day of month or array with days of month (default: 1)
-     * @param int  $hour  (opt.) the hour or array of hours (default: 0)
-     * @param int  $min   (opt.) the minute or array of minutes (default: 0)
+     * @param string|int|array $day  (opt.) the day of month or array with days of month (default: 1)
+     * @param string|int|array $hour (opt.) the hour or array of hours (default: 0)
+     * @param string|int|array $min  (opt.) the minute or array of minutes (default: 0)
      *
      * @return $this
      */
-    protected function runMonthly($day = 1, $hour = 0, $min = 0)
+    protected function runMonthly(mixed $day = 1, mixed $hour = 0, mixed $min = 0): self
     {
         return $this->setSchedule($min, $hour, $day);
     }
@@ -319,13 +323,13 @@ class Cronjob
     /**
      * Run this job once every quarter (every 3rd month)
      *
-     * @param int  $day   (opt.) the day of month or array with days of month (default: 1)
-     * @param int  $hour  (opt.) the hour or array of hours (default: 0)
-     * @param int  $min   (opt.) the minute or array of minutes (default: 0)
+     * @param string|int|array $day  (opt.) the day of month or array with days of month (default: 1)
+     * @param string|int|array $hour (opt.) the hour or array of hours (default: 0)
+     * @param string|int|array $min  (opt.) the minute or array of minutes (default: 0)
      *
      * @return $this
      */
-    protected function runQuarterly($day = 1, $hour = 0, $min = 0)
+    protected function runQuarterly(mixed $day = 1, mixed $hour = 0, mixed $min = 0): self
     {
         return $this->setSchedule($min, $hour, $day, '*/3');
     }
@@ -333,14 +337,14 @@ class Cronjob
     /**
      * Run this job once every quarter (every 3rd month)
      *
-     * @param int  $month  (opt.) the month or array with months (default: 1)
-     * @param int  $day    (opt.) the day of month or array with days of month (default: 1)
-     * @param int  $hour   (opt.) the hour or array of hours (default: 0)
-     * @param int  $min    (opt.) the minute or array of minutes (default: 0)
+     * @param string|int|array $month (opt.) the month or array with months (default: 1)
+     * @param string|int|array $day   (opt.) the day of month or array with days of month (default: 1)
+     * @param string|int|array $hour  (opt.) the hour or array of hours (default: 0)
+     * @param string|int|array $min   (opt.) the minute or array of minutes (default: 0)
      *
      * @return $this
      */
-    protected function runYearly($month = 1, $day = 1, $hour = 0, $min = 0)
+    protected function runYearly(mixed $month = 1, mixed $day = 1, mixed $hour = 0, mixed $min = 0): self
     {
         return $this->setSchedule($min, $hour, $day, $month);
     }
