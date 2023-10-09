@@ -33,7 +33,7 @@ class JOB_NAME extends Cronjob
     /**
      * Cron job configuration
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('JOB_DESCRIPTION')
             ->runJOB_PERIOD(0, 0);
@@ -42,13 +42,13 @@ class JOB_NAME extends Cronjob
     /**
      * Run that job.
      *
-     * @return bool
+     * @return int
      */
-    public function run()
+    public function run(): int
     {
         // TODO
 
-        return true;
+        return self::SUCCESS;
     }
 
 }
