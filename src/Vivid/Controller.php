@@ -5,8 +5,6 @@
 
 namespace Charm\Vivid;
 
-use Charm\Vivid\Kernel\Modules\Request;
-
 /**
  * Class Controller
  *
@@ -16,31 +14,13 @@ use Charm\Vivid\Kernel\Modules\Request;
  */
 class Controller
 {
-    /**
-     * Logged in user
-     *
-     * @var \App\Models\User
-     */
-    protected $user;
-
-    /**
-     * The request object
-     *
-     * @var Request
-     */
-    protected $request;
 
     /**
      * Controller constructor
      */
     public function __construct()
     {
-        // Add logged in user if guard is enabled
-        if (Charm::Config()->get('main:guard.enabled', true)) {
-            $this->user = Charm::Guard()->getUser();
-        }
-
-        // Add request
-        $this->request = Charm::Request();
+        // Nothing to do here yet
     }
+
 }
