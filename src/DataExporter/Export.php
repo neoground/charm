@@ -7,6 +7,7 @@ namespace Charm\DataExporter;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Ods;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -218,6 +219,17 @@ class Export
         ]);
     }
 
+    public function getWriter()
+    {
+        return match ($this->type) {
+            'xlsx' => new Xlsx($this->spreadsheet),
+            'xls' => new Xls($this->spreadsheet),
+            'ods' => new Ods($this->spreadsheet),
+            'csv' => new Csv($this->spreadsheet),
+            default => new Xlsx($this->spreadsheet),
+        };
+    }
+
     /**
      * Save the data to file
      *
@@ -236,21 +248,7 @@ class Export
         $this->formatTitleRow();
 
         // Create writer based on type
-        switch($this->type) {
-            case 'xlsx':
-                $writer = new Xlsx($this->spreadsheet);
-                break;
-            case 'xls':
-                $writer = new Xls($this->spreadsheet);
-                break;
-            case 'ods':
-                $writer = new Ods($this->spreadsheet);
-                break;
-            default:
-                // Use XLSX as default
-                $writer = new Xlsx($this->spreadsheet);
-                break;
-        }
+        $writer = $this->getWriter();
 
         if (file_exists($filename) && $override) {
             unlink($filename);
