@@ -321,11 +321,12 @@ class Model extends \Illuminate\Database\Eloquent\Model
         // Pagination
         $page = (int)C::Request()->get('page', 1);
         $amount = (int)C::Request()->get('amount', 25);
+        $max_amount = (int)C::Request()->get('max_amount', 1000);
         $skip = ($page - 1) * $amount;
 
         // Prevent fetching too much data
-        if ($amount > 1000) {
-            $amount = 1000;
+        if ($amount > $max_amount) {
+            $amount = $max_amount;
         }
 
         // Add order by
