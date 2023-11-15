@@ -13,6 +13,7 @@ use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Cron\CronExpression;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Process;
 
 /**
  * Class Crown
@@ -72,12 +73,49 @@ class Crown extends Module implements ModuleInterface
         $all_jobs = $this->getAllCronJobs();
 
         // Check if due
+        $due_jobs = [];
         foreach ($all_jobs as $job) {
             $cron = new CronExpression($job->getExpression());
             if ($cron->isDue()) {
-                // Yup. Run it!
-                $this->executeCronJob($job);
+                $due_jobs[] = $job;
             }
+        }
+
+        foreach($due_jobs as $job) {
+            // Run due jobs in own thread
+            $this->output->writeln('Running job in background: ' . get_class($job));
+            $process = new Process([
+                PHP_BINARY, C::Storage()->getBasePath() . DS . 'bob.php', 'cron:run', get_class($job)
+            ]);
+            $process->setTimeout(null);
+            $process->setOptions([
+                'create_new_console' => 'true'
+            ]);
+            $process->start();
+        }
+    }
+
+    /**
+     * Run a specific cron job by class name
+     *
+     * @param string $class the class name including namespace
+     *
+     * @return void
+     */
+    public function runCronjob(string $class): void
+    {
+        // Find job by class name
+        $all_jobs = $this->getAllCronJobs();
+        $job_to_run = false;
+        foreach($all_jobs as $job) {
+            if(get_class($job) == $class) {
+                $job_to_run = $job;
+                break;
+            }
+        }
+
+        if($job_to_run) {
+            $this->executeCronJob($job_to_run);
         }
     }
 

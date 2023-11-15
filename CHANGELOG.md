@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   awesome [GuzzleHttp](https://docs.guzzlephp.org/en/stable/index.html) library.
 - `C::Validator()->...` module for easy validation of strings and access to versatile validations based on
   the awesome [Respect-Validation](https://respect-validation.readthedocs.io/en/latest/) package.
+- DataExporter can now export to XLSX, ODS, CSV and HTML and is working with the latest PHPSpreadsheet version
 
 ### Changed
 - Improved security of DebugBar
@@ -31,9 +32,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   the current URL with or without the query parameters
 - Refactoring of the `Arrays` module, including strict types and utilizing `CArray`
 - Crown module now has strict type and return codes for run method (breaking changes, please adjust your cron jobs!)
+- Crown module now smoothly supports multiple jobs each run which run in own threads in parallel
 
 ### Fixed
 - Small bug fixes due to wrong return types
+- Errors due to sequential cron job handling which led to some cron jobs which didn't run when the previous one took 
+  too long. They are now running in their own threads in parallel.
 
 ---
 
