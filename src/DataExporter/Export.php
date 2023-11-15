@@ -5,9 +5,13 @@
 
 namespace Charm\DataExporter;
 
+use Charm\Vivid\C;
+use PhpOffice\PhpSpreadsheet\Exception;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
+use PhpOffice\PhpSpreadsheet\Writer\Html;
 use PhpOffice\PhpSpreadsheet\Writer\Ods;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -15,29 +19,31 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 /**
  * Class Exporter
  *
- * Handling data export to file
+ * Handling array export to file
  *
- * @package Charm\Guard
+ * Supported files: csv, html, xlsx, ods
+ *
+ * @package Charm\DataExporter
  */
 class Export
 {
     /** @var Spreadsheet  the spreadseet */
-    protected $spreadsheet;
+    protected Spreadsheet $spreadsheet;
 
     /** @var array  with all data */
-    protected $arr;
+    protected array $arr;
 
     /** @var string  the file type */
-    protected $type = 'xlsx';
+    protected string $type = 'xlsx';
 
     /**
      * Export constructor.
      *
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * @throws Exception
      */
     public function __construct()
     {
-        // Init PHPExcel
+        // Init PHPSpreadsheet
         $spreadsheet = new Spreadsheet();
         $spreadsheet->setActiveSheetIndex(0);
         $this->spreadsheet = $spreadsheet;
@@ -50,7 +56,7 @@ class Export
      *
      * As default this will create a xlsx file, if the type is not changed.
      *
-     * @param string  $type  the wanted type: xlsx, xls, ods
+     * @param string $type the wanted type: xlsx, xls, ods
      */
     public function setType($type)
     {
@@ -62,7 +68,7 @@ class Export
      *
      * @return Worksheet
      *
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * @throws Exception
      */
     public function getActiveSheet()
     {
@@ -70,13 +76,61 @@ class Export
     }
 
     /**
+     * Get the whole spreadsheet instance
+     *
+     * @return Spreadsheet
+     */
+    public function getSpreadsheet(): Spreadsheet
+    {
+        return $this->spreadsheet;
+    }
+
+    /**
+     * Set spreadsheet metadata
+     *
+     * @param string|null $creator
+     * @param string|null $title
+     * @param string|null $subject
+     * @param string|null $description
+     * @param string|null $lastModifiedBy
+     *
+     * @return $this
+     */
+    public function setMetadata(string $creator = null, string $title = null, string $subject = null, string $description = null, string $lastModifiedBy = null): self
+    {
+        $props = $this->spreadsheet->getProperties();
+
+        if (!empty($creator)) {
+            $props->setCreator($creator);
+        }
+
+        if (!empty($title)) {
+            $props->setTitle($title);
+        }
+
+        if (!empty($subject)) {
+            $props->setSubject($subject);
+        }
+
+        if (!empty($description)) {
+            $props->setDescription($description);
+        }
+
+        if (!empty($lastModifiedBy)) {
+            $props->setLastModifiedBy($lastModifiedBy);
+        }
+
+        return $this;
+    }
+
+    /**
      * Set title of active work sheet
      *
-     * @param string  $title  the title
+     * @param string $title the title
      *
      * @return $this
      *
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * @throws Exception
      */
     public function setSheetTitle($title)
     {
@@ -116,7 +170,7 @@ class Export
      *
      * @return $this
      *
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * @throws Exception
      */
     public function freezeFirstRow()
     {
@@ -129,7 +183,7 @@ class Export
      *
      * @return $this
      *
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * @throws Exception
      */
     public function freezeFirstColumn()
     {
@@ -142,7 +196,7 @@ class Export
      *
      * @return $this
      *
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * @throws Exception
      */
     public function freezeFirstColumnAndRow()
     {
@@ -151,14 +205,30 @@ class Export
     }
 
     /**
-     * Set number style for a row
-     *
-     * @param string  $row    name of row (e.g. A, Z, AAA)
-     * @param string  $style  wanted style (name of constant from \PHPExcel_Style_NumberFormat class)
+     * Auto size for all columns (auto width)
      *
      * @return $this
      *
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * @throws Exception
+     */
+    public function autoColumnSize()
+    {
+        foreach ($this->getActiveSheet()->getColumnIterator() as $column) {
+            $this->getActiveSheet()->getColumnDimension($column->getColumnIndex())->setAutoSize(true);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Set number style for a row
+     *
+     * @param string $row   name of row (e.g. A, Z, AAA)
+     * @param string $style wanted style (name of constant from NumberFormat class)
+     *
+     * @return $this
+     *
+     * @throws Exception
      */
     public function setRowNumberStyle($row, $style)
     {
@@ -167,7 +237,7 @@ class Export
         $this->getActiveSheet()
             ->getStyle($row_dimension)
             ->getNumberFormat()
-            ->setFormatCode("\\PHPExcel_Style_NumberFormat::" . $style);
+            ->setFormatCode("\\PhpOffice\\PhpSpreadsheet\\Style\\NumberFormat::" . $style);
 
         return $this;
     }
@@ -177,7 +247,7 @@ class Export
      *
      * @return $this
      *
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * @throws Exception
      */
     private function formatTitleRow()
     {
@@ -190,16 +260,16 @@ class Export
         $this->getActiveSheet()->getStyle("A1:" . $highest_column . "1")->applyFromArray([
             'borders' => [
                 'outline' => [
-                    'style' => \PHPExcel_Style_Border::BORDER_THIN,
-                    'color' => ['rgb' => '9BC2E6']
-                ]
+                    'style' => Border::BORDER_THIN,
+                    'color' => ['rgb' => '9BC2E6'],
+                ],
             ],
             'font' => [
                 'bold' => true,
                 'color' => ['rgb' => '4471B5'],
                 'size' => 12,
-                'name' => 'Calibri'
-            ]
+                'name' => 'Calibri',
+            ],
         ]);
         return $this;
     }
@@ -207,15 +277,15 @@ class Export
     /**
      * Basic style format for whole sheet
      *
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * @throws Exception
      */
     private function baseFormat()
     {
         $this->getActiveSheet()->getStyle($this->getActiveSheet()->calculateWorksheetDataDimension())->applyFromArray([
             'font' => [
                 'size' => 11,
-                'name' => 'Calibri'
-            ]
+                'name' => 'Calibri',
+            ],
         ]);
     }
 
@@ -226,6 +296,7 @@ class Export
             'xls' => new Xls($this->spreadsheet),
             'ods' => new Ods($this->spreadsheet),
             'csv' => new Csv($this->spreadsheet),
+            'html' => new Html($this->spreadsheet),
             default => new Xlsx($this->spreadsheet),
         };
     }
@@ -233,12 +304,12 @@ class Export
     /**
      * Save the data to file
      *
-     * @param string  $filename  absolute path to file with filename + extension (xlsx)
-     * @param bool    $override  (optional) override file if existing? Default: false
+     * @param string $filename absolute path to file with filename + extension (xlsx)
+     * @param bool   $override (optional) override file if existing? Default: false
      *
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * @throws Exception
      */
-    public function saveToFile($filename, $override = false)
+    public function saveToFile(string $filename, bool $override = false)
     {
         // Add data to sheet
         $this->getActiveSheet()->fromArray($this->arr);
@@ -247,11 +318,14 @@ class Export
         $this->baseFormat();
         $this->formatTitleRow();
 
+        // Only A1 should be selected by default
+        $this->getActiveSheet()->setSelectedCells('A1');
+
         // Create writer based on type
         $writer = $this->getWriter();
 
-        if (file_exists($filename) && $override) {
-            unlink($filename);
+        if ($override) {
+            C::Storage()->deleteFileIfExists($filename);
         }
 
         $writer->save($filename);

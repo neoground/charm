@@ -32,24 +32,26 @@ class DataExporter extends Module implements ModuleInterface
      *
      * @return Export
      */
-    public function createNewExport()
+    public function createNewExport(): Export
     {
-        $e = new Export();
-        return $e;
+        return new Export();
     }
 
     /**
      * Save an array as CSV
      *
-     * The input array must contain sub arraysfor each line.
+     * The input array must contain sub arrays for each line.
      * The keys of the first sub array are used as the heading.
      *
-     * @param array   $arr          the input array
-     * @param string  $destination  destination path with file name of csv
+     * This is a simple method for easy dumping.
+     * For more extensive exports use the Export class instead.
+     *
+     * @param array  $arr         the input array
+     * @param string $destination absolute path to csv file
      *
      * @return bool
      */
-    public function arrayToCsv($arr, $destination)
+    public function arrayToCsv(array $arr, string $destination): bool
     {
         $fp = fopen($destination, 'w');
 
