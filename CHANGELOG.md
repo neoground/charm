@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `C::Validator()->...` module for easy validation of strings and access to versatile validations based on
   the awesome [Respect-Validation](https://respect-validation.readthedocs.io/en/latest/) package.
 - DataExporter can now export to XLSX, ODS, CSV and HTML and is working with the latest PHPSpreadsheet version
+- `C::Request()->isSameOrigin()` method which returns bool based on `HTTP_ORIGIN` and app's base URL
 
 ### Changed
 - Improved security of DebugBar

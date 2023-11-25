@@ -471,4 +471,15 @@ class Request extends Module implements ModuleInterface
         return C::Session()->get('charm_request_input', false);
     }
 
+    /**
+     * Check if the request is from the same origin (checks HTTP_ORIGIN and validates it with base URL)
+     *
+     * @return bool
+     */
+    public function isSameOrigin(): bool
+    {
+        return C::Server()->has('HTTP_ORIGIN')
+            && C::Server()->get('HTTP_ORIGIN') == C::Router()->getBaseUrl();
+    }
+
 }
