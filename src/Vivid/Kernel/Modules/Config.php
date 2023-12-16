@@ -45,6 +45,14 @@ class Config extends Module implements ModuleInterface
     }
 
     /**
+     * After init is complete check for maintenance mode
+     */
+    public function postInit()
+    {
+
+    }
+
+    /**
      * Get config value
      *
      * @param string     $key     the key
@@ -163,6 +171,46 @@ class Config extends Module implements ModuleInterface
     public function inDebugMode(): bool
     {
         return $this->get('main:debug.debugmode') == true;
+    }
+
+    /**
+     * Checks whether the application is in maintenance mode.
+     *
+     * This method checks if the 'maintenance.lock' file exists in the system's variable path.
+     * If the file exists, it indicates that the application is in maintenance mode.
+     * Otherwise, it implies that the application is not in maintenance mode.
+     *
+     * @return bool Returns true if the application is in maintenance mode, false otherwise.
+     */
+    public function inMaintenanceMode(): bool
+    {
+        return file_exists(C::Storage()->getVarPath() . DS . 'maintenance.lock');
+    }
+
+    /**
+     * Turns on the maintenance mode for the application.
+     *
+     * This method creates an empty 'maintenance.lock' file in the system's variable path
+     * to indicate that the application is in maintenance mode.
+     *
+     * @return bool Returns true if the maintenance mode is successfully turned on, false otherwise.
+     */
+    public function turnMaintenanceModeOn(): bool
+    {
+        return (bool) file_put_contents(C::Storage()->getVarPath() . DS . 'maintenance.lock', '');
+    }
+
+    /**
+     * Turns off the maintenance mode for the application.
+     *
+     * This method deletes the 'maintenance.lock' file in the system's variable path,
+     * which indicates that the application is no longer in maintenance mode.
+     *
+     * @return bool Returns true if the maintenance mode is successfully turned off, false otherwise.
+     */
+    public function turnMaintenanceModeOff(): bool
+    {
+        return C::Storage()->deleteFileIfExists(C::Storage()->getVarPath() . DS . 'maintenance.lock');
     }
 
     /**

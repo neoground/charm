@@ -351,9 +351,9 @@ class Storage extends Module implements ModuleInterface
     /**
      * Delete a file if it exists
      *
-     * @param string $file path to file
+     * @param string $file The path to the file
      *
-     * @return bool true on deletion false on error or if not found
+     * @return bool Returns true on success or false on failure
      */
     public function deleteFileIfExists(string $file) : bool
     {
