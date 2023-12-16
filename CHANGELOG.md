@@ -25,6 +25,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   the awesome [Respect-Validation](https://respect-validation.readthedocs.io/en/latest/) package.
 - DataExporter can now export to XLSX, ODS, CSV and HTML and is working with the latest PHPSpreadsheet version
 - `C::Request()->isSameOrigin()` method which returns bool based on `HTTP_ORIGIN` and app's base URL
+- Maintenance mode including middleware and output handling. Use the CLI commands `cc:down` and `cc:up` to turn
+  the mode on / off or create file `var/maintenance.lock` manually.
 
 ### Changed
 - Improved security of DebugBar
