@@ -11,6 +11,8 @@ use Charm\Vivid\C;
 use Charm\Vivid\Exceptions\LogicException;
 use Charm\Vivid\Exceptions\ModuleNotFoundException;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
+use Charm\Vivid\Kernel\Output\Json;
+use Charm\Vivid\Kernel\Output\View;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -45,11 +47,43 @@ class Config extends Module implements ModuleInterface
     }
 
     /**
-     * After init is complete check for maintenance mode
+     * After init is complete check for maintenance mode and abort if app is down
      */
     public function postInit()
     {
+        if($this->inMaintenanceMode()) {
+            $this->handleMaintenanceMode();
+        }
+    }
 
+    /**
+     * Handles the maintenance mode for the application.
+     *
+     * This method is responsible for handling the maintenance mode of the application.
+     * It checks the configuration settings to determine the output format (JSON or HTML).
+     * If the output format is JSON, it outputs JSON response with appropriate error message.
+     * Otherwise, it outputs HTML view for the maintenance mode.
+     *
+     * After that the app is terminated!
+     */
+    private function handleMaintenanceMode(): void
+    {
+        // Output JSON for API
+        $error_style = $this->getModule('Config')->get('main:output.maintenance_style', 'default');
+        if ($this->getModule('Request')->accepts('json') || $error_style == 'json') {
+            $output = Json::makeErrorMessage('AppDown', 500);
+            echo $output->render();
+
+            return;
+        }
+
+        // Output HTML in every other case
+        $tpl = $this->getModule('Config')->get('main:output.maintenance_view', 'maintenance');
+        $view = View::make($tpl, 500);
+
+        echo $view->render();
+
+        C::shutdown();
     }
 
     /**

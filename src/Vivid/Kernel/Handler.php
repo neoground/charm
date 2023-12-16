@@ -16,7 +16,6 @@ use Charm\Vivid\Kernel\Output\View;
 use Charm\Vivid\Kernel\Traits\SingletonTrait;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use JetBrains\PhpStorm\NoReturn;
 use Phroute\Phroute\Exception\HttpMethodNotAllowedException;
 use Phroute\Phroute\Exception\HttpRouteNotFoundException;
 use Symfony\Component\Console\Application;
@@ -542,7 +541,7 @@ class Handler
     /**
      * Shutdown the application because we're done!
      */
-    #[NoReturn] public function shutdown(): void
+    public function shutdown(): void
     {
         // Fire shutdown event
         if (C::has('Event')) {
