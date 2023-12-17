@@ -36,6 +36,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Refactoring of the `Arrays` module, including strict types and utilizing `CArray`
 - Crown module now has strict type and return codes for run method (breaking changes, please adjust your cron jobs!)
 - Crown module now smoothly supports multiple jobs each run which run in own threads in parallel
+- For main framework access we now use the magic magnet `Charm\Vivid\C` as the default class instead of the alternative
+  class `Charm\Vivid\Charm`, which can be used as well, depending on the dev's preferences
 
 ### Fixed
 - Small bug fixes due to wrong return types
