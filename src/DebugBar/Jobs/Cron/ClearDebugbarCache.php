@@ -20,31 +20,31 @@ class ClearDebugbarCache extends Cronjob
     /**
      * Cron job configuration
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('Cleaning up the debug bar cache')
-            ->runDaily(4);
+            ->runDaily(2, 15);
     }
 
     /**
      * Run that job.
      *
-     * @return bool
+     * @return int
      */
-    public function run()
+    public function run(): int
     {
         $path = C::Storage()->getCachePath() . DS . 'debugbar';
+        $keep_in_days = C::Config()->get('main:debug.log_keep_days', 14);
         $now = time();
-
-        if(file_exists($path)) {
-            foreach(C::Storage()->scanDirForFiles($path) as $file) {
-                // When file is older than 48 hours, delete it
-                if ($now - filemtime($file) >= 60 * 60 * 48) {
-                    unlink($file);
+        if (file_exists($path)) {
+            foreach (C::Storage()->scanDir($path) as $file) {
+                $absfile = $path . DS . $file;
+                if ($now - filemtime($absfile) >= 60 * 60 * 24 * $keep_in_days) {
+                    C::Logging()->debug('Removing old debugbar cache file: ' . $file);
+                    unlink($absfile);
                 }
             }
         }
-
         return true;
     }
 }

@@ -27,6 +27,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `C::Request()->isSameOrigin()` method which returns bool based on `HTTP_ORIGIN` and app's base URL
 - Maintenance mode including middleware and output handling. Use the CLI commands `cc:down` and `cc:up` to turn
   the mode on / off or create file `var/maintenance.lock` manually.
+- Cron job to remove log files older than `main:logging.keep_days` days. Same for debugbar cache files after
+  `main:debug.log_keep_days` days.
 
 ### Changed
 - Improved security of DebugBar
