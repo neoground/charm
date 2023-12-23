@@ -8,6 +8,8 @@ if (!function_exists('is_json')) {
     /**
      * Check if a string is valid json
      *
+     * @deprecated Since PHP 8.3 you should use the built-in function json_validate
+     *
      * @param $string
      *
      * @return bool
@@ -16,6 +18,10 @@ if (!function_exists('is_json')) {
     {
         if (is_array($string)) {
             return false;
+        }
+
+        if(function_exists('json_validate')) {
+            return json_validate($string);
         }
 
         json_decode($string);
