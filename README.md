@@ -23,7 +23,7 @@ requires creativity, passion, and the courage to explore uncharted territories.
 With the Charm Framework, you'll embark on an epic journey through the cosmos of 
 web development, discovering new ways to create and innovate while having fun along the way.
 
-We've infused the Charm Framework with the spirit of Star Wars, a timeless tale of 
+We've infused the Charm Framework with the spirit of Sci-Fi, timeless tales of 
 heroes and villains, triumph and tragedy, that has captured the hearts of millions across the galaxy. 
 Our goal is to bring the magic and excitement of this beloved saga to the world of PHP web development, 
 inspiring you to embrace your inner Jedi and become a true master of your craft.
