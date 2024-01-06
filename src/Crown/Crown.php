@@ -171,6 +171,13 @@ class Crown extends Module implements ModuleInterface
         // Go through all cron jobs
         foreach (C::Storage()->scanDir($dir) as $file) {
             $fullpath = $dir . DS . $file;
+
+            if(is_dir($fullpath)) {
+                // Got a subdirectory, so load it as well
+                $this->loadCronjobs($fullpath, $namespace . "\\" . $file);
+                continue;
+            }
+
             $pathinfo = pathinfo($fullpath);
             require_once($fullpath);
 
