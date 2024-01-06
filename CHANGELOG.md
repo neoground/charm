@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   the mode on / off or create file `var/maintenance.lock` manually.
 - Cron job to remove log files older than `main:logging.keep_days` days. Same for debugbar cache files after
   `main:debug.log_keep_days` days.
+- Cron jobs can now be organized in subdirectories inside `app/Jobs/Cron` and will be loaded recursively.
 
 ### Changed
 - Improved security of DebugBar
