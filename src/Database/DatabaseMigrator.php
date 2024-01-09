@@ -132,7 +132,7 @@ class DatabaseMigrator
         }
 
         // Run migrations in models
-        $this->output->writeln('<info>Running ' . $method . ' migrations in models</info>');
+        $this->output->writeln('<info>:: Running ' . $method . ' migrations in models</info>', OutputInterface::VERBOSITY_VERBOSE);
         $this->runModelMigrations($method, $module);
     }
 
@@ -144,7 +144,7 @@ class DatabaseMigrator
     public function runAllMigrations($method)
     {
         foreach(C::getAllModules() as $name => $module) {
-            $this->output->writeln('<info>Running ' . $method . ' migrations for module: ' . $name . '</info>');
+            $this->output->writeln('<info>:: Running ' . $method . ' migrations for module: ' . $name . '</info>');
 
             $this->runMigrations($method, null, $name);
         }
@@ -158,7 +158,7 @@ class DatabaseMigrator
      */
     private function runModelMigrations($method, $module = "App")
     {
-        $this->output->writeln('Model Migration ' . $method . ': ' . $module, OutputInterface::VERBOSITY_NORMAL);
+        $this->output->writeln('Model Migration ' . $method . ': ' . $module, OutputInterface::VERBOSITY_VERBOSE);
         try {
             $mod = C::get($module);
 
@@ -217,12 +217,12 @@ class DatabaseMigrator
                 if($method == 'down') {
 
                     // DOWN migration
-                    $this->output->writeln('Dropping table: ' . $tablename);
+                    $this->output->writeln('🔥 Dropping table: ' . $tablename);
                     if (!$schema_builder->hasTable($tablename)) {
                         $schema_builder->drop($tablename);
                         $this->synced_tables['dropped'][] = $tablename;
                     } else {
-                        $this->output->writeln('Ignoring non-existing table: ' . $tablename);
+                        $this->output->writeln('ℹ Ignoring non-existing table: ' . $tablename, OutputInterface::VERBOSITY_VERBOSE);
                         $this->synced_tables['ignored'][] = $tablename;
                     }
 
@@ -230,11 +230,11 @@ class DatabaseMigrator
 
                     // UP migration
                     if (!$schema_builder->hasTable($tablename)) {
-                        $this->output->writeln('Creating table: ' . $tablename);
+                        $this->output->writeln('✨ Creating table: ' . $tablename);
                         $schema_builder->create($tablename, $obj::getTableStructure());
                         $this->synced_tables['created'][] = $tablename;
                     } else {
-                        $this->output->writeln('Ignoring existing table: ' . $tablename);
+                        $this->output->writeln('ℹ Ignoring existing table: ' . $tablename, OutputInterface::VERBOSITY_VERBOSE);
                         $this->synced_tables['ignored'][] = $tablename;
 
                         // TODO Check if fields changed / added / removed and alter them
@@ -253,40 +253,33 @@ class DatabaseMigrator
      */
     public function outputStats() : void
     {
-        $counter_processed = str_pad($this->synced_tables['processed'], 4, ' ', STR_PAD_LEFT);
-        $counter_created = str_pad(count($this->synced_tables['created']), 4, ' ', STR_PAD_LEFT);
-        $counter_dropped = str_pad(count($this->synced_tables['dropped']), 4, ' ', STR_PAD_LEFT);
-        $counter_ignored = str_pad(count($this->synced_tables['ignored']), 4, ' ', STR_PAD_LEFT);
+        $counter_processed = count($this->synced_tables['processed']);
+        $counter_created = count($this->synced_tables['created']);
+        $counter_dropped = count($this->synced_tables['dropped']);
+        $counter_ignored = count($this->synced_tables['ignored']);
 
-        $this->output->writeln(' ');
-        $this->output->writeln('+-------------------------------------------------------------------------+');
-        $this->output->writeln('|                                                                         |');
-        $this->output->writeln('|                           <info>S  U  M  M  A  R  Y</info>                           |');
-        $this->output->writeln('|                                                                         |');
-        $this->output->writeln('+-------------------------------------------------------------------------+');
-        $this->output->writeln('|                                                                         |');
-        $this->output->writeln('| Processed tables:  <info>' . $counter_processed . '</info>                                                 |');
-        $this->output->writeln('| Created   tables:  <info>' . $counter_created . '</info>                                                 |');
-        $this->output->writeln('| Dropped   tables:  <info>' . $counter_dropped . '</info>                                                 |');
-        $this->output->writeln('| Ignored   tables:  <info>' . $counter_ignored . '</info>                                                 |');
-        $this->output->writeln('|                                                                         |');
-        $this->output->writeln('+-------------------------------------------------------------------------+');
-        $this->output->writeln(' ');
+        $this->output->writeln('');
+        $this->output->writeln('<info>:: SUMMARY</info>');
+        $this->output->writeln('');
+        $this->output->writeln('<info>' . $counter_processed . '</info> processed, <info>'
+            . $counter_created . '</info> created, <info>'
+            . $counter_dropped . '</info> dropped, <info>'
+            . $counter_ignored . '</info> existing.');
 
         if($counter_created > 0) {
-            $this->output->writeln(' ');
-            $this->output->writeln('<info>Created:</info>');
+            $this->output->writeln('');
+            $this->output->writeln('<info>:: Created</info>');
             $this->output->writeln(implode(', ', $this->synced_tables['created']));
-            $this->output->writeln(' ');
-
         }
 
         if($counter_dropped > 0) {
-            $this->output->writeln(' ');
-            $this->output->writeln('<info>Dropped:</info>');
+            $this->output->writeln('');
+            $this->output->writeln('<info>:: Dropped</info>');
             $this->output->writeln(implode(', ', $this->synced_tables['dropped']));
-            $this->output->writeln(' ');
+            $this->output->writeln('');
 
         }
+
+        $this->output->writeln('');
     }
 }
