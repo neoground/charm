@@ -148,8 +148,6 @@ class DatabaseMigrator
 
             $this->runMigrations($method, null, $name);
         }
-
-        $this->runMigrations($method, null, "App");
     }
 
     /**
