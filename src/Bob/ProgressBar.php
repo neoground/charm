@@ -3,7 +3,7 @@
  * This file contains the ProgressBar class.
  */
 
-namespace Charm\Vivid\Console;
+namespace Charm\Bob;
 
 use Symfony\Component\Console\Helper\ProgressBar as SProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -18,18 +18,18 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ProgressBar
 {
     /** @var SProgressBar the progress bar */
-    protected $pb;
+    protected SProgressBar $pb;
 
     /** @var OutputInterface the console output */
-    protected $output;
+    protected OutputInterface $output;
 
     /**
      * Create a new progress bar
      *
      * @param OutputInterface $output An OutputInterface instance
-     * @param int $max Maximum steps (0 if unknown)
+     * @param int             $max    Maximum steps (0 if unknown)
      */
-    public function __construct($output, $max = 0)
+    public function __construct(OutputInterface $output, int $max = 0)
     {
         $this->pb = new SProgressBar($output, $max);
         $this->output = $output;
@@ -48,7 +48,7 @@ class ProgressBar
      *
      * @param int $step Number of steps to advance
      */
-    public function advance($step = 1)
+    public function advance(int $step = 1): void
     {
         $this->pb->advance($step);
     }
@@ -58,7 +58,7 @@ class ProgressBar
      *
      * @return SProgressBar
      */
-    public function getProgressBarInstance()
+    public function getProgressBarInstance(): SProgressBar
     {
         return $this->pb;
     }
@@ -71,9 +71,9 @@ class ProgressBar
      * (by wrapping the name with %).
      *
      * @param string $message The text to associate with the placeholder
-     * @param string $name The name of the placeholder
+     * @param string $name    The name of the placeholder
      */
-    public function setMessage($message, $name = 'message')
+    public function setMessage(string $message, string $name = 'message'): void
     {
         $this->pb->setMessage($message, $name);
     }
@@ -81,11 +81,11 @@ class ProgressBar
     /**
      * Finishes the progress output.
      */
-    public function finish()
+    public function finish(): void
     {
         $this->pb->finish();
 
         // Empty line for clean finish
-        $this->output->writeln(" ");
+        $this->output->writeln("");
     }
 }

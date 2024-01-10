@@ -1,6 +1,6 @@
 <?php
 /**
- * This file contains the ProgressBar class.
+ * This file contains the LogOutput class.
  */
 
 namespace Charm\Vivid\Console;
