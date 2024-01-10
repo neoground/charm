@@ -27,9 +27,10 @@ class DbSyncCommand extends Command
     protected function configure()
     {
         $this->setName("db:sync")
-            ->setDescription("Sync the database tables of all modules (drop tables with: --action=down)")
+            ->setDescription("Sync the database tables of all modules")
+            ->setHelp("This command is designed to synchronize the database tables across all modules of the application. It primarily focuses on ensuring that the database schema is in alignment with the current state of the application's modules.")
             ->setDefinition([
-                new InputOption('action', 'do', InputOption::VALUE_OPTIONAL, 'Action to take: up / down', 'up'),
+                new InputOption('action', 'do', InputOption::VALUE_OPTIONAL, 'Specifies the action to be performed on the database schema, can be either "up" or "down".', 'up'),
             ]);
     }
 
@@ -48,14 +49,14 @@ class DbSyncCommand extends Command
         $dm = new DatabaseMigrator($output);
 
         if ($action == 'down') {
-            $dm->runAllMigrations('down', $output);
+            $dm->runAllMigrations('down');
         } else {
-            $dm->runAllMigrations('up', $output);
+            $dm->runAllMigrations('up');
         }
 
         $dm->outputStats();
 
-        $output->writeln('<info>Done!</info>');
+        $output->writeln('<info>✅ Done!</info>');
         return Command::SUCCESS;
     }
 }

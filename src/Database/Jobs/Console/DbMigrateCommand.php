@@ -27,11 +27,12 @@ class DbMigrateCommand extends Command
     protected function configure()
     {
         $this->setName("db:migrate")
-            ->setDescription("Migrate the database tables (parameters: --action=up / --action=down)")
+            ->setDescription("Migrate the database tables")
+            ->setHelp('This command facilitates the migration of database tables. It allows the user to specify whether to upgrade or downgrade the database schema, target specific migration files, or apply migrations to specific modules within the application.')
             ->setDefinition([
-                new InputOption('action', 'do', InputOption::VALUE_REQUIRED, 'Action to take: up / down', 'up'),
-                new InputOption('file', 'f', InputOption::VALUE_OPTIONAL, 'Optional single file to migrate', ''),
-                new InputOption('module', 'm', InputOption::VALUE_OPTIONAL, 'Optional module name', 'App')
+                new InputOption('action', 'do', InputOption::VALUE_REQUIRED, 'Specifies the action to be performed on the database schema, can be either "up" or "down".', 'up'),
+                new InputOption('file', 'f', InputOption::VALUE_OPTIONAL, 'Optional. If provided, specifies a single migration file to be migrated. Only provide the filename.', ''),
+                new InputOption('module', 'm', InputOption::VALUE_OPTIONAL, 'Optional. Specifies the module where the migration should be applied.', 'App')
             ]);
     }
 
@@ -51,24 +52,13 @@ class DbMigrateCommand extends Command
 
         $dm = new DatabaseMigrator($output);
 
-        if (!empty($file)) {
-            // Single migration
-            $output->writeln('<info>Starting single migration</info>');
-        } else {
-            // File empty or not set -> full migration!
-            $output->writeln('<info>Starting migrations</info>');
-            $file = null;
-        }
-
         if ($action == 'up') {
-            $output->writeln('<info>Running UP migrations</info>');
-            $dm->runMigrations('up', $file, $module, $output);
+            $dm->runMigrations('up', $file, $module);
         } elseif ($action == 'down') {
-            $output->writeln('<info>Running DOWN migrations</info>');
-            $dm->runMigrations('down', $file, $module, $output);
+            $dm->runMigrations('down', $file, $module);
         }
 
-        $output->writeln('<info>Done!</info>');
+        $output->writeln('<info>✅ Done!</info>');
         return Command::SUCCESS;
     }
 }

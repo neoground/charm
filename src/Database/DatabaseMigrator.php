@@ -80,7 +80,7 @@ class DatabaseMigrator
 
         // Is $file set? Single migration?
         if (!empty($file)) {
-            $this->output->writeln('Single migration of: ' . $file);
+            $this->output->writeln('ℹ Single migration of: ' . $file);
 
             // Remove every file which is not like the wanted name!
             foreach ($files as $k => $m) {
@@ -114,7 +114,7 @@ class DatabaseMigrator
 
                 if(!class_exists($class)) {
                     // Still not found. Ignore.
-                    $this->output->writeln('<error>Invalid class in: ' . $class_raw
+                    $this->output->writeln('<error>❌ Invalid class in: ' . $class_raw
                         . '. Expected: ' . $class . '</error>');
                     continue;
                 }
