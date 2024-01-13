@@ -41,11 +41,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Crown module now smoothly supports multiple jobs each run which run in own threads in parallel
 - For main framework access we now use the magic magnet `Charm\Vivid\C` as the default class instead of the alternative
   class `Charm\Vivid\Charm`, which can be used as well, depending on the dev's preferences
+- Moved the ProgressBar class to the `Bob` module
+- Improved and extended the available `CommandHelper` methods
 
 ### Fixed
 - Small bug fixes due to wrong return types
 - Errors due to sequential cron job handling which led to some cron jobs which didn't run when the previous one took 
   too long. They are now running in their own threads in parallel.
+- Image handling via the `Image` class is working again, improved thumbnail generation
 
 ---
 

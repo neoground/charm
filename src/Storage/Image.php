@@ -22,20 +22,18 @@ class Image extends SimpleImage
      *
      * @param string|UploadedFile $file The image file to load.
      *
-     * @return SimpleImage
-     * @throws \Exception Thrown if file or image data is invalid.
+     * @return Image
+     * @throws \Exception
      */
-    public function fromFile($file)
+    public function fromFile(string|UploadedFile $file): static
     {
         if (is_string($file)) {
             // Got path string
             return parent::fromFile($file);
-        } else if ($file instanceof UploadedFile) {
-            // Got uploaded file
-            return parent::fromFile($file->getTempName());
         }
 
-        throw new \Exception("File not found: $file", self::ERR_FILE_NOT_FOUND);
+        // Got uploaded file
+        return parent::fromFile($file->getTempName());
     }
 
     /**
@@ -44,6 +42,7 @@ class Image extends SimpleImage
      * @param string $src path to source
      * @param string $dest path where thumbnail should be stored
      * @param int    $width wanted with of thumbnail in px. Default: 600
+     * @param int    $height wanted height of thumbnail in px. Default: 600
      * @param string $mime mime of thumbnail. Default: image/jpeg
      * @param int    $quality quality of thumbnail 0-100. Default: 80
      *
@@ -52,14 +51,15 @@ class Image extends SimpleImage
     public static function createThumbnail(string $src,
                                            string $dest,
                                            int $width = 600,
+                                           int $height = 600,
                                            string $mime = "image/jpeg",
                                            int $quality = 80) : bool
     {
         try {
             $tn = new SimpleImage();
             $tn->fromFile($src)
-                ->bestFit($width, $width)
-                ->thumbnail($width, $width)
+                ->bestFit($width, $height)
+                ->thumbnail($width, $height)
                 ->toFile($dest, $mime, $quality);
 
             return true;
