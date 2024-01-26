@@ -45,7 +45,7 @@ class CreateEnvironment extends Command
 
         $name = $input->getArgument('name');
         if(empty($name)) {
-            $name = $ch->ask('Name of environment: ');
+            $name = $ch->ask('Name of environment');
         }
 
         $output->writeln(sprintf('Creating environment "%s"...', $name));
@@ -69,9 +69,9 @@ class CreateEnvironment extends Command
         $data = [
             'ENVIRONMENT_NAME' => $name,
             'BASE_PATH' => C::Storage()->getBasePath(),
-            'DEBUG_MODE' => $ch->choice('Enable dev and debug mode? (true): ', ['false', 'true'], 1),
-            'ERROR_STYLE' => $ch->choice('How should errors be returned? (default): ', ['default', 'view', 'json', 'exception'], 0),
-            'BASE_URL' => $ch->ask('URL to app index (used as fallback): '),
+            'DEBUG_MODE' => $ch->choice('Enable dev and debug mode?', ['false', 'true'], 1),
+            'ERROR_STYLE' => $ch->choice('How should errors be returned?', ['default', 'view', 'json', 'exception'], 0),
+            'BASE_URL' => $ch->ask('URL to app index (used as fallback)'),
         ];
 
         C::CharmCreator()->createFile('config', $mainFile, $data, 'main_env');
@@ -93,25 +93,25 @@ class CreateEnvironment extends Command
             'REDIS_PASS' => '',
         ];
 
-        if($ch->confirm('Add a database connection? y/n: ')) {
+        if($ch->confirm('Add a database connection? y/n')) {
             $data = [
                 ...$data,
-                'DATABASE_ENABLED' => 'true',
-                'DB_DRIVER' => $ch->choice('Select the database driver (mysql): ', ['mysql', 'pgsql', 'sqlite', 'sqlsrv'], 0),
-                'DB_DATABASE' => $ch->ask('Database name: '),
-                'DB_HOST' => $ch->ask('Database hostname (localhost): ', 'localhost'),
-                'DB_USER' => $ch->ask('Database username: '),
-                'DB_PASS' => $ch->ask('Database password: '),
+                'DB_ENABLED' => 'true',
+                'DB_DRIVER' => $ch->choice('Select the database driver', ['mysql', 'pgsql', 'sqlite', 'sqlsrv'], 0),
+                'DB_DATABASE' => $ch->ask('Database name'),
+                'DB_HOST' => $ch->ask('Database hostname (localhost)', 'localhost'),
+                'DB_USER' => $ch->ask('Database username'),
+                'DB_PASS' => $ch->askHidden('Database password'),
             ];
         }
 
-        if($ch->confirm('Add a redis connection? y/n: ')) {
+        if($ch->confirm('Add a redis connection? y/n')) {
             $data = [
                 ...$data,
                 'REDIS_ENABLED' => 'true',
-                'REDIS_HOST' => $ch->ask('Redis hostname (127.0.0.1): ', '127.0.0.1'),
-                'REDIS_PORT' => $ch->ask('Redis port (6379): ', '6379'),
-                'REDIS_PASS' => $ch->ask('Redis password: '),
+                'REDIS_HOST' => $ch->ask('Redis hostname (127.0.0.1)', '127.0.0.1'),
+                'REDIS_PORT' => $ch->ask('Redis port (6379)', '6379'),
+                'REDIS_PASS' => $ch->askHidden('Redis password'),
             ];
         }
 

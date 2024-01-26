@@ -235,6 +235,11 @@ class ConsoleHelper
         return $this->ch->ask($question, $default);
     }
 
+    public function askHidden($question)
+    {
+        return $this->ch->askHidden($question);
+    }
+
     public function confirm($question, $default = false)
     {
         return $this->ch->confirm($question, $default);

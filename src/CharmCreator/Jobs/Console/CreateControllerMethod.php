@@ -55,7 +55,7 @@ class CreateControllerMethod extends Command
         $controllerName = $input->getOption('ctrl');
         if (empty($controllerName)) {
             // TODO Allow selection for better UX and without needing validation
-            $controllerName = $ch->ask('Name of controller class: ');
+            $controllerName = $ch->ask('Name of controller class');
         }
 
         $ch->askForTemplateAndData();
