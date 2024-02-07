@@ -30,7 +30,7 @@ class ShutdownEvent extends EventListener
     /**
      * Event execution
      */
-    public function fire()
+    public function fire(mixed $args = null): bool
     {
         if(C::Config()->get('main:debug.debugmode', false) && C::has('DebugBar')) {
             // Collect all data in file if enabled
@@ -39,5 +39,7 @@ class ShutdownEvent extends EventListener
                 C::DebugBar()->getInstance()->collect();
             }
         }
+
+        return true;
     }
 }

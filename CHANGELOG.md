@@ -43,6 +43,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   class `Charm\Vivid\Charm`, which can be used as well, depending on the dev's preferences
 - Moved the ProgressBar class to the `Bob` module
 - Improved and extended the available `CommandHelper` methods
+- `EventListener` fire methods can now have a parameter passed to when the event is fired
 
 ### Fixed
 - Small bug fixes due to wrong return types

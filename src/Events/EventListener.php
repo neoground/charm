@@ -43,11 +43,11 @@ class EventListener
     /**
      * Firing the event
      *
-     * @throws LogicException When the fire() method is not implemented in an event
+     * @param mixed $args optional argument which can be passed on event firing
      */
-    public function fire()
+    public function fire(mixed $args = null): bool
     {
-        throw new LogicException("You must override the fire() method for this event.");
+        return false;
     }
 
     /**

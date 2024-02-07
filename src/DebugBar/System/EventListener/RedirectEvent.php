@@ -30,7 +30,7 @@ class RedirectEvent extends EventListener
     /**
      * Event execution
      */
-    public function fire()
+    public function fire(mixed $args = null): bool
     {
         if(C::Config()->get('main:debug.debugmode', false) && C::has('DebugBar')) {
             // Collect all data in file
@@ -39,5 +39,7 @@ class RedirectEvent extends EventListener
                 $instance->collect();
             }
         }
+
+        return true;
     }
 }

@@ -75,10 +75,8 @@ class EventProvider extends Module implements ModuleInterface
      * @param string $method method to call
      *
      * @return bool
-     *
-     * @throws ModuleNotFoundException
      */
-    public function addListener($module, $name, $method)
+    public function addListener(string $module, string $name, string $method): bool
     {
         // Add listener
         return C::AppStorage()->append('Events', $module . '_' . $name, $method);
@@ -90,11 +88,12 @@ class EventProvider extends Module implements ModuleInterface
      * @param string $module name of module
      * @param string $name   name of event
      *
-     * @return false|null|array
+     * @return array
      */
-    public function getListeners($module, $name)
+    public function getListeners(string $module, string $name): array
     {
-        return C::AppStorage()->get('Events', $module . '_' . $name);
+        $listeners = C::AppStorage()->get('Events', $module . '_' . $name);
+        return (empty($listeners) ? [] : $listeners);
     }
 
     /**
@@ -102,33 +101,33 @@ class EventProvider extends Module implements ModuleInterface
      *
      * @param string $module name of module
      * @param string $name   name of event
+     * @param mixed  $args   optional argument to pass to fire methods
      *
      * @return bool
      */
-    public function fire($module, $name)
+    public function fire(string $module, string $name, mixed $args = null): bool
     {
         $listeners = $this->getListeners($module, $name);
 
         $ret = true;
 
-        if(is_array($listeners) && count($listeners) > 0) {
+        if(count($listeners) > 0) {
             foreach($listeners as $listener) {
                 // Call method
-
                 if(str_contains($listener, "::")) {
                     // Static method
-                    $ret &= call_user_func($listener);
+                    $ret &= call_user_func($listener, $args);
                 } else {
                     // Normal method -> init class + call method
                     $parts = explode(".", $listener);
                     if(count($parts) === 2 && class_exists($parts[0])) {
-                        $ret &= call_user_func([new $parts[0], $parts[1]]);
+                        $ret &= call_user_func([new $parts[0], $parts[1]], $args);
                     }
                 }
 
             }
         }
 
-        return $ret;
+        return (bool) $ret;
     }
 }

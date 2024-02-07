@@ -30,7 +30,7 @@ class RenderEvent extends EventListener
     /**
      * Event execution
      */
-    public function fire()
+    public function fire(mixed $args = null): bool
     {
         if(C::Config()->get('main:debug.show_debugbar', false) && C::has('DebugBar')) {
             $instance = C::DebugBar()->getInstance();
@@ -52,5 +52,7 @@ class RenderEvent extends EventListener
                 View::addBody('debugbar_body', C::DebugBar()->getRenderBar());
             }
         }
+
+        return true;
     }
 }
