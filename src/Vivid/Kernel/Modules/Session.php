@@ -158,4 +158,18 @@ class Session extends Module implements ModuleInterface
         return $_SESSION;
     }
 
+    /**
+     * Save and close the current session
+     *
+     * This is done when the script exeuction ends.
+     * But you can also call it when you don't need to write to the session anymore,
+     * so you can prevent session locking. Reading is of course still possible after that.
+     *
+     * @return bool Returns true on success and false on failure.
+     */
+    public function saveAndClose(): bool
+    {
+        return session_write_close();
+    }
+
 }

@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Cron job to remove log files older than `main:logging.keep_days` days. Same for debugbar cache files after
   `main:debug.log_keep_days` days.
 - Cron jobs can now be organized in subdirectories inside `app/Jobs/Cron` and will be loaded recursively.
+- `C::Session()->saveAndClose()` to easily write and end the session, so you can prevent session blocking
 
 ### Changed
 - Improved security of DebugBar
