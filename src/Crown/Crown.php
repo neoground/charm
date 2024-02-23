@@ -174,7 +174,7 @@ class Crown extends Module implements ModuleInterface
 
             if(is_dir($fullpath)) {
                 // Got a subdirectory, so load it as well
-                $this->loadCronjobs($fullpath, $namespace . "\\" . $file);
+                $jobs = [...$jobs, ...$this->loadCronjobs($fullpath, $namespace . "\\" . $file)];
                 continue;
             }
 
