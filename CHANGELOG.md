@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   `main:debug.log_keep_days` days.
 - Cron jobs can now be organized in subdirectories inside `app/Jobs/Cron` and will be loaded recursively.
 - `C::Session()->saveAndClose()` to easily write and end the session, so you can prevent session blocking
+- `C::Http()->withGenericUserAgent()->get(...)` easily allows to make requests using a generic common user agent
 
 ### Changed
 - Improved security of DebugBar
