@@ -29,9 +29,9 @@ class ClearDebugbarCache extends Cronjob
     /**
      * Run that job.
      *
-     * @return int
+     * @return bool
      */
-    public function run(): int
+    public function run(): bool
     {
         $path = C::Storage()->getCachePath() . DS . 'debugbar';
         $keep_in_days = C::Config()->get('main:debug.log_keep_days', 14);

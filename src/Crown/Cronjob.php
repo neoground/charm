@@ -22,11 +22,6 @@ class Cronjob
     const FRIDAY = 5;
     const SATURDAY = 6;
 
-    // Return codes
-    public const SUCCESS = 0;
-    public const FAILURE = 1;
-    public const INVALID = 2;
-
     /** @var string  name of cron job */
     protected string $name;
 
@@ -52,11 +47,11 @@ class Cronjob
     /**
      * Run that job
      *
-     * @return int
+     * @return bool
      */
-    public function run(): int
+    public function run(): bool
     {
-        return self::INVALID;
+        return false;
     }
 
     /**

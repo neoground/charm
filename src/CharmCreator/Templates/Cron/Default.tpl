@@ -42,13 +42,13 @@ class JOB_NAME extends Cronjob
     /**
      * Run that job.
      *
-     * @return int
+     * @return bool
      */
-    public function run(): int
+    public function run(): bool
     {
         // TODO
 
-        return self::SUCCESS;
+        return true;
     }
 
 }

@@ -33,9 +33,9 @@ class ClearLogs extends Cronjob
      * that are older than the specified number of days determined by the
      * "main:logging.keep_days" configuration value.
      *
-     * @return int Returns true if the operation was successful.
+     * @return bool Returns true if the operation was successful.
      */
-    public function run(): int
+    public function run(): bool
     {
         $path = C::Storage()->getLogPath();
         $files = C::Storage()->scanDir($path);
