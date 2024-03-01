@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Cron jobs can now be organized in subdirectories inside `app/Jobs/Cron` and will be loaded recursively.
 - `C::Session()->saveAndClose()` to easily write and end the session, so you can prevent session blocking
 - `C::Http()->withGenericUserAgent()->get(...)` easily allows to make requests using a generic common user agent
+- `C::Performance()->...` module to easily access key metrics of the app and to create custom measurements.
 
 ### Changed
 - Improved security of DebugBar

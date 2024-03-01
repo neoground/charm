@@ -58,6 +58,7 @@ class Handler
             'Config',
             'Logging',
             'Debug',
+            'Performance' => '\\Charm\\Performance\\Performance',
             'DebugBar' => '\\Charm\\DebugBar\\DebugBar',
             'Session',
             'Redis',
@@ -552,6 +553,10 @@ class Handler
         // Fire shutdown event
         if (C::has('Event')) {
             C::Event()->fire('Charm', 'shutdown');
+        }
+
+        if(C::has('Session')) {
+            C::Session()->saveAndClose();
         }
 
         exit(0);

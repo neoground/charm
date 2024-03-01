@@ -201,7 +201,10 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
         $level = strtolower($level);
 
         if (C::has('Event')) {
-            C::Event()->fire('Logging', $level);
+            C::Event()->fire('Logging', $level, [
+                'message' => $message,
+                'context' => $context
+            ]);
         }
 
         if (C::has('DebugBar') && C::DebugBar()->isEnabled()) {
