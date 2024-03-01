@@ -16,11 +16,11 @@ if (!function_exists('cPath')) {
      *
      * Without leading slash
      *
-     * @param string $subdir (optional) sub directory
+     * @param string $subdir (optional) subdirectory
      *
      * @return string
      */
-    function cPath($subdir = '/')
+    function cPath(string $subdir = '/'): string
     {
         $path = null;
 
@@ -47,11 +47,11 @@ if (!function_exists('cBaseUrl')) {
     /**
      * Get the base URL for URL generation.
      *
-     * Without leading slash
+     * Without trailing slash
      *
      * @return string
      */
-    function cBaseUrl()
+    function cBaseUrl(): string
     {
         $pathInfo = pathinfo($_SERVER['PHP_SELF']);
         $protocol = C::Request()->isHttpsRequest() ? 'https://' : 'http://';
@@ -73,7 +73,7 @@ if (!function_exists('cCurrentUrl')) {
      *
      * @return string
      */
-    function cCurrentUrl()
+    function cCurrentUrl(): string
     {
         $protocol = C::Request()->isHttpsRequest() ? 'https://' : 'http://';
         return $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
@@ -92,7 +92,7 @@ if (!function_exists('apache_request_headers')) {
      *
      * @return array|false
      */
-    function apache_request_headers()
+    function apache_request_headers(): bool|array
     {
         $arh = [];
         $rx_http = '/\AHTTP_/';
