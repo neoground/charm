@@ -5,7 +5,9 @@
 
 namespace Charm\Vivid;
 
+use Charm\Bob\Bob;
 use Charm\Cache\Cache;
+use Charm\CharmCreator\CharmCreator;
 use Charm\Database\Database;
 use Charm\DebugBar\DebugBar;
 use Charm\Events\EventProvider;
@@ -13,6 +15,7 @@ use Charm\Guard\Guard;
 use Charm\Guard\Token;
 use Charm\Http\Http;
 use Charm\Mailman\Mailman;
+use Charm\Performance\Performance;
 use Charm\Storage\Storage;
 use Charm\Vivid\Kernel\EngineManager;
 use Charm\Vivid\Kernel\Handler;
@@ -46,13 +49,16 @@ use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
  * @method static EngineManager App
  * @method static EventProvider Event
  * @method static Http Http
+ * @method static Performance Performance
+ * @method static CharmCreator CharmCreator
+ * @method static Bob Bob
  *
  * @package Charm\Vivid
  */
 class C
 {
     /** @var string the version of charm */
-    public const VERSION = "3.1";
+    public const VERSION = "3.2";
 
     /**
      * Get a loaded module
