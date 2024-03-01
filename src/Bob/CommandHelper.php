@@ -48,11 +48,11 @@ class CommandHelper
     public function outputCharmHeader()
     {
         $logo = "\n";
-        $logo .= ' ██████ ██   ██  █████  ██████  ███    ███ ' . "\n";
-        $logo .= '██      ██   ██ ██   ██ ██   ██ ████  ████ ' . "\n";
-        $logo .= '██      ███████ ███████ ██████  ██ ████ ██ ' . "\n";
-        $logo .= '██      ██   ██ ██   ██ ██   ██ ██  ██  ██ ' . "\n";
-        $logo .= ' ██████ ██   ██ ██   ██ ██   ██ ██      ██ ' . "\n";
+        $logo .= '        __                       ' . "\n";
+        $logo .= '  _____/ /_  ____ __________ ___ ' . "\n";
+        $logo .= ' / ___/ __ \/ __ `/ ___/ __ `__ \\' . "\n";
+        $logo .= '/ /__/ / / / /_/ / /  / / / / / /' . "\n";
+        $logo .= '\___/_/ /_/\__,_/_/  /_/ /_/ /_/ ' . "\n";
         $logo .= "\n";
 
         $this->outputRainbow($logo);
@@ -100,7 +100,7 @@ class CommandHelper
             $this->outputRainbow($output_str);
         } else {
             foreach (explode("\n", $output_str) as $row) {
-                $this->output->writeln($row);
+                $this->writeln($row);
             }
         }
     }
@@ -141,7 +141,7 @@ class CommandHelper
                 $new_color = rand(0, count($colors) - 1);
             }
             $last_color = $new_color;
-            $this->output->writeln($colors[$new_color] . $line . "\033[37m");
+            $this->writeln($colors[$new_color] . $line . "\033[37m");
         }
     }
 
@@ -438,8 +438,8 @@ class CommandHelper
      */
     public function heading1(string $content): void
     {
-        $this->output->writeln('');
-        $this->output->writeln('<fg=bright-cyan>::</> <fg=bright-white;options=bold>' . $content . '</>');
+        $this->writeln('');
+        $this->writeln('<fg=bright-cyan>::</> <fg=bright-white;options=bold>' . $content . '</>');
     }
 
     /**
@@ -454,7 +454,7 @@ class CommandHelper
      */
     public function heading2(string $content): void
     {
-        $this->output->writeln('<fg=cyan>::</> <fg=white>' . $content . '</>');
+        $this->writeln('<fg=cyan>::</> <fg=white>' . $content . '</>');
     }
 
     /**
@@ -469,7 +469,91 @@ class CommandHelper
      */
     public function heading3(string $content): void
     {
-        $this->output->writeln('<fg=green>=></> <fg=white>' . $content . '</>');
+        $this->writeln('<fg=green>=></> <fg=white>' . $content . '</>');
     }
 
+    /**
+     * Writes messages to the output and adds a new line at the end.
+     *
+     * This method takes a single message or an array of messages and writes them to the output
+     * using the SymfonyStyle writeln method. An optional parameter $options can be provided to specify
+     * the output format.
+     *
+     * @param string|string[] $messages The message or array of messages to write.
+     * @param int             $options  The output format options. Defaults to OutputInterface::OUTPUT_NORMAL.
+     *
+     * @return void
+     */
+    public function writeln(array|string $messages, int $options = OutputInterface::OUTPUT_NORMAL): void
+    {
+        $this->output->writeln($messages, $options);
+    }
+
+    /**
+     * Retrieves the value of the specified input argument.
+     *
+     * @param string $name The name of the argument to retrieve.
+     *
+     * @return mixed The value of the specified argument.
+     */
+    public function getArgument(string $name): mixed
+    {
+        return $this->input->getArgument($name);
+    }
+
+    /**
+     * Retrieves all input arguments.
+     *
+     * @return array Returns an array containing all input arguments, indexed by their names.
+     */
+    public function getArguments(): array
+    {
+        return $this->input->getArguments();
+    }
+
+    /**
+     * Checks if the specified input argument exists.
+     *
+     * @param string $name The name of the argument to check.
+     *
+     * @return bool True if the argument exists, false otherwise.
+     */
+    public function hasArgument(string $name): bool
+    {
+        return $this->input->hasArgument($name);
+    }
+
+    /**
+     * Retrieves the value of the specified command-line option.
+     *
+     * @param string $name The name of the option to retrieve.
+     *
+     * @return mixed The value of the specified option.
+     */
+    public function getOption(string $name): mixed
+    {
+        return $this->input->getOption($name);
+    }
+
+    /**
+     * Retrieves the command-line options from the input object.
+     *
+     * @return array The options retrieved from the input object.
+     */
+    public function getOptions(): array
+    {
+        return $this->input->getOptions();
+    }
+
+    /**
+     * Checks if a command-line option with the given name exists.
+     *
+     * @param string $name The name of the option to check.
+     *
+     * @return bool True if the option exists, false otherwise.
+     */
+    public function hasOption(string $name): bool
+    {
+        return $this->input->hasOption($name);
+    }
 }

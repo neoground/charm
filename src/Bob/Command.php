@@ -5,8 +5,8 @@
 
 namespace Charm\Bob;
 
-use Symfony\Component\Console\Question\ChoiceQuestion;
-use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class Command
@@ -22,16 +22,60 @@ use Symfony\Component\Console\Question\Question;
  */
 class Command extends \Symfony\Component\Console\Command\Command
 {
-    public function ask($input, $output, $question)
+    protected OutputInterface $output;
+    protected InputInterface $input;
+    protected CommandHelper $io;
+
+    /**
+     * Sets the output.
+     *
+     * @param OutputInterface $output The output interface to set.
+     *
+     * @return self
+     */
+    public function setOutput(OutputInterface $output): self
     {
-        return $this->getHelper('question')->ask($input, $output, new Question($question));
+        $this->output = $output;
+        return $this;
     }
 
-    public function choice($input, $output, $question, $arr, $default = null)
+    /**
+     * Sets the input for the object.
+     *
+     * @param InputInterface $input The input to be set.
+     *
+     * @return self Returns the object itself for method chaining.
+     */
+    public function setInput(InputInterface $input): self
     {
-        $cq = new ChoiceQuestion($question, $arr, $default);
-        return $this->getHelper('question')->ask($input, $output, $cq);
+        $this->input = $input;
+        return $this;
     }
 
+    /**
+     * Initializes the CommandHelper object.
+     *
+     * Make sure input and output are set before calling this method.
+     *
+     * @return self
+     */
+    public function initIO(): self
+    {
+        $this->io = new CommandHelper($this->input, $this->output);
+        return $this;
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $this->output = $output;
+        $this->input = $input;
+        $this->initIO();
+        return $this->main() ? self::SUCCESS : self::FAILURE;
+    }
+
+    public function main(): bool
+    {
+        return false;
+    }
 
 }

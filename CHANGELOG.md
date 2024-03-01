@@ -46,6 +46,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Moved the ProgressBar class to the `Bob` module
 - Improved and extended the available `CommandHelper` methods
 - `EventListener` fire methods can now have a parameter passed to when the event is fired
+- Console commands have a new structure, now simplifying the general structure. Easy access of input and output
+  is possible via `$this->io->...`.
 
 ### Fixed
 - Small bug fixes due to wrong return types
