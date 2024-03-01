@@ -195,7 +195,7 @@ class Performance extends Module implements ModuleInterface
      *
      * @return int The amount of memory currently being used in bytes.
      */
-    public function getMemoryUsage()
+    public function getMemoryUsage(): int
     {
         return memory_get_peak_usage();
     }
@@ -208,7 +208,7 @@ class Performance extends Module implements ModuleInterface
      *
      * @return int The total memory usage in bytes.
      */
-    public function getTotalMemoryUsage()
+    public function getTotalMemoryUsage(): int
     {
         return memory_get_peak_usage(true);
     }
