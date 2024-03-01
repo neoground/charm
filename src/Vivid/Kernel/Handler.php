@@ -73,7 +73,7 @@ class Handler
             'Bob' => '\\Charm\\Bob\\Bob',
             'CharmCreator' => '\\Charm\\CharmCreator\\CharmCreator',
             'Mailman' => '\\Charm\\Mailman\\Mailman',
-            'Http' => '\\Charm\\Http\\Http'
+            'Http' => '\\Charm\\Http\\Http',
         ];
 
         $this->modules_blacklist = [];
@@ -503,7 +503,7 @@ class Handler
         $error_style = $this->getModule('Config')->get('main:output.error_style', 'default');
 
         // Show whoops in debug mode
-        $is_debug_mode = $this->getModule('Config')->get('main:debug.debugmode', false);
+        $is_debug_mode = $this->getModule('Config')->inDebugMode();
         $debug_exception = $this->getModule('Config')->get('main:debug.exceptions', true);
 
         return ($is_debug_mode && $debug_exception) || $error_style == 'exception';
@@ -555,7 +555,7 @@ class Handler
             C::Event()->fire('Charm', 'shutdown');
         }
 
-        if(C::has('Session')) {
+        if (C::has('Session')) {
             C::Session()->saveAndClose();
         }
 

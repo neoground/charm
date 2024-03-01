@@ -59,15 +59,15 @@ class Debug extends Module implements ModuleInterface
         $whoops = new Run;
         $handle = new PrettyPageHandler;
 
-        $handle->addDataTableCallback('charm', [self::class, 'getWhoopsMetadata']);
+        $handle->addDataTableCallback('Charm', [self::class, 'getWhoopsMetadata']);
 
         $root_path = C::Storage()->getBasePath();
-        if ($root_path !== false) {
+        if ($root_path) {
             $handle->setApplicationRootPath($root_path);
         }
 
         $editor = C::Config()->get('main:debug.editor', false);
-        if ($editor !== false) {
+        if ($editor) {
             $handle->setEditor($editor);
         }
 
