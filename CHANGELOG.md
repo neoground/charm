@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `C::Session()->saveAndClose()` to easily write and end the session, so you can prevent session blocking
 - `C::Http()->withGenericUserAgent()->get(...)` easily allows to make requests using a generic common user agent
 - `C::Performance()->...` module to easily access key metrics of the app and to create custom measurements.
+- More methods to `C::Server()->...` to get different parts of uname data of the server.
 
 ### Changed
 - Improved security of DebugBar
