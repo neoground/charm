@@ -287,7 +287,7 @@ class Handler
             foreach ($modules as $module) {
 
                 // Add module if not empty
-                if (!empty($module)) {
+                if (!empty($module) && !in_array($module, $this->modules_to_load)) {
                     $this->addModule($module);
 
                     // Also add depedend modules of this module

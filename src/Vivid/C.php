@@ -39,6 +39,7 @@ use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
  * @method static Kernel\Modules\Request Request
  * @method static Kernel\Modules\Server Server
  * @method static Kernel\Modules\Session Session
+ * @method static Kernel\Modules\Validator Validator
  * @method static Router\Router Router
  * @method static DebugBar DebugBar
  * @method static Guard Guard
