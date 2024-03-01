@@ -130,15 +130,21 @@ class Handler
         // Post init hooks
         $this->callPostInitHooks();
 
-        // Save measurements
-        if (C::Config()->inDebugMode()) {
+        // Save metrics
+        if (C::Config()->inDebugMode() || C::Config()->get('main:debug.metrics', false)) {
             C::AppStorage()->set('Charm', 'time_start', $start_time);
             C::AppStorage()->set('Charm', 'time_init', $init_time);
             C::AppStorage()->set('Charm', 'time_routing', $routing_time);
+            C::AppStorage()->set('Charm', 'time_postinit', microtime(true));
         }
 
         // Route + Output!
         $this->output();
+
+        // Save metrics
+        if (C::Config()->inDebugMode() || C::Config()->get('main:debug.metrics', false)) {
+            C::AppStorage()->set('Charm', 'time_output', microtime(true));
+        }
 
         // Finally shutdown
         $this->shutdown();
@@ -426,8 +432,8 @@ class Handler
             /** @var OutputInterface $response */
             $response = $this->getModule('Router')->dispatch();
 
-            // Time measurement
-            if (C::Config()->inDebugMode()) {
+            // Save metrics
+            if (C::Config()->inDebugMode() || C::Config()->get('main:debug.metrics', false)) {
                 C::AppStorage()->set('Charm', 'time_controller', microtime(true));
             }
 
