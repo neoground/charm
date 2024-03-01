@@ -133,8 +133,9 @@ class DebugBar extends Module implements ModuleInterface
             } else {
                 $r->addControl('current_user', [
                     "icon" => "user",
-                    "tooltip" => "Logged in as: " . C::Guard()->getUser()->getDisplayName(),
-                    "title" => C::Guard()->getUserId()
+                    "tooltip" => "Logged in as: " . C::Guard()->getUser()->getDisplayName()
+                        . " [#" . C::Guard()->getUserId() . "]",
+                    "title" => C::Guard()->getUser()->getDisplayName()
                 ]);
             }
         }

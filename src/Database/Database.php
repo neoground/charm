@@ -75,7 +75,7 @@ class Database extends Module implements ModuleInterface
      */
     private function addEloquentToDebugBar()
     {
-        if(C::has('DebugBar')) {
+        if(C::has('DebugBar') && C::DebugBar()->isEnabled()) {
             $debugbar = C::DebugBar()->getInstance();
 
             // Add Eloquent data if we got a database connection

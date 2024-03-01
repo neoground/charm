@@ -32,7 +32,8 @@ class RenderEvent extends EventListener
      */
     public function fire(mixed $args = null): bool
     {
-        if(C::Config()->get('main:debug.show_debugbar', false) && C::has('DebugBar')) {
+        if(C::Config()->get('main:debug.show_debugbar', false)
+            && C::has('DebugBar') && C::DebugBar()->isEnabled()) {
             $instance = C::DebugBar()->getInstance();
             if(is_object($instance)) {
                 $time_start = C::AppStorage()->get('Charm', 'time_start');
