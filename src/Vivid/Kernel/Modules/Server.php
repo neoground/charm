@@ -61,4 +61,44 @@ class Server extends Module implements ModuleInterface
         return $_SERVER;
     }
 
+    /**
+     * Retrieves the operating system of the current server.
+     *
+     * @return string The name of the operating system.
+     */
+    public function getOperatingSystem(): string
+    {
+        return php_uname('s');
+    }
+
+    /**
+     * Retrieves the hostname of the current server.
+     *
+     * @return string The name of the operating system.
+     */
+    public function getHostname(): string
+    {
+        return php_uname('n');
+    }
+
+    /**
+     * Retrieves the operating system release name + version of the current server.
+     *
+     * @return string The name of the operating system.
+     */
+    public function getVersion(): string
+    {
+        return php_uname('r') . ' ' . php_uname('v');
+    }
+
+    /**
+     * Retrieves the machine type of the current server (e.g. i386).
+     *
+     * @return string The name of the operating system.
+     */
+    public function getMachineType(): string
+    {
+        return php_uname('m');
+    }
+
 }
