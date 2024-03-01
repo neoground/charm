@@ -32,14 +32,11 @@ class AppstorageGenerateCommand extends Command
     /**
      * The execution
      *
-     * @param InputInterface   $input
-     * @param OutputInterface  $output
-     *
-     * @return int
+     * @return bool
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function main(): bool
     {
-        $output->writeln('<info>Generating AppStorage cache file...</info>');
+        $this->io->writeln('<info>Generating AppStorage cache file...</info>');
         C::AppStorage()->generateCache();
 
         // Also clear opcache
@@ -47,7 +44,7 @@ class AppstorageGenerateCommand extends Command
             opcache_reset();
         }
 
-        $output->writeln(' Done!');
-        return Command::SUCCESS;
+        $this->io->success('✅ Done!');
+        return true;
     }
 }

@@ -7,8 +7,6 @@ namespace Charm\Bob\Jobs\Console;
 
 use Charm\Bob\Command;
 use Charm\Vivid\C;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class MaintenanceOn
@@ -26,26 +24,24 @@ class MaintenanceOn extends Command
     protected function configure()
     {
         $this->setName("cc:down")
-            ->setDescription("Enables the maintenance mode. While maintenance mode is active, no regular web requests are processed.");
+            ->setDescription("Enables the maintenance mode")
+            ->setHelp('While maintenance mode is active, no regular web requests are processed.');
     }
 
     /**
      * The execution
      *
-     * @param InputInterface   $input
-     * @param OutputInterface  $output
-     *
-     * @return int
+     * @return bool
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function main(): bool
     {
-        if(C::Config()->turnMaintenanceModeOn()) {
-            $output->writeln('<info>✅ Maintenace mode turned on. App is down.</info>');
-            return Command::SUCCESS;
+        if (C::Config()->turnMaintenanceModeOn()) {
+            $this->io->success('✅ Maintenace mode turned on. App is down.');
+            return true;
         }
 
-        $output->writeln('<error>❌ Could not turn on maintenance mode!</error>');
-        $output->writeln('Please create an empty var/maintenance.lock file manually and check permissions.');
-        return Command::FAILURE;
+        $this->io->writeln('<error>❌ Could not turn on maintenance mode!</error>');
+        $this->io->writeln('Please create an empty var/maintenance.lock file manually and check permissions.');
+        return false;
     }
 }

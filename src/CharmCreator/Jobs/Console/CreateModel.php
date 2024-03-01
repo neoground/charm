@@ -8,8 +8,6 @@ namespace Charm\CharmCreator\Jobs\Console;
 use Charm\Bob\Command;
 use Charm\CharmCreator\Jobs\ConsoleHelper;
 use Charm\Vivid\C;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class CreateModelCommand
@@ -34,27 +32,24 @@ class CreateModel extends Command
     /**
      * The execution
      *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
-     * @return int
+     * @return bool
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function main(): bool
     {
         $type = 'model';
-        $ch = ConsoleHelper::createAndHandle($input, $output, $this->getHelper('question'), $type,
+        $ch = ConsoleHelper::createAndHandle($this->input, $this->output, $this->getHelper('question'), $type,
             'Creating a new model');
 
         if ($ch === false) {
-            return self::FAILURE;
+            return false;
         }
 
         C::CharmCreator()->createFile($type, $ch->getAbsolutePath(), $ch->getData(), $ch->getTemplate());
 
-        $output->writeln(' ');
-        $ch->success('✅ Created model ' . $ch->getName());
-        $output->writeln(' ');
+        $this->io->writeln('');
+        $this->io->success('✅ Created model ' . $ch->getName());
+        $this->io->writeln('');
 
-        return self::SUCCESS;
+        return true;
     }
 }

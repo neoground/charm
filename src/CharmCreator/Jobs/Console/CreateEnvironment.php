@@ -5,13 +5,10 @@
 
 namespace Charm\CharmCreator\Jobs\Console;
 
+use Charm\Bob\Command;
 use Charm\CharmCreator\Jobs\ConsoleHelper;
 use Charm\Vivid\C;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
 
 /**
  * Class CreateEnvironment
@@ -34,33 +31,30 @@ class CreateEnvironment extends Command
     /**
      * The execution
      *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
-     * @return int
+     * @return bool
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function main(): bool
     {
-        $ch = new ConsoleHelper($input, $output, $this->getHelper('question'));
+        $ch = new ConsoleHelper($this->input, $this->output, $this->getHelper('question'));
 
-        $name = $input->getArgument('name');
-        if(empty($name)) {
+        $name = $this->io->getArgument('name');
+        if (empty($name)) {
             $name = $ch->ask('Name of environment');
         }
 
-        $output->writeln(sprintf('Creating environment "%s"...', $name));
+        $this->io->writeln(sprintf('Creating environment "%s"...', $name));
 
-        $envFolder = C::Storage()->getAppPath() . DS .'Config' . DS . 'Environments' . DS . $name;
+        $envFolder = C::Storage()->getAppPath() . DS . 'Config' . DS . 'Environments' . DS . $name;
 
         // Check if environment already exists
         if (is_dir($envFolder)) {
-            $output->writeln('<error>Environment ' . $name . ' already exists.</error>');
-            return self::FAILURE;
+            $this->io->writeln('<error>❌ Environment ' . $name . ' already exists.</error>');
+            return false;
         }
 
         // Create environment folder and copy main.yaml and connections.yaml files
         C::Storage()->createDirectoriesIfNotExisting($envFolder);
-        $output->writeln('✅ Created environment folder');
+        $this->io->writeln('✅ Created environment folder');
 
         $mainFile = $envFolder . DS . 'main.yaml';
         $connectionsFile = $envFolder . DS . 'connections.yaml';
@@ -93,7 +87,7 @@ class CreateEnvironment extends Command
             'REDIS_PASS' => '',
         ];
 
-        if($ch->confirm('Add a database connection? y/n')) {
+        if ($ch->confirm('Add a database connection? y/n')) {
             $data = [
                 ...$data,
                 'DB_ENABLED' => 'true',
@@ -105,7 +99,7 @@ class CreateEnvironment extends Command
             ];
         }
 
-        if($ch->confirm('Add a redis connection? y/n')) {
+        if ($ch->confirm('Add a redis connection? y/n')) {
             $data = [
                 ...$data,
                 'REDIS_ENABLED' => 'true',
@@ -117,34 +111,34 @@ class CreateEnvironment extends Command
 
         C::CharmCreator()->createFile('config', $connectionsFile, $data, 'connections_env');
 
-        $output->writeln(sprintf('✅ Environment "%s" created and config files updated', $name));
+        $this->io->writeln(sprintf('✅ Environment "%s" created and config files updated', $name));
 
         // Check if the current environment is different from the new environment
         $envFile = C::Storage()->getAppPath() . DS . 'app.env';
-        if(!file_exists($envFile)) {
+        if (!file_exists($envFile)) {
             // No environment yet -> use this as default
             file_put_contents($envFile, $name);
-            $output->writeln(sprintf('✅ Environment changed to "%s"', $name));
+            $this->io->writeln(sprintf('✅ Environment changed to "%s"', $name));
         } else {
             $currentEnv = file_exists($envFile) ? trim(file_get_contents($envFile)) : 'dev';
             if ($currentEnv !== $name) {
-                $answer = $ch->choice( sprintf('Current environment is "%s". Change to "%s"?', $currentEnv, $name),
+                $answer = $ch->choice(sprintf('Current environment is "%s". Change to "%s"?', $currentEnv, $name),
                     ['yes', 'no'],
                     0);
 
                 if ($answer === 'yes') {
                     file_put_contents($envFile, $name);
-                    $output->writeln(sprintf('✅ Environment changed to "%s"', $name));
+                    $this->io->writeln(sprintf('✅ Environment changed to "%s"', $name));
                 } else {
-                    $output->writeln('Environment not changed');
+                    $this->io->writeln('Environment not changed');
                 }
             }
         }
 
-        $output->writeln(' ');
-        $ch->success('✅ Created config environment ' . $name);
-        $output->writeln(' ');
+        $this->io->writeln('');
+        $this->io->success('✅ Created config environment ' . $name);
+        $this->io->writeln('');
 
-        return self::SUCCESS;
+        return true;
     }
 }

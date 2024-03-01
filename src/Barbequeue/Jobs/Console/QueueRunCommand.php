@@ -5,11 +5,9 @@
 
 namespace Charm\Barbequeue\Jobs\Console;
 
+use Charm\Bob\Command;
 use Charm\Vivid\C;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class QueueRunCommand
@@ -28,29 +26,22 @@ class QueueRunCommand extends Command
     {
         $this->setName("queue:run")
             ->setDescription("Running the queue. Should be called every 5 or 10 minutes")
-            ->setDefinition([
-                new InputOption('name', 'qn', InputOption::VALUE_REQUIRED,
-                    'Name of queue to run', ''),
-                new InputOption('worker', 'wn', InputOption::VALUE_OPTIONAL,
-                    'ID of worker', 1),
-            ]);
+            ->addOption('name', 'qn', InputOption::VALUE_REQUIRED, 'Name of queue to run', '')
+            ->addOption('worker', 'wn', InputOption::VALUE_OPTIONAL, 'ID of worker', 1);
     }
 
     /**
      * The execution
      *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
      * @return bool
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function main(): bool
     {
-        $name = $input->getOption('name');
-        $worker = $input->getOption('worker');
+        $name = $this->io->getOption('name');
+        $worker = $this->io->getOption('worker');
 
         if (empty(trim($name))) {
-            $output->writeln('<error>No queue name set!</error>');
+            $this->io->writeln('<error>❌ No queue name set!</error>');
             exit;
         }
 
@@ -58,12 +49,12 @@ class QueueRunCommand extends Command
             $worker = 1;
         }
 
-        $output->writeln('<info>Starting queue ' . $name . ', worker ID: ' . $worker . '</info>');
+        $this->io->writeln('<info>Starting queue ' . $name . ', worker ID: ' . $worker . '</info>');
 
         // Execute bbq
         C::Queue()->run($name, $worker);
 
-        $output->writeln('<info>Done!</info>');
+        $this->io->writeln('✅ Done!');
 
         return true;
     }

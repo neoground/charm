@@ -6,11 +6,8 @@
 namespace Charm\Bob\Jobs\Console;
 
 use Charm\Bob\Command;
-use Charm\Bob\CommandHelper;
 use Charm\Vivid\C;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -35,33 +32,28 @@ class ModuleInstall extends Command
     /**
      * The execution
      *
-     * @param InputInterface   $input
-     * @param OutputInterface  $output
-     *
-     * @return int
+     * @return bool
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function main(): bool
     {
-        $ch = new CommandHelper($input, $output);
+        $name = $this->io->getArgument('name');
 
-        $name = $input->getArgument('name');
-
-        $output->writeln('<info>Installing ' . $name . '...</info>');
+        $this->io->writeln('<info>Installing ' . $name . '...</info>');
 
         // TODO Require via composer
 
         $installed_file = C::Storage()->getBasePath() . DS . 'vendor' . DS . 'composer' . DS . 'installed.php';
-        if(!file_exists($installed_file)) {
-            $ch->error('❌ Installed composer packages could not be detected!');
-            $output->writeln('Make sure you ran "composer install" and that the "vendor" dir exists');
-            return self::FAILURE;
+        if (!file_exists($installed_file)) {
+            $this->io->error('<error>❌ Installed composer packages could not be detected!</error>');
+            $this->io->writeln('Make sure you ran "composer install" and that the "vendor" dir exists');
+            return false;
         }
         $installed = require($installed_file);
 
-        if(!array_key_exists($name, $installed['versions'])) {
-            $ch->error('❌ Module package could not be found!');
-            $output->writeln('Make sure you install the package first via: "composer require ' . $name . '"');
-            return self::FAILURE;
+        if (!array_key_exists($name, $installed['versions'])) {
+            $this->io->error('<error>❌ Module package could not be found!</error>');
+            $this->io->writeln('Make sure you install the package first via: "composer require ' . $name . '"');
+            return false;
         }
 
         $install_path = $installed['versions'][$name]['install_path'];
@@ -72,21 +64,21 @@ class ModuleInstall extends Command
 
         $module_manifest_path = $abs_path . DS . 'charm.yaml';
 
-        if(!file_exists($module_manifest_path)) {
-            $ch->error('❌ Module manifest could not be found!');
-            $output->writeln('Make sure you installed the right package. Looked for manifest at: ' . $module_manifest_path);
-            return self::FAILURE;
+        if (!file_exists($module_manifest_path)) {
+            $this->io->error('<error>❌ Module manifest could not be found!</error>');
+            $this->io->writeln('Make sure you installed the right package. Looked for manifest at: ' . $module_manifest_path);
+            return false;
         }
 
         $manifest = Yaml::parseFile($module_manifest_path);
 
-        $output->writeln('✅ Detected module: ' . $manifest['name'] . ' ' . $manifest['version']);
-        $output->writeln('                    ' . $manifest['summary']);
+        $this->io->writeln('✅ Detected module: ' . $manifest['name'] . ' ' . $manifest['version']);
+        $this->io->writeln('                    ' . $manifest['summary']);
 
         // Add link in modules.yaml
         $myaml_path = C::Storage()->getAppPath() . DS . 'Config' . DS . 'modules.yaml';
 
-        if(!file_exists($myaml_path)) {
+        if (!file_exists($myaml_path)) {
             // Default yaml content
             $myaml = "# +-------------------------------------------------------------------------+\n";
             $myaml .= "# | modules.yaml - The Galactic Registry of Intergalactic Modules           |\n";
@@ -102,17 +94,17 @@ class ModuleInstall extends Command
         $myaml .= "\n  # " . trim($manifest['name']);
         $myaml .= "\n  - " . trim($manifest['binding']);
 
-        if(file_put_contents($myaml_path, $myaml)) {
-            $output->writeln('✅ Linked module in modules.yaml');
+        if (file_put_contents($myaml_path, $myaml)) {
+            $this->io->writeln('✅ Linked module in modules.yaml');
         } else {
-            $ch->error('❌ Could not save modules.yaml file!');
-            return self::FAILURE;
+            $this->io->error('<error>❌ Could not save modules.yaml file!</error>');
+            return false;
         }
 
         // TODO Execute post install command of module
 
-        $ch->success('[OK] Module ' . $manifest['name'] . ' was installed successfully!');
+        $this->io->success('✅ Module ' . $manifest['name'] . ' was installed successfully!');
 
-        return self::SUCCESS;
+        return true;
     }
 }

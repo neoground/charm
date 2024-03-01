@@ -5,12 +5,10 @@
 
 namespace Charm\Crown\Jobs\Console;
 
+use Charm\Bob\Command;
 use Charm\Crown\Crown;
 use Charm\Vivid\C;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class CronRunCommand
@@ -33,24 +31,21 @@ class CronRunCommand extends Command
     /**
      * The execution
      *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
-     * @return int
+     * @return bool
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function main(): bool
     {
         /** @var Crown $c */
         $c = C::Crown();
-        $c->setConsoleOutput($output);
+        $c->setConsoleOutput($this->output);
 
-        $job = $input->getArgument('job');
+        $job = $this->io->getArgument('job');
         if(!empty($job)) {
             $c->runCronjob($job);
         } else {
             $c->run();
         }
 
-        return self::SUCCESS;
+        return true;
     }
 }

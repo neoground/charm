@@ -7,8 +7,6 @@ namespace Charm\Bob\Jobs\Console;
 
 use Charm\Bob\Command;
 use Charm\Vivid\C;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class MaintenanceOff
@@ -26,26 +24,24 @@ class MaintenanceOff extends Command
     protected function configure()
     {
         $this->setName("cc:up")
-            ->setDescription("Deactivates the maintenance mode allowing application to accept requests again.");
+            ->setDescription("Deactivates the maintenance mode")
+            ->setHelp('This allows the application to accept requests again.');
     }
 
     /**
      * The execution
      *
-     * @param InputInterface   $input
-     * @param OutputInterface  $output
-     *
-     * @return int
+     * @return bool
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function main(): bool
     {
-        if(C::Config()->turnMaintenanceModeOn()) {
-            $output->writeln('<info>✅ Maintenace mode turned off. App is up again.</info>');
-            return Command::SUCCESS;
+        if (C::Config()->turnMaintenanceModeOn()) {
+            $this->io->success('✅ Maintenace mode turned off. App is up again.');
+            return true;
         }
 
-        $output->writeln('<error>❌ Could not turn off maintenance mode!</error>');
-        $output->writeln('Please remove the var/maintenance.lock file manually and check permissions.');
-        return Command::FAILURE;
+        $this->io->writeln('<error>❌ Could not turn off maintenance mode!</error>');
+        $this->io->writeln('Please remove the var/maintenance.lock file manually and check permissions.');
+        return false;
     }
 }

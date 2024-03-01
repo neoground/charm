@@ -5,11 +5,9 @@
 
 namespace Charm\Database\Jobs\Console;
 
+use Charm\Bob\Command;
 use Charm\Database\DatabaseMigrator;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Input\InputArgument;
 
 /**
  * Class DbSyncCommand
@@ -29,24 +27,19 @@ class DbSyncCommand extends Command
         $this->setName("db:sync")
             ->setDescription("Sync the database tables of all modules")
             ->setHelp("This command is designed to synchronize the database tables across all modules of the application. It primarily focuses on ensuring that the database schema is in alignment with the current state of the application's modules.")
-            ->setDefinition([
-                new InputOption('action', 'do', InputOption::VALUE_OPTIONAL, 'Specifies the action to be performed on the database schema, can be either "up" or "down".', 'up'),
-            ]);
+            ->addArgument('action', InputArgument::OPTIONAL, 'Specifies the action to be performed on the database schema, can be either "up" or "down".');
     }
 
     /**
      * The execution
      *
-     * @param InputInterface   $input
-     * @param OutputInterface  $output
-     *
      * @return bool
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function main(): bool
     {
-        $action = $input->getOption('action');
+        $action = $this->io->getArgument('action');
 
-        $dm = new DatabaseMigrator($output);
+        $dm = new DatabaseMigrator($this->output);
 
         if ($action == 'down') {
             $dm->runAllMigrations('down');
@@ -56,7 +49,7 @@ class DbSyncCommand extends Command
 
         $dm->outputStats();
 
-        $output->writeln('<info>✅ Done!</info>');
-        return Command::SUCCESS;
+        $this->io->success('✅ Done!');
+        return true;
     }
 }

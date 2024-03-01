@@ -5,11 +5,9 @@
 
 namespace Charm\CharmCreator\Jobs\Console;
 
+use Charm\Bob\Command;
 use Charm\CharmCreator\Jobs\ConsoleHelper;
 use Charm\Vivid\C;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class CreateController
@@ -31,29 +29,26 @@ class CreateController extends Command
     /**
      * The execution
      *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
-     * @return int
+     * @return bool
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function main(): bool
     {
         $type = 'controller';
-        $ch = ConsoleHelper::createAndHandle($input, $output,
+        $ch = ConsoleHelper::createAndHandle($this->input, $this->output,
             $this->getHelper('question'),
             $type,
             'Creating a new controller');
 
         if ($ch === false) {
-            return self::FAILURE;
+            return false;
         }
 
         C::CharmCreator()->createFile($type, $ch->getAbsolutePath(), $ch->getData(), $ch->getTemplate());
 
-        $output->writeln(' ');
-        $ch->success('✅ Created controller ' . $ch->getName());
-        $output->writeln(' ');
+        $this->io->writeln('');
+        $this->io->success('✅ Created controller ' . $ch->getName());
+        $this->io->writeln('');
 
-        return self::SUCCESS;
+        return true;
     }
 }

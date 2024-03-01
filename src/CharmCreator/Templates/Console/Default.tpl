@@ -18,10 +18,8 @@ fields:
 
 namespace App\Jobs\Console;
 
+use Charm\Bob\Command;
 use Charm\Vivid\C;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class JOB_NAME
@@ -42,19 +40,14 @@ class JOB_NAME extends Command
 
     /**
      * The execution
-     *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
-     * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function main(): bool
     {
-        $output->writeln('Hello World');
+        $this->io->text('Hello world!');
 
         // TODO
 
-        return self::SUCCESS;
+        return true;
     }
 
 }

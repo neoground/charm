@@ -5,11 +5,9 @@
 
 namespace Charm\Barbequeue\Jobs\Console;
 
+use Charm\Bob\Command;
 use Charm\Vivid\C;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Input\InputArgument;
 
 /**
  * Class QueueClearCommand
@@ -28,35 +26,29 @@ class QueueClearCommand extends Command
     {
         $this->setName("queue:clear")
             ->setDescription("Clearing the queue")
-            ->setDefinition([
-                new InputOption('name', 'qn', InputOption::VALUE_REQUIRED,
-                    'Name of queue to run', ''),
-            ]);
+            ->addArgument('name', InputArgument::REQUIRED, 'Name of queue to clear');
     }
 
     /**
      * The execution
      *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
      * @return bool
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function main(): bool
     {
-        $name = $input->getOption('name');
+        $name = $this->io->getArgument('name');
 
         if (empty(trim($name))) {
-            $output->writeln('<error>No queue name set!</error>');
+            $this->io->writeln('<error>❌ No queue name set!</error>');
             exit;
         }
 
-        $output->writeln('<info>Clearing queue ' . $name . '</info>');
+        $this->io->writeln('<info>Clearing queue ' . $name . '...</info>');
 
         // Execute bbq
         C::Queue()->clear($name);
 
-        $output->writeln('<info>Done!</info>');
+        $this->io->writeln('✅ Done!');
 
         return true;
     }

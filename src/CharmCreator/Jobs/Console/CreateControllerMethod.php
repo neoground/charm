@@ -8,9 +8,7 @@ namespace Charm\CharmCreator\Jobs\Console;
 use Charm\Bob\Command;
 use Charm\CharmCreator\Jobs\ConsoleHelper;
 use Charm\Vivid\C;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class CreateControllerMethod
@@ -38,21 +36,18 @@ class CreateControllerMethod extends Command
     /**
      * The execution
      *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
-     * @return int
+     * @return bool
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function main(): bool
     {
         // Ask for template + custom fields
-        $ch = ConsoleHelper::create($input, $output, $this->getHelper('question'), 'method');
+        $ch = ConsoleHelper::create($this->input, $this->output, $this->getHelper('question'), 'method');
         $ch->outputCharmHeader();
         $ch->outputAsciiBox('Creating a new controller method');
-        $output->writeln(' ');
+        $this->io->writeln('');
 
         // Ask for controller
-        $controllerName = $input->getOption('ctrl');
+        $controllerName = $this->io->getOption('ctrl');
         if (empty($controllerName)) {
             // TODO Allow selection for better UX and without needing validation
             $controllerName = $ch->ask('Name of controller class');
@@ -63,10 +58,10 @@ class CreateControllerMethod extends Command
 
         C::CharmCreator()->addMethodToController($ch->getAbsolutePath(), $ch->getData(), $ch->getTemplate());
 
-        $output->writeln(' ');
-        $ch->success('✅ Added method ' . $ch->getName() . ' to controller ' . $controllerName);
-        $output->writeln(' ');
+        $this->io->writeln('');
+        $this->io->success('✅ Added method ' . $ch->getName() . ' to controller ' . $controllerName);
+        $this->io->writeln('');
 
-        return self::SUCCESS;
+        return true;
     }
 }

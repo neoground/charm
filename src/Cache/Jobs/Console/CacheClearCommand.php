@@ -5,10 +5,8 @@
 
 namespace Charm\Cache\Jobs\Console;
 
+use Charm\Bob\Command;
 use Charm\Vivid\C;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class CacheClearCommand
@@ -30,37 +28,34 @@ class CacheClearCommand extends Command
     /**
      * The execution
      *
-     * @param InputInterface   $input
-     * @param OutputInterface  $output
-     *
-     * @return int
+     * @return bool
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function main(): bool
     {
         // AppStorage
-        $output->writeln('Removing AppStorage cache file');
+        $this->io->writeln('Removing AppStorage cache file');
         C::AppStorage()->clearCache();
 
         // Clear views cache
         $dir = C::Storage()->getCachePath() . DS . 'views';
-        if(file_exists($dir)) {
-            $output->writeln('Removing Views cache');
+        if (file_exists($dir)) {
+            $this->io->writeln('Removing Views cache');
             $this->removeDirectoryContent($dir);
         }
 
         // Also clear opcache
-        if(function_exists('opcache_reset')) {
-            $output->writeln('Resetting opcache');
+        if (function_exists('opcache_reset')) {
+            $this->io->writeln('Resetting opcache');
             opcache_reset();
         }
 
-        if(C::has('Event')) {
-            $output->writeln('Firing cache clear event');
+        if (C::has('Event')) {
+            $this->io->writeln('Firing cache clear event');
             C::Event()->fire('Cache', 'clear');
         }
 
-        $output->writeln('Done!');
-        return Command::SUCCESS;
+        $this->io->success('✅ Done!');
+        return true;
     }
 
     /**
@@ -68,12 +63,12 @@ class CacheClearCommand extends Command
      *
      * Idea: http://andy-carter.com/blog/recursively-remove-a-directory-in-php
      *
-     * @param string $path the path
-     * @param bool $recursion in recursion? Internal use!
+     * @param string $path      the path
+     * @param bool   $recursion in recursion? Internal use!
      *
      * @return bool
      */
-    private function removeDirectoryContent($path, $recursion = false)
+    private function removeDirectoryContent(string $path, bool $recursion = false): bool
     {
         $files = glob($path . '/*');
         foreach ($files as $file) {
