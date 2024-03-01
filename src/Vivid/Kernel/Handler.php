@@ -200,7 +200,7 @@ class Handler
         // Post init hooks
         $this->callPostInitHooks();
 
-        $app = new Application('C::BOB', C::VERSION);
+        $app = new Application('Charm :: Bob', C::VERSION);
 
         // Add commands from all modules (including the app itself)
         foreach ($this->getModuleClasses() as $name => $module) {
