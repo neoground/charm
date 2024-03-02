@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [3.3]
+### Added
+- `UserModel` class which is the new base model for the app's `User` model.
+
+---
+
 ## [3.2]
 ### Added
 - Handy ViewExtension default functions
