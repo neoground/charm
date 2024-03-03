@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - `UserModel` class which is the new base model for the app's `User` model.
 
+### Removed
+- Dropped support for FTP filesystems (SFTP is preferred if needed at all).
+
 ---
 
 ## [3.2]

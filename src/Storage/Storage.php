@@ -10,8 +10,6 @@ use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemAdapter;
-use League\Flysystem\Ftp\FtpAdapter;
-use League\Flysystem\Ftp\FtpConnectionOptions;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use League\Flysystem\PhpseclibV3\SftpAdapter;
 use League\Flysystem\PhpseclibV3\SftpConnectionProvider;
@@ -60,13 +58,6 @@ class Storage extends Module implements ModuleInterface
                                 $this->addLocalFilesystem($name, $data['path']);
                             }
                             break;
-                        case 'ftp':
-                            // All values provided by $data. Only strip type (only used by us)
-                            $config = $data;
-                            unset($config['type']);
-
-                            $this->addFtpFilesystem($name, $config);
-                            break;
                         case 'sftp':
                             // All values provided by $data. Only strip type (only used by us)
                             $config = $data;
@@ -101,21 +92,6 @@ class Storage extends Module implements ModuleInterface
         }
 
         return $this->addFilesystemByAdapter($name, new LocalFilesystemAdapter($path));
-    }
-
-    /**
-     * Add a FTP filesystem
-     *
-     * @param string $name   name of filesystem
-     * @param array  $config config values (see FtpConnectionOptions)
-     *
-     * @return Filesystem
-     */
-    public function addFtpFilesystem(string $name, array $config): Filesystem
-    {
-        return $this->addFilesystemByAdapter($name, new FtpAdapter(
-            FtpConnectionOptions::fromArray($config)
-        ));
     }
 
     /**

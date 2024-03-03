@@ -3,7 +3,7 @@
   "description": "Charm Framework",
   "homepage": "https://neoground.com/projects/charm",
   "license": "MIT",
-  "version": "v3.2.1",
+  "version": "v3.2.2",
   "authors": [
     {
       "name": "Sven Reifschneider",
@@ -25,7 +25,6 @@
     "dragonmantank/cron-expression": "^3.3",
     "phpmailer/phpmailer": "^6.9",
     "league/flysystem": "^3.24",
-    "league/flysystem-ftp": "^3.24",
     "league/flysystem-sftp-v3": "^3.23",
     "filp/whoops": "^2.15",
     "maximebf/debugbar": "^1.21",
