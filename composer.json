@@ -39,7 +39,8 @@
     "respect/validation": "^2.3"
   },
   "suggest": {
-    "ext-redis": "For native redis support instead of using predis"
+    "ext-redis": "For native redis support instead of using predis",
+    "kint-php/kint-twig": "Provides d() and s() functions in twig templates"
   },
   "autoload": {
     "psr-4": {

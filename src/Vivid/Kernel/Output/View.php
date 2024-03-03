@@ -12,7 +12,6 @@ use Charm\Vivid\Helper\ViewLoader;
 use Charm\Vivid\Kernel\Handler;
 use Charm\Vivid\Kernel\Interfaces\HttpCodes;
 use Charm\Vivid\Kernel\Interfaces\OutputInterface;
-use Kint\Twig\TwigExtension;
 use Twig\Environment;
 use Twig\Extension\StringLoaderExtension;
 
@@ -46,9 +45,13 @@ class View implements OutputInterface, HttpCodes
     /**
      * View constructor.
      *
-     * @param string    $tpl        Template name without extension (folder separated by '.', prepend optional package
-     *                              with ':')
-     * @param int|array $statuscode HTTP status code or optional with() parameters
+     * Template names follow the typical dot-notation:
+     *
+     * - $tpl = "dashboard.index" -> view: app/Views/dashboard/index.twig
+     * - $tpl = "MyModule:api.version" -> view: $MyModuleDir/Views/api/version.twig
+     *
+     * @param string    $tpl        Template name without extension
+     * @param int|array $statuscode HTTP status code or optional with() array
      */
     function __construct($tpl, $statuscode = 200)
     {
@@ -68,9 +71,13 @@ class View implements OutputInterface, HttpCodes
     /**
      * Make a new view response
      *
-     * @param string    $tpl        The template name without extension (folder separated by '.', prepend optional
-     *                              package with ':')
-     * @param int|array $statuscode status code, default: 200 or optional with() parameters
+     * Template names follow the typical dot-notation:
+     *
+     *  - $tpl = "dashboard.index" -> view: app/Views/dashboard/index.twig
+     *  - $tpl = "MyModule:api.version" -> view: $MyModuleDir/Views/api/version.twig
+     *
+     * @param string    $tpl        The template name without extension
+     * @param int|array $statuscode status code, default: 200 or optional with() array
      *
      * @return View
      */
@@ -128,7 +135,6 @@ class View implements OutputInterface, HttpCodes
 
         // Add extensions
         $twig->addExtension(new StringLoaderExtension());
-        $twig->addExtension(new TwigExtension());
 
         // Add charm twig extension
         $twig->addExtension(new ViewExtension());
@@ -367,6 +373,16 @@ class View implements OutputInterface, HttpCodes
     {
         $this->cache_output = $duration;
         return $this;
+    }
+
+    /**
+     * Get the Twig environment instance
+     *
+     * @return Environment The Twig environment instance.
+     */
+    public function getTwigEnvironment(): Environment
+    {
+        return $this->twig;
     }
 
 }
