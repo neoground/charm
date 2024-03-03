@@ -102,13 +102,21 @@ class Arrays extends Module implements ModuleInterface
      *
      * @see https://stackoverflow.com/a/25712428/6026136
      *
-     * @param array $array1
-     * @param array $array2
+     * @param mixed $array1
+     * @param mixed $array2
      *
      * @return array
      */
-    public function array_merge_recursive(array &$array1, array &$array2): array
+    public function array_merge_recursive(mixed &$array1, mixed &$array2): array
     {
+        // If arrays aren't an array, cast them
+        if (!is_array($array1)) {
+            $array1 = (array)$array1;
+        }
+        if (!is_array($array2)) {
+            $array2 = (array)$array2;
+        }
+
         $merged = $array1;
 
         foreach ($array2 as $key => & $value) {

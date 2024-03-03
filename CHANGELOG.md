@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [3.3]
 ### Added
 - `UserModel` class which is the new base model for the app's `User` model.
+- Types, refactoring and default values for EngineManager
+- `C::Arrays()->array_merge_recursive(...)` now allows any data type as input arrays and will cast them into arrays.
 
 ### Removed
 - Dropped support for FTP filesystems (SFTP is preferred if needed at all).
