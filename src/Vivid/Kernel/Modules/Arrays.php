@@ -102,8 +102,8 @@ class Arrays extends Module implements ModuleInterface
      *
      * @see https://stackoverflow.com/a/25712428/6026136
      *
-     * @param mixed $array1
-     * @param mixed $array2
+     * @param mixed $array1 The first array (or any data type which will be cast into an array)
+     * @param mixed $array2 The second array (or any data type which will be cast into an array)
      *
      * @return array
      */
