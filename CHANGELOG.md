@@ -11,9 +11,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `UserModel` class which is the new base model for the app's `User` model.
 - Types, refactoring and default values for EngineManager
 - `C::Arrays()->array_merge_recursive(...)` now allows any data type as input arrays and will cast them into arrays.
+- When creating a `View` output object you can now access the twig environment to modify it as you like.
 
 ### Removed
 - Dropped support for FTP filesystems (SFTP is preferred if needed at all).
+- Removed kint-twig package to remove unnecessary overhead, if needed it can be added and linked manually.
 
 ---
 
@@ -67,6 +69,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Errors due to sequential cron job handling which led to some cron jobs which didn't run when the previous one took 
   too long. They are now running in their own threads in parallel.
 - Image handling via the `Image` class is working again, improved thumbnail generation
+
+### Migrating
+
+- Replace `$this->user` in your controllers with `C::Guard()->getUser()`
+- Replace `$this->user->id` in your controllers with `C::Guard()->getUserId()`
+- Replace `$this->request` in your controllers with `C::Request()`
+- To be future-proof, update your console commands to extend the new class `Charm\Bob\Command` and adjust the methods
+- Check that your cron jobs return bool and are compatible with the new return types
 
 ---
 
