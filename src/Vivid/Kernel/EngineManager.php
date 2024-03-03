@@ -18,20 +18,20 @@ use Charm\Vivid\C;
 class EngineManager extends Module
 {
     /** @var string  the environment */
-    protected $environment;
+    protected string $environment = '';
 
     /** @var array  the config */
-    protected $config;
+    protected array $config = [];
 
     /** @var bool switch if env is set via app.env file */
-    protected $set_via_file = false;
+    protected bool $set_via_file = false;
 
     /**
      * Set the environment
      *
      * @param string $env
      */
-    public function setEnvironment($env)
+    public function setEnvironment(string $env): void
     {
         $this->environment = $env;
     }
@@ -41,7 +41,7 @@ class EngineManager extends Module
      *
      * @return string
      */
-    public function getEnvironment()
+    public function getEnvironment(): string
     {
         // Use manually set environment from the app.env file
         $appenv = C::Storage()->getAppPath() . DS . 'app.env';
@@ -61,7 +61,7 @@ class EngineManager extends Module
      *
      * @param array $arr the config array
      */
-    public function setConfig($arr)
+    public function setConfig(array $arr): void
     {
         $this->config = C::Arrays()->array_merge_recursive($this->config, $arr);
     }
@@ -70,11 +70,11 @@ class EngineManager extends Module
      * Get the config
      *
      * @param string     $key     config key
-     * @param null|mixed $default default value to return
+     * @param mixed|null $default default value to return
      *
      * @return mixed
      */
-    public function getConfig($key, $default = null)
+    public function getConfig(string $key, mixed $default = null): mixed
     {
         return C::Arrays()->get($this->config, $key, $default);
     }
@@ -87,7 +87,7 @@ class EngineManager extends Module
      *
      * Explanation: https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request
      */
-    public function enablePreflightHandling()
+    public function enablePreflightHandling(): void
     {
         if (C::Server()->get('REQUEST_METHOD') == "OPTIONS") {
             // Basic headers are provided by nginx. No Access-Control needed again...
