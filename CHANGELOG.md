@@ -7,13 +7,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ---
 
 ## [3.3]
-### Added
+### ✨ Added
 - `UserModel` class which is the new base model for the app's `User` model.
 - Types, refactoring and default values for EngineManager
 - `C::Arrays()->array_merge_recursive(...)` now allows any data type as input arrays and will cast them into arrays.
 - When creating a `View` output object you can now access the twig environment to modify it as you like.
 
-### Removed
+### 🔧 Changed
+- Maintenance mode commands are now `c:up` and `c:down` to harmonize the namespace of charm's own CLI commands
+- Merge charm creator CLI commands into a single `c:new`, only `c:env` stays the same
+
+### 🔥 Removed
 - Dropped support for FTP filesystems (SFTP is preferred if needed at all).
 - Removed kint-twig package to remove unnecessary overhead, if needed it can be added and linked manually.
 
