@@ -23,7 +23,7 @@ class MaintenanceOff extends Command
      */
     protected function configure()
     {
-        $this->setName("cc:up")
+        $this->setName("c:up")
             ->setDescription("Deactivates the maintenance mode")
             ->setHelp('This allows the application to accept requests again.');
     }

@@ -23,7 +23,7 @@ class MaintenanceOn extends Command
      */
     protected function configure()
     {
-        $this->setName("cc:down")
+        $this->setName("c:down")
             ->setDescription("Enables the maintenance mode")
             ->setHelp('While maintenance mode is active, no regular web requests are processed.');
     }
