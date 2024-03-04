@@ -6,7 +6,7 @@
 namespace Charm\CharmCreator\Jobs\Console;
 
 use Charm\Bob\Command;
-use Charm\CharmCreator\Jobs\ConsoleHelper;
+use Charm\CharmCreator\ConsoleHelper;
 use Charm\Vivid\C;
 use Symfony\Component\Console\Input\InputArgument;
 

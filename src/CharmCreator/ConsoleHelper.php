@@ -3,7 +3,7 @@
  * This file contains the console helper class.
  */
 
-namespace Charm\CharmCreator\Jobs;
+namespace Charm\CharmCreator;
 
 use Charm\Bob\CommandHelper;
 use Charm\Vivid\C;
