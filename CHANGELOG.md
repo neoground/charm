@@ -79,6 +79,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Replace `$this->user` in your controllers with `C::Guard()->getUser()`
 - Replace `$this->user->id` in your controllers with `C::Guard()->getUserId()`
 - Replace `$this->request` in your controllers with `C::Request()`
+- Check method signatures of all event listeners, especially: `public function fire(mixed $args = null): bool {...}`
 - To be future-proof, update your console commands to extend the new class `Charm\Bob\Command` and adjust the methods
 - Check that your cron jobs return bool and are compatible with the new return types
 
