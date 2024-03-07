@@ -170,7 +170,7 @@ class Config extends Module implements ModuleInterface
         C::AppStorage()->set('Config', $cache_key, $yaml);
 
         // Return found value
-        return C::get('Arrays')->get($yaml, $wanted_key, $default);
+        return C::Arrays()->get($yaml, $wanted_key, $default);
     }
 
     /**

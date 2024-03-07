@@ -46,12 +46,12 @@ class Arrays extends Module implements ModuleInterface
     /**
      * Check if array has a non-empty value by key
      *
-     * @param array  $arr input array
+     * @param mixed  $arr input array
      * @param string $key the key
      *
      * @return bool
      */
-    public function has(array $arr, mixed $key): bool
+    public function has(mixed $arr, mixed $key): bool
     {
         return !empty(self::get($arr, $key, false));
     }
@@ -59,14 +59,16 @@ class Arrays extends Module implements ModuleInterface
     /**
      * Get specific value from array
      *
-     * @param array          $arr     input array
+     * @param mixed          $arr     input array
      * @param string|numeric $key     the key
      * @param null|mixed     $default (optional) default value
      *
      * @return mixed
      */
-    public function get(array $arr, mixed $key, mixed $default = null): mixed
+    public function get(mixed $arr, mixed $key, mixed $default = null): mixed
     {
+        $arr = (array) $arr;
+
         // Get key parts for multiple dimensions
         $keyparts = explode(".", $key);
 

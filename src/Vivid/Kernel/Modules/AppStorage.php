@@ -268,7 +268,7 @@ class AppStorage extends Module implements ModuleInterface
                             if (str_contains($file, '.yaml')) {
                                 $conf_name = str_replace('.yaml', '', $file);
 
-                                // Get something from config file so it gets stored in the appstorage
+                                // Get something from config file, so it gets stored in the appstorage
                                 C::Config()->get($name . '#' . $conf_name . ':foobar');
                             }
                         }

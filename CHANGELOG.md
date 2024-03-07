@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### 🔧 Changed
 - Maintenance mode commands are now `c:up` and `c:down` to harmonize the namespace of charm's own CLI commands
 - Merge charm creator CLI commands into a single `c:new`, only `c:env` stays the same
+- `C::Arrays()->get(...)` and `C::Arrays()->has(...)` now take any type as an array input 
+  and will cast it into an array.
 
 ### 🔥 Removed
 - Dropped support for FTP filesystems (SFTP is preferred if needed at all).
