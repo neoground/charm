@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Merge charm creator CLI commands into a single `c:new`, only `c:env` stays the same
 - `C::Arrays()->get(...)` and `C::Arrays()->has(...)` now take any type as an array input 
   and will cast it into an array.
+- Add total runtime metric method and refine time measurement. You can easily get the `Metric` object of the total
+  runtime via `C::Performance()->getTotalRuntimeMetric()` and easily adjust the start and end time of `Metric` objects.
 
 ### 🔥 Removed
 - Dropped support for FTP filesystems (SFTP is preferred if needed at all).

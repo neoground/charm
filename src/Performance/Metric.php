@@ -18,33 +18,64 @@ class Metric
     /**
      * Start the measurement.
      *
-     * @return self Returns an instance of this class.
+     * @return static Returns an instance of this class.
      */
-    public function start(): self
+    public function start(): static
     {
-        $this->start_time = microtime(true);
-        return $this;
+        return $this->setStartTime(microtime(true));
     }
 
     /**
      * End the measurement.
      *
-     * @return self Returns an instance of this class.
+     * @return static Returns an instance of this class.
      */
-    public function end(): self
+    public function end(): static
     {
-        $this->end_time = microtime(true);
+        return $this->setEndTime(microtime(true));
+    }
+
+    /**
+     * Set the start time of the measurement.
+     *
+     * @param float $time The start time of the measurement.
+     *
+     * @return static Returns an instance of this class.
+     */
+    public function setStartTime(float $time): static
+    {
+        $this->start_time = $time;
+        return $this;
+    }
+
+    /**
+     * Set the end time of the measurement.
+     *
+     * @param float $time The end time of the measurement.
+     *
+     * @return static Returns an instance of this class.
+     */
+    public function setEndTime(float $time): static
+    {
+        $this->end_time = $time;
         return $this;
     }
 
     /**
      * Get the duration in seconds.
      *
+     * If no end time is set, the current time will be used.
+     *
      * @return float The duration in seconds with microsecond precision.
      */
     public function getDuration(): float
     {
-        return $this->end_time - $this->start_time;
+        $end = $this->end_time;
+        if(empty($this->end_time)) {
+            $end = microtime(true);
+        }
+
+        return $end - $this->start_time;
     }
 
     /**

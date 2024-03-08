@@ -165,6 +165,26 @@ class Performance extends Module implements ModuleInterface
     }
 
     /**
+     * Get the total runtime metric of the application.
+     *
+     * This method calculates the total runtime metric by considering the start time of the application
+     * and the time at which either the output is done or the controller is done.
+     * If the output done time is not available, the controller done time is used instead.
+     *
+     * @return Metric The total runtime metric object including the start time and end time.
+     */
+    public function getTotalRuntimeMetric(): Metric
+    {
+        $y = $this->getOutputDoneTime();
+        if (!$y) {
+            $y = $this->getControllerDoneTime();
+        }
+
+        return (new Metric())->setStartTime($this->getStartTime())
+            ->setEndTime($y);
+    }
+
+    /**
      * Calculate the duration between two given timestamps.
      *
      * @param float|false $x The first timestamp.
