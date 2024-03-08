@@ -451,7 +451,13 @@ class Handler
             // Searched model was not found (firstOrFail / findOrFail)
             return $this->outputError($e->getMessage(), 404);
         } catch (Exception $e) {
-            // Other exception
+            // Other exception from controller
+            if ($this->shouldOutputException()) {
+                // Throw the caught exception again, so we can display it correctly
+                throw $e;
+            }
+
+            // Normal output of exception
             return $this->outputError($e->getMessage(), 500);
         }
 
