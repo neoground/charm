@@ -253,7 +253,7 @@ class DatabaseMigrator
      */
     public function outputStats() : void
     {
-        $counter_processed = count($this->synced_tables['processed']);
+        $counter_processed = $this->synced_tables['processed'];
         $counter_created = count($this->synced_tables['created']);
         $counter_dropped = count($this->synced_tables['dropped']);
         $counter_ignored = count($this->synced_tables['ignored']);

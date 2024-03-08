@@ -21,6 +21,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Add total runtime metric method and refine time measurement. You can easily get the `Metric` object of the total
   runtime via `C::Performance()->getTotalRuntimeMetric()` and easily adjust the start and end time of `Metric` objects.
 
+### 🐞 Fixed
+- The database migrator command `bob db:sync` now displays the stats correctly.
+
 ### 🔥 Removed
 - Dropped support for FTP filesystems (SFTP is preferred if needed at all).
 - Removed kint-twig package to remove unnecessary overhead, if needed it can be added and linked manually.
