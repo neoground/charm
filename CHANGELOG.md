@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Types, refactoring and default values for EngineManager
 - `C::Arrays()->array_merge_recursive(...)` now allows any data type as input arrays and will cast them into arrays.
 - When creating a `View` output object you can now access the twig environment to modify it as you like.
+- Model properties can now be filtered as `array_like`, so you can provide multiple values which all must be
+  contained in the property.
 
 ### 🔧 Changed
 - Maintenance mode commands are now `c:up` and `c:down` to harmonize the namespace of charm's own CLI commands

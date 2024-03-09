@@ -268,6 +268,13 @@ class Model extends \Illuminate\Database\Eloquent\Model
                             $x->whereIn($k, $val);
                         }
                         break;
+                    case 'array_like':
+                        if (is_array($val) || is_iterable($val)) {
+                            foreach($val as $array_val) {
+                                $x->where($k, 'LIKE', '%' . $array_val . '%');
+                            }
+                        }
+                        break;
                     case 'isnull':
                         if (!empty($val)) {
                             $x->whereNull($k);
