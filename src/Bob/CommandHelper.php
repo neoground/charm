@@ -210,7 +210,7 @@ class CommandHelper
      */
     public function choice(string $question, array $arr, mixed $default = null, $multiselect = false): mixed
     {
-        return $this->symfonyStyle->choice($question, $arr, $default, multiselect: $multiselect);
+        return $this->symfonyStyle->choice($question, $arr, $default, $multiselect);
     }
 
     /**
