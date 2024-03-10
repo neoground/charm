@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - When creating a `View` output object you can now access the twig environment to modify it as you like.
 - Model properties can now be filtered as `array_like`, so you can provide multiple values which all must be
   contained in the property.
+- When getting the current user via `C::Guard()->getUser(true)` you can now set a bool parameter to decide if
+  the user data should be fetched from the cache (true, default) or from the database via a query (false).
 
 ### 🔧 Changed
 - Maintenance mode commands are now `c:up` and `c:down` to harmonize the namespace of charm's own CLI commands

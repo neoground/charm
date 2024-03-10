@@ -65,9 +65,11 @@ class Guard extends Module implements ModuleInterface
     /**
      * Get the logged-in user
      *
+     * @param bool $use_cache cache the user object? Default: true
+     *
      * @return object|false  the user object or false if guard is disabled
      */
-    public function getUser()
+    public function getUser(bool $use_cache = true)
     {
         if(!C::Config()->get('main:guard.enabled', true)) {
             return false;
@@ -89,7 +91,11 @@ class Guard extends Module implements ModuleInterface
         }
 
         // Return session user
-        return $this->user_class::findWithCache($_SESSION['user']);
+        if($use_cache) {
+            return $this->user_class::findWithCache($_SESSION['user']);
+        }
+
+        return $this->user_class::find($_SESSION['user']);
     }
 
     /**
