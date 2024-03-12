@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### 🐞 Fixed
 - The database migrator command `bob db:sync` now displays the stats correctly.
 - Command's `$this->io->choice(...)` worke fine again.
+- Performance tracking of CLI commands
 
 ### 🔥 Removed
 - Dropped support for FTP filesystems (SFTP is preferred if needed at all).

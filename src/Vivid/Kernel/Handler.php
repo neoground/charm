@@ -194,8 +194,13 @@ class Handler
      */
     public function startConsole(): void
     {
+        // Save time for performance measurements
+        $start_time = microtime(true);
+
         // Init the whole system
         $this->initSystem();
+
+        $init_time = microtime(true);
 
         // Post init hooks
         $this->callPostInitHooks();
@@ -220,11 +225,24 @@ class Handler
             }
         }
 
+        // Save metrics
+        if (C::Config()->inDebugMode() || C::Config()->get('main:debug.metrics', false)) {
+            C::AppStorage()->set('Charm', 'time_start', $start_time);
+            C::AppStorage()->set('Charm', 'time_init', $init_time);
+            C::AppStorage()->set('Charm', 'time_routing', microtime(true));
+            C::AppStorage()->set('Charm', 'time_postinit', microtime(true));
+        }
+
         // Start the console
         try {
             $app->run();
         } catch (Exception $e) {
             echo "Got exception: " . $e->getMessage();
+        }
+
+        // Save metrics
+        if (C::Config()->inDebugMode() || C::Config()->get('main:debug.metrics', false)) {
+            C::AppStorage()->set('Charm', 'time_output', microtime(true));
         }
 
         // Finally shutdown

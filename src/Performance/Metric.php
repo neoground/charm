@@ -71,7 +71,7 @@ class Metric
     public function getDuration(): float
     {
         $end = $this->end_time;
-        if(empty($this->end_time)) {
+        if(empty($end)) {
             $end = microtime(true);
         }
 
