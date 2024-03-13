@@ -25,11 +25,54 @@ class CommandHelper
     protected OutputInterface $output;
     protected SymfonyStyle $symfonyStyle;
 
-    public function __construct(InputInterface $input, OutputInterface $output)
+    public function __construct(InputInterface $input = null, OutputInterface $output = null)
+    {
+        if(is_object($input)) {
+            $this->setInput($input);
+        }
+        if(is_object($output)) {
+            $this->setOutput($output);
+        }
+        $this->initStyleInstance();
+    }
+
+    /**
+     * Sets the input object for the class.
+     *
+     * @param InputInterface $input The input object to be set.
+     *
+     * @return static Returns the current instance of the class.
+     */
+    public function setInput(InputInterface $input): static
     {
         $this->input = $input;
+        return $this;
+    }
+
+    /**
+     * Sets the output object for the class.
+     *
+     * @param OutputInterface $output The output object to be set.
+     *
+     * @return static Returns the current instance of the class.
+     */
+    public function setOutput(OutputInterface $output): static
+    {
         $this->output = $output;
-        $this->symfonyStyle = new SymfonyStyle($this->input, $this->output);
+        return $this;
+    }
+
+    /**
+     * Initializes the SymfonyStyle instance if both the input and output objects are set.
+     *
+     * @return static Returns the current instance of the class.
+     */
+    public function initStyleInstance(): static
+    {
+        if(is_object($this->input) && is_object($this->output)) {
+            $this->symfonyStyle = new SymfonyStyle($this->input, $this->output);
+        }
+        return $this;
     }
 
     /**

@@ -26,6 +26,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   runtime via `C::Performance()->getTotalRuntimeMetric()` and easily adjust the start and end time of `Metric` objects.
 - When an error occurs while outputting the error exception will be thrown instead of a generic one. This gives
   you the correct stack trace for debugging, if exception throwing is enabled.
+- The CLI's `$this->io` CommandHelper class now has own setters for input and output objects and can be created without
+  any of them.
 
 ### 🐞 Fixed
 - The database migrator command `bob db:sync` now displays the stats correctly.
