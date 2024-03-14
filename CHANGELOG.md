@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## [3.3]
+## [3.3] - 14 March 2024
 ### ✨ Added
 - `UserModel` class which is the new base model for the app's `User` model.
 - Types, refactoring and default values for EngineManager
@@ -40,7 +40,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## [3.2]
+## [3.2] - 1 March 2024
 ### Added
 - Handy ViewExtension default functions
 - `C::Router()->constructUrl(...)` method to create custom URLs with parameters
@@ -102,7 +102,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## [3.1]
+## [3.1] - 1 April 2023
 ### Added
 - CommandHelper class with handy commands to easily style input / output of console commands
 
@@ -115,7 +115,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## [3.0]
+## [3.0] - 27 March 2023
 ### Added
 - CharmCreator commands and handling
 - Way more documentation
