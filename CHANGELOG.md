@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [3.4] - In Development
+
+### 🔧 Changed
+- The formatted duration of a Performance Metric only returns the seconds if duration is below 1 minute
+
+---
+
 ## [3.3] - 14 March 2024
 ### ✨ Added
 - `UserModel` class which is the new base model for the app's `User` model.

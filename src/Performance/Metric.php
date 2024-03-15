@@ -91,10 +91,14 @@ class Metric
     /**
      * Get the formatted duration in minutes and seconds.
      *
-     * @return string The formatted duration string in the format "4m 20s"
+     * @return string The formatted duration string in the format "4m 20s" or "48s"
      */
     public function getFormattedDuration(): string
     {
-        return $this->getDurationInMinutes() . 'm ' . ($this->getDuration() % 60) . 's';
+        $min = $this->getDurationInMinutes();
+        if($min > 0) {
+            return $this->getDurationInMinutes() . 'm ' . ($this->getDuration() % 60) . 's';
+        }
+        return ($this->getDuration() % 60) . 's';
     }
 }
