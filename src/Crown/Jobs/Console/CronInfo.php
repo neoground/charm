@@ -188,6 +188,7 @@ Description=Timer for charm project " . $name . "
 [Timer]
 OnCalendar=*:0/1
 Unit=" . $name . ".service
+AccuracySec=1s
 
 [Install]
 WantedBy=timers.target
