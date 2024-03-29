@@ -23,10 +23,10 @@ class ModuleInstall extends Command
      */
     protected function configure()
     {
-        $this->setName("cm:i")
-            ->setDescription("Install a charm module")
-            ->setHelp('This command allows you to install a new charm module')
-            ->addArgument('name', InputArgument::REQUIRED, 'Name of the new charm module');
+        $this->setName("c:mod")
+            ->setDescription("Install / uninstall a charm module")
+            ->setHelp('This command allows you to install / uninstall a charm module')
+            ->addArgument('name', InputArgument::REQUIRED, 'Name of the charm module');
     }
 
     /**
@@ -40,19 +40,19 @@ class ModuleInstall extends Command
 
         $this->io->writeln('<info>Installing ' . $name . '...</info>');
 
-        // TODO Require via composer
-
         $installed_file = C::Storage()->getBasePath() . DS . 'vendor' . DS . 'composer' . DS . 'installed.php';
         if (!file_exists($installed_file)) {
             $this->io->error('<error>❌ Installed composer packages could not be detected!</error>');
-            $this->io->writeln('Make sure you ran "composer install" and that the "vendor" dir exists');
+            $this->io->writeln('Make sure you ran "composer install" and that the "vendor" dir exists.');
             return false;
         }
         $installed = require($installed_file);
 
         if (!array_key_exists($name, $installed['versions'])) {
+            // TODO Require via composer
+
             $this->io->error('<error>❌ Module package could not be found!</error>');
-            $this->io->writeln('Make sure you install the package first via: "composer require ' . $name . '"');
+            $this->io->writeln('Make sure you install the package first via: "composer require ' . $name . '".');
             return false;
         }
 
@@ -90,20 +90,43 @@ class ModuleInstall extends Command
 
         $myaml = trim($myaml);
 
-        // Append new module
-        $myaml .= "\n  # " . trim($manifest['name']);
-        $myaml .= "\n  - " . trim($manifest['binding']);
+        if(!str_contains($myaml, trim($manifest['name']))) {
+            // Not installed yet -> install
 
-        if (file_put_contents($myaml_path, $myaml)) {
-            $this->io->writeln('✅ Linked module in modules.yaml');
+            // Append new module
+            $myaml .= "\n  # " . trim($manifest['name']);
+            $myaml .= "\n  - " . trim($manifest['binding']);
+
+            if (file_put_contents($myaml_path, $myaml)) {
+                $this->io->writeln('✅ Linked module in modules.yaml');
+            } else {
+                $this->io->error('<error>❌ Could not save modules.yaml file!</error>');
+                return false;
+            }
+
+            // TODO Execute post install command of module
+
+            $this->io->success('✅ Module ' . $manifest['name'] . ' has been installed successfully!');
         } else {
-            $this->io->error('<error>❌ Could not save modules.yaml file!</error>');
-            return false;
+            // Module existing -> ask to uninstall
+            if($this->io->confirm('The module is currently installed. Do you want to remove it?')) {
+                // Remove line from $myaml which contains $manifest['name']
+                $myaml = preg_replace('/\s*# ' . preg_quote(trim($manifest['name']), '/') . '.*\n\s*-\s*' . preg_quote(trim($manifest['binding']), '/') . '/s', '', $myaml);
+
+                if (file_put_contents($myaml_path, $myaml)) {
+                    $this->io->writeln('✅ Removed module in modules.yaml');
+                } else {
+                    $this->io->error('<error>❌ Could not save modules.yaml file!</error>');
+                    return false;
+                }
+
+                // TODO Execute post uninstall command of module
+
+                // TODO remove from composer
+
+                $this->io->success('✅ Module ' . $manifest['name'] . ' has been removed successfully!');
+            }
         }
-
-        // TODO Execute post install command of module
-
-        $this->io->success('✅ Module ' . $manifest['name'] . ' was installed successfully!');
 
         return true;
     }

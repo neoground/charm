@@ -8,8 +8,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [3.4] - In Development
 
+### ✨ Added
+- New console command `cron:info` which shows all cron jobs and allows the creation of systemd service + timer files
+- New console command `sys:info` which displays some basic information of the app
+
 ### 🔧 Changed
 - The formatted duration of a Performance Metric only returns the seconds if duration is below 1 minute
+- The module installer is now called via `bob c:mod` and is prepared to install and uninstall modules (still WIP!)
 
 ---
 
