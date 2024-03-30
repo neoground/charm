@@ -5,6 +5,7 @@
 
 namespace Charm\Vivid\Kernel\Output;
 
+use Charm\Cache\CacheEntry;
 use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Interfaces\HttpCodes;
 use Charm\Vivid\Kernel\Interfaces\OutputInterface;
@@ -183,6 +184,49 @@ class Json implements OutputInterface, HttpCodes
     public function getContent()
     {
         return $this->data;
+    }
+
+    /**
+     * Build the JSON output with caching support.
+     *
+     * Caching is only used if Cache module is available and enabled
+     * (no debug mode or if you're in debug mode and have main:debug.cache_enabled set).
+     *
+     * @param callable $callback   The callback function to generate the JSON output, must return an array
+     * @param string   $key_prefix The cache key or optional prefix. Default is "json_#".
+     *                             Appended will be a SHA256 hash of all request values if $key_prefix ends with "_#".
+     * @param array    $tags       The tags to associate with the cache entry.
+     * @param int      $minutes    The number of minutes to store the cache entry. Default is 1440 (24 hours).
+     *
+     * @return self The JSON object.
+     */
+    public static function makeWithCache(callable $callback,
+                                         string   $key_prefix = 'json_#',
+                                         array    $tags = [],
+                                         int      $minutes = 1440)
+    {
+        if (C::has('Cache') &&
+            !(C::Config()->inDebugMode() && !C::Config()->get('main:debug.cache_enabled'))) {
+            // Find and return from cache
+            $req = hash('sha256', json_encode(C::Request()->getAll()));
+            $key = str_replace('_#', '_' . $req, $key_prefix);
+
+            if (C::Cache()->has($key)) {
+                return Json::make(C::Cache()->get($key));
+            }
+
+            // Store in cache, delete with filtered paginated data cache
+            $ce = new CacheEntry($key);
+            $ce->setValue($callback());
+            if (count($tags) > 0) {
+                $ce->setTags($tags);
+            }
+            C::Cache()->setEntry($ce, $minutes);
+
+            return Json::make($callback());
+        }
+
+        return self::make($callback());
     }
 
 }

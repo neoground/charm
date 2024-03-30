@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### ✨ Added
 - New console command `cron:info` which shows all cron jobs and allows the creation of systemd service + timer files
 - New console command `sys:info` which displays some basic information of the app
+- Caching to Model's `getFilteredPaginatedData()`
+- Caching to Json outputs via `Json::makeWithCache(...)`, can automatically append a unique hash based on the request
 
 ### 🔧 Changed
 - The formatted duration of a Performance Metric only returns the seconds if duration is below 1 minute

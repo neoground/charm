@@ -185,7 +185,10 @@ class Model extends \Illuminate\Database\Eloquent\Model
      */
     public function afterSave()
     {
-
+        // Clear filtered paginated data cache
+        if(C::has('Cache')) {
+            C::Cache()->removeByTag('model_' . $this->table . '_fpd');
+        }
     }
 
     /**
@@ -312,6 +315,32 @@ class Model extends \Illuminate\Database\Eloquent\Model
      */
     public static function getFilteredPaginatedData()
     {
+        // Build unique key based on request data
+        $s = new static;
+        $req = hash('sha256', json_encode(C::Request()->getAll()));
+        $key = 'model_' . $s->table . '_fpd_' . $req;
+
+        if(C::has('Cache') &&
+            !(C::Config()->inDebugMode() && !C::Config()->get('main:debug.cache_enabled'))) {
+            // Find and return from cache
+            if(C::Cache()->has($key)) {
+                return C::Cache()->get($key);
+            }
+
+            // Generate data
+            $x = self::filterBasedOnRequest();
+            $data = self::getPaginatedData($x);
+
+            // Store in cache
+            $ce = new CacheEntry($key);
+            $ce->setValue($data);
+            $ce->setTags(['model_' . $s->table . '_fpd']);
+            C::Cache()->setEntry($ce, 1440 * 7);
+
+            return $data;
+        }
+
+        // No caching -> simply return data
         $x = self::filterBasedOnRequest();
         return self::getPaginatedData($x);
     }
