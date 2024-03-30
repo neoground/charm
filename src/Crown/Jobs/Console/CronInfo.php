@@ -172,7 +172,7 @@ class CronInfo extends Command
 Description=Run cron for charm project " . $name . "
 
 [Service]
-Type=simple
+Type=forking
 User=" . $user . "
 StandardOutput=journal
 StandardError=journal
