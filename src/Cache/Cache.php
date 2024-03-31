@@ -40,19 +40,23 @@ class Cache extends Module implements ModuleInterface
      *
      * Saves it in redis
      *
-     * @param string   $key     the unique key
-     * @param int      $minutes minutes of expiration
-     * @param mixed    $callback the callback / or cache entry
+     * @param string               $key      the unique key
+     * @param int                  $minutes  minutes of expiration
+     * @param callable|CacheEntry  $callback the callback or cache entry
+     * @param array                $tags     optional tags for cache entry
      *
      * @return mixed the stored value
      */
-    public function remember($key, $minutes, $callback)
+    public function remember(string $key, int $minutes, callable|CacheEntry $callback, array $tags = []): mixed
     {
         if(!$this->has($key)) {
             if($callback instanceof CacheEntry) {
                 $this->setEntry($callback, $minutes);
             } else {
-                $this->set($key, $minutes, $callback);
+                $cb = new CacheEntry($key);
+                $cb->setValue($callback);
+                $cb->setTags($tags);
+                $this->setEntry($cb, $minutes);
             }
         }
         return $this->get($key);

@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### 🔧 Changed
 - The formatted duration of a Performance Metric only returns the seconds if duration is below 1 minute
 - The module installer is now called via `bob c:mod` and is prepared to install and uninstall modules (still WIP!)
+- When using `C::Cache()->remember(...)` you can now also specify optional tags to apply to the saved entry
 
 ---
 
