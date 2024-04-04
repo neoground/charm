@@ -533,6 +533,20 @@ class CommandHelper
     }
 
     /**
+     * Writes the given messages to the output, only if the output verbosity is set to "verbose".
+     *
+     * @see self::writeln()
+     *
+     * @param array|string $messages The messages to be written to the output.
+     *
+     * @return void
+     */
+    public function writelnVerbose(array|string $messages): void
+    {
+        $this->writeln($messages, OutputInterface::VERBOSITY_VERBOSE);
+    }
+
+    /**
      * Retrieves the value of the specified input argument.
      *
      * @param string $name The name of the argument to retrieve.
