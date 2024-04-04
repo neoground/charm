@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Caching to Model's `getFilteredPaginatedData()`
 - Caching to Json outputs via `Json::makeWithCache(...)`, can automatically append a unique hash based on the request
 - New CLI command method `$this->io->writelnVerbose($message)` to output a message only if output verbosity is verbose
+- CLI command helper constants for verbose output, input option and input arguments
 
 ### 🔧 Changed
 - The formatted duration of a Performance Metric only returns the seconds if duration is below 1 minute

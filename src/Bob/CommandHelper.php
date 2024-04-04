@@ -25,6 +25,22 @@ class CommandHelper
     protected OutputInterface $output;
     protected SymfonyStyle $symfonyStyle;
 
+    public const VERBOSITY_QUIET = 16;
+    public const VERBOSITY_NORMAL = 32;
+    public const VERBOSITY_VERBOSE = 64;
+    public const VERBOSITY_VERY_VERBOSE = 128;
+    public const VERBOSITY_DEBUG = 256;
+
+    public const INPUT_ARGUMENT_REQUIRED = 1;
+    public const INPUT_ARGUMENT_OPTIONAL = 2;
+    public const INPUT_ARGUMENT_IS_ARRAY = 4;
+
+    public const INPUT_OPTION_NONE = 1;
+    public const INPUT_OPTION_REQUIRED = 2;
+    public const INPUT_OPTION_OPTIONAL = 4;
+    public const INPUT_OPTION_IS_ARRAY = 8;
+    public const INPUT_OPTION_NEGATABLE = 16;
+
     public function __construct(InputInterface $input = null, OutputInterface $output = null)
     {
         if(is_object($input)) {
