@@ -54,18 +54,18 @@ class Token extends Module implements ModuleInterface
      */
     public function getToken(): bool|string
     {
-        if(!empty($this->token)) {
+        if (!empty($this->token)) {
             return $this->token;
         }
 
         $auth_header = C::Request()->getHeader('authorization');
 
-        if(empty($auth_header)) {
+        if (empty($auth_header)) {
             // Try x-authorization, some prefer this
             $auth_header = C::Request()->getHeader('x-authorization');
         }
 
-        if(!empty($auth_header)) {
+        if (!empty($auth_header)) {
             $matches = [];
             preg_match('/usertoken="(.*?)"/', $auth_header, $matches);
             if (isset($matches[1])) {
@@ -75,7 +75,7 @@ class Token extends Module implements ModuleInterface
             }
 
             // Second try: Bearer token
-            if(str_starts_with($auth_header, 'Bearer')) {
+            if (str_starts_with($auth_header, 'Bearer')) {
                 $parts = explode("Bearer", $auth_header);
                 return trim($parts[1]);
             }
@@ -105,7 +105,7 @@ class Token extends Module implements ModuleInterface
 
         $matches = [];
         preg_match('/client="(.*?)"/', $auth_header, $matches);
-        if(isset($matches[1])){
+        if (isset($matches[1])) {
             $token = $matches[1];
             $this->client_token = $token;
             return $token;
@@ -131,14 +131,14 @@ class Token extends Module implements ModuleInterface
      */
     private function findUserByToken()
     {
-        if(class_exists($this->token_location)) {
+        if (class_exists($this->token_location)) {
             // Got class
             $token_class = $this->token_location::where('token', $this->getToken())
                 ->where('expiration', '>=', Carbon::now()->toDateTimeString())
                 ->where('type', 'api')
                 ->first();
 
-            if(is_object($token_class)) {
+            if (is_object($token_class)) {
                 return $this->user_class::find($token_class->user_id);
             }
 
@@ -148,7 +148,7 @@ class Token extends Module implements ModuleInterface
         // Got field
         try {
             return $this->user_class::where($this->token_location, $this->token)->first();
-        } catch(QueryException $e) {
+        } catch (QueryException $e) {
             return false;
         }
     }
@@ -161,11 +161,11 @@ class Token extends Module implements ModuleInterface
     public function getUser()
     {
         // Get user by token stored in redis
-        if(C::has('Redis')) {
+        if (C::has('Redis')) {
             $user_id = C::Redis()->getClient()->hget('api_user', $this->token);
-            if(!empty($user_id)) {
+            if (!empty($user_id)) {
                 $user = $this->user_class::find($user_id);
-                if(is_object($user)) {
+                if (is_object($user)) {
                     return $user;
                 }
             }
@@ -181,7 +181,7 @@ class Token extends Module implements ModuleInterface
         }
 
         // Store in redis cache
-        if(C::has('Redis') && !$default_user) {
+        if (C::has('Redis') && !$default_user) {
             C::Redis()->getClient()->hset('api_user', $this->token, $u->id);
         }
 
@@ -195,7 +195,7 @@ class Token extends Module implements ModuleInterface
      */
     public function isLoggedIn(): bool
     {
-        if(!empty($this->token)) {
+        if (!empty($this->token)) {
             // Check redis
             $in_redis = C::has('Redis') && C::Redis()->getClient()->hexists('api_user', $this->token);
 
@@ -207,29 +207,47 @@ class Token extends Module implements ModuleInterface
     }
 
     /**
+     * Generate a secure token
+     *
+     * @param int $length The length of the token (default = 16)
+     *
+     * @return string The generated token
+     */
+    public function generateSecureToken(int $length = 16): string
+    {
+        $keyspace = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz123456789';
+        $str = '';
+        $max = strlen($keyspace) - 1;
+        for ($i = 0; $i < $length; ++$i) {
+            $str .= $keyspace[random_int(0, $max)];
+        }
+        return $str;
+    }
+
+    /**
      * Generate a token
      *
-     * The random bytes will be base64 encoded (without special characters).
-     * So a 48 byte long input will create a 63 characters token.
+     * The token consists of A-Z, a-z, 1-9, without characters which can be
+     * misunderstood like 1, I, l, o, 0
      *
-     * @param int  $bytes    bytes length, default 16
+     * @param int  $length   token length, default 16
      * @param bool $apitoken (opt.) is it an api token which must be unique in api_token column? Default: false
      *
      * @return string
      */
-    public function createToken(int $bytes = 16, bool $apitoken = false): string
+    public function createToken(int $length = 16, bool $apitoken = false): string
     {
-        $token = base64_encode(openssl_random_pseudo_bytes($bytes));
+        $token = $this->generateSecureToken($length);
         $token = str_replace(['+', '/', '='], "", $token);
 
         // Check if token in database. If so, generate new one!
-        if($apitoken) {
-            if(class_exists($this->token_location)) {
+        if ($apitoken) {
+            if (class_exists($this->token_location)) {
                 $this->token_location::getUniqueToken('api');
             } else {
                 // Find in user table
                 while ($this->user_class::where($this->token_location, $token)->count() > 0) {
-                    $token = base64_encode(openssl_random_pseudo_bytes($bytes));
+                    $token = $this->generateSecureToken($length);
                     $token = str_replace(['+', '/', '='], "", $token);
                 }
             }
