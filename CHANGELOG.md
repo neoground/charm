@@ -6,7 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## [3.4] - In Development
+## [3.5] - In Development
+
+---
+
+## [3.4] - 20 April 2024
 
 ### ✨ Added
 - New console command `cron:info` which shows all cron jobs and allows the creation of systemd service + timer files
@@ -23,6 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Creating a Token via `C::Token()->createToken($length)` is now improved and returns a better string utilizing
   the whole alphabet instead of base64, also adding `C::Token()->generateSecureToken($length)` for simple token
   string generation
+- Crown is now running jobs in a detached process utilizing `nohup`, improve systemd service for parallel running
 
 ---
 
