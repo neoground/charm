@@ -3,7 +3,7 @@
   "description": "Charm Framework",
   "homepage": "https://neoground.com/projects/charm",
   "license": "MIT",
-  "version": "v3.4",
+  "version": "v3.4.1",
   "authors": [
     {
       "name": "Sven Reifschneider",
