@@ -85,7 +85,7 @@ class Crown extends Module implements ModuleInterface
             // Run due jobs in own thread, detach with nohup and send to background
             $this->output->writeln('Running job in background: ' . get_class($job));
             $process = new Process([
-                'nohup', PHP_BINARY, C::Storage()->getBasePath() . DS . 'bob.php', 'cron:run', get_class($job)
+                PHP_BINARY, C::Storage()->getBasePath() . DS . 'bob.php', 'cron:run', get_class($job)
             ]);
             $process->setTimeout(null);
             $process->setOptions([

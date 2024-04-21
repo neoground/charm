@@ -27,7 +27,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Creating a Token via `C::Token()->createToken($length)` is now improved and returns a better string utilizing
   the whole alphabet instead of base64, also adding `C::Token()->generateSecureToken($length)` for simple token
   string generation
-- Crown is now running jobs in a detached process utilizing `nohup`, improve systemd service for parallel running
 
 ---
 
