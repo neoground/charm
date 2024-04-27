@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [3.5] - In Development
 
+### ✨ Added
+
+- Model filtering via `filterBasedOnRequest()` and `getFilteredPaginatedData()` can now be customized
+  with a custom callback which allows adjusting the QueryBuilder
+
 ---
 
 ## [3.4] - 20 April 2024

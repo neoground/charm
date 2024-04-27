@@ -194,9 +194,12 @@ class Model extends \Illuminate\Database\Eloquent\Model
     /**
      * Add query filters based on request input
      *
+     * @param callable|null $custom_filter an optional custom filter function to filter the data even more
+     *                                     (has QueryBuilder as parameter and must return it)
+     *
      * @return Builder
      */
-    public static function filterBasedOnRequest()
+    public static function filterBasedOnRequest(callable $custom_filter = null): Builder
     {
         $model = new static();
         $x = self::where($model->getKeyName(), '>', 0);
@@ -303,6 +306,11 @@ class Model extends \Illuminate\Database\Eloquent\Model
             });
         }
 
+        // Apply custom filters
+        if(is_callable($custom_filter)) {
+            $x = $custom_filter($x);
+        }
+
         return $x;
     }
 
@@ -311,9 +319,12 @@ class Model extends \Illuminate\Database\Eloquent\Model
      *
      * A combination of filterBasedOnRequest() and getPaginatedData()
      *
+     * @param callable|null $custom_filter an optional custom filter function to filter the data even more
+     *                                    (has QueryBuilder as parameter and must return it)
+     *
      * @return array
      */
-    public static function getFilteredPaginatedData()
+    public static function getFilteredPaginatedData(callable $custom_filter = null): array
     {
         // Build unique key based on request data
         $s = new static;
@@ -328,7 +339,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
             }
 
             // Generate data
-            $x = self::filterBasedOnRequest();
+            $x = self::filterBasedOnRequest($custom_filter);
             $data = self::getPaginatedData($x);
 
             // Store in cache
@@ -341,7 +352,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
         }
 
         // No caching -> simply return data
-        $x = self::filterBasedOnRequest();
+        $x = self::filterBasedOnRequest($custom_filter);
         return self::getPaginatedData($x);
     }
 
