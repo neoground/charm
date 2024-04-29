@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Model filtering via `filterBasedOnRequest()` and `getFilteredPaginatedData()` can now be customized
   with a custom callback which allows adjusting the QueryBuilder
 
+### 🔧 Changed
+
+- Replace symfony/process with exec for better detachment of cron jobs in background
+
 ---
 
 ## [3.4] - 20 April 2024

@@ -13,7 +13,6 @@ use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Cron\CronExpression;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\Process;
 
 /**
  * Class Crown
@@ -84,14 +83,9 @@ class Crown extends Module implements ModuleInterface
         foreach($due_jobs as $job) {
             // Run due jobs in own thread, detach with nohup and send to background
             $this->output->writeln('Running job in background: ' . get_class($job));
-            $process = new Process([
-                PHP_BINARY, C::Storage()->getBasePath() . DS . 'bob.php', 'cron:run', get_class($job)
-            ]);
-            $process->setTimeout(null);
-            $process->setOptions([
-                'create_new_console' => 'true'
-            ]);
-            $process->start();
+            $command = PHP_BINARY . ' ' . C::Storage()->getBasePath() . DS
+                . 'bob.php cron:run ' . escapeshellarg(get_class($job));
+            exec('nohup ' . $command . ' > /dev/null 2>&1 &');
         }
     }
 
