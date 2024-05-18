@@ -59,16 +59,16 @@ class Mailman extends Module implements ModuleInterface
         $tpl_path = C::Storage()->getAssetsPath() . DS . 'templates' . DS . 'email';
 
         // Can be overridden by setting
-        if(C::AppStorage()->has('Mailman', 'template_path')) {
+        if (C::AppStorage()->has('Mailman', 'template_path')) {
             $tpl_path = C::AppStorage()->get('Mailman', 'template_path');
         }
 
         $loader = new FilesystemLoader($tpl_path);
 
-        $twig = new Environment($loader, array(
+        $twig = new Environment($loader, [
             'cache' => false,
-            'debug' => C::Config()->get('main:debug.debugmode', false)
-        ));
+            'debug' => C::Config()->get('main:debug.debugmode', false),
+        ]);
 
         // Add charm global
         $twig->addGlobal('charm', C::getInstance());
@@ -77,13 +77,13 @@ class Mailman extends Module implements ModuleInterface
         $twig->addExtension(new ViewExtension());
 
         // Add own / custom twig functions (including app's ViewExtension)
-        foreach(Handler::getInstance()->getModuleClasses() as $name => $module) {
+        foreach (Handler::getInstance()->getModuleClasses() as $name => $module) {
             try {
                 $mod = Handler::getInstance()->getModule($name);
-                if(is_object($mod) && method_exists($mod, 'getReflectionClass')) {
+                if (is_object($mod) && method_exists($mod, 'getReflectionClass')) {
                     $class = $mod->getReflectionClass()->getNamespaceName() . "\\System\\ViewExtension";
 
-                    if(class_exists($class)) {
+                    if (class_exists($class)) {
                         $twig->addExtension(new $class);
                     }
                 }
@@ -108,7 +108,7 @@ class Mailman extends Module implements ModuleInterface
      */
     public function __call($name, $arguments)
     {
-        if(method_exists($this->driver, $name)) {
+        if (method_exists($this->driver, $name)) {
             return call_user_func_array([$this->driver, $name], $arguments);
         }
 
@@ -119,19 +119,19 @@ class Mailman extends Module implements ModuleInterface
      * Set the driver
      *
      * @param string $name driver name
-     * @param mixed $data optional data to pass to driver
+     * @param mixed  $data optional data to pass to driver
      *
      * @return self
      */
     public function setDriver($name, $data = null)
     {
         $full_class = $name;
-        if(!str_contains($full_class, '\\')) {
+        if (!str_contains($full_class, '\\')) {
             // Got native driver
             $full_class = '\\Charm\\Mailman\\Drivers\\' . ucfirst($name);
         }
 
-        if(class_exists($full_class)) {
+        if (class_exists($full_class)) {
             $this->driver = $full_class::compose($data);
             $this->driver_name = $name;
             $this->driver_data = $data;
@@ -158,8 +158,8 @@ class Mailman extends Module implements ModuleInterface
     /**
      * Add recipient
      *
-     * @param string  $email  the e-mail address
-     * @param string  $name   (opt.) recipient name
+     * @param string $email the e-mail address
+     * @param string $name  (opt.) recipient name
      *
      * @return $this
      */
@@ -172,8 +172,8 @@ class Mailman extends Module implements ModuleInterface
     /**
      * Add a CC address
      *
-     * @param string  $email  the e-mail address
-     * @param string  $name   (opt.) recipient name
+     * @param string $email the e-mail address
+     * @param string $name  (opt.) recipient name
      *
      * @return $this
      */
@@ -186,8 +186,8 @@ class Mailman extends Module implements ModuleInterface
     /**
      * Add a BCC address
      *
-     * @param string  $email  the e-mail address
-     * @param string  $name   (opt.) recipient name
+     * @param string $email the e-mail address
+     * @param string $name  (opt.) recipient name
      *
      * @return $this
      */
@@ -225,8 +225,8 @@ class Mailman extends Module implements ModuleInterface
     /**
      * Add an attachment
      *
-     * @param string  $path  absolute path to file
-     * @param string  $name  (opt.) filename of attachment
+     * @param string $path absolute path to file
+     * @param string $name (opt.) filename of attachment
      *
      * @return $this
      */
@@ -241,7 +241,7 @@ class Mailman extends Module implements ModuleInterface
      *
      * Text only for non-html email clients)
      *
-     * @param string  $msg  the message
+     * @param string $msg the message
      *
      * @return $this
      */
@@ -254,7 +254,7 @@ class Mailman extends Module implements ModuleInterface
     /**
      * Set HTML content of message
      *
-     * @param string  $msg  the message
+     * @param string $msg the message
      *
      * @return $this
      */
@@ -267,7 +267,7 @@ class Mailman extends Module implements ModuleInterface
     /**
      * Set e-mail subject
      *
-     * @param string  $name  the subject
+     * @param string $name the subject
      *
      * @return $this
      */
@@ -280,9 +280,9 @@ class Mailman extends Module implements ModuleInterface
     /**
      * Set HTML content by template
      *
-     * @param string  $name     name of template directory or single twig file (with .twig extension)
-     * @param array   $data     (opt.) array of data to pass to template
-     * @param bool    $combined (opt.) use html + text templates automatically?
+     * @param string $name     name of template directory or single twig file (with .twig extension)
+     * @param array  $data     (opt.) array of data to pass to template
+     * @param bool   $combined (opt.) use html + text templates automatically?
      *
      * @return $this
      */
@@ -300,17 +300,17 @@ class Mailman extends Module implements ModuleInterface
             $view = $name;
 
             // Got normal name -> directory?
-            if(!str_contains($name, '.twig')) {
+            if (!str_contains($name, '.twig')) {
                 $file = 'email.twig';
 
-                if($combined) {
+                if ($combined) {
                     $file = 'email_html.twig';
                 }
 
                 $view = $name . DS . $file;
             }
 
-            if($combined) {
+            if ($combined) {
                 // Combined: First add text version
                 $textview = str_replace('_html', '_text', $view);
                 $this->setTextContent($this->twig->render($textview, $data));

@@ -7,8 +7,8 @@ namespace Charm\Mailman\Drivers;
 
 use Charm\Mailman\MailmanDriverInterface;
 use Charm\Vivid\C;
-use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\PHPMailer;
 
 /**
  * Class Smtp
@@ -49,7 +49,7 @@ class Smtp implements MailmanDriverInterface
      * Add recipient
      *
      * @param string $email the e-mail address
-     * @param string $name (opt.) recipient name
+     * @param string $name  (opt.) recipient name
      *
      * @return $this
      */
@@ -63,7 +63,7 @@ class Smtp implements MailmanDriverInterface
      * Add a CC address
      *
      * @param string $email the e-mail address
-     * @param string $name (opt.) recipient name
+     * @param string $name  (opt.) recipient name
      *
      * @return $this
      */
@@ -77,7 +77,7 @@ class Smtp implements MailmanDriverInterface
      * Add a BCC address
      *
      * @param string $email the e-mail address
-     * @param string $name (opt.) recipient name
+     * @param string $name  (opt.) recipient name
      *
      * @return $this
      */
@@ -99,7 +99,7 @@ class Smtp implements MailmanDriverInterface
     {
         try {
             $this->mail->addAttachment($path, $name);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             C::Logging()->error(
                 'Could not add attachment to e-mail',
                 [$e->getMessage(), $this->mail->ErrorInfo]
@@ -225,20 +225,20 @@ class Smtp implements MailmanDriverInterface
         try {
             $ret = $this->mail->send();
             $this->success = true;
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             C::Logging()->error('Could not send email', [$e->getMessage(), $this->mail->ErrorInfo]);
             $this->success = false;
             $this->error_msg = $e->getMessage();
         }
 
-        if($ret === false) {
+        if ($ret === false) {
             $this->success = false;
 
-            if(C::has('Event')) {
+            if (C::has('Event')) {
                 C::Event()->fire('Mailman', 'sentSuccess');
             }
         } else {
-            if(C::has('Event')) {
+            if (C::has('Event')) {
                 C::Event()->fire('Mailman', 'sentError');
             }
         }
@@ -271,7 +271,7 @@ class Smtp implements MailmanDriverInterface
     public function enableDebugOutput()
     {
         $this->mail->SMTPDebug = 4;
-        $this->mail->Debugoutput = function($str, $level) {
+        $this->mail->Debugoutput = function ($str, $level) {
             C::Logging()->info('[MAIL] SMTP ' . $level . ': ' . $str);
         };
         return $this;
@@ -284,17 +284,17 @@ class Smtp implements MailmanDriverInterface
      *
      * The parameters are the same as in the config file.
      *
-     * @param string $host       host name
-     * @param string $username   login user name
-     * @param string $password   login password
-     * @param string $from_name  from name
-     * @param string $from_mail  from email address
-     * @param int    $port       (opt.) host port (Default: 587)
-     * @param bool   $use_tls    (opt.) use tls? (Default: true)
-     * @param bool   $use_ssl    (opt.) use ssl? (Default: false)
-     * @param bool   $auth       (opt.) needs auth? (Default: true)
-     * @param string $auth_type  (opt.) auth type (Default: LOGIN)
-     * @param bool   $trust_all  (opt.) trust all certificates? (Default: false)
+     * @param string $host      host name
+     * @param string $username  login user name
+     * @param string $password  login password
+     * @param string $from_name from name
+     * @param string $from_mail from email address
+     * @param int    $port      (opt.) host port (Default: 587)
+     * @param bool   $use_tls   (opt.) use tls? (Default: true)
+     * @param bool   $use_ssl   (opt.) use ssl? (Default: false)
+     * @param bool   $auth      (opt.) needs auth? (Default: true)
+     * @param string $auth_type (opt.) auth type (Default: LOGIN)
+     * @param bool   $trust_all (opt.) trust all certificates? (Default: false)
      *
      * @return $this
      */
@@ -310,7 +310,8 @@ class Smtp implements MailmanDriverInterface
         $auth = true,
         $auth_type = 'login',
         $trust_all = false
-    ){
+    )
+    {
         // Init PHPMailer and set config values
         try {
             $mail = new PHPMailer(true);
@@ -330,20 +331,20 @@ class Smtp implements MailmanDriverInterface
             // TLS / SSL security
             if ($use_tls) {
                 $mail->SMTPSecure = 'tls';
-            } elseif ($use_ssl) {
+            } else if ($use_ssl) {
                 $mail->SMTPSecure = 'ssl';
             } else {
                 $mail->SMTPSecure = false;
             }
 
-            // Allow self signed certificates
+            // Allow self-signed certificates
             if ($trust_all) {
                 $mail->SMTPOptions = [
                     'ssl' => [
                         'verify_peer' => false,
                         'verify_peer_name' => false,
-                        'allow_self_signed' => true
-                    ]
+                        'allow_self_signed' => true,
+                    ],
                 ];
             }
 
@@ -352,15 +353,15 @@ class Smtp implements MailmanDriverInterface
                 $from_name
             );
             $this->from = $from_name
-                . ' <' .  $from_mail . '>';
-        } catch(Exception $e) {
+                . ' <' . $from_mail . '>';
+        } catch (Exception $e) {
             C::Logging()->error('Could not set SMTP connection', [$e->getMessage(), $mail->ErrorInfo]);
         }
 
         $this->mail = $mail;
 
         // Debug mode
-        if(C::Config()->get('main:debug.debugmode', false)) {
+        if (C::Config()->get('main:debug.debugmode', false)) {
             $this->enableDebugOutput();
         }
 
@@ -370,7 +371,7 @@ class Smtp implements MailmanDriverInterface
     /**
      * Set SMTP connection
      *
-     * @param string  $name  name of connection (defined in connections:email)
+     * @param string $name name of connection (defined in connections:email)
      *
      * @return $this
      */
@@ -387,11 +388,11 @@ class Smtp implements MailmanDriverInterface
 
             $type = C::Config()->get($configspace . '.type', 'smtp');
 
-            if($type == 'sendmail') {
+            if ($type == 'sendmail') {
                 // Just use sendmail
                 $mail->isSendmail();
 
-            } elseif($type == 'smtp') {
+            } else if ($type == 'smtp') {
                 // SMTP connection
                 $mail->isSMTP();
 
@@ -405,7 +406,7 @@ class Smtp implements MailmanDriverInterface
                 // TLS / SSL security
                 if (C::Config()->get($configspace . '.usetls')) {
                     $mail->SMTPSecure = 'tls';
-                } elseif (C::Config()->get($configspace . '.usessl')) {
+                } else if (C::Config()->get($configspace . '.usessl')) {
                     $mail->SMTPSecure = 'ssl';
                 } else {
                     $mail->SMTPSecure = false;
@@ -417,8 +418,8 @@ class Smtp implements MailmanDriverInterface
                         'ssl' => [
                             'verify_peer' => false,
                             'verify_peer_name' => false,
-                            'allow_self_signed' => true
-                        ]
+                            'allow_self_signed' => true,
+                        ],
                     ];
                 }
             }
@@ -428,15 +429,15 @@ class Smtp implements MailmanDriverInterface
                 C::Config()->get($configspace . '.fromname')
             );
             $this->from = C::Config()->get($configspace . '.fromname')
-                . ' <' .  C::Config()->get($configspace . '.frommail') . '>';
-        } catch(Exception $e) {
+                . ' <' . C::Config()->get($configspace . '.frommail') . '>';
+        } catch (Exception $e) {
             C::Logging()->error('Could not set SMTP connection', [$e->getMessage(), $mail->ErrorInfo]);
         }
 
         $this->mail = $mail;
 
         // Debug mode
-        if(C::Config()->get('main:debug.debugmode', false)) {
+        if (C::Config()->get('main:debug.debugmode', false)) {
             $this->enableDebugOutput();
         }
 

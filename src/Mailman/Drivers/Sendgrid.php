@@ -60,7 +60,7 @@ class Sendgrid implements MailmanDriverInterface
      * Add recipient
      *
      * @param string $email the e-mail address
-     * @param string $name (opt.) recipient name
+     * @param string $name  (opt.) recipient name
      *
      * @return $this
      */
@@ -74,7 +74,7 @@ class Sendgrid implements MailmanDriverInterface
      * Add a CC address
      *
      * @param string $email the e-mail address
-     * @param string $name (opt.) recipient name
+     * @param string $name  (opt.) recipient name
      *
      * @return $this
      */
@@ -88,7 +88,7 @@ class Sendgrid implements MailmanDriverInterface
      * Add a BCC address
      *
      * @param string $email the e-mail address
-     * @param string $name (opt.) recipient name
+     * @param string $name  (opt.) recipient name
      *
      * @return $this
      */
@@ -108,7 +108,7 @@ class Sendgrid implements MailmanDriverInterface
      */
     public function addAttachment($path, $name = '')
     {
-        if(empty($name)) {
+        if (empty($name)) {
             $name = basename($path);
         }
 
@@ -222,10 +222,10 @@ class Sendgrid implements MailmanDriverInterface
         $sendgrid = new \SendGrid(C::Config()->get($this->configspace . '.sendgrid.token'));
         try {
             $response = $sendgrid->send($this->mail);
-            $this->success = ((int) $response->statusCode() < 300);
+            $this->success = ((int)$response->statusCode() < 300);
 
-            if(!$this->success) {
-                C::Logging()->error('[SENDGRID] [Code ' . (int) $response->statusCode() . '] Error: ' . $response->body());
+            if (!$this->success) {
+                C::Logging()->error('[SENDGRID] [Code ' . (int)$response->statusCode() . '] Error: ' . $response->body());
             }
 
         } catch (\Exception $e) {
