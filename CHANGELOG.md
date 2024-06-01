@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Model filtering via `filterBasedOnRequest()` and `getFilteredPaginatedData()` can now be customized
   with a custom callback which allows adjusting the QueryBuilder
+- Run cron jobs via a dedicated daemon: `bob cron:daemon start/stop/info`, works beautifully with a systemd service
 
 ### 🔧 Changed
 

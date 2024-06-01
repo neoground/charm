@@ -80,13 +80,12 @@ class CronInfo extends Command
 
             $name = str_replace('/', '-', $cdata['name']);
             $service_filename = 'charm-' . $name . '.service';
-            $timer_filename = 'charm-' . $name . '.timer';
             $systemd_dir = '/etc/systemd/system';
 
-            if (file_exists($systemd_dir . DS . $service_filename) && file_exists($systemd_dir . DS . $timer_filename)) {
-                $this->io->success('✅ Detected valid systemd service file "' . $service_filename . '" and timer "' . $timer_filename . '".');
+            if (file_exists($systemd_dir . DS . $service_filename)) {
+                $this->io->success('✅ Detected valid systemd service file "' . $service_filename . '".');
 
-                if($tool == 'systemd') {
+                if ($tool == 'systemd') {
                     $this->io->writeln('Recreating systemd files');
                     $this->createSystemdFiles($name, $systemd_dir);
 
@@ -103,9 +102,9 @@ class CronInfo extends Command
                 }
 
                 $this->io->newLine();
-                $this->io->writeln('To enable the timer, run:');
+                $this->io->writeln('To enable the service, please run:');
                 $this->io->writeln('<info>sudo systemctl daemon-reload</info>');
-                $this->io->writeln('<info>sudo systemctl enable --now ' . $timer_filename . '</info>');
+                $this->io->writeln('<info>sudo systemctl enable --now ' . $service_filename . '</info>');
                 $this->io->newLine();
             }
 
@@ -130,15 +129,12 @@ class CronInfo extends Command
     private function createSystemdFiles(string $name, string $systemd_dir): bool
     {
         $service_filename = 'charm-' . $name . '.service';
-        $timer_filename = 'charm-' . $name . '.timer';
 
         $service_path = C::Storage()->getVarPath() . DS . $service_filename;
-        $timer_path = C::Storage()->getVarPath() . DS . $timer_filename;
 
         $user = $this->io->ask('Please enter the user who will call cron:run', get_current_user());
 
         $service_content = $this->getSystemdServiceFileContent($name, $user);
-        $timer_content = $this->getSystemdTimerFileContent($name);
 
         if (file_put_contents($service_path, $service_content)) {
             $this->io->writeln('✅ Successfully created systemd service file.');
@@ -147,20 +143,12 @@ class CronInfo extends Command
             return false;
         }
 
-        if (file_put_contents($timer_path, $timer_content)) {
-            $this->io->writeln('✅ Successfully created systemd timer file.');
-        } else {
-            $this->io->error('Error while creating systemd timer file! Aborting.');
-            return false;
-        }
-
         $this->io->newLine();
         if ($this->io->confirm('Should the files be linked in ' . $systemd_dir . '?')) {
-            $this->linkSystemdFiles($service_path, $timer_path, $systemd_dir, 'charm-' . $name);
+            $this->linkSystemdFiles($service_path, $systemd_dir, 'charm-' . $name);
         } else {
             $this->io->writeln('Please link the systemd files manually via:');
             $this->io->writeln('<info>sudo ln -sf ' . $service_path . ' ' . $systemd_dir . DS . $service_filename . '</info>');
-            $this->io->writeln('<info>sudo ln -sf ' . $timer_path . ' ' . $systemd_dir . DS . $timer_filename . '</info>');
         }
 
         return true;
@@ -169,45 +157,31 @@ class CronInfo extends Command
     private function getSystemdServiceFileContent($name, $user): string
     {
         return "[Unit]
-Description=Run cron for charm project " . $name . "
+Description=Cron daemon for charm project " . $name . "
+After=network.target
 
 [Service]
 Type=forking
 User=" . $user . "
 StandardOutput=journal
 StandardError=journal
-ExecStart=" . PHP_BINARY . " " . C::Storage()->getBasePath() . DS . 'bob.php' . " cron:run
+ExecStart=" . PHP_BINARY . " " . C::Storage()->getBasePath() . DS . 'bob.php' . " cron:daemon start
+ExecStop=" . PHP_BINARY . " " . C::Storage()->getBasePath() . DS . 'bob.php' . " cron:daemon stop
+Restart=always
+KillSignal=SIGINT
+SendSIGKILL=no
+
+WantedBy=multi-user.target
 ";
     }
 
-    private function getSystemdTimerFileContent($name): string
-    {
-        return "[Unit]
-Description=Timer for charm project " . $name . "
-
-[Timer]
-OnCalendar=*:0/1
-AccuracySec=1s
-
-[Install]
-WantedBy=timers.target
-";
-    }
-
-    private function linkSystemdFiles($service_path, $timer_path, $systemd_dir, $name): void
+    private function linkSystemdFiles($service_path, $systemd_dir, $name): void
     {
         if ($this->linkSystemdFile($service_path, $systemd_dir . DS . $name . '.service')) {
             $this->io->writeln('✅ Successfully linked service file to systemd.');
         } else {
             $this->io->writeln('Please link the service file manually via:');
             $this->io->writeln('<info>sudo ln -sf ' . $service_path . ' ' . $systemd_dir . DS . $name . '.service</info>');
-        }
-
-        if ($this->linkSystemdFile($timer_path, $systemd_dir . DS . $name . '.timer')) {
-            $this->io->writeln('✅ Successfully linked timer file to systemd.');
-        } else {
-            $this->io->writeln('Please link the timer file manually via:');
-            $this->io->writeln('<info>sudo ln -sf ' . $timer_path . ' ' . $systemd_dir . DS . $name . '.timer</info>');
         }
     }
 
