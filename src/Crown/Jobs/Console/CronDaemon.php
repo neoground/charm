@@ -66,11 +66,19 @@ class CronDaemon extends Command
     }
 
     /**
+     * Get the absolute path to the pid lock file
+     */
+    private function getPidFilePath(): string
+    {
+        return C::Storage()->getCachePath() . DS . 'cron_daemon.lock';
+    }
+
+    /**
      * Starts the daemon if it is not already running.
      */
     private function startDaemon(): void
     {
-        $pidfile = C::Storage()->getCachePath() . DS . 'cron_daemon.lock';
+        $pidfile = $this->getPidFilePath();
         if (file_exists($pidfile)) {
             $this->io->writeln('<error>👻 Daemon is already running.</error>');
             return;
@@ -97,7 +105,7 @@ class CronDaemon extends Command
      */
     private function stopDaemon(): void
     {
-        $pidfile = C::Storage()->getCachePath() . DS . 'cron_daemon.lock';
+        $pidfile = $this->getPidFilePath();
 
         if (!file_exists($pidfile)) {
             $this->io->writeln('<error>❌ Daemon is not running.</error>');
@@ -115,7 +123,7 @@ class CronDaemon extends Command
      */
     private function infoDaemon(): void
     {
-        $pidfile = C::Storage()->getCachePath() . DS . 'cron_daemon.lock';
+        $pidfile = $this->getPidFilePath();
         if (!file_exists($pidfile)) {
             $this->io->writeln('❌ Daemon is not running.');
             return;
