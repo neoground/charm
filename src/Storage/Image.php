@@ -32,8 +32,7 @@ class Image extends SimpleImage
             return parent::fromFile($file);
         }
 
-        // Got uploaded file
-        return parent::fromFile($file->getTempName());
+        parent::fromString($file->getFileContent());
     }
 
     /**

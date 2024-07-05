@@ -5,6 +5,8 @@
 
 namespace Charm\Vivid\Elements;
 
+use Charm\Storage\Image;
+use Charm\Vivid\C;
 use Charm\Vivid\Exceptions\FileSystemException;
 
 
@@ -155,4 +157,27 @@ class UploadedFile
             }
         }
     }
+
+    /**
+     * Get an image object of the uploaded file
+     *
+     * @return Image
+     *
+     * @throws \Exception
+     */
+    public function toImage(): Image
+    {
+        return (new Image())->fromFile($this);
+    }
+
+    /**
+     * Get the content of the uploaded file
+     *
+     * @return string
+     */
+    public function getFileContent(): string
+    {
+        return (!empty($this->file_content)) ? $this->file_content : file_get_contents($this->getTempName());
+    }
+
 }
