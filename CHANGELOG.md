@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Model filtering via `filterBasedOnRequest()` and `getFilteredPaginatedData()` can now be customized
   with a custom callback which allows adjusting the QueryBuilder
 - Run cron jobs via a dedicated daemon: `bob cron:daemon start/stop/info`, works beautifully with a systemd service
+- Uploaded files can now directly be transformed into an `Image` object for easy image manipulation / conversion
+- Add base64 support for fetching multiple files in a single upload (array of base64 strings)
 
 ### 🔧 Changed
 

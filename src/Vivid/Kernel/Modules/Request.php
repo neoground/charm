@@ -381,7 +381,7 @@ class Request extends Module implements ModuleInterface
      *
      * @return UploadedFile[]
      */
-    public function getFiles($name)
+    public function getFiles(string $name): array
     {
         $arr = [];
         $total = count($this->files[$name]['name']);
@@ -399,6 +399,20 @@ class Request extends Module implements ModuleInterface
             }
         }
 
+        if(empty($arr)) {
+            // Check for base64 array
+            $req = $this->get($name);
+            if (!empty($req) && is_array($req)) {
+                foreach($req as $val) {
+                    $upload = UploadedFile::fromBase64($val);
+                    if ($upload !== false) {
+                        $arr[] = $upload;
+                    }
+                }
+
+            }
+        }
+
         return $arr;
     }
 
@@ -407,7 +421,7 @@ class Request extends Module implements ModuleInterface
      *
      * @return string
      */
-    public function getIpAddress()
+    public function getIpAddress(): string
     {
         // Cloudflare origin ip support
         $cf_ip = $this->getHeader('CF-Connecting-IP');
