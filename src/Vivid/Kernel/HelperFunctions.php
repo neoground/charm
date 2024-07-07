@@ -46,7 +46,7 @@ if (!function_exists('is_serialized')) {
     }
 }
 
-if (!function_exists('ddd') && class_exists("\\Kint")) {
+if (!function_exists('ddd')) {
 
     /**
      * Dump and die
@@ -67,7 +67,12 @@ if (!function_exists('ddd') && class_exists("\\Kint")) {
             }
         }
 
-        \Kint::dump(...$vars);
+        if(class_exists("\Kint")) {
+            \Kint::dump(...$vars);
+        } else {
+            var_dump(...$vars);
+        }
+
         \Charm\Vivid\C::shutdown();
     }
 }

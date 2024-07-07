@@ -8,12 +8,6 @@ namespace Charm\Vivid\Kernel\Modules;
 use Charm\Vivid\Base\Module;
 use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
-use Kint\Renderer\RichRenderer;
-use Whoops\Handler\JsonResponseHandler;
-use Whoops\Handler\PlainTextHandler;
-use Whoops\Handler\PrettyPageHandler;
-use Whoops\Run;
-use Whoops\Util\Misc;
 
 /**
  * Class Debug
@@ -24,8 +18,8 @@ use Whoops\Util\Misc;
  */
 class Debug extends Module implements ModuleInterface
 {
-    /** @var Run the whoops instance */
-    protected Run $whoops;
+    /** @var object the whoops instance */
+    protected object $whoops;
 
     /**
      * Load the module
@@ -37,12 +31,16 @@ class Debug extends Module implements ModuleInterface
             $this->initWhoops();
         } else {
             // No debug mode -> production!
-            \Kint::$enabled_mode = false;
+            if(class_exists("Kint")) {
+                \Kint::$enabled_mode = false;
+            }
         }
 
-        // Set kint settings
-        \Kint::$aliases[] = 'ddd';
-        RichRenderer::$folder = false;
+        // Set kint settings if available
+        if(class_exists("Kint")) {
+            \Kint::$aliases[] = 'ddd';
+            \Kint\Renderer\RichRenderer::$folder = false;
+        }
     }
 
     /**
@@ -56,8 +54,8 @@ class Debug extends Module implements ModuleInterface
             return false;
         }
 
-        $whoops = new Run;
-        $handle = new PrettyPageHandler;
+        $whoops = new \Whoops\Run;
+        $handle = new \Whoops\Handler\PrettyPageHandler;
 
         $handle->addDataTableCallback('Charm', [self::class, 'getWhoopsMetadata']);
 
@@ -81,9 +79,9 @@ class Debug extends Module implements ModuleInterface
 
         // Output depending on CLI / AJAX Request / default view
         if (is_cli()) {
-            $whoops->pushHandler(new PlainTextHandler());
-        } else if (Misc::isAjaxRequest()) {
-            $whoops->pushHandler(new JsonResponseHandler);
+            $whoops->pushHandler(new \Whoops\Handler\PlainTextHandler());
+        } else if (\Whoops\Util\Misc::isAjaxRequest()) {
+            $whoops->pushHandler(new \Whoops\Handler\JsonResponseHandler);
         } else {
             $whoops->pushHandler($handle);
         }
@@ -115,9 +113,9 @@ class Debug extends Module implements ModuleInterface
     /**
      * Get the whoops instance
      *
-     * @return Run
+     * @return object|\Whoops\Run
      */
-    public function getWhoopsInstance(): Run
+    public function getWhoopsInstance(): object
     {
         return $this->whoops;
     }

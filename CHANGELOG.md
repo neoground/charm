@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### 🔧 Changed
 
 - Replace symfony/process with exec for better detachment of cron jobs in background
+- Move dev packages (debugbar, kint, phpunit, whoops) to require-dev, made their usage optional in the framework
 
 ---
 

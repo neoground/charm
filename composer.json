@@ -26,17 +26,17 @@
     "phpmailer/phpmailer": "^6.9",
     "league/flysystem": "^3.24",
     "league/flysystem-sftp-v3": "^3.23",
-    "filp/whoops": "^2.15",
-    "maximebf/debugbar": "^1.21",
-    "kint-php/kint": "^5.1",
-    "phpunit/phpunit": "^10.5",
     "opis/closure": "^3.6",
-    "spatie/db-dumper": "^3.4",
     "claviska/simpleimage": "^4.0",
     "illuminate/database": "^10.46",
-    "kint-php/kint-twig": "^5.0",
     "guzzlehttp/guzzle": "^7.8",
     "respect/validation": "^2.3"
+  },
+  "require-dev": {
+    "filp/whoops": "^2.15",
+    "kint-php/kint": "^5.1",
+    "maximebf/debugbar": "^1.21",
+    "phpunit/phpunit": "^10.5"
   },
   "suggest": {
     "ext-redis": "For native redis support instead of using predis",
