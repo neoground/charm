@@ -57,14 +57,14 @@ class Request extends Module implements ModuleInterface
     /**
      * Get a request value
      *
-     * @param $key      string        the wanted key, arrays separated by .
-     * @param $default  null|mixed    (optional) default parameter
-     * @param $sanitize bool|callable (optional) sanitize request value (will strip tags if set to true or use your own
+     * @param $key      mixed         the wanted key, arrays separated by "."
+     * @param $default  mixed|null    (optional) default parameter
+     * @param $sanitize callable|bool (optional) sanitize request value (will strip tags if set to true or use your own
      *                  sanitizing function)
      *
      * @return null|string|array
      */
-    public function get($key, $default = null, $sanitize = false)
+    public function get(mixed $key, mixed $default = null, callable|bool $sanitize = false): mixed
     {
         if ($sanitize !== false) {
             if (is_callable($sanitize)) {
