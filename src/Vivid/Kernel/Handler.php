@@ -63,6 +63,7 @@ class Handler
             'Session',
             'Redis',
             'Database' => '\\Charm\\Database\\Database',
+            'Header',
             'Request',
             'Formatter',
             'Validator',
@@ -493,6 +494,9 @@ class Handler
 
         // Output!
         try {
+            // Headers first
+            C::Header()->sendResponseHeaders();
+
             // Render, but only output if we got any
             // (to prevent problems with non-standard output like file streams)
             $render_output = $response->render();

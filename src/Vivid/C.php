@@ -34,6 +34,7 @@ use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
  * @method static Database Database
  * @method static Kernel\Modules\Debug Debug
  * @method static Kernel\Modules\Formatter Formatter
+ * @method static Kernel\Modules\Header Header
  * @method static Kernel\Modules\Logging Logging
  * @method static Kernel\Modules\Redis Redis
  * @method static Kernel\Modules\Request Request

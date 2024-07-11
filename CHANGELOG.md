@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Add base64 support for fetching multiple files in a single upload (array of base64 strings)
 - Create and validate a CSRF token in a session via `C::Session()->generateCsrfToken()`
 - A string can now easily be escaped via `C::Formatter()->escape($str)`
+- New module `C::Header()` for easy handling of request / response headers with handy methods to set the most 
+  common headers directly, including CORS and security related headers
 
 ### 🔧 Changed
 
