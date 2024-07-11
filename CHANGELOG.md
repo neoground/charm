@@ -23,6 +23,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Replace symfony/process with exec for better detachment of cron jobs in background
 - Move dev packages (debugbar, kint, phpunit, whoops) to require-dev, made their usage optional in the framework
 
+### 🔥 Removed
+
+- Polyfill for `apache_request_headers()` since we now have an own module `C::Header()`
+
 ---
 
 ## [3.4] - 20 April 2024
