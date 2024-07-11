@@ -172,4 +172,34 @@ class Session extends Module implements ModuleInterface
         return session_write_close();
     }
 
+    /**
+     * Generate a unique CSRF token and store it in the session
+     *
+     * @param bool $force_new Force the creation of a new token if it already exists. Default: false
+     *
+     * @return string the token
+     */
+    public function generateCsrfToken(bool $force_new = false): string
+    {
+        $token = $this->get('csrf_token', false);
+        if (empty($token) || $force_new) {
+            $token = C::Token()->generateSecureToken(32);
+            $this->set('csrf_token', $token);
+        }
+        return $token;
+    }
+
+    /**
+     * Validate a CSRF token
+     *
+     * @param string $token the provided token
+     *
+     * @return bool
+     */
+    public function validateCsrfToken(string $token): bool
+    {
+        $session_token = $this->get('csrf_token', false);
+        return !empty($session_token) && hash_equals($session_token, $token);
+    }
+
 }
