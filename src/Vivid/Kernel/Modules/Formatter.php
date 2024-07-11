@@ -364,7 +364,7 @@ class Formatter extends Module implements ModuleInterface
             // Default
             $language = C::Config()->get('main:session.default_language', 'en');
 
-            $lang_header = C::Request()->getHeader('Accept-Language');
+            $lang_header = C::Header()->get('Accept-Language');
             if (!empty($lang_header)) {
                 foreach (C::Config()->get('main:session.available_languages', []) as $lang) {
                     if (str_contains($lang_header, $lang)) {

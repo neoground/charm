@@ -73,7 +73,7 @@ class Header extends Module implements ModuleInterface
      * output itself and might lead to problems if you set them too, like
      * Content-Type, Content-Length or Last-Modified.
      *
-     * @param string $key response header key
+     * @param string $key   response header key
      * @param mixed  $value response header value
      *
      * @return $this
@@ -91,7 +91,7 @@ class Header extends Module implements ModuleInterface
      */
     public function sendResponseHeaders(): void
     {
-        foreach($this->response_headers as $k => $v) {
+        foreach ($this->response_headers as $k => $v) {
             header($k . ': ' . $v);
         }
     }
@@ -178,8 +178,8 @@ class Header extends Module implements ModuleInterface
      * Controls which web features and APIs can be used in the browser.
      *
      * @param bool $geolocation enable / disable (default) geolocation API
-     * @param bool $microphone enable / disable (default) microphone API
-     * @param bool $camera enable / disable (default) camera API
+     * @param bool $microphone  enable / disable (default) microphone API
+     * @param bool $camera      enable / disable (default) camera API
      *
      * @return static
      */

@@ -158,7 +158,7 @@ class Json implements OutputInterface, HttpCodes
         C::Event()->fire('Json', 'renderStart');
 
         // Set content type
-        header('Content-type: application/json');
+        header('Content-Type: application/json');
 
         // Set status code
         http_response_code($this->statuscode);

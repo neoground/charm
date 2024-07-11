@@ -58,11 +58,11 @@ class Token extends Module implements ModuleInterface
             return $this->token;
         }
 
-        $auth_header = C::Request()->getHeader('authorization');
+        $auth_header = C::Header()->get('authorization');
 
         if (empty($auth_header)) {
             // Try x-authorization, some prefer this
-            $auth_header = C::Request()->getHeader('x-authorization');
+            $auth_header = C::Header()->get('x-authorization');
         }
 
         if (!empty($auth_header)) {
@@ -101,7 +101,7 @@ class Token extends Module implements ModuleInterface
      */
     public function getClientToken(): bool|string
     {
-        $auth_header = C::Request()->getHeader('authorization');
+        $auth_header = C::Header()->get('authorization');
 
         $matches = [];
         preg_match('/client="(.*?)"/', $auth_header, $matches);

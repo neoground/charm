@@ -186,14 +186,12 @@ class Request extends Module implements ModuleInterface
      * @param null|mixed $default (optional) default parameter
      *
      * @return null|string
+     *
+     * @deprecated since v3.5, use C::Header()->get(..) instead
      */
-    public function getHeader($key, $default = null)
+    public function getHeader(string $key, mixed $default = null): mixed
     {
-        // Make header keys + wanted key lowercase to prevent problems
-        $headers = array_change_key_case(apache_request_headers());
-        $key = strtolower($key);
-
-        return C::Arrays()->get($headers, $key, $default);
+        return C::Header()->get($key, $default);
     }
 
     /**
