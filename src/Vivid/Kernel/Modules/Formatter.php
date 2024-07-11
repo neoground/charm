@@ -432,4 +432,16 @@ class Formatter extends Module implements ModuleInterface
         return ($new_price - $old_price) / $old_price * 100;
     }
 
+    /**
+     * Escape a string
+     *
+     * @param string $data the input string
+     *
+     * @return string the escaped string
+     */
+    public function escape(string $data): string
+    {
+        return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
+    }
+
 }

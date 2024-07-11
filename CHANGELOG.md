@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Uploaded files can now directly be transformed into an `Image` object for easy image manipulation / conversion
 - Add base64 support for fetching multiple files in a single upload (array of base64 strings)
 - Create and validate a CSRF token in a session via `C::Session()->generateCsrfToken()`
+- A string can now easily be escaped via `C::Formatter()->escape($str)`
 
 ### 🔧 Changed
 
