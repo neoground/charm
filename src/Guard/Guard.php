@@ -11,6 +11,7 @@ use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use Charm\Vivid\Kernel\Output\Redirect;
 use Charm\Vivid\Router\Elements\Filter;
+use Predis\Client;
 
 /**
  * Class Guard
@@ -65,6 +66,8 @@ class Guard extends Module implements ModuleInterface
     /**
      * Get the logged-in user
      *
+     * If a user is not logged in, this will return the default user.
+     *
      * @param bool $use_cache cache the user object? Default: true
      *
      * @return object|false  the user object or false if guard is disabled
@@ -103,10 +106,11 @@ class Guard extends Module implements ModuleInterface
      *
      * This is more performant than getUser() because the id is stored in the session.
      * No database query needed.
+     * If a user is not logged in, this will return the default user ID.
      *
      * @return int|false the user id or false if guard is disabled
      */
-    public function getUserId()
+    public function getUserId(): bool|int
     {
         if(!C::Config()->get('main:guard.enabled', true)) {
             return false;
@@ -135,7 +139,7 @@ class Guard extends Module implements ModuleInterface
      *
      * @return bool
      */
-    public function isLoggedIn()
+    public function isLoggedIn(): bool
     {
         if(!C::Config()->get('main:guard.enabled', true)) {
             return false;
@@ -168,7 +172,7 @@ class Guard extends Module implements ModuleInterface
      *
      * @return bool
      */
-    private function isExpired()
+    private function isExpired(): bool
     {
         // If last activity is not set, it's expired by default
         if (!array_key_exists('last_activity', $_SESSION)) {
@@ -190,14 +194,14 @@ class Guard extends Module implements ModuleInterface
     }
 
     /**
-     * Check password
+     * Check if the password is correct
      *
-     * @param string|object  $username  the username or user object
-     * @param string         $password  the password
+     * @param object|string $username the username or user object
+     * @param string        $password the password
      *
-     * @return bool
+     * @return bool true if password is correct, false otherwise
      */
-    public function checkPassword($username, $password)
+    public function checkPassword(object|string $username, string $password): bool
     {
         $u = $username;
 
@@ -228,13 +232,17 @@ class Guard extends Module implements ModuleInterface
     /**
      * Login a user
      *
-     * @param string  $username    the username
-     * @param string  $password    the password
-     * @param bool    $rememberme  (opt.) remember user? default: false
+     * This will check for the password and call handleLogin().
+     * If you need a custom login handling (e.g. TFA), call these
+     * methods manually in your Auth controller.
+     *
+     * @param string $username   the username
+     * @param string $password   the password
+     * @param bool   $rememberme (opt.) remember user? default: false
      *
      * @return bool
      */
-    public function login($username, $password, $rememberme = false)
+    public function login(string $username, string $password, bool $rememberme = false): bool
     {
         if ($this->checkPassword($username, $password)) {
             $u = $this->findUserByUsername($username);
@@ -250,9 +258,9 @@ class Guard extends Module implements ModuleInterface
     /**
      * Execute logout
      *
-     * @param bool  $auto_logout  (opt.) triggered as auto logout? default: false
+     * @param bool $auto_logout (opt.) triggered as auto logout? default: false
      */
-    public function logout($auto_logout = false)
+    public function logout(bool $auto_logout = false): void
     {
         $_SESSION = [];
         $session = C::Config()->get('main:session.name');
@@ -272,7 +280,6 @@ class Guard extends Module implements ModuleInterface
         // So messages etc. work as expected
         session_name(C::Config()->get('main:session.name', 'charm'));
         session_start();
-
     }
 
     /**
@@ -285,7 +292,7 @@ class Guard extends Module implements ModuleInterface
      *
      * @return bool
      */
-    public function handleLogin($u, $rememberme)
+    public function handleLogin(object $u, bool $rememberme): bool
     {
         $now = Carbon::now();
 
@@ -318,6 +325,18 @@ class Guard extends Module implements ModuleInterface
             setcookie(
                 $session . "chrem", $this->buildRememberMeToken($u), $expire, '/'
             );
+        }
+
+        // Clear login attempts
+        $hashkey = C::Config()->get('main:session.name', 'charm');
+        $r = C::Redis()->getClient();
+        $ip = C::Request()->getIpAddress();
+        if ($ip) {
+            try {
+                $iphash = md5($ip);
+                $r->del($hashkey . ':loginattempts:' . $iphash);
+                $r->hdel($hashkey . ':loginattempts:count', $iphash);
+            } catch(\Exception $e) { }
         }
 
         return true;
@@ -381,16 +400,14 @@ class Guard extends Module implements ModuleInterface
     }
 
     /**
-     * Get amount of wrong login attempts for current IP
+     * Get amount of wrong login attempts for the current client
      *
-     * Note: Make sure that you remove that hash every day or so.
-     *       Login attempts don't expire itself!
-     *
-     * @return int
+     * @return int the amount of wrong login attempts
      */
-    public function getWrongLoginAttempts()
+    public function getWrongLoginAttempts(): int
     {
         $hashkey = C::Config()->get('main:session.name', 'charm');
+        $expireTime = ((int) C::Config()->get('main:guard.login_attempts_expiration', 1440)) * 60;
 
         // Get redis connection
         $r = C::Redis()->getClient();
@@ -399,28 +416,37 @@ class Guard extends Module implements ModuleInterface
         $ip = C::Request()->getIpAddress();
 
         if ($ip) {
-            $iphash = md5($ip);
+            try {
+                $iphash = md5($ip);
+                $currentTime = time();
 
-            $counter = $r->hget($hashkey . ':loginattempts', $iphash);
-            if (!$counter) {
-                $counter = 0;
+                // Remove expired attempts
+                $r->zremrangebyscore($hashkey . ':loginattempts:' . $iphash, '-inf', $currentTime - $expireTime);
+
+                // Get the count of attempts
+                $counter = $r->zcard($hashkey . ':loginattempts:' . $iphash);
+
+                // Store the count of attempts
+                $r->hset($hashkey . ':loginattempts:count', $iphash, $counter);
+
+                return (int) $counter;
+            } catch(\Exception $e) {
+                return 0;
             }
-
-            return $counter;
         }
 
         return 0;
     }
 
     /**
-     * Save wrong login attempt of current IP in redis
+     * Save failed login attempt of the current client in redis
      *
-     * Note: Make sure that you remove that hash every day or so.
-     *       Login attempts don't expire itself!
+     * @return bool true if saved successfully, false on error
      */
-    public function saveWrongLoginAttempt()
+    public function saveWrongLoginAttempt(): bool
     {
         $hashkey = C::Config()->get('main:session.name', 'charm');
+        $expireTime = ((int) C::Config()->get('main:guard.login_attempts_expiration', 1440)) * 60;
 
         // Get redis connection
         $r = C::Redis()->getClient();
@@ -429,17 +455,35 @@ class Guard extends Module implements ModuleInterface
         $ip = C::Request()->getIpAddress();
 
         if ($ip) {
-            $iphash = md5($ip);
+            try {
+                $iphash = md5($ip);
 
-            $counter = $r->hget($hashkey . ':loginattempts', $iphash);
-            if (!$counter || !is_numeric($counter)) {
-                $counter = 0;
+                // Use a sorted set to store the timestamp of each login attempt
+                $currentTime = time();
+                if($r instanceof Client) {
+                    // Predis wants an array
+                    $r->zadd($hashkey . ':loginattempts:' . $iphash, [$currentTime, $currentTime]);
+                } else {
+                    // PHPredis is fine with multiple arguments
+                    $r->zadd($hashkey . ':loginattempts:' . $iphash, $currentTime, $currentTime);
+                }
+
+                // Remove expired attempts
+                $r->zremrangebyscore($hashkey . ':loginattempts:' . $iphash, '-inf', $currentTime - $expireTime);
+
+                // Get the count of attempts
+                $counter = $r->zcard($hashkey . ':loginattempts:' . $iphash);
+
+                // Store the count of attempts
+                $r->hset($hashkey . ':loginattempts:count', $iphash, $counter);
+
+                return true;
+            } catch(\Exception $e) {
+                return false;
             }
-
-            $counter++;
-
-            $r->hset('loginattempts', $iphash, $counter);
         }
+
+        return false;
     }
 
     /**
@@ -454,5 +498,75 @@ class Guard extends Module implements ModuleInterface
         return password_hash($password, PASSWORD_DEFAULT);
     }
 
+    /**
+     * Throttle the login
+     *
+     * If a client tried to log in too many times,
+     * the login will be throttled. You can configure
+     * this in the main:guard.throttle_* config.
+     *
+     * @return bool true if throttled, false if not
+     */
+    public function throttleLogin(): bool
+    {
+        $hashkey = C::Config()->get('main:session.name', 'charm');
+        $r = C::Redis()->getClient();
+        $ip = C::Request()->getIpAddress();
+        $throttleThreshold = (int) C::Config()->get('main:guard.throttle_threshold', 5);
+        $throttleDelay = (int) C::Config()->get('main:guard.throttle_seconds', 10);
+
+        if ($ip) {
+            $iphash = md5($ip);
+
+            // Check the count of attempts
+            try {
+            $counter = $r->hget($hashkey . ':loginattempts:count', $iphash);
+            } catch (\Exception $e) {
+                return false;
+            }
+
+            if ($counter && is_numeric($counter)) {
+                if ($counter >= $throttleThreshold) {
+                    // Apply throttling delay
+                    sleep($throttleDelay);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if the client is blocked (too many login attempts)
+     *
+     * This should be called on top of your Auth handler and
+     * abort the login process asap if the client is blocked.
+     *
+     * @return bool true if blocked, false if not
+     */
+    public function isBlocked(): bool
+    {
+        $hashkey = C::Config()->get('main:session.name', 'charm');
+        $maxAttempts = (int) C::Config()->get('main:guard.max_login_attempts', 20);
+        $r = C::Redis()->getClient();
+        $ip = C::Request()->getIpAddress();
+
+        if ($ip) {
+            $iphash = md5($ip);
+
+            // Check the count of attempts
+            try {
+                $counter = $r->hget($hashkey . ':loginattempts:count', $iphash);
+                if ($counter && is_numeric($counter)) {
+                    return $counter >= $maxAttempts;
+                }
+            } catch (\Exception $e) {
+                return false;
+            }
+        }
+
+        return false;
+    }
 
 }

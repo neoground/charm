@@ -19,11 +19,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - A string can now easily be escaped via `C::Formatter()->escape($str)`
 - New module `C::Header()` for easy handling of request / response headers with handy methods to set the most 
   common headers directly, including CORS and security related headers
+- Login throttling via `C::Guard()->throttleLogin()`, check if a client is blocked via `C::Guard()->isBlocked()`
 
 ### 🔧 Changed
 
 - Replace symfony/process with exec for better detachment of cron jobs in background
 - Move dev packages (debugbar, kint, phpunit, whoops) to require-dev, made their usage optional in the framework
+- Failed login attempts are stored more intelligently and expired failed logins are removed automatically
 
 ### 🔥 Removed
 
