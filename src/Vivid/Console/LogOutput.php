@@ -43,7 +43,7 @@ class LogOutput implements OutputInterface
     /**
      * {@inheritdoc}
      */
-    public function setFormatter(OutputFormatterInterface $formatter)
+    public function setFormatter(OutputFormatterInterface $formatter): void
     {
         // do nothing
     }
@@ -63,7 +63,7 @@ class LogOutput implements OutputInterface
     /**
      * {@inheritdoc}
      */
-    public function setDecorated(bool $decorated)
+    public function setDecorated(bool $decorated): void
     {
         // do nothing
     }
@@ -79,7 +79,7 @@ class LogOutput implements OutputInterface
     /**
      * {@inheritdoc}
      */
-    public function setVerbosity(int $level)
+    public function setVerbosity(int $level): void
     {
         // do nothing
     }
@@ -127,7 +127,7 @@ class LogOutput implements OutputInterface
     /**
      * {@inheritdoc}
      */
-    public function writeln($messages, int $options = self::OUTPUT_NORMAL)
+    public function writeln(string|iterable $messages, int $options = 0): void
     {
         $level = 'info';
         if($options == self::VERBOSITY_VERBOSE
@@ -149,7 +149,7 @@ class LogOutput implements OutputInterface
     /**
      * {@inheritdoc}
      */
-    public function write($messages, bool $newline = false, int $options = self::OUTPUT_NORMAL)
+    public function write(string|iterable $messages, bool $newline = false, int $options = 0): void
     {
         $this->writeln($messages, $options);
     }
