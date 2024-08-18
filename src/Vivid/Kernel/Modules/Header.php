@@ -19,10 +19,10 @@ use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 class Header extends Module implements ModuleInterface
 {
     /** @var array All request headers */
-    protected array $request_headers;
+    protected array $request_headers = [];
 
     /** @var array Response headers */
-    protected array $response_headers;
+    protected array $response_headers = [];
 
     /**
      * Load the module
