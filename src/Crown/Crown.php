@@ -234,7 +234,7 @@ class Crown extends Module implements ModuleInterface
 
         } catch (\Exception $e) {
             // Log exception
-            C::Logging()->error('[CROWN] Exception', [$e->getMessage()]);
+            C::Logging()->error('[CROWN] Exception', [$e->getMessage(), $e->getTraceAsString()]);
             $this->output->writeln('<error> Exception: ' . $e->getMessage() . '</error>');
         }
     }

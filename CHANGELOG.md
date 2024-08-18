@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - New module `C::Header()` for easy handling of request / response headers with handy methods to set the most 
   common headers directly, including CORS and security related headers
 - Login throttling via `C::Guard()->throttleLogin()`, check if a client is blocked via `C::Guard()->isBlocked()`
+- Logging of the stack trace when an exception happens during a cron job
 
 ### 🔧 Changed
 
