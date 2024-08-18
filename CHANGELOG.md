@@ -27,6 +27,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Move dev packages (debugbar, kint, phpunit, whoops) to require-dev, made their usage optional in the framework
 - Failed login attempts are stored more intelligently and expired failed logins are removed automatically
 
+### 🐞 Fixed
+
+- A bug when a view is rendered via CLI where the Session module is not available
+
 ### 🔥 Removed
 
 - Polyfill for `apache_request_headers()` since we now have an own module `C::Header()`

@@ -290,7 +290,7 @@ class View implements OutputInterface, HttpCodes
         ];
 
         // Add optional message
-        if (C::Session()->has('charm_message')) {
+        if (C::has('Session') && C::Session()->has('charm_message')) {
             $this->content['charm']['message'] = C::Session()->get('charm_message');
             C::Session()->delete('charm_message');
         }
