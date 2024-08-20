@@ -25,8 +25,15 @@ class Session extends Module implements ModuleInterface
     {
         // Set lifetime and session data
         ini_set('session.gc_maxlifetime', C::Config()->get('main:session.expire', 720) * 60);
-        ini_set('session.gc_divisor', 1);
-        ini_set('session.gc_probability', 0);
+
+        if(C::Config()->get('main:session.gc.enabled', true)) {
+            ini_set('session.gc_divisor', (int) C::Config()->get('main:session.gc.divisor', 100));
+            ini_set('session.gc_probability', 1);
+        } else {
+            // Disable
+            ini_set('session.gc_divisor', 1);
+            ini_set('session.gc_probability', 0);
+        }
 
         // Session cookies
         ini_set('session.cookie_lifetime', 0);
