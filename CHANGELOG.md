@@ -8,7 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [3.6] - In Development
 
--
+### ✨ Added
+
+-  Garbage collector config options, improve default garbage collection in session module
 
 ---
 
