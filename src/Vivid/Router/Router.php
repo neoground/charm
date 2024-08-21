@@ -471,10 +471,10 @@ class Router extends Module implements ModuleInterface
         return (isset($urlComponents['scheme']) ? $urlComponents['scheme'] . '://' : '')
             . (isset($urlComponents['user']) ? $urlComponents['user'] . (isset($urlComponents['pass']) ? ':' . $urlComponents['pass'] : '') . '@' : '')
             . ($urlComponents['host'] ?? '')
-            . ($urlComponents['port'] ?? '')
+            . (isset($urlComponents['port']) ? ':' . $urlComponents['port'] : '')
             . ($urlComponents['path'] ?? '')
             . '?' . $urlComponents['query']
-            . ($urlComponents['fragment'] ?? '');
+            . (isset($urlComponents['fragment']) ? '#' . $urlComponents['fragment'] : '');
     }
 
 }

@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -  Garbage collector config options, improve default garbage collection in session module
 
+### 🐞 Fixed
+
+- Fix URL construction in Router module for URLs with ports + fragments
+
 ---
 
 ## [3.5] - 18 August 2024
