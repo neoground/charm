@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### ✨ Added
 
 - Garbage collector config options, improve default garbage collection in session module
-- Facade classes for modules: Config, DB (eloquent connection, similar to laravel's DB facade), Log, Request, Session
+- Facade classes for modules: Config, DB (eloquent connection, similar to laravel's DB facade), Log, 
+  Request, Router, Session
 
 ### 🐞 Fixed
 
