@@ -336,4 +336,37 @@ class Storage extends Module implements ModuleInterface
         return (file_exists($file) && unlink($file));
     }
 
+    /**
+     * Delete a file if it exists
+     *
+     * @param string $file The path to the file
+     *
+     * @return bool Returns true on success or false on failure
+     */
+    public function deleteFile(string $file): bool
+    {
+        return $this->deleteFileIfExists($file);
+    }
+
+    /**
+     * Delete a directory (and its content) if it exists
+     *
+     * @param string $path The path to the directory
+     * @param bool   $delete_files_in_dir Also delete files in the dir? Default: true
+     *
+     * @return bool
+     */
+    public function deleteDirectory(string $path, bool $delete_files_in_dir = true): bool
+    {
+        if(file_exists($path)) {
+            if($delete_files_in_dir) {
+                array_map('unlink', glob("$path/*.*"));
+            }
+
+            return rmdir($path);
+        }
+
+        return false;
+    }
+
 }
