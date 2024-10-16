@@ -33,6 +33,8 @@ class Image extends SimpleImage
         }
 
         parent::fromString($file->getFileContent());
+
+        return $this;
     }
 
     /**
