@@ -134,16 +134,49 @@ class Model extends \Illuminate\Database\Eloquent\Model
         $this->afterSave();
 
         // Update this instance. Flush cache
-        if (C::has('Cache')
-            && C::Config()->get('connections:database.caching', true)
-            && $this->caching) {
-
+        if (C::has('Cache')) {
             $classname = str_replace("\\", ":", get_called_class());
             $key = "Model:" . $classname . ':' . $this->id;
             C::Cache()->remove($key);
 
             // Remove all with class specific tag
             C::Cache()->removeByTag('Model:' . $classname);
+
+            // Clear filtered paginated data cache
+            C::Cache()->removeByTag('model_' . $this->table . '_fpd');
+        }
+
+        // Return
+        return $ret;
+    }
+
+    /**
+     * Delete the model from the database.
+     *
+     * @return bool|null
+     *
+     * @throws \LogicException
+     */
+    public function delete(): bool|null
+    {
+        $this->beforeDelete();
+
+        // Save
+        $ret = parent::delete();
+
+        $this->afterDelete();
+
+        // Update this instance. Flush cache
+        if (C::has('Cache')) {
+            $classname = str_replace("\\", ":", get_called_class());
+            $key = "Model:" . $classname . ':' . $this->id;
+            C::Cache()->remove($key);
+
+            // Remove all with class specific tag
+            C::Cache()->removeByTag('Model:' . $classname);
+
+            // Clear filtered paginated data cache
+            C::Cache()->removeByTag('model_' . $this->table . '_fpd');
         }
 
         // Return
@@ -185,10 +218,23 @@ class Model extends \Illuminate\Database\Eloquent\Model
      */
     public function afterSave()
     {
-        // Clear filtered paginated data cache
-        if(C::has('Cache')) {
-            C::Cache()->removeByTag('model_' . $this->table . '_fpd');
-        }
+
+    }
+
+    /**
+     * Code to execute on model deletion right before delete()
+     */
+    public function beforeDelete(): void
+    {
+
+    }
+
+    /**
+     * Code to execute on model deletion after delete()
+     */
+    public function afterDelete(): void
+    {
+
     }
 
     /**
@@ -276,7 +322,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
                         break;
                     case 'array_like':
                         if (is_array($val) || is_iterable($val)) {
-                            foreach($val as $array_val) {
+                            foreach ($val as $array_val) {
                                 $x->where($k, 'LIKE', '%' . $array_val . '%');
                             }
                         }
@@ -307,7 +353,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
         }
 
         // Apply custom filters
-        if(is_callable($custom_filter)) {
+        if (is_callable($custom_filter)) {
             $x = $custom_filter($x);
         }
 
@@ -320,7 +366,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
      * A combination of filterBasedOnRequest() and getPaginatedData()
      *
      * @param callable|null $custom_filter an optional custom filter function to filter the data even more
-     *                                    (has QueryBuilder as parameter and must return it)
+     *                                     (has QueryBuilder as parameter and must return it)
      *
      * @return array
      */
@@ -331,10 +377,10 @@ class Model extends \Illuminate\Database\Eloquent\Model
         $req = hash('sha256', json_encode(C::Request()->getAll()));
         $key = 'model_' . $s->table . '_fpd_' . $req;
 
-        if(C::has('Cache') &&
+        if (C::has('Cache') &&
             !(C::Config()->inDebugMode() && !C::Config()->get('main:debug.cache_enabled'))) {
             // Find and return from cache
-            if(C::Cache()->has($key)) {
+            if (C::Cache()->has($key)) {
                 return C::Cache()->get($key);
             }
 
