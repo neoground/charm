@@ -94,14 +94,19 @@ class Request extends Module implements ModuleInterface
      * This can be used for custom overriding or
      * for internal calling of other controller methods and so on.
      *
-     * @param string $key
-     * @param mixed  $value
+     * @param mixed  $key    key string or array (to set multiple values by key => value)
+     * @param mixed  $value  the value to set (leave empty when $key is an array)
      *
      * @return true
      */
-    public function set($key, $value): bool
+    public function set(mixed $key, mixed $value = null): bool
     {
-        $this->vars[$key] = $value;
+        if(is_array($key)) {
+            $this->vars = [...$this->vars, $value];
+        } else {
+            $this->vars[$key] = $value;
+        }
+
         return true;
     }
 
@@ -111,17 +116,31 @@ class Request extends Module implements ModuleInterface
      * This can be used for custom overriding or
      * for internal calling of other controller methods and so on.
      *
-     * @param string $key
-     * @param mixed  $value
+     * @param mixed $key   key string or array (to set multiple values by key => value)
+     * @param mixed $value the value to set (leave empty when $key is an array)
      *
      * @return bool true if set, false if existing
      */
-    public function setIfEmpty($key, $value): bool
+    public function setIfEmpty(mixed $key, mixed $value = null): bool
     {
-        if (!$this->has($key) || empty($this->get($key))) {
-            $this->set($key, $value);
-            return true;
+        if(is_array($key)) {
+            $ret = true;
+            foreach($key as $k => $v) {
+                if (!$this->has($k) || empty($this->get($k))) {
+                    $this->set($k, $v);
+                } else {
+                    // Existing
+                    $ret = false;
+                }
+            }
+            return $ret;
+        } else {
+            if (!$this->has($key) || empty($this->get($key))) {
+                $this->set($key, $value);
+                return true;
+            }
         }
+
         return false;
     }
 
