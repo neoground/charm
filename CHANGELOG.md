@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   Request, Router, Session
 - New method to delete a directory and its content: `C::Storage()->deleteDirectory($dir)`
 - Model methods: `beforeDelete()` + `afterDelete()`, simplified cache handling on save / on delete
+- Set multiple request values at once via array (for `C::Request()->set([])` and `C::Request()->setMultiple([])`)
 
 ### 🐞 Fixed
 
