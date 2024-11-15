@@ -257,17 +257,23 @@ class Storage extends Module implements ModuleInterface
      *
      * Will exclude dotfiles
      *
-     * @param string $dir absolute path to directory
-     * @param int $sorting_order optional sorting order. Default: ascending. Set to non-zero for descending
+     * @param string $dir           absolute path to directory
+     * @param int    $sorting_order optional sorting order. Default: ascending. Set to non-zero for descending
      *
-     * @return array|false returns false on error
+     * @return array returns an array with all files in the dir (or an empty array if there are none)
      */
-    public function scanDir($dir, int $sorting_order = 0)
+    public function scanDir(string $dir, int $sorting_order = 0): array
     {
-        if(!file_exists($dir) || !is_dir($dir)) {
-            return false;
+        // Check directory existence and validity
+        if (!is_dir($dir)) {
+            return [];
         }
-        return array_diff(scandir($dir, $sorting_order), ['.', '..']);
+
+        // Use scandir for raw directory scanning
+        $entries = scandir($dir, $sorting_order === 0 ? SCANDIR_SORT_ASCENDING : SCANDIR_SORT_DESCENDING);
+
+        // Return only valid entries, excluding dotfiles
+        return $entries !== false ? array_diff($entries, ['.', '..']) : [];
     }
 
     /**
@@ -275,20 +281,19 @@ class Storage extends Module implements ModuleInterface
      *
      * Will exclude dotfiles
      *
-     * @param string $dir absolute path to directory
-     * @param int $sorting_order optional sorting order. Default: ascending. Set to non-zero for descending
+     * @param string $dir           absolute path to directory
+     * @param int    $sorting_order optional sorting order. Default: ascending. Set to non-zero for descending
      *
-     * @return array|false returns false on error
+     * @return array returns an array with all directories in the dir (or an empty array if there are none)
      */
-    public function scanDirForDirectories($dir, int $sorting_order = 0)
+    public function scanDirForDirectories(string $dir, int $sorting_order = 0): array
     {
-        $ret = [];
-        foreach($this->scanDir($dir, $sorting_order) as $file) {
-            if(is_dir($dir . DS . $file)) {
-                $ret[] = $file;
-            }
-        }
-        return $ret;
+        // Ensure no trailing slash
+        $dir = rtrim($dir, '/');
+
+        // Scan directory and filter for directories only
+        $entries = $this->scanDir($dir, $sorting_order);
+        return array_filter($entries, fn($entry) => is_dir("$dir/" . $entry));
     }
 
     /**
@@ -296,20 +301,19 @@ class Storage extends Module implements ModuleInterface
      *
      * Will exclude dotfiles
      *
-     * @param string $dir absolute path to directory
-     * @param int $sorting_order optional sorting order. Default: ascending. Set to non-zero for descending
+     * @param string $dir           absolute path to directory
+     * @param int    $sorting_order optional sorting order. Default: ascending. Set to non-zero for descending
      *
-     * @return array|false returns false on error
+     * @return array returns an array with all files in the dir (or an empty array if there are none)
      */
-    public function scanDirForFiles($dir, int $sorting_order = 0)
+    public function scanDirForFiles(string $dir, int $sorting_order = 0): array
     {
-        $ret = [];
-        foreach($this->scanDir($dir, $sorting_order) as $file) {
-            if(is_file($dir . DS . $file)) {
-                $ret[] = $file;
-            }
-        }
-        return $ret;
+        // Ensure no trailing slash
+        $dir = rtrim($dir, '/');
+
+        // Scan directory and filter for files only
+        $entries = $this->scanDir($dir, $sorting_order);
+        return array_filter($entries, fn($entry) => is_file("$dir/" . $entry));
     }
 
     /**
@@ -319,7 +323,7 @@ class Storage extends Module implements ModuleInterface
      *
      * @return bool  true if created or already existing, false on failure
      */
-    public function createDirectoriesIfNotExisting(string $path, int $mode = 0777) : bool
+    public function createDirectoriesIfNotExisting(string $path, int $mode = 0777): bool
     {
         return file_exists($path) || mkdir($path, $mode, true);
     }
@@ -331,7 +335,7 @@ class Storage extends Module implements ModuleInterface
      *
      * @return bool Returns true on success or false on failure
      */
-    public function deleteFileIfExists(string $file) : bool
+    public function deleteFileIfExists(string $file): bool
     {
         return (file_exists($file) && unlink($file));
     }
@@ -351,15 +355,15 @@ class Storage extends Module implements ModuleInterface
     /**
      * Delete a directory (and its content) if it exists
      *
-     * @param string $path The path to the directory
+     * @param string $path                The path to the directory
      * @param bool   $delete_files_in_dir Also delete files in the dir? Default: true
      *
      * @return bool
      */
     public function deleteDirectory(string $path, bool $delete_files_in_dir = true): bool
     {
-        if(file_exists($path)) {
-            if($delete_files_in_dir) {
+        if (file_exists($path)) {
+            if ($delete_files_in_dir) {
                 array_map('unlink', glob("$path/*.*"));
             }
 
