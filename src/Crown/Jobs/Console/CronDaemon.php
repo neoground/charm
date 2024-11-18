@@ -84,6 +84,11 @@ class CronDaemon extends Command
             return;
         }
 
+        if (!extension_loaded('pcntl')) {
+            $this->io->error('Required PHP extension "pcntl" is missing!');
+            return;
+        }
+
         $pid = pcntl_fork();
 
         if ($pid == -1) {
@@ -138,6 +143,11 @@ class CronDaemon extends Command
      */
     private function runDaemon(): void
     {
+        if (!extension_loaded('pcntl')) {
+            $this->io->error('Required PHP extension "pcntl" is missing!');
+            return;
+        }
+
         // Set up signal handlers
         pcntl_signal(SIGTERM, [$this, 'signalHandler']);
         pcntl_signal(SIGINT, [$this, 'signalHandler']);
