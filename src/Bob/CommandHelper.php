@@ -43,10 +43,10 @@ class CommandHelper
 
     public function __construct(InputInterface $input = null, OutputInterface $output = null)
     {
-        if(is_object($input)) {
+        if (is_object($input)) {
             $this->setInput($input);
         }
-        if(is_object($output)) {
+        if (is_object($output)) {
             $this->setOutput($output);
         }
         $this->initStyleInstance();
@@ -85,7 +85,7 @@ class CommandHelper
      */
     public function initStyleInstance(): static
     {
-        if(is_object($this->input) && is_object($this->output)) {
+        if (is_object($this->input) && is_object($this->output)) {
             $this->symfonyStyle = new SymfonyStyle($this->input, $this->output);
         }
         return $this;
@@ -551,15 +551,29 @@ class CommandHelper
     /**
      * Writes the given messages to the output, only if the output verbosity is set to "verbose".
      *
-     * @see self::writeln()
-     *
      * @param array|string $messages The messages to be written to the output.
      *
      * @return void
+     * @see self::writeln()
+     *
      */
     public function writelnVerbose(array|string $messages): void
     {
         $this->writeln($messages, OutputInterface::VERBOSITY_VERBOSE);
+    }
+
+    /**
+     * Writes the given messages to the output, with newline disabled by default.
+     *
+     * @param string|iterable $messages The messages to be written to the output.
+     * @param bool            $newline  Add new line at the end? Default: false
+     * @param int             $options  options to pass to write method
+     *
+     * @return void
+     */
+    public function write(string|iterable $messages, bool $newline = false, int $options = 0): void
+    {
+        $this->output->write($messages, $newline, $options);
     }
 
     /**
