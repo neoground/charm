@@ -373,4 +373,21 @@ class Storage extends Module implements ModuleInterface
         return false;
     }
 
+    /**
+     * Delete all files in a directory (if it exists), but not the directory itself
+     *
+     * @param string $path The path to the directory
+     *
+     * @return bool
+     */
+    public function deleteFilesInDirectory(string $path): bool
+    {
+        if (file_exists($path)) {
+            array_map('unlink', glob("$path/*.*"));
+            return true;
+        }
+
+        return false;
+    }
+
 }

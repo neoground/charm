@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Garbage collector config options, improve default garbage collection in session module
 - Facade classes for modules: Config, DB (eloquent connection, similar to laravel's DB facade), Log, 
   Request, Router, Session
-- New method to delete a directory and its content: `C::Storage()->deleteDirectory($dir)`
+- New methods to delete a directory and its content: `C::Storage()->deleteDirectory($dir)` and `C::Storage()->deleteFilesInDirectory($dir)`
 - Model methods: `beforeDelete()` + `afterDelete()`, simplified cache handling on save / on delete
 - Set multiple request values at once via array (for `C::Request()->set([])` and `C::Request()->setMultiple([])`)
 - `Charm\Storage\File` class for file related methods, added SHA256 + MD5 checksum methods
