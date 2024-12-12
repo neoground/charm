@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## [3.6] - In Development
+## [3.6] - 12 December 2024
 
 ### ✨ Added
 
@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### 🔧 Changed
 
 - Improve performance and code structure of `C::Storage()->scanDir()` and the filtered `scanDirFor...()` methods
+- Update composer packages
 
 ### 🐞 Fixed
 
