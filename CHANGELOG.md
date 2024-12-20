@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Model methods: `beforeDelete()` + `afterDelete()`, simplified cache handling on save / on delete
 - Set multiple request values at once via array (for `C::Request()->set([])` and `C::Request()->setMultiple([])`)
 - `Charm\Storage\File` class for file related methods, added SHA256 + MD5 checksum methods
+- Support for multiple loggers, including logging to file, redis, syslog, process, errorlog
 
 ### 🔧 Changed
 

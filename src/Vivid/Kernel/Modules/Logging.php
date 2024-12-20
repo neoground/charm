@@ -8,7 +8,11 @@ namespace Charm\Vivid\Kernel\Modules;
 use Charm\Vivid\Base\Module;
 use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
+use Monolog\Handler\ErrorLogHandler;
+use Monolog\Handler\ProcessHandler;
+use Monolog\Handler\RedisHandler;
 use Monolog\Handler\StreamHandler;
+use Monolog\Handler\SyslogHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 
@@ -22,13 +26,15 @@ use Psr\Log\LoggerInterface;
 class Logging extends Module implements ModuleInterface, LoggerInterface
 {
     /** @var Logger the logger instance */
-    protected $logger;
+    protected Logger $logger;
 
     /** @var bool Logging enabled? */
-    protected $enabled = true;
+    protected bool $enabled = true;
 
-    /** @var Logging[] stored custom log instances */
-    protected $logger_instances = [];
+    /** @var Logger[] stored log instances */
+    protected array $logger_instances = [];
+
+    protected string $active_logger = 'charm';
 
     /**
      * Load the module
@@ -41,20 +47,9 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
             return false;
         }
 
-        // Build file path
-        $path = C::Storage()->getLogPath() . DS . date("Y-m-d") . ".log";
-
-        // Get log level
-        $loglevel_name = C::Config()->get('main:logging.level', 'info');
-        $loglevel = Logger::toMonologLevel($loglevel_name);
-
-        $permissions = C::Config()->get('main:logging.file_permission', 0664);
-
-        $logger = new Logger("charm");
-        $logger->pushHandler(new StreamHandler($path, $loglevel, true, $permissions));
-
-        // Save instance
-        $this->logger = $logger;
+        // Init default logger (charm)
+        $this->initLogger('charm', ['type' => 'file']);
+        $this->active_logger = C::Config()->get('main:logging.default_logger', 'charm');
 
         // Also redirect stderr to custom log file?
         if (C::Config()->get('main:logging.errors', true)) {
@@ -64,26 +59,65 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
         return true;
     }
 
+    private function initLogger(string $key, array $logger_config = []): Logger|false
+    {
+        if (empty($logger_config)) {
+            $logger_config = C::Config()->get('main:logging.loggers.' . $key, []);
+        }
+
+        if (empty($logger_config)) {
+            return false;
+        }
+
+        $loglevel = Logger::toMonologLevel($logger_config['level'] ?? C::Config()->get('main:logging.level', 'info'));
+        $logger = new Logger($key);
+
+        switch (strtolower($logger_config['type'])) {
+            case 'file':
+                // Build file path
+                $suffix = ($key == 'charm') ? '.log' : '-' . $key . '.log';
+                $path = C::Storage()->getLogPath() . DS . date("Y-m-d") . $suffix;
+                $permissions = C::Config()->get('main:logging.file_permission', 0664);
+                $logger->pushHandler(new StreamHandler($path, $loglevel, true, $permissions));
+                break;
+            case 'redis':
+                $logger->pushHandler(new RedisHandler(C::Redis()->getClient(), $logger_config['key'] ?? 'charm:log', $loglevel, true));
+                break;
+            case 'syslog':
+                $logger->pushHandler(new SyslogHandler($logger_config['ident'] ?? 'charm', level: $loglevel));
+                break;
+            case 'process':
+                $logger->pushHandler(new ProcessHandler($logger_config['command'], level: $loglevel));
+                break;
+            case 'errorlog':
+                $logger->pushHandler(new ErrorLogHandler(level: $loglevel));
+                break;
+            // TODO Add more drivers for common use cases
+            //      See https://github.com/Seldaek/monolog/blob/main/doc/02-handlers-formatters-processors.md
+        }
+
+        $this->logger_instances[$key] = $logger;
+        return $logger;
+    }
+
     /**
-     * Add a log entry with a custom name
+     * Add a log entry via a custom logger
      *
-     * This uses the channel functionality of Monolog
-     *
-     * @param string $name custom name
+     * @param string $key logger key
      *
      * @return Logging
      */
-    public function withName($name)
+    public function via(string $key): self
     {
-        if (array_key_exists($name, $this->logger_instances)) {
-            return $this->logger_instances[$name];
+        if (!array_key_exists($key, $this->logger_instances)) {
+            if (!$this->initLogger($key)) {
+                return $this;
+            }
         }
 
-        $logging = clone $this;
-        $logging->logger = $logging->logger->withName($name);
-
-        $this->logger_instances[$name] = $logging;
-        return $logging;
+        $x = clone $this;
+        $x->active_logger = $key;
+        return $x;
     }
 
     /**
@@ -203,7 +237,7 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
         if (C::has('Event')) {
             C::Event()->fire('Logging', $level, [
                 'message' => $message,
-                'context' => $context
+                'context' => $context,
             ]);
         }
 
