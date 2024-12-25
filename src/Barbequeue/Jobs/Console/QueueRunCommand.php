@@ -49,12 +49,12 @@ class QueueRunCommand extends Command
             $worker = 1;
         }
 
-        $this->io->writeln('<info>Starting queue ' . $name . ', worker ID: ' . $worker . '</info>');
+        $this->io->writelnVerbose('<info>Starting queue ' . $name . ', worker ID: ' . $worker . '</info>');
 
         // Execute bbq
         C::Queue()->run($name, $worker);
 
-        $this->io->writeln('✅ Done!');
+        $this->io->writelnVerbose('✅ Done!');
 
         return true;
     }
