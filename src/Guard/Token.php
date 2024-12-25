@@ -160,9 +160,11 @@ class Token extends Module implements ModuleInterface
      */
     public function getUser()
     {
+        $redis = C::Redis()->getClient();
+
         // Get user by token stored in redis
-        if (C::has('Redis')) {
-            $user_id = C::Redis()->getClient()->hget('api_user', $this->token);
+        if ($redis) {
+            $user_id = $redis->hget('api_user', $this->token);
             if (!empty($user_id)) {
                 $user = $this->user_class::find($user_id);
                 if (is_object($user)) {
@@ -181,8 +183,8 @@ class Token extends Module implements ModuleInterface
         }
 
         // Store in redis cache
-        if (C::has('Redis') && !$default_user) {
-            C::Redis()->getClient()->hset('api_user', $this->token, $u->id);
+        if ($redis && !$default_user) {
+            $redis->hset('api_user', $this->token, $u->id);
         }
 
         return $u;
@@ -197,7 +199,8 @@ class Token extends Module implements ModuleInterface
     {
         if (!empty($this->token)) {
             // Check redis
-            $in_redis = C::has('Redis') && C::Redis()->getClient()->hexists('api_user', $this->token);
+            $redis = C::Redis()->getClient();
+            $in_redis = $redis && $redis->hexists('api_user', $this->token);
 
             // Check database if not in redis yet
             return $in_redis || is_object($this->findUserByToken());

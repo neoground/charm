@@ -98,11 +98,15 @@ class Redis extends Module implements ModuleInterface
     /**
      * Get the redis client
      *
-     * @return Client
+     * @return Client|\Redis|false The client or false if there is no client instance (e.g. redis disabled)
      */
     public function getClient()
     {
-        return $this->redis_client;
+        $client = $this->redis_client;
+        if(!is_object($client)) {
+            return false;
+        }
+        return $client;
     }
 
     /**

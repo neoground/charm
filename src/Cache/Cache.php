@@ -77,13 +77,13 @@ class Cache extends Module implements ModuleInterface
         $key = $this->prefix . ':' . $key;
 
         // Don't have it cached? Generate it!
-        if(!$this->redis->exists($key)) {
+        if(!$this->redis?->exists($key)) {
 
             $entry = new CacheEntry($key);
             $entry->setValue($callback);
 
-            $this->redis->set($key, (string) $entry);
-            $this->redis->expire($key, $minutes * 60);
+            $this->redis?->set($key, (string) $entry);
+            $this->redis?->expire($key, $minutes * 60);
             return true;
         }
 
@@ -103,8 +103,8 @@ class Cache extends Module implements ModuleInterface
         $entry->setKey($key);
 
         // Save in redis
-        $this->redis->set($key, (string) $entry);
-        $this->redis->expire($key, $minutes * 60);
+        $this->redis?->set($key, (string) $entry);
+        $this->redis?->expire($key, $minutes * 60);
 
         // Set tags
         $tags = $entry->getTags();
@@ -114,7 +114,7 @@ class Cache extends Module implements ModuleInterface
                 if(extension_loaded('redis') && $this->redis instanceof \Redis) {
                     $this->redis->sAdd($this->prefix . '_tags:' . $tag, $key);
                 } else {
-                    $this->redis->sadd($this->prefix . '_tags:' . $tag, [$key]);
+                    $this->redis?->sadd($this->prefix . '_tags:' . $tag, [$key]);
                 }
             }
         }
@@ -132,10 +132,10 @@ class Cache extends Module implements ModuleInterface
     public function getByTag($tag)
     {
         if(is_array($tag)) {
-            return $this->redis->sinter($tag);
+            return $this->redis?->sinter($tag);
         }
 
-        return $this->redis->smembers($this->prefix . '_tags:' . $tag);
+        return $this->redis?->smembers($this->prefix . '_tags:' . $tag);
     }
 
     /**
@@ -157,7 +157,7 @@ class Cache extends Module implements ModuleInterface
         }
 
         // Get data
-        $entry = CacheEntry::make($this->redis->get($key));
+        $entry = CacheEntry::make($this->redis?->get($key));
         return $entry->getValue();
     }
 
@@ -173,7 +173,7 @@ class Cache extends Module implements ModuleInterface
             $key = $this->prefix . ':' . $key;
         }
 
-        return (bool) $this->redis->exists($key);
+        return (bool) $this->redis?->exists($key);
     }
 
     /**
@@ -193,7 +193,7 @@ class Cache extends Module implements ModuleInterface
             $this->redis->del($key);
         } else {
             // Predis
-            $this->redis->del([$key]);
+            $this->redis?->del([$key]);
         }
     }
 

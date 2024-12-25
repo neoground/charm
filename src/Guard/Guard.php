@@ -331,7 +331,7 @@ class Guard extends Module implements ModuleInterface
         $hashkey = C::Config()->get('main:session.name', 'charm');
         $r = C::Redis()->getClient();
         $ip = C::Request()->getIpAddress();
-        if ($ip) {
+        if ($r && $ip) {
             try {
                 $iphash = md5($ip);
                 $r->del($hashkey . ':loginattempts:' . $iphash);
@@ -415,7 +415,7 @@ class Guard extends Module implements ModuleInterface
         // Get ip
         $ip = C::Request()->getIpAddress();
 
-        if ($ip) {
+        if ($r && $ip) {
             try {
                 $iphash = md5($ip);
                 $currentTime = time();
@@ -454,7 +454,7 @@ class Guard extends Module implements ModuleInterface
         // Get ip
         $ip = C::Request()->getIpAddress();
 
-        if ($ip) {
+        if ($r && $ip) {
             try {
                 $iphash = md5($ip);
 
@@ -515,7 +515,7 @@ class Guard extends Module implements ModuleInterface
         $throttleThreshold = (int) C::Config()->get('main:guard.throttle_threshold', 5);
         $throttleDelay = (int) C::Config()->get('main:guard.throttle_seconds', 10);
 
-        if ($ip) {
+        if ($r && $ip) {
             $iphash = md5($ip);
 
             // Check the count of attempts
@@ -552,7 +552,7 @@ class Guard extends Module implements ModuleInterface
         $r = C::Redis()->getClient();
         $ip = C::Request()->getIpAddress();
 
-        if ($ip) {
+        if ($r && $ip) {
             $iphash = md5($ip);
 
             // Check the count of attempts

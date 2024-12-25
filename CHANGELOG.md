@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [3.7] - In Development
+
+### 🔧 Changed
+
+- Redis usage in the whole system is now optional, works fine without redis at all [#40]
+
+---
+
 ## [3.6] - 12 December 2024
 
 ### ✨ Added
