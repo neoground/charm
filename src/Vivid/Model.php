@@ -646,8 +646,32 @@ class Model extends \Illuminate\Database\Eloquent\Model
             if (str_contains($k, '_id')) {
                 $val = str_replace("id-", "", $v);
 
-                if (empty($val)) {
-                    $val = null;
+                // Cast update value
+                if(str_contains($k, ':')) {
+                    $parts = explode(":", $k);
+                    $cast = array_pop($parts);
+                    $k = implode(":", $parts);
+
+                    switch(strtolower($cast)) {
+                        case 'bool':
+                        case 'boolean':
+                            $val = (bool)$val;
+                            break;
+                        case 'int':
+                            $val = (int)$val;
+                            break;
+                        case 'float':
+                            $val = (float)$val;
+                            break;
+                        case 'date':
+                            $val = Carbon::parse($val);
+                            break;
+                    }
+                } else {
+                    // Cast to null if empty (default behavior)
+                    if (empty($val)) {
+                        $val = null;
+                    }
                 }
 
                 $update_values[$k] = $val;

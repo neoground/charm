@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [3.7] - In Development
 
+### ✨ Added
+
+- Casting support for update_values of a model, similar to laravel's casts, e.g.: `uploaded_at:date`. Supports
+  bool, int, float, date, none (to prevent from casting empty values to NULL)
+
 ### 🔧 Changed
 
 - Redis usage in the whole system is now optional, works fine without redis at all [#40]
