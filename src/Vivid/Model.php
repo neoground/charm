@@ -663,6 +663,9 @@ class Model extends \Illuminate\Database\Eloquent\Model
                         case 'float':
                             $val = (float)$val;
                             break;
+                        case 'string':
+                            $val = (string)$val;
+                            break;
                         case 'date':
                             $val = Carbon::parse($val);
                             break;
