@@ -666,6 +666,9 @@ class Model extends \Illuminate\Database\Eloquent\Model
                         case 'string':
                             $val = (string)$val;
                             break;
+                        case 'trim':
+                            $val = trim((string)$val);
+                            break;
                         case 'date':
                             $val = Carbon::parse($val);
                             break;

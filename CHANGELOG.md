@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### ✨ Added
 
 - Casting support for update_values of a model, similar to laravel's casts, e.g.: `uploaded_at:date`. Supports
-  bool, int, float, date, string, none (to prevent from casting empty values to NULL)
+  bool, int, float, date, string, trim (a trimmed string), none (to prevent from casting empty values to NULL)
 
 ### 🔧 Changed
 
