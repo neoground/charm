@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### 🔧 Changed
 
 - Redis usage in the whole system is now optional, works fine without redis at all [#40]
+- The environment config file `app/app.env` is now a proper ini-file. 
+  Kept legacy support but preferred syntax is now e.g. `ENVIRONMENT=Prod`.
 
 ---
 

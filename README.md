@@ -124,7 +124,7 @@ by navigating to the `app/Config` directory. For environment-specific settings,
 explore the `app/Config/Environments/Local` directory.
 
 The active environment is determined by the `app/app.env` file, which contains
-the name of the environment in use. The auto setup process takes care of this for you.
+the name of the environment in use, e.g. `ENVIRONMENT=Prod`. The auto setup process takes care of this for you.
 
 ### Web Server Setup: Powering Up the Millennium Falcon
 

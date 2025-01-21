@@ -127,7 +127,7 @@ class CreateEnvironment extends Command
                     0);
 
                 if ($answer === 'yes') {
-                    file_put_contents($envFile, $name);
+                    file_put_contents($envFile, 'ENVIRONMENT=' . $name);
                     $this->io->writeln(sprintf('✅ Environment changed to "%s"', $name));
                 } else {
                     $this->io->writeln('Environment not changed');
