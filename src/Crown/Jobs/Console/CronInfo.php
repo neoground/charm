@@ -62,7 +62,7 @@ class CronInfo extends Command
         $this->io->newLine();
 
         // Detect if system has systemd available
-        if (file_exists('/run/systemd/system')) {
+        if (file_exists('/run/systemd/system') || $tool == 'systemd') {
             // Systemd
 
             // Build service name and check if it exists
@@ -115,6 +115,7 @@ class CronInfo extends Command
             $this->io->newLine();
             $this->io->writeln('Could not detect systemd on your host.');
             $this->io->writeln('Please make sure the cron:run command is called every minute. We recommend using cron.');
+            $this->io->writeln('You can find sample service files for systemd, init, openrc and cron in your project\'s var/templates/Services.');
         }
 
         $this->io->newLine();
