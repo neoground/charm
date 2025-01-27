@@ -1,0 +1,19 @@
+---
+name: Systemd service to run cron:run
+fields:
+  USERNAME:
+    name: Name of PHP / web user who runs the cron job (e.g. www-data)
+    type: input
+  PATH:
+    name: Absolute path to the project dir (e.g. /var/www/myproject)
+    type: input
+---
+[Unit]
+Description=Run cron for charm project
+
+[Service]
+Type=forking
+User=USERNAME
+StandardOutput=journal
+StandardError=journal
+ExecStart=php PATH/bob.php cron:run

@@ -1,0 +1,12 @@
+---
+name: Systemd timer to run cron:run
+---
+[Unit]
+Description=Timer for charm project cron job
+
+[Timer]
+OnCalendar=*:0/1
+AccuracySec=1s
+
+[Install]
+WantedBy=timers.target
