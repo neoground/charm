@@ -1,0 +1,27 @@
+---
+name: Systemd service to run the cron daemon
+fields:
+  USERNAME:
+    name: Name of PHP / web user who runs the cron job (e.g. www-data)
+    type: input
+  PATH:
+    name: Absolute path to the project dir (e.g. /var/www/myproject)
+    type: input
+---
+[Unit]
+Description=Cron daemon for charm project
+After=network.target
+
+[Service]
+Type=forking
+User=USERNAME
+StandardOutput=journal
+StandardError=journal
+ExecStart=php PATH/bob.php cron:daemon start
+ExecStop=php PATH/bob.php cron:daemon stop
+Restart=always
+KillSignal=SIGINT
+SendSIGKILL=no
+
+[Install]
+WantedBy=multi-user.target
