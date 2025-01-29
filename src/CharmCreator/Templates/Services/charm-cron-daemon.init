@@ -1,0 +1,58 @@
+---
+name: Init script to run the cron daemon
+fields:
+  USERNAME:
+    name: Name of PHP / web user who runs the cron job (e.g. www-data)
+    type: input
+  PATH:
+    name: Absolute path to the project dir (e.g. /var/www/myproject)
+    type: input
+---
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          charm-cron
+# Required-Start:    $network
+# Required-Stop:     $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Cron daemon for charm project
+### END INIT INFO
+
+DAEMON="php PATH/bob.php cron:daemon"
+NAME="charm-cron"
+DESC="Cron daemon for charm project"
+USER="USERNAME"
+PIDFILE="/var/run/$NAME.pid"
+
+case "$1" in
+    start)
+        echo "Starting $DESC..."
+        start-stop-daemon --start --quiet --background --make-pidfile --pidfile $PIDFILE --chuid $USER --exec $DAEMON -- start
+        echo "$DESC started"
+        ;;
+    stop)
+        echo "Stopping $DESC..."
+        start-stop-daemon --stop --quiet --pidfile $PIDFILE --retry TERM/30/KILL/5
+        rm -f $PIDFILE
+        echo "$DESC stopped"
+        ;;
+    restart)
+        echo "Restarting $DESC..."
+        $0 stop
+        $0 start
+        ;;
+    status)
+        if [ -e $PIDFILE ]; then
+            echo "$DESC is running (PID $(cat $PIDFILE))"
+        else
+            echo "$DESC is not running"
+            exit 1
+        fi
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart|status}"
+        exit 1
+        ;;
+esac
+
+exit 0
