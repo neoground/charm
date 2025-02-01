@@ -390,4 +390,20 @@ class Storage extends Module implements ModuleInterface
         return false;
     }
 
+    /**
+     * Get a random filename without extension
+     *
+     * @param int $length The wanted length (1-25). Recommended default and maximum: 25
+     *
+     * @return string
+     */
+    public function getRandomFilename(int $length = 25): string
+    {
+        if($length === 25) {
+            return str_replace('.', '-' . rand(11, 99), uniqid('', true));
+        }
+
+        return substr(str_replace('.', rand(11, 99), uniqid('', true)), 0, $length);
+    }
+
 }
