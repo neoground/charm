@@ -21,7 +21,7 @@ class CacheClearCommand extends Command
      */
     protected function configure()
     {
-        $this->setName("cache:clear")
+        $this->setName("c:clr")
             ->setDescription("Clear all caches");
     }
 
