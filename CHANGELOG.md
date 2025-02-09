@@ -10,17 +10,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### ✨ Added
 
-- Casting support for update_values of a model, similar to laravel's casts, e.g.: `uploaded_at:date`. Supports
-  bool, int, float, date, string, trim (a trimmed string), none (to prevent from casting empty values to NULL)
-- Queue daemon which can run the queue reliably twice each minute, similar to the cron daemon
-- New method to generate a random filename with 25 characters: `C::Storage()->getRandomFilename()`
+- Casting support for update_values of a model, similar to laravel's casts, e.g.: `uploaded_at:date`. Supports.
+  bool, int, float, date, string, trim (a trimmed string), none (to prevent from casting empty values to NULL).
+- Queue daemon which can run the queue reliably twice each minute, similar to the cron daemon.
+- New method to generate a random filename with 25 characters: `C::Storage()->getRandomFilename()`.
+- New method `C::getAllAppModules()` to only get app-related loaded modules like the App module, no kernel modules.
 
 ### 🔧 Changed
 
-- Redis usage in the whole system is now optional, works fine without redis at all [#40]
+- Redis usage in the whole system is now optional, works fine without redis at all [#40].
 - The environment config file `app/app.env` is now a proper ini-file. 
   Kept legacy support but preferred syntax is now e.g. `ENVIRONMENT=Prod`.
 - The cache clear command is now available via `bob c:clr` to make calling it more efficient.
+- Database migrations are now only run on app-related modules, no kernel modules, since they have no migrations.
 
 ---
 

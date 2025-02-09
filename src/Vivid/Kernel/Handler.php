@@ -417,6 +417,23 @@ class Handler
     }
 
     /**
+     * Get all app related modules (no kernel modules)
+     *
+     * @return object[]
+     */
+    public function getAllAppModules(): array
+    {
+        $mods = $this->modules;
+        foreach($mods as $k => $v) {
+            $modclass = $this->module_classes[$k];
+            if(str_contains($modclass, 'Charm\\')) {
+                unset($mods[$k]);
+            }
+        }
+        return $mods;
+    }
+
+    /**
      * Get class names of all loaded modules as array
      *
      * @return array

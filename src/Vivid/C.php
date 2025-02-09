@@ -89,6 +89,17 @@ class C
     }
 
     /**
+     * Get all loaded app specific modules (no kernel modules)
+     *
+     * @return object[]
+     */
+    public static function getAllAppModules(): array
+    {
+        $handler = Handler::getInstance();
+        return $handler->getAllAppModules();
+    }
+
+    /**
      * Check if a module is loaded
      *
      * @param string $name name of moduile or full class name

@@ -137,13 +137,13 @@ class DatabaseMigrator
     }
 
     /**
-     * Run all database migrations of all modules
+     * Run all database migrations of all app modules
      *
      * @param string           $method  method to call (up / down)
      */
     public function runAllMigrations($method)
     {
-        foreach(C::getAllModules() as $name => $module) {
+        foreach(C::getAllAppModules() as $name => $module) {
             $this->output->writeln('<info>:: Running ' . $method . ' migrations for module: ' . $name . '</info>');
 
             $this->runMigrations($method, null, $name);
