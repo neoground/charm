@@ -139,9 +139,10 @@ May the Force guide you, young Jedi!
 ## 🚧 Beta Notice
 
 Please note that Charm is currently in beta.
-We are hard at work on version 4.0, which will be the first stable release. 
-As with any beta software, please use Charm with caution and be prepared for 
-potential changes as we continue to refine and enhance the framework.
+We are hard at work on version 4.0, which will be the first full stable release. 
+
+Starting at version 3.7, charm is in a stable beta. We didn't experience bigger bugs in the
+last few months, and it runs very well on our production apps. Huge, breaking changes are unlikely from now on.
 
 ## ☕ Support Charm's Development
 
