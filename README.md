@@ -82,7 +82,7 @@ and its included [Getting Started Guide](https://neoground.com/docs/charm/start.
 
 To ensure a smooth journey with the Charm Framework, make sure your system meets the following requirements:
 
-- PHP 8.0 or later (8.1 / 8.2 preferred, ideally with Redis module)
+- PHP 8.3 or later (ideally with Redis module)
 - Composer
 - Depending on your app:
     - Database: MariaDB, MySQL, SQLite, PostgreSQL or SQL Server
