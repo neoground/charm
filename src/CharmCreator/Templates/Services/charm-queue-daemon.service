@@ -1,0 +1,27 @@
+---
+name: Systemd service to run the queue daemon
+fields:
+  USERNAME:
+    name: Name of PHP / web user who runs the queue job (e.g. www-data)
+    type: input
+  PATH:
+    name: Absolute path to the project dir (e.g. /var/www/myproject)
+    type: input
+---
+[Unit]
+Description=Queue daemon for charm project
+After=network.target
+
+[Service]
+Type=forking
+User=USERNAME
+StandardOutput=journal
+StandardError=journal
+ExecStart=php PATH/bob.php queue:daemon start
+ExecStop=php PATH/bob.php queue:daemon stop
+Restart=always
+KillSignal=SIGINT
+SendSIGKILL=no
+
+[Install]
+WantedBy=multi-user.target
