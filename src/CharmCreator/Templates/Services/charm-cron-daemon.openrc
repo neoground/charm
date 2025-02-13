@@ -1,0 +1,38 @@
+---
+name: OpenRC script to run the cron daemon
+fields:
+  USERNAME:
+    name: Name of PHP / web user who runs the cron job (e.g. www-data)
+    type: input
+  PATH:
+    name: Absolute path to the project dir (e.g. /var/www/myproject)
+    type: input
+---
+#!/sbin/openrc-run
+
+name="Charm Cron Daemon"
+description="Cron daemon for charm project"
+command="/usr/bin/php"
+command_args="PATH/bob.php cron:daemon start"
+command_background="yes"
+pidfile="/run/charm-cron.pid"
+user="USERNAME"
+
+depend() {
+    need net
+}
+
+start_pre() {
+    checkpath --directory /run --owner $user
+}
+
+stop() {
+    ebegin "Stopping $name"
+    start-stop-daemon --stop --pidfile $pidfile --signal SIGINT
+    eend $?
+}
+
+restart() {
+    svc_stop
+    svc_start
+}
