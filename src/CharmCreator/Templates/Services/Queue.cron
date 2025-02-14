@@ -1,0 +1,15 @@
+---
+name: Crontab entry to run cron:run
+fields:
+  USERNAME:
+    name: Name of PHP / web user who runs the cron job (e.g. www-data)
+    type: input
+  PATH:
+    name: Absolute path to the project dir (e.g. /var/www/myproject)
+    type: input
+  QNAME:
+    name: Name of queue to run (e.g. default)
+    type: input
+---
+# Crontab entry for charm project
+* * * * *  USERNAME  php PATH/bob.php queue:run --name="QNAME" >> /dev/null 2>&1
