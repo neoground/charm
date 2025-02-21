@@ -54,4 +54,7 @@ types:
     namespace: App\Config
     relative_dir: App/Config
     file_suffix: yaml
+  service:
+    name: service
+    relative_dir: var
 
