@@ -108,6 +108,11 @@ class CronInfo extends Command
                 $this->io->newLine();
             }
 
+            $this->io->writeln('The daemon might need to be restarted after upgrading core packages on your host.');
+            $this->io->writeln('On debian-based hosts consider creating a file /etc/apt/apt.conf.d/99' . $name . '-restart with the content:');
+            $this->io->writeln('DPkg::Post-Invoke { "systemctl restart ' . $service_filename . ' || true"; };');
+            $this->io->newLine();
+
             $this->io->writeln('If you have any trouble with this systemd service, you can also try using cron instead.');
 
         } else {
@@ -172,6 +177,7 @@ Restart=always
 KillSignal=SIGINT
 SendSIGKILL=no
 
+[Install]
 WantedBy=multi-user.target
 ";
     }
