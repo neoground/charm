@@ -222,42 +222,40 @@ class Formatter extends Module implements ModuleInterface
     /**
      * Slugify a text string
      *
-     * Ideas taken from:
-     * https://github.com/django/django/blob/master/django/utils/text.py
-     * https://stackoverflow.com/questions/2955251/php-function-to-make-slug-url-string
-     * https://gist.github.com/sgmurphy/3098978
+     * Convert spaces or repeated dashes to single dashes.
+     * Remove characters that aren't alphanumerics, underscores, or hyphens.
+     * Convert to lowercase. Also strip leading and trailing whitespace, dashes, and underscores.
+     * But keeps and translates umlauts, so we have beautiful names or links.
      *
-     * Convert spaces or repeated
-     * dashes to single dashes. Remove characters that aren't alphanumerics,
-     * underscores, or hyphens. Convert to lowercase. Also strip leading and
-     * trailing whitespace, dashes, and underscores.
-     * But keeps and translates umlaute, so we have beautiful names or links.
+     * Inspired by:
      *
-     * @param string $text
+     * - https://github.com/django/django/blob/master/django/utils/text.py
+     * - https://stackoverflow.com/questions/2955251/php-function-to-make-slug-url-string
+     *
+     * @param string $text input string
+     * @param bool $isFilename slugify the text for use in a filename?
      *
      * @return string
      */
-    public function slugify(string $text): string
+    public function slugify(string $text, bool $isFilename = false): string
     {
         // Lowercase
-        $text = strtolower($text);
+        $text = mb_strtolower($text, 'UTF-8');
 
         // Replace umlaute etc.
-        // Character map from: https://gist.github.com/sgmurphy/3098978
+        // Character map based on: https://gist.github.com/sgmurphy/3098978
         $char_map = [
             // Latin
             'À' => 'A', 'Á' => 'A', 'Â' => 'A', 'Ã' => 'A', 'Ä' => 'A', 'Å' => 'A', 'Æ' => 'AE', 'Ç' => 'C',
             'È' => 'E', 'É' => 'E', 'Ê' => 'E', 'Ë' => 'E', 'Ì' => 'I', 'Í' => 'I', 'Î' => 'I', 'Ï' => 'I',
             'Ð' => 'D', 'Ñ' => 'N', 'Ò' => 'O', 'Ó' => 'O', 'Ô' => 'O', 'Õ' => 'O', 'Ö' => 'O', 'Ő' => 'O',
             'Ø' => 'O', 'Ù' => 'U', 'Ú' => 'U', 'Û' => 'U', 'Ü' => 'U', 'Ű' => 'U', 'Ý' => 'Y', 'Þ' => 'TH',
-            'ß' => 'ss',
+            'ß' => 'ss', 'ẞ' => 'SS',
             'à' => 'a', 'á' => 'a', 'â' => 'a', 'ã' => 'a', 'ä' => 'a', 'å' => 'a', 'æ' => 'ae', 'ç' => 'c',
             'è' => 'e', 'é' => 'e', 'ê' => 'e', 'ë' => 'e', 'ì' => 'i', 'í' => 'i', 'î' => 'i', 'ï' => 'i',
             'ð' => 'd', 'ñ' => 'n', 'ò' => 'o', 'ó' => 'o', 'ô' => 'o', 'õ' => 'o', 'ö' => 'o', 'ő' => 'o',
             'ø' => 'o', 'ù' => 'u', 'ú' => 'u', 'û' => 'u', 'ü' => 'u', 'ű' => 'u', 'ý' => 'y', 'þ' => 'th',
             'ÿ' => 'y',
-            // Latin symbols
-            '©' => '(c)',
             // Greek
             'Α' => 'A', 'Β' => 'B', 'Γ' => 'G', 'Δ' => 'D', 'Ε' => 'E', 'Ζ' => 'Z', 'Η' => 'H', 'Θ' => '8',
             'Ι' => 'I', 'Κ' => 'K', 'Λ' => 'L', 'Μ' => 'M', 'Ν' => 'N', 'Ξ' => '3', 'Ο' => 'O', 'Π' => 'P',
@@ -299,26 +297,47 @@ class Formatter extends Module implements ModuleInterface
             'ū' => 'u',
         ];
 
-        str_replace(array_keys($char_map), $char_map, $text);
+        $text = str_replace(array_keys($char_map), $char_map, $text);
 
-        // Replace non letter or digits by -
+        // Replace non-letter or digit characters with a hyphen
         $text = preg_replace('~[^\pL\d]+~u', '-', $text);
 
-        // Transliterate if host supports it
+        // Transliterate to ASCII
         if (function_exists('iconv')) {
-            $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+            $transliterated = @iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+            if ($transliterated !== false) {
+                $text = $transliterated;
+            }
         }
 
-        // Remove unwanted characters
-        $text = preg_replace('~[^-\w]+~', '', $text);
+        // Remove any remaining invalid characters
+        $text = preg_replace('~[^a-zA-Z0-9\-_]+~', '', $text);
 
-        // Trim
+        // Trim unwanted characters
         $text = trim($text, ' -_');
 
-        // Remove duplicate -
+        // Remove duplicate hyphens
         $text = preg_replace('~-+~', '-', $text);
 
-        // Lowercase again
+        if ($isFilename) {
+            // Remove characters that are invalid for filenames
+            $text = preg_replace('/[<>:"\/\\|?*]/', '', $text);
+
+            // Ensure filename does not match reserved names (Windows issue)
+            $reserved_names = ['con', 'prn', 'aux', 'nul',
+                'com1', 'com2', 'com3', 'com4', 'com5', 'com6', 'com7', 'com8', 'com9',
+                'lpt1', 'lpt2', 'lpt3', 'lpt4', 'lpt5', 'lpt6', 'lpt7', 'lpt8', 'lpt9'];
+            if (in_array($text, $reserved_names, true)) {
+                $text .= '-file';
+            }
+
+            // Limit filename length (250 chars to be safe for all file systems)
+            $text = substr($text, 0, 250);
+        } else {
+            // Standard URL slug: Replace underscores with hyphens
+            $text = str_replace('_', '-', $text);
+        }
+
         return strtolower($text);
     }
 
