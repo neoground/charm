@@ -214,7 +214,7 @@ class Formatter extends Module implements ModuleInterface
      *
      * @return mixed
      */
-    public function sanitizeUrl(string $input)
+    public function sanitizeUrl(string $input): mixed
     {
         return filter_var($input, FILTER_SANITIZE_URL);
     }
@@ -232,15 +232,18 @@ class Formatter extends Module implements ModuleInterface
      * - https://github.com/django/django/blob/master/django/utils/text.py
      * - https://stackoverflow.com/questions/2955251/php-function-to-make-slug-url-string
      *
-     * @param string $text input string
-     * @param bool $isFilename slugify the text for use in a filename?
+     * @param string  $text         input string
+     * @param bool    $isFilename   slugify the text for use in a filename? Default: false
+     * @param bool    $inLowercase  make the slugified string lowercase? Default: true
      *
      * @return string
      */
-    public function slugify(string $text, bool $isFilename = false): string
+    public function slugify(string $text, bool $isFilename = false, bool $inLowercase = true): string
     {
         // Lowercase
-        $text = mb_strtolower($text, 'UTF-8');
+        if($inLowercase) {
+            $text = mb_strtolower($text, 'UTF-8');
+        }
 
         // Replace umlaute etc.
         // Character map based on: https://gist.github.com/sgmurphy/3098978
@@ -338,7 +341,7 @@ class Formatter extends Module implements ModuleInterface
             $text = str_replace('_', '-', $text);
         }
 
-        return strtolower($text);
+        return $inLowercase ? strtolower($text) : $text;
     }
 
     /**
