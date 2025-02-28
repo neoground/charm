@@ -6,6 +6,7 @@
 namespace Charm\Http;
 
 use Charm\Vivid\Base\Module;
+use Charm\Vivid\C;
 use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -174,6 +175,41 @@ class Http extends Module implements ModuleInterface
     public function getNewClient(array $config = []): Client
     {
         return new Client($config);
+    }
+
+    /**
+     * Download a file.
+     *
+     * @param string      $url      URL to remote file.
+     * @param string|null $filepath Absolute path where to store the file. If this is null (default) the content will
+     *                              be returned.
+     * @param int         $timeout  Timeout for download in seconds (default: 10).
+     *
+     * @return string|bool The content of the file or true if download to $filepath succeeded or false on error.
+     */
+    public function download(string $url, ?string $filepath, int $timeout = 10): string|bool
+    {
+        $options = [...$this->default_options, 'timeout' => $timeout];
+        if (!empty($filepath)) {
+            C::Storage()->createDirectoriesIfNotExisting(dirname($filepath));
+            $options['sink'] = $filepath;
+        }
+
+        try {
+            $response = $this->request('GET', $url, $options);
+            if ($response->getStatusCode() === 200) {
+                if (!empty($filepath)) {
+                    return true;
+                } else {
+                    return $response->getGuzzleResponse()->getBody()->getContents();
+                }
+            }
+        } catch (GuzzleException $e) {
+            C::Logging()->error('Download error: ' . $e->getMessage());
+            return false;
+        }
+
+        return false;
     }
 
 }

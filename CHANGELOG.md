@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - New method to generate a random filename with 25 characters: `C::Storage()->getRandomFilename()`.
 - New method `C::getAllAppModules()` to only get app-related loaded modules like the App module, no kernel modules.
 - Slugifying is improved and can now create safe filenames via `C::Formatter()->slugify($text, true)`.
+- Simple method to download files via `C::Http()->download($url)`.
 
 ### 🔧 Changed
 
