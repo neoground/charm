@@ -32,6 +32,12 @@ class Token extends Module implements ModuleInterface
     /** @var string  the user class */
     protected string $user_class;
 
+    /** @var string  the authentication header key for the user-specific token */
+    protected string $user_token_key = 'usertoken';
+
+    /** @var string  the authentication header key for the client-specific token */
+    protected string $client_token_key = 'client';
+
     /**
      * Load the module
      *
@@ -39,9 +45,17 @@ class Token extends Module implements ModuleInterface
      */
     public function loadModule()
     {
-        // Get user class
+        // Get user class + token location (can be field in user class or own class model)
         $this->user_class = C::Config()->get('main:guard.user_class', 'App\\Models\\User');
         $this->token_location = C::Config()->get('main:guard.token_location', 'api_token');
+
+        // HTTP Header for token authentication (Authentication or X-Authentication):
+        // Provides the token and optionally a client token to verify the client. You can adjust the keys.
+        // Example headers with default keys:
+        // Authentication: usertoken="foobar" client="123456"
+        // X-Authentication: Bearer foobar
+        $this->user_token_key = C::Config()->get('main:guard.user_token_key', 'usertoken');
+        $this->client_token_key = C::Config()->get('main:guard.client_token_key', 'client');
 
         // Get token
         $this->getToken();
@@ -67,7 +81,7 @@ class Token extends Module implements ModuleInterface
 
         if (!empty($auth_header)) {
             $matches = [];
-            preg_match('/usertoken="(.*?)"/', $auth_header, $matches);
+            preg_match('/' . $this->user_token_key . '="(.*?)"/', $auth_header, $matches);
             if (isset($matches[1])) {
                 $token = $matches[1];
                 $this->token = $token;
@@ -104,7 +118,7 @@ class Token extends Module implements ModuleInterface
         $auth_header = C::Header()->get('authorization');
 
         $matches = [];
-        preg_match('/client="(.*?)"/', $auth_header, $matches);
+        preg_match('/' . $this->client_token_key . '="(.*?)"/', $auth_header, $matches);
         if (isset($matches[1])) {
             $token = $matches[1];
             $this->client_token = $token;
@@ -155,6 +169,10 @@ class Token extends Module implements ModuleInterface
 
     /**
      * Get the user by the provided token
+     *
+     * TODO: Use the user object built-in cache (findWithCache), so this is automatically invalidated.
+     *       The current solution might lead to old user states in api_user... And optimize for performance,
+     *       also in findUserByToken().
      *
      * @return object  the user object  (if no user is found, the system user will be returned)
      */
@@ -211,6 +229,8 @@ class Token extends Module implements ModuleInterface
 
     /**
      * Generate a secure token
+     *
+     * The generated token is optimized for sharing, it doesn't contain similar characters (I, l, O, 0).
      *
      * @param int $length The length of the token (default = 16)
      *
