@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   Kept legacy support but preferred syntax is now e.g. `ENVIRONMENT=Prod`.
 - The cache clear command is now available via `bob c:clr` to make calling it more efficient.
 - Database migrations are now only run on app-related modules, no kernel modules, since they have no migrations.
+- The keys for the authentication token on requests can now be adjusted via config.
 
 ---
 
