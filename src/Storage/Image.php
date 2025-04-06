@@ -29,10 +29,11 @@ class Image extends SimpleImage
     {
         if (is_string($file)) {
             // Got path string
-            return parent::fromFile($file);
+            parent::fromFile($file);
+        } else {
+            // Object
+            parent::fromString($file->getFileContent());
         }
-
-        parent::fromString($file->getFileContent());
 
         return $this;
     }
