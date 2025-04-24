@@ -134,20 +134,51 @@ class Model extends \Illuminate\Database\Eloquent\Model
         $this->afterSave();
 
         // Update this instance. Flush cache
+        $this->clearModelCache(true);
+
+        // Return
+        return $ret;
+    }
+
+    /**
+     * Clear the cache of this single model entity.
+     *
+     * This will remove the cached entry for the current model instance.
+     * Optionally clears all cached entries of this model type.
+     *
+     * @param bool $clear_full_cache If true, clears all cached entries of this model type, if false only of this entity.
+     *
+     * @return void
+     */
+    public function clearModelCache(bool $clear_full_cache = false): void
+    {
         if (C::has('Cache')) {
             $classname = str_replace("\\", ":", get_called_class());
             $key = "Model:" . $classname . ':' . $this->id;
             C::Cache()->remove($key);
+        }
+        
+        if($clear_full_cache) {
+            self::clearModelsCache();
+        }
+    }
+
+    /**
+     * Clear the full cache of all model entities of this type.
+     *
+     * @return void
+     */
+    public static function clearModelsCache(): void
+    {
+        if (C::has('Cache')) {
+            $classname = str_replace("\\", ":", get_called_class());
 
             // Remove all with class specific tag
             C::Cache()->removeByTag('Model:' . $classname);
 
             // Clear filtered paginated data cache
-            C::Cache()->removeByTag('model_' . $this->table . '_fpd');
+            C::Cache()->removeByTag('model_' . (new self)->table . '_fpd');
         }
-
-        // Return
-        return $ret;
     }
 
     /**
@@ -367,17 +398,18 @@ class Model extends \Illuminate\Database\Eloquent\Model
      *
      * @param callable|null $custom_filter an optional custom filter function to filter the data even more
      *                                     (has QueryBuilder as parameter and must return it)
+     * @param bool $use_cache whether to use caching or not. Defaults to true.
      *
      * @return array
      */
-    public static function getFilteredPaginatedData(callable $custom_filter = null): array
+    public static function getFilteredPaginatedData(callable $custom_filter = null, bool $use_cache = true): array
     {
         // Build unique key based on request data
         $s = new static;
         $req = hash('sha256', json_encode(C::Request()->getAll()));
         $key = 'model_' . $s->table . '_fpd_' . $req;
 
-        if (C::has('Cache') &&
+        if (C::has('Cache') && $use_cache &&
             !(C::Config()->inDebugMode() && !C::Config()->get('main:debug.cache_enabled'))) {
             // Find and return from cache
             if (C::Cache()->has($key)) {
