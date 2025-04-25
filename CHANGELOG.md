@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - The cache clear command is now available via `bob c:clr` to make calling it more efficient.
 - Database migrations are now only run on app-related modules, no kernel modules, since they have no migrations.
 - The keys for the authentication token on requests can now be adjusted via config.
+- Improve backup + restore methods for models. Now with an optimized handling of large datasets and using NDJSON.
 
 ---
 

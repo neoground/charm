@@ -539,7 +539,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
     }
 
     /**
-     * JSON formatting with unescaped unicode
+     * JSON formatting with unescaped Unicode
      *
      * This makes storage inside the database a lot easier
      *
@@ -547,45 +547,69 @@ class Model extends \Illuminate\Database\Eloquent\Model
      *
      * @return false|string
      */
-    protected function asJson($value)
+    protected function asJson($value): false|string
     {
         return json_encode($value, JSON_UNESCAPED_UNICODE);
     }
 
     /**
-     * Backup this model (table in database) to a backup file
+     * Backup this model (table in database) to a backup file.
      *
-     * This will serialize the whole collection.
+     * This will save all entities as a NDJSON file.
      *
      * You can restore it with the restoreBackup() method.
      *
-     * @param null|string $destination optional absolute path to file. Leave empty for default handling
+     * @param null|string $destination optional absolute path to file. Leave empty for default handling.
+     * @param bool $full_backup whether to back up all fields (default: true), or only public fields (no hidden ones).
      *
      * @return int|false the number of bytes that were written to the file, or false on failure.
      */
-    public static function backup(string|null $destination = null)
+    public static function backup(string|null $destination = null, bool $full_backup = true): string|false
     {
-        if (empty($destination)) {
-            $self = new static();
-            $filename = Carbon::now()->format('Y-m-d_H-i-s') . '_' . $self->table . '.bak';
-            $dir = C::Storage()->getVarPath() . DS . 'backup' . DS . 'models';
-        } else {
-            $dir = dirname($destination);
-            $filename = basename($destination);
-        }
+        $self = new static();
+        $table = $self->getTable();
+
+        $filename = $destination ?? (
+            Carbon::now()->format('Y-m-d_H-i-s') . "_" . $table . ".bak"
+        );
+
+        $dir = $destination
+            ? dirname($filename)
+            : C::Storage()->getVarPath() . DS . 'backup' . DS . 'models';
 
         C::Storage()->createDirectoriesIfNotExisting($dir);
-        return file_put_contents($dir . DS . $filename, serialize(static::all()));
+
+        $path = $dir . DS . basename($filename);
+        $handle = fopen($path, 'w');
+
+        if (!$handle) {
+            return false;
+        }
+
+        static::query()->orderBy('id')->chunk(100, function ($models) use ($handle, $full_backup) {
+            foreach ($models as $model) {
+                if($full_backup) {
+                    $model_data = $model->getAttributes();
+                } else {
+                    $model_data = $model->toArray();
+                }
+
+                fwrite($handle, json_encode($model_data) . PHP_EOL);
+            }
+        });
+
+        fclose($handle);
+        return $path;
     }
 
     /**
-     * Get a list of all available backups for this model
+     * Get a list of all available backups for this model.
      *
-     * @param null|string $dir optional path to directory where backups are stored
+     * @param null|string $dir optional path to directory where backups are stored.
      *
-     * @return array absolute paths to all backups in descending order (the latest entity first)
+     * @return array absolute paths to all backups in descending order (the latest entity first).
      */
-    public static function availableBackups($dir = null)
+    public static function getAvailableBackups($dir = null)
     {
         if (empty($dir)) {
             $dir = C::Storage()->getVarPath() . DS . 'backup' . DS . 'models';
@@ -595,7 +619,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
 
         $bakfiles = [];
         foreach (C::Storage()->scanDir($dir, 1) as $bakfile) {
-            if (str_contains($bakfile, '_' . $self->table . '.bak')) {
+            if (str_contains($bakfile, '_' . $self->getTable() . '.bak')) {
                 $bakfiles[] = $dir . DS . $bakfile;
             }
         }
@@ -604,33 +628,37 @@ class Model extends \Illuminate\Database\Eloquent\Model
     }
 
     /**
-     * Restore a backup
+     * Restore a backup.
      *
-     * @param string $filename absolute path to the backup file or 'latest' to use the latest backup
+     * @param string $source absolute path to the backup file or 'latest' to use the latest backup.
+     * @param bool $truncate whether to truncate the table before restoring, defaults to false.
+     *
+     * @return int|bool count of restored entities on success, or false on read error.
      */
-    public static function restoreBackup(string $filename = 'latest')
+    public static function restoreBackup(string $source, bool $truncate = false): int|bool
     {
-        if ($filename == 'latest') {
-            $available = static::availableBackups();
-            if (count($available) == 0) {
-                return false;
-            }
-
-            $filename = array_shift($available);
-        }
-
-        if (!file_exists($filename)) {
+        $handle = fopen($source, 'r');
+        if (!$handle) {
             return false;
         }
 
-        $collection = unserialize(file_get_contents($filename));
+        $count = 0;
+        $self = new static();
 
-        // Insert all entries
-        foreach ($collection as $entity) {
-            $entity->save();
+        if ($truncate) {
+            $self->truncate(); // Be cautious: this clears the whole table
         }
 
-        return true;
+        while (($line = fgets($handle)) !== false) {
+            $data = json_decode($line, true);
+            if (!empty($data)) {
+                $self->create($data);
+                $count++;
+            }
+        }
+
+        fclose($handle);
+        return $count;
     }
 
     /**
