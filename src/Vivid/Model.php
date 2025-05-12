@@ -701,47 +701,46 @@ class Model extends \Illuminate\Database\Eloquent\Model
             ];
         }
 
-        // Remove "id-" from values of id fields, might be prepended for better sorting
+        // Process values for each update field
         foreach ($update_values as $k => $v) {
+            $val = $v;
+
+            // Remove "id-" from values of id fields, might be prepended for better sorting
             if (str_contains($k, '_id')) {
                 $val = str_replace("id-", "", $v);
-
-                // Cast update value
-                if(str_contains($k, ':')) {
-                    $parts = explode(":", $k);
-                    $cast = array_pop($parts);
-                    $k = implode(":", $parts);
-
-                    switch(strtolower($cast)) {
-                        case 'bool':
-                        case 'boolean':
-                            $val = (bool)$val;
-                            break;
-                        case 'int':
-                            $val = (int)$val;
-                            break;
-                        case 'float':
-                            $val = (float)$val;
-                            break;
-                        case 'string':
-                            $val = (string)$val;
-                            break;
-                        case 'trim':
-                            $val = trim((string)$val);
-                            break;
-                        case 'date':
-                            $val = Carbon::parse($val);
-                            break;
-                    }
-                } else {
-                    // Cast to null if empty (default behavior)
-                    if (empty($val)) {
-                        $val = null;
-                    }
-                }
-
-                $update_values[$k] = $val;
             }
+
+            if(str_contains($k, ':')) {
+                // Cast update value
+                $parts = explode(":", $k);
+                $cast = array_pop($parts);
+
+                unset($update_values[$k]);
+                $k = implode(":", $parts);
+
+                switch (strtolower($cast)) {
+                    case 'bool':
+                    case 'boolean':
+                        $val = (bool)$val;
+                        break;
+                    case 'int':
+                        $val = (int)$val;
+                        break;
+                    case 'float':
+                        $val = (float)$val;
+                        break;
+                    case 'date':
+                        $val = Carbon::parse($val);
+                        break;
+                }
+            } else {
+                // Cast to null if empty (default behavior)
+                if (empty($val)) {
+                    $val = null;
+                }
+            }
+
+            $update_values[$k] = $val;
         }
 
         return static::updateOrCreate($search_fields, $update_values);
