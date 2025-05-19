@@ -680,8 +680,21 @@ class Model extends \Illuminate\Database\Eloquent\Model
     public static function addOrUpdate(mixed $search_fields = null, $update_values = null)
     {
         $x = new static();
+        $casts = [];
+
         if (!$update_values) {
-            $update_values = C::Request()->getMultiple($x->update_fields);
+            // Get fields from request based on update_fields (but without casts)
+            $update_fields = $x->update_fields;
+            foreach($update_fields as $field => $value) {
+                if(str_contains($value, ':')) {
+                    $parts = explode(":", $value);
+                    $cast = array_pop($parts);
+                    $key = implode(":", $parts);
+                    $update_fields[$field] = $key;
+                    $casts[$key] = $cast;
+                }
+            }
+            $update_values = C::Request()->getMultiple($update_fields);
         }
 
         if (!is_array($search_fields)) {
@@ -710,15 +723,9 @@ class Model extends \Illuminate\Database\Eloquent\Model
                 $val = str_replace("id-", "", $v);
             }
 
-            if(str_contains($k, ':')) {
+            if(array_key_exists($k, $casts)) {
                 // Cast update value
-                $parts = explode(":", $k);
-                $cast = array_pop($parts);
-
-                unset($update_values[$k]);
-                $k = implode(":", $parts);
-
-                switch (strtolower($cast)) {
+                switch (strtolower($casts[$k])) {
                     case 'bool':
                     case 'boolean':
                         $val = (bool)$val;
