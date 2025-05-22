@@ -30,6 +30,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - The keys for the authentication token on requests can now be adjusted via config.
 - Improve backup + restore methods for models. Now with an optimized handling of large datasets and using NDJSON.
 
+### 🔥 Removed
+
+- Global `is_json` function, replaced by PHP's native `json_validate`
+- Global `is_serialized` function, is unnecessary nowadays since this would duplicate running `unserialize`.
+
 ---
 
 ## [3.6] - 12 December 2024

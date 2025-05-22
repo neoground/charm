@@ -3,48 +3,7 @@
  * This file contains charm's helper functions for string, arrays and so on
  */
 
-if (!function_exists('is_json')) {
-
-    /**
-     * Check if a string is valid json
-     *
-     * @deprecated Since PHP 8.3 you should use the built-in function json_validate
-     *
-     * @param $string
-     *
-     * @return bool
-     */
-    function is_json($string): bool
-    {
-        if (is_array($string)) {
-            return false;
-        }
-
-        if(function_exists('json_validate')) {
-            return json_validate($string);
-        }
-
-        json_decode($string);
-        return (json_last_error() == JSON_ERROR_NONE);
-    }
-
-}
-
-
-if (!function_exists('is_serialized')) {
-
-    /**
-     * Check if a string is serialized
-     *
-     * @param string $string
-     *
-     * @return bool
-     */
-    function is_serialized($string): bool
-    {
-        return (@unserialize($string) !== false);
-    }
-}
+use Charm\Vivid\C;
 
 if (!function_exists('ddd')) {
 
@@ -73,7 +32,7 @@ if (!function_exists('ddd')) {
             var_dump(...$vars);
         }
 
-        \Charm\Vivid\C::shutdown();
+        C::shutdown();
     }
 }
 
@@ -86,7 +45,7 @@ if (!function_exists('ddb')) {
      */
     function ddb(...$vars)
     {
-        \Charm\Vivid\C::DebugBar()->debugVar(...$vars);
+        C::DebugBar()->debugVar(...$vars);
     }
 }
 
