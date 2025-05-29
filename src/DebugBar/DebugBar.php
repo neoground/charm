@@ -80,7 +80,7 @@ class DebugBar extends Module implements ModuleInterface
     {
         if(!is_object($this->debugBarRenderer) && $this->isEnabled()) {
             $this->debugBarRenderer = $this->debugBar->getJavascriptRenderer();
-            $this->debugBarRenderer->setBaseUrl(cBaseUrl() . '/vendor/maximebf/debugbar/src/DebugBar/Resources');
+            $this->debugBarRenderer->setBaseUrl(cBaseUrl() . '/vendor/php-debugbar/php-debugbar/src/DebugBar/Resources');
             $this->debugBarRenderer->setOpenHandlerUrl(cBaseUrl() . '/charm/debugbar_handler');
         }
 
