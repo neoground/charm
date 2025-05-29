@@ -6,13 +6,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## [3.7] - In Development
+## [3.8] - In Development
+
+### ✨ Added
+
+-
+
+### 🔧 Changed
+
+-
+
+---
+
+## [3.7] - 30 May 2025
 
 ### ✨ Added
 
 - Casting support for update_values of a model, similar to laravel's casts, e.g.: `uploaded_at:date`. Supports.
   bool, int, float, date, string, trim (a trimmed string), none (to prevent from casting empty values to NULL).
-- Queue daemon which can run the queue reliably twice each minute, similar to the cron daemon.
+- Queue daemon, which can run the queue reliably twice each minute, similar to the cron daemon.
 - New method to generate a random filename with 25 characters: `C::Storage()->getRandomFilename()`.
 - New method `C::getAllAppModules()` to only get app-related loaded modules like the App module, no kernel modules.
 - Slugifying is improved and can now create safe filenames via `C::Formatter()->slugify($text, true)`.
@@ -115,6 +127,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ---
 
 ## [3.3] - 14 March 2024
+
 ### ✨ Added
 - `UserModel` class which is the new base model for the app's `User` model.
 - Types, refactoring and default values for EngineManager
@@ -149,6 +162,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ---
 
 ## [3.2] - 1 March 2024
+
 ### Added
 - Handy ViewExtension default functions
 - `C::Router()->constructUrl(...)` method to create custom URLs with parameters
@@ -211,6 +225,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ---
 
 ## [3.1] - 1 April 2023
+
 ### Added
 - CommandHelper class with handy commands to easily style input / output of console commands
 
@@ -224,6 +239,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ---
 
 ## [3.0] - 27 March 2023
+
 ### Added
 - CharmCreator commands and handling
 - Way more documentation
@@ -236,6 +252,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ---
 
 ## [2.0]
+
 ### Added
 - Get all available cron jobs via `C::Crown()->getAllCronJobs()`
 - Summary of database migrations as console output
@@ -262,5 +279,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ---
 
 ## [1.0]
+
 ### Added
 - First public initial commit of base system
