@@ -7,7 +7,6 @@ namespace Charm\Vivid\Router\Elements;
 
 use Charm\Vivid\C;
 use Charm\Vivid\Router\RouterElement;
-use Opis\Closure\SerializableClosure;
 
 /**
  * Class Filter
@@ -47,7 +46,7 @@ class Filter implements RouterElement
     }
 
     /**
-     * Add element to router
+     * Add an element to the router
      *
      * @param \Phroute\Phroute\RouteCollector $router
      * @param array                           $routes data of all routes
@@ -70,8 +69,7 @@ class Filter implements RouterElement
         $cb = $this->callback;
 
         if ($cb instanceof \Closure) {
-            $s = new SerializableClosure($cb);
-            $cb = $s->serialize();
+            $cb = \Opis\Closure\serialize($cb);
         }
 
         return serialize([
@@ -93,14 +91,15 @@ class Filter implements RouterElement
 
         $this->name = $us['name'];
 
-        if (!is_serialized($us['callback'])) {
+        $cb = @unserialize($us['callback']);
+        if ($cb === false) {
             $this->callback = $us['callback'];
         } else {
             try {
                 $this->callback = $us['callback']->getClosure($us['callback']);
             } catch (\Exception $e) {
                 // Normal unserialize because super closure threw an error!
-                $this->callback = unserialize($us['callback']);
+                $this->callback = $cb;
             }
         }
     }

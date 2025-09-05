@@ -151,8 +151,9 @@ class Queue extends Module implements ModuleInterface
         C::Logging()->debug('[BBQ] [Worker ' . $worker_id . '] Running: ' . $job);
 
         // Get the job data
-        if (is_serialized($job)) {
-            $job = unserialize($job);
+        $unserialized = @unserialize($job);
+        if ($unserialized !== false) {
+            $job = $unserialized;
         }
 
         $job_data = json_decode($job, true);

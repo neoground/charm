@@ -58,7 +58,7 @@ if (!function_exists('to_string')) {
      *
      * @return string
      */
-    function to_string($input)
+    function to_string(mixed $input): string
     {
         // Serialize objects
         if (is_object($input)) {
@@ -79,21 +79,22 @@ if (!function_exists('to_string')) {
 if (!function_exists('from_string')) {
 
     /**
-     * String (from to_string) to object / array / string
+     * String (from `to_string`) to object / array / string
      *
      * @param string $input the input
      *
      * @return mixed
      */
-    function from_string($input)
+    function from_string(string $input): mixed
     {
         // Serialized -> Object
-        if (is_serialized($input)) {
-            return unserialize($input);
+        $unserialized = @unserialize($input);
+        if ($unserialized !== false) {
+            return $unserialized;
         }
 
         // JSON -> Array
-        if (is_json($input)) {
+        if (json_validate($input)) {
             return json_decode($input, true);
         }
 

@@ -26,21 +26,21 @@ class Model extends \Illuminate\Database\Eloquent\Model
     protected bool $caching = true;
 
     /**
-     * The attributes which can be filtered
+     * The attributes, which can be filtered
      *
      * @var string[]
      */
     protected array $filter_attributes = [];
 
     /**
-     * The attributes which should be used for a query search
+     * The attributes, which should be used for a query search
      *
      * @var string[]
      */
     protected array $search_attributes = [];
 
     /**
-     * The attributes which should be updated by updateOrCreate by default
+     * The attributes, which should be updated by updateOrCreate by default
      *
      * @var string[]
      */
@@ -97,7 +97,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
     }
 
     /**
-     * Get class name without namespace
+     * Get class name without its namespace
      *
      * @return string|false false on error
      */
@@ -113,7 +113,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
     }
 
     /**
-     * Handle saving of model
+     * Save the model to the database.
      *
      * @param array $options options for saving
      *
@@ -203,7 +203,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
             $key = "Model:" . $classname . ':' . $this->id;
             C::Cache()->remove($key);
 
-            // Remove all with class specific tag
+            // Remove all cache entries with the class-specific tag
             C::Cache()->removeByTag('Model:' . $classname);
 
             // Clear filtered paginated data cache
@@ -544,16 +544,17 @@ class Model extends \Illuminate\Database\Eloquent\Model
      * This makes storage inside the database a lot easier
      *
      * @param mixed $value
+     * @param int   $flags
      *
      * @return false|string
      */
-    protected function asJson($value): false|string
+    protected function asJson($value, $flags = 0): false|string
     {
         return json_encode($value, JSON_UNESCAPED_UNICODE);
     }
 
     /**
-     * Backup this model (table in database) to a backup file.
+     * Back up this model (table in a database) to a backup file.
      *
      * This will save all entities as a NDJSON file.
      *

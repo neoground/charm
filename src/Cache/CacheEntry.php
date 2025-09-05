@@ -98,10 +98,11 @@ class CacheEntry
     public function getValue()
     {
         // Format output
-        if(is_serialized($this->val)) {
+        $unserialized = @unserialize($this->val);
+        if($unserialized !== false) {
             // Handling serialized
-            $this->val = unserialize($this->val);
-        } elseif(!is_array($this->val) && is_json($this->val)) {
+            $this->val = $unserialized;
+        } elseif(!is_array($this->val) && json_validate($this->val)) {
             // Handling JSON
             $this->val = json_decode($this->val, true);
         }
