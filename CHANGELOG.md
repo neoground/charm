@@ -10,11 +10,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### ✨ Added
 
--
+- Unit tests via PHPUnit.
+- New Storage method `C::Storage()->initDirs()` to create all needed directories.
 
 ### 🔧 Changed
 
--
+- Update serialization / JSON implementations to use native PHP functions.
+- Update composer packages.
 
 ---
 

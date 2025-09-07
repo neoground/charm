@@ -367,7 +367,7 @@ class Storage extends Module implements ModuleInterface
                 array_map('unlink', glob("$path/*.*"));
             }
 
-            return rmdir($path);
+            return @rmdir($path);
         }
 
         return false;
@@ -399,11 +399,25 @@ class Storage extends Module implements ModuleInterface
      */
     public function getRandomFilename(int $length = 25): string
     {
-        if($length === 25) {
+        if ($length === 25) {
             return str_replace('.', '-' . rand(11, 99), uniqid('', true));
         }
 
         return substr(str_replace('.', rand(11, 99), uniqid('', true)), 0, $length);
+    }
+
+    /**
+     * Initialize and create required base directories if they do not already exist.
+     *
+     * @return void
+     */
+    public function initDirs(): void
+    {
+        // Create base directories if they don't exist yet
+        $this->createDirectoriesIfNotExisting($this->getDataPath());
+        $this->createDirectoriesIfNotExisting($this->getVarPath());
+        $this->createDirectoriesIfNotExisting($this->getCachePath());
+        $this->createDirectoriesIfNotExisting($this->getLogPath());
     }
 
 }

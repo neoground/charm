@@ -15,27 +15,26 @@
     "ext-json": "*",
     "ext-fileinfo": "*",
     "ext-openssl": "*",
-    "monolog/monolog": "^3.8",
-    "nesbot/carbon": "^3.8",
-    "symfony/console": "^7.2",
-    "twig/twig": "^3.17",
+    "monolog/monolog": "^3.9",
+    "nesbot/carbon": "^3.10",
+    "symfony/console": "^7.3",
+    "twig/twig": "^3.21",
     "phroute/phroute": "^2.2",
-    "predis/predis": "^3.0",
-    "symfony/yaml": "^7.2",
+    "predis/predis": "^3.2",
+    "symfony/yaml": "^7.3",
     "dragonmantank/cron-expression": "^3.4",
-    "phpmailer/phpmailer": "^6.9",
-    "league/flysystem": "^3.29",
-    "league/flysystem-sftp-v3": "^3.29",
+    "phpmailer/phpmailer": "^6.10",
+    "league/flysystem": "^3.30",
+    "league/flysystem-sftp-v3": "^3.30",
     "opis/closure": "^4.3",
     "claviska/simpleimage": "^4.2",
-    "illuminate/database": "^12.16",
-    "guzzlehttp/guzzle": "^7.8",
-    "respect/validation": "^2.3",
-    "filp/whoops": "^2.16",
+    "illuminate/database": "^12.28",
+    "guzzlehttp/guzzle": "^7.10",
+    "respect/validation": "^2.4",
+    "filp/whoops": "^2.18",
     "kint-php/kint": "^6.0",
     "php-debugbar/php-debugbar": "^2.2",
-    "phpunit/phpunit": "^12.0",
-    "laravel/serializable-closure": "^2.0"
+    "phpunit/phpunit": "^12.3"
   },
   "suggest": {
     "ext-pcntl": "Required when you want to use the built-in cron daemon",
@@ -45,6 +44,12 @@
   "autoload": {
     "psr-4": {
       "Charm\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/",
+      "App\\": "tests/FrameworkApp/app/"
     }
   }
 }

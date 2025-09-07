@@ -39,11 +39,11 @@ class Config extends Module implements ModuleInterface
 
         // Load date time config
         // Set time zone
-        date_default_timezone_set($this->get('main:local.timezone'));
+        date_default_timezone_set($this->get('main:local.timezone', 'UTC'));
         // Set date time formatting and language
-        setlocale(LC_ALL, $this->get('main:local.language'));
+        setlocale(LC_ALL, $this->get('main:local.language', 'en_US.utf8'));
         // Set Carbon
-        Carbon::setLocale($this->get('main:local.shortlang'));
+        Carbon::setLocale($this->get('main:local.shortlang', 'auto'));
     }
 
     /**
@@ -61,7 +61,7 @@ class Config extends Module implements ModuleInterface
      *
      * This method is responsible for handling the maintenance mode of the application.
      * It checks the configuration settings to determine the output format (JSON or HTML).
-     * If the output format is JSON, it outputs JSON response with appropriate error message.
+     * If the output format is JSON, it outputs JSON response with the appropriate error message.
      * Otherwise, it outputs HTML view for the maintenance mode.
      *
      * After that the app is terminated!
