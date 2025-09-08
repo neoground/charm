@@ -40,32 +40,30 @@ class Validator extends Module implements ModuleInterface
 
     public function validateEmail(string $email): bool
     {
-        return (bool) filter_var($email, FILTER_VALIDATE_EMAIL);
+        return (bool)filter_var($email, FILTER_VALIDATE_EMAIL);
     }
 
     public function validateDomain(string $domain): bool
     {
-        return (bool) filter_var($domain, FILTER_VALIDATE_DOMAIN);
+        return (bool)filter_var($domain, FILTER_VALIDATE_DOMAIN);
     }
 
     public function validateMacAddress(string $mac): bool
     {
-        return (bool) filter_var($mac, FILTER_VALIDATE_MAC);
+        return (bool)filter_var($mac, FILTER_VALIDATE_MAC);
     }
 
     public function validateUrl(string $url, bool $path_required = false, bool $query_required = false): bool
     {
-        $flags = [];
-        if($path_required) {
-            $flags[] = FILTER_FLAG_PATH_REQUIRED;
+        $bitmask = 0;
+        if ($path_required) {
+            $bitmask |= FILTER_FLAG_PATH_REQUIRED;
         }
-        if($query_required) {
-            $flags[] = FILTER_FLAG_QUERY_REQUIRED;
+        if ($query_required) {
+            $bitmask |= FILTER_FLAG_QUERY_REQUIRED;
         }
 
-        return (bool) filter_var($url, FILTER_VALIDATE_URL, [
-            'flags' => $flags
-        ]);
+        return (bool)filter_var($url, FILTER_VALIDATE_URL, ['flags' => $bitmask]);
     }
 
 }
