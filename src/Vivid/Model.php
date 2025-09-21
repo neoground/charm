@@ -740,6 +740,9 @@ class Model extends \Illuminate\Database\Eloquent\Model
                     case 'date':
                         $val = Carbon::parse($val);
                         break;
+                    case 'array':
+                        $val = (array)$val;
+                        break;
                 }
             } else {
                 // Cast to null if empty (default behavior)

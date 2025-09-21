@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### ✨ Added
 
 - Unit tests via PHPUnit.
-- New Storage method `C::Storage()->initDirs()` to create all needed directories.
+- New Storage method `C::Storage()->initDirs()` to create all necessary directories.
+- Add "array" as addOrUpdate cast type.
 
 ### 🔧 Changed
 

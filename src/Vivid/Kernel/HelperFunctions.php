@@ -70,8 +70,8 @@ if (!function_exists('to_string')) {
             return json_encode($input);
         }
 
-        // Default: no conversion
-        return $input;
+        // Default: no conversion, just cast as string
+        return (string) $input;
     }
 
 }
