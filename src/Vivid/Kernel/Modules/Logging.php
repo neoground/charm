@@ -25,9 +25,6 @@ use Psr\Log\LoggerInterface;
  */
 class Logging extends Module implements ModuleInterface, LoggerInterface
 {
-    /** @var Logger the logger instance */
-    protected Logger $logger;
-
     /** @var bool Logging enabled? */
     protected bool $enabled = true;
 
@@ -246,6 +243,6 @@ class Logging extends Module implements ModuleInterface, LoggerInterface
             $db['messages']->$level($message);
         }
 
-        $this->logger->addRecord(Logger::toMonologLevel($level), $message, $context);
+        $this->logger_instances[$this->active_logger]->addRecord(Logger::toMonologLevel($level), $message, $context);
     }
 }
