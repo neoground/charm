@@ -24,10 +24,13 @@ class DebugbarController extends Controller
      */
     public function getHandler()
     {
-        if(C::Config()->get('main:debug.show_debugbar', false) && C::Config()->inDebugMode()) {
-            $openHandler = new OpenHandler(C::DebugBar()->getInstance());
-            $openHandler->handle();
-            C::shutdown();
+        if (C::Config()->get('main:debug.show_debugbar', false) && C::Config()->inDebugMode()) {
+            $instance = C::DebugBar()->getInstance();
+            if ($instance) {
+                $openHandler = new OpenHandler($instance);
+                $openHandler->handle();
+                C::shutdown();
+            }
         }
 
         return View::makeError('NotFound', 404);
