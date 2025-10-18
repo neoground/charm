@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### 🔧 Changed
 
+- Improve default session config (strict mode, SID improvements).
 - Update serialization / JSON implementations to use native PHP functions.
 - Update composer packages.
 

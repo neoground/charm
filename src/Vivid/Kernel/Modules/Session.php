@@ -35,6 +35,13 @@ class Session extends Module implements ModuleInterface
             ini_set('session.gc_probability', 0);
         }
 
+        // Strict mode (no adoption of stale / foreign IDs)
+        ini_set('session.use_strict_mode', 1);
+
+        // Better IDs
+        ini_set('session.sid_length', 48);
+        ini_set('session.sid_bits_per_character', 6);
+
         // Session cookies
         ini_set('session.cookie_lifetime', 0);
         ini_set('session.use_cookies', 1);
