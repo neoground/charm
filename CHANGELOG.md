@@ -6,7 +6,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## [3.8] - In Development
+## [3.9] - In Development
+
+### ✨ Added
+
+-
+
+### 🔧 Changed
+
+-
+
+### 🔥 Removed
+
+-
+
+---
+
+## [3.8] - 31 October 2025
 
 ### ✨ Added
 
