@@ -83,6 +83,8 @@ and its included [Getting Started Guide](https://neoground.com/docs/charm/start.
 To ensure a smooth journey with the Charm Framework, make sure your system meets the following requirements:
 
 - PHP 8.3 or later (ideally with Redis module)
+  - PHP installation needs basic extensions. Make sure you don't have "php-psr" installed, since this
+    conflicts with Monolog's Logging engine.
 - Composer
 - Depending on your app:
     - Database: MariaDB, MySQL, SQLite, PostgreSQL or SQL Server
