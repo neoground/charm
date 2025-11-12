@@ -114,7 +114,16 @@ class CharmCreator extends Module implements ModuleInterface
         $tpl = $path . DS . str_replace('.tpl', '', $name) . '.tpl';
 
         if (!file_exists($tpl)) {
-            // TODO Handle invalid file...
+            // Can also be yaml / yml
+            $tpl = $path . DS . str_replace('.tpl', '', $name) . '.yaml';
+
+            if (!file_exists($tpl)) {
+                $tpl = $path . DS . str_replace('.tpl', '', $name) . '.yml';
+
+                if (!file_exists($tpl)) {
+                    return false;
+                }
+            }
         }
 
         return file_get_contents($tpl);
@@ -136,7 +145,7 @@ class CharmCreator extends Module implements ModuleInterface
             $arr = [];
 
             foreach ($files as $file) {
-                $filename = str_replace(".tpl", "", $file);
+                $filename = str_replace([".tpl", ".yaml", ".yml"], "", $file);
                 $tpl_content = $this->getTemplate($type, $filename);
                 $yaml = Yaml::parse($this->extract($tpl_content, 'yaml'));
                 $arr[] = $yaml['name'] . ' [' . $filename . ']';
