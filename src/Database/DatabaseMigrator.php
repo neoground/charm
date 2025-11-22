@@ -209,7 +209,7 @@ class DatabaseMigrator
 
                 $obj = new $class;
                 $tablename = $obj->getTable();
-                $connection = $obj->getConnection();
+                $connection = $obj->getConnectionName() ?? 'default';
 
                 $schema_builder = C::Database()->getDatabaseConnection($connection)->getSchemaBuilder();
 
