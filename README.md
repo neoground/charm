@@ -12,9 +12,18 @@
 
 ## A performant, modern PHP Framework
 
-Version 4 of this framework is a rewrite with breaking changes. 
-We adapt modern practices and optimize the codebase for usage with PHP 8.5.
-While doing so, we also modernize and professionalize the framework overall to be a future-proof foundation.
+A lightweight, fast, modular PHP framework – the foundation for ambitious apps and SaaS.
+Crafted and used in production by Neoground.
+
+Charm is a **modern PHP framework** optimized for **PHP 8.5**, performance, and clean architecture.  
+It powers Neoground’s own projects and SaaS products and is designed as a solid, composable foundation for:
+
+- APIs and backends
+- SaaS and business applications
+- Hybrid/web apps with modern frontends
+
+Version 4 of this framework is a major rewrite with breaking changes.
+It is our goal to have a solid foundation for all kind of webapps and websites for many years.
 
 Below you find the legacy Readme.
 

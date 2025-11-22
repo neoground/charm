@@ -101,7 +101,7 @@ class Database extends Module implements ModuleInterface
      */
     public function getDatabaseConnection(string $name = 'default'): ?Connection
     {
-        return $this->eloquent_instance[$name] ?? null;
+        return $this->eloquent_instances[$name] ?? null;
     }
 
     /**
