@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### ✨ Added
 
--
+- Support for multiple database connections and connection specific migrations
 
 ### 🔧 Changed
 

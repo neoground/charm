@@ -10,6 +10,14 @@
 ![GitHub issues](https://img.shields.io/github/issues/neoground/charm)
 ![GitHub stars](https://img.shields.io/github/stars/neoground/charm?style=social)
 
+## A performant, modern PHP Framework
+
+Version 4 of this framework is a rewrite with breaking changes. 
+We adapt modern practices and optimize the codebase for usage with PHP 8.5.
+While doing so, we also modernize and professionalize the framework overall to be a future-proof foundation.
+
+Below you find the legacy Readme.
+
 ## 🚀 A Galactic Adventure in PHP Web Development
 
 In a galaxy far, far away, there was a PHP web framework that 

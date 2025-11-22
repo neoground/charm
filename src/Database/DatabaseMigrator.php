@@ -6,7 +6,6 @@
 namespace Charm\Database;
 
 use Charm\Vivid\C;
-use Illuminate\Database\Schema\Builder;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -28,7 +27,7 @@ class DatabaseMigrator
      */
     public function __construct(OutputInterface|null $output = null)
     {
-        if(!is_object($output)) {
+        if (!is_object($output)) {
             $output = new NullOutput();
         }
 
@@ -39,18 +38,18 @@ class DatabaseMigrator
             'created' => [],
             'altered' => [],
             'ignored' => [],
-            'processed' => 0
+            'processed' => 0,
         ];
     }
 
     /**
      * Run all database migrations of a module
      *
-     * @param string          $method method to call (up / down)
-     * @param string          $file   optional filename (part) for single migration
-     * @param string          $module optional module name which should be migrated
+     * @param string      $method method to call (up / down)
+     * @param string|null $file   optional filename (part) for single migration
+     * @param string|null $module optional module name which should be migrated
      */
-    public function runMigrations(string $method, $file = null, $module = "App")
+    public function runMigrations(string $method, ?string $file = null, ?string $module = "App"): void
     {
         // Get needed data from module
         $mod = C::get($module);
@@ -60,14 +59,14 @@ class DatabaseMigrator
         $namespace = "\\App\\System\\Migrations";
 
         // Module specific
-        if(is_object($mod) && method_exists($mod, 'getReflectionClass')) {
+        if (method_exists($mod, 'getReflectionClass')) {
             $path = C::get($module)->getBaseDirectory() . DS . 'System' . DS . 'Migrations';
 
             $namespace = $mod->getReflectionClass()->getNamespaceName() . "\\System\\Migrations";
         }
 
         // Get all migration files
-        if(!file_exists($path)) {
+        if (!file_exists($path)) {
             $this->output->writeln('No migrations found for module: ' . $module, OutputInterface::VERBOSITY_VERBOSE);
         }
 
@@ -100,19 +99,19 @@ class DatabaseMigrator
             $class_parts = explode("_", $class_raw);
 
             // Remove all numeric prefixes
-            while(is_numeric($class_parts[0])) {
+            while (is_numeric($class_parts[0])) {
                 array_shift($class_parts);
             }
 
             // Create class name with namespace
-            $class = $namespace . "\\" . implode("",  array_map("ucfirst", $class_parts));
+            $class = $namespace . "\\" . implode("", array_map("ucfirst", $class_parts));
 
-            if(!class_exists($class)) {
+            if (!class_exists($class)) {
 
                 // Append table suffix. Some people like that.
                 $class = $class . 'Table';
 
-                if(!class_exists($class)) {
+                if (!class_exists($class)) {
                     // Still not found. Ignore.
                     $this->output->writeln('<error>❌ Invalid class in: ' . $class_raw
                         . '. Expected: ' . $class . '</error>');
@@ -124,7 +123,7 @@ class DatabaseMigrator
 
             $this->output->writeln('Migrating: ' . $class);
 
-            if($method == 'up') {
+            if ($method == 'up') {
                 $migration->up();
             } else {
                 $migration->down();
@@ -139,11 +138,11 @@ class DatabaseMigrator
     /**
      * Run all database migrations of all app modules
      *
-     * @param string           $method  method to call (up / down)
+     * @param string $method method to call (up / down)
      */
-    public function runAllMigrations($method)
+    public function runAllMigrations(string $method): void
     {
-        foreach(C::getAllAppModules() as $name => $module) {
+        foreach (C::getAllAppModules() as $name => $module) {
             $this->output->writeln('<info>:: Running ' . $method . ' migrations for module: ' . $name . '</info>');
 
             $this->runMigrations($method, null, $name);
@@ -156,23 +155,21 @@ class DatabaseMigrator
      * @param string $method migration method (up / down)
      * @param string $module wanted module
      */
-    private function runModelMigrations($method, $module = "App")
+    private function runModelMigrations(string $method, string $module = "App"): void
     {
         $this->output->writeln('Model Migration ' . $method . ': ' . $module, OutputInterface::VERBOSITY_VERBOSE);
         try {
             $mod = C::get($module);
 
-            if(is_object($mod)) {
+            if (is_object($mod)) {
                 $models_dir = $mod->getBaseDirectory() . DS . 'Models';
                 $namespace = $mod->getReflectionClass()->getNamespaceName() . "\\Models";
 
-                $schema_builder = C::Database()->getDatabaseConnection()->getSchemaBuilder();
-
-                if(file_exists($models_dir)) {
-                    $this->scanDirForModelMigration($models_dir, $method, $schema_builder, $namespace);
+                if (file_exists($models_dir)) {
+                    $this->scanDirForModelMigration($models_dir, $method, $namespace);
                 }
             }
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             // Invalid module or file -> ignore.
         }
 
@@ -181,22 +178,21 @@ class DatabaseMigrator
     /**
      * Scan a dir for model migrations recursively and execute migrations
      *
-     * @param string          $dir            absolute path to dir
-     * @param string          $method         wanted method up / down
-     * @param Builder         $schema_builder schema buiilder object
-     * @param string          $namespace      namespace of classes in this dir
+     * @param string $dir       absolute path to dir
+     * @param string $method    wanted method up / down
+     * @param string $namespace namespace of classes in this dir
      */
-    private function scanDirForModelMigration(string $dir, string $method, Builder $schema_builder, string $namespace)
+    private function scanDirForModelMigration(string $dir, string $method, string $namespace)
     {
-        foreach(C::Storage()->scanDir($dir) as $file) {
+        foreach (C::Storage()->scanDir($dir) as $file) {
             $fullpath = $dir . DS . $file;
             $pathinfo = pathinfo($fullpath);
 
             $class = $namespace . "\\" . $pathinfo['filename'];
 
-            if(is_dir($fullpath)) {
+            if (is_dir($fullpath)) {
                 $this->output->writeln('Checking sub directory: ' . $fullpath, OutputInterface::VERBOSITY_VERBOSE);
-                $this->scanDirForModelMigration($fullpath, $method, $schema_builder, $class);
+                $this->scanDirForModelMigration($fullpath, $method, $class);
 
                 // This is a dir -> don't process. Go to next file.
                 continue;
@@ -206,15 +202,18 @@ class DatabaseMigrator
 
             require_once($fullpath);
 
-            if(method_exists($class, "getTableStructure")) {
+            if (method_exists($class, "getTableStructure")) {
                 $this->synced_tables['processed']++;
 
-                // If class is already declared (in most cases due to classic migration), remove this
+                // TODO If class is already declared (in most cases due to classic migration), ignore this
 
                 $obj = new $class;
                 $tablename = $obj->getTable();
+                $connection = $obj->getConnection();
 
-                if($method == 'down') {
+                $schema_builder = C::Database()->getDatabaseConnection($connection)->getSchemaBuilder();
+
+                if ($method == 'down') {
 
                     // DOWN migration
                     $this->output->writeln('🔥 Dropping table: ' . $tablename);
@@ -251,7 +250,7 @@ class DatabaseMigrator
      *
      * @return void
      */
-    public function outputStats() : void
+    public function outputStats(): void
     {
         $counter_processed = $this->synced_tables['processed'];
         $counter_created = count($this->synced_tables['created']);
@@ -266,13 +265,13 @@ class DatabaseMigrator
             . $counter_dropped . '</info> dropped, <info>'
             . $counter_ignored . '</info> existing.');
 
-        if($counter_created > 0) {
+        if ($counter_created > 0) {
             $this->output->writeln('');
             $this->output->writeln('<info>:: Created</info>');
             $this->output->writeln(implode(', ', $this->synced_tables['created']));
         }
 
-        if($counter_dropped > 0) {
+        if ($counter_dropped > 0) {
             $this->output->writeln('');
             $this->output->writeln('<info>:: Dropped</info>');
             $this->output->writeln(implode(', ', $this->synced_tables['dropped']));
