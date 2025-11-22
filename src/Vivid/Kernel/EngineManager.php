@@ -47,7 +47,7 @@ class EngineManager extends Module
         $appenv = C::Storage()->getAppPath() . DS . 'app.env';
         if (!$this->set_via_file && file_exists($appenv)) {
             $content = trim(file_get_contents($appenv));
-            if(str_contains('=', $content)) {
+            if(str_contains($content, '=')) {
                 // Modern app.env config file
                 $ini_array = parse_ini_string($content);
                 $this->environment = $ini_array['ENVIRONMENT'];
