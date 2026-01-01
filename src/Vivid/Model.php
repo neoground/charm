@@ -178,7 +178,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
             C::Cache()->removeByTag('Model:' . $classname);
 
             // Clear filtered paginated data cache
-            C::Cache()->removeByTag('model_' . (new self)->table . '_fpd');
+            C::Cache()->removeByTag('model_' . (new static)->table . '_fpd');
         }
     }
 

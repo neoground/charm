@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -
 
+### 🐞 Fixed
+
+- A bug that prevented the model cache from being cleared correctly on save
+
 ### 🔥 Removed
 
 -
