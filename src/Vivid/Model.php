@@ -47,11 +47,11 @@ class Model extends \Illuminate\Database\Eloquent\Model
     protected array $update_fields = [];
 
     /**
-     * Disable population of created_by / updated_by fields for an entry
+     * Disable the population of created_by / updated_by fields for an entry
      *
      * @return $this
      */
-    public function disableByFields()
+    public function disableByFields(): static
     {
         $this->set_by = false;
         return $this;
@@ -69,11 +69,11 @@ class Model extends \Illuminate\Database\Eloquent\Model
      * Normal self::find($id) function, but with integrated cache!
      *
      * @param int $id      id of entity
-     * @param int $minutes minutes after cache expires
+     * @param int $minutes minutes after the cache expires
      *
      * @return mixed
      */
-    public static function findWithCache($id, $minutes = 720)
+    public static function findWithCache(int $id, int $minutes = 720): mixed
     {
         $classname = str_replace("\\", ":", get_called_class());
         $key = "Model:" . $classname . ':' . $id;
@@ -97,7 +97,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
     }
 
     /**
-     * Get class name without its namespace
+     * Get the class name without its namespace
      *
      * @return string|false false on error
      */
@@ -146,7 +146,8 @@ class Model extends \Illuminate\Database\Eloquent\Model
      * This will remove the cached entry for the current model instance.
      * Optionally clears all cached entries of this model type.
      *
-     * @param bool $clear_full_cache If true, clears all cached entries of this model type, if false only of this entity.
+     * @param bool $clear_full_cache If true, clears all cached entries of this model type, if false only of this
+     *                               entity.
      *
      * @return void
      */
@@ -157,8 +158,8 @@ class Model extends \Illuminate\Database\Eloquent\Model
             $key = "Model:" . $classname . ':' . $this->id;
             C::Cache()->remove($key);
         }
-        
-        if($clear_full_cache) {
+
+        if ($clear_full_cache) {
             self::clearModelsCache();
         }
     }
@@ -173,7 +174,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
         if (C::has('Cache')) {
             $classname = str_replace("\\", ":", get_called_class());
 
-            // Remove all with class specific tag
+            // Remove all model cache entries by the class-specific tag
             C::Cache()->removeByTag('Model:' . $classname);
 
             // Clear filtered paginated data cache
@@ -215,9 +216,9 @@ class Model extends \Illuminate\Database\Eloquent\Model
     }
 
     /**
-     * Set created_by / updated_by fields with current user
+     * Set created_by / updated_by fields with the current user
      */
-    private function setByFields()
+    private function setByFields(): void
     {
         // Add created_by / updated_by only if guard is enabled
         if (C::has('Guard') && $this->set_by) {
@@ -293,7 +294,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
             // Go through all set filter attributes
             foreach ($model->filter_attributes as $k => $v) {
 
-                // If only val is present, key is numeric. Default case: string
+                // If only val is present, the key is numeric. Default case: string
                 if (is_numeric($k)) {
                     $k = $v;
                     $v = "string";
@@ -302,12 +303,12 @@ class Model extends \Illuminate\Database\Eloquent\Model
                 // Get value
                 $val = C::Request()->get($k);
 
-                // No filtering if value is empty (but allow 0 and handle range case)
+                // No filtering if value is empty (but allow 0 and handle a range case)
                 if (empty($val) && $v !== "range" && $val !== 0) {
                     continue;
                 }
 
-                // Remove "id-" prefix from id fields
+                // Remove the "id-" prefix from id fields
                 if (str_contains($k, '_id')) {
                     $val = str_replace("id-", "", $val);
                 }
@@ -317,7 +318,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
                     $v($x, $val);
                 }
 
-                // Add value to query
+                // Add value to the query
                 switch ($v) {
                     case 'string':
                         $x->where($k, $val);
@@ -326,7 +327,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
                         $x->where($k, 'LIKE', "%" . $val . "%");
                         break;
                     case 'range':
-                        // Value is FROM;TO
+                        // Value is "FROM;TO"
                         $parts = explode(";", $val);
                         if (count($parts) === 2) {
                             $x->whereBetween($k, $parts);
@@ -372,7 +373,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
             }
         }
 
-        // Add search query
+        // Add the search query
         $query = C::Request()->get('query', false);
         if (!empty($query) && property_exists($model, 'search_attributes')) {
             $search_att = $model->search_attributes;
@@ -392,19 +393,19 @@ class Model extends \Illuminate\Database\Eloquent\Model
     }
 
     /**
-     * Filter this model based on request input, fetch, format and paginate data
+     * Filter this model based on request input, fetch, format, and paginate data
      *
      * A combination of filterBasedOnRequest() and getPaginatedData()
      *
      * @param callable|null $custom_filter an optional custom filter function to filter the data even more
      *                                     (has QueryBuilder as parameter and must return it)
-     * @param bool $use_cache whether to use caching or not. Defaults to true.
+     * @param bool          $use_cache     whether to use caching or not. Defaults to true.
      *
      * @return array
      */
-    public static function getFilteredPaginatedData(callable $custom_filter = null, bool $use_cache = true): array
+    public static function getFilteredPaginatedData(callable $custom_filter = null, bool $use_cache = false): array
     {
-        // Build unique key based on request data
+        // Build a unique key based on request data
         $s = new static;
         $req = hash('sha256', json_encode(C::Request()->getAll()));
         $key = 'model_' . $s->table . '_fpd_' . $req;
@@ -487,7 +488,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
         // Fetch data
         $x = $x->skip($skip)->take($amount)->get();
 
-        // Format results and build pagination array
+        // Format results and build the pagination array
         $results = [];
         foreach ($x as $entry) {
             if (method_exists($entry, 'formatToArray')) {
@@ -561,7 +562,8 @@ class Model extends \Illuminate\Database\Eloquent\Model
      * You can restore it with the restoreBackup() method.
      *
      * @param null|string $destination optional absolute path to file. Leave empty for default handling.
-     * @param bool $full_backup whether to back up all fields (default: true), or only public fields (no hidden ones).
+     * @param bool        $full_backup whether to back up all fields (default: true), or only public fields (no hidden
+     *                                 ones).
      *
      * @return int|false the number of bytes that were written to the file, or false on failure.
      */
@@ -589,7 +591,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
 
         static::query()->orderBy('id')->chunk(100, function ($models) use ($handle, $full_backup) {
             foreach ($models as $model) {
-                if($full_backup) {
+                if ($full_backup) {
                     $model_data = $model->getAttributes();
                 } else {
                     $model_data = $model->toArray();
@@ -606,11 +608,11 @@ class Model extends \Illuminate\Database\Eloquent\Model
     /**
      * Get a list of all available backups for this model.
      *
-     * @param null|string $dir optional path to directory where backups are stored.
+     * @param string|null $dir optional path to the directory where backups are stored.
      *
      * @return array absolute paths to all backups in descending order (the latest entity first).
      */
-    public static function getAvailableBackups($dir = null)
+    public static function getAvailableBackups(?string $dir = null): array
     {
         if (empty($dir)) {
             $dir = C::Storage()->getVarPath() . DS . 'backup' . DS . 'models';
@@ -631,8 +633,8 @@ class Model extends \Illuminate\Database\Eloquent\Model
     /**
      * Restore a backup.
      *
-     * @param string $source absolute path to the backup file or 'latest' to use the latest backup.
-     * @param bool $truncate whether to truncate the table before restoring, defaults to false.
+     * @param string $source   absolute path to the backup file or 'latest' to use the latest backup.
+     * @param bool   $truncate whether to truncate the table before restoring, defaults to false.
      *
      * @return int|bool count of restored entities on success, or false on read error.
      */
@@ -665,7 +667,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
     /**
      * Add or update an entity
      *
-     * ID values (in both fields) can have "id-" prepended as values for better sorting,
+     * ID values (in both fields) can have "id-" prepended as values for better sorting;
      * this will be stripped from the values. Matches on id field in search fields and update fields
      * which contain "_id".
      *
@@ -673,12 +675,12 @@ class Model extends \Illuminate\Database\Eloquent\Model
      *
      * @param mixed|null $search_fields array of fields to match for entity (see eloquent's updateOrCreate) or id value
      *                                  or null for id request field
-     * @param mixed|null $update_values array with table field names as key and new value as value or null to use
-     *                                  "update_fields" array in class
+     * @param mixed|null $update_values array with table field names as the key and new value as the value
+     *                                  or null to use "update_fields" array in class
      *
      * @return mixed the object of the entity, returns value of eloquent's updateOrCreate
      */
-    public static function addOrUpdate(mixed $search_fields = null, $update_values = null)
+    public static function addOrUpdate(mixed $search_fields = null, mixed $update_values = null): mixed
     {
         $x = new static();
         $casts = [];
@@ -686,8 +688,8 @@ class Model extends \Illuminate\Database\Eloquent\Model
         if (!$update_values) {
             // Get fields from request based on update_fields (but without casts)
             $update_fields = $x->update_fields;
-            foreach($update_fields as $field => $value) {
-                if(str_contains($value, ':')) {
+            foreach ($update_fields as $field => $value) {
+                if (str_contains($value, ':')) {
                     $parts = explode(":", $value);
                     $cast = array_pop($parts);
                     $key = implode(":", $parts);
@@ -724,7 +726,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
                 $val = str_replace("id-", "", $v);
             }
 
-            if(array_key_exists($k, $casts)) {
+            if (array_key_exists($k, $casts)) {
                 // Cast update value
                 switch (strtolower($casts[$k])) {
                     case 'bool':
