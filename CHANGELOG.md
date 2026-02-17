@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### 🔧 Changed
 
--
+- When generating the appstorage cache file the destination dir will now be created if it's missing
 
 ### 🐞 Fixed
 

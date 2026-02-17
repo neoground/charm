@@ -234,6 +234,7 @@ class AppStorage extends Module implements ModuleInterface
         }
 
         // Generate cache, override file
+        C::Storage()->createDirectoriesIfNotExisting(dirname($this->cache_file));
         file_put_contents($this->cache_file, serialize($this->storage));
     }
 
