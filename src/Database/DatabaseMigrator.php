@@ -171,6 +171,7 @@ class DatabaseMigrator
             }
         } catch (\Exception $e) {
             // Invalid module or file -> ignore.
+            $this->output->writeln('<error>' . $e->getMessage() . '</error>');
         }
 
     }
