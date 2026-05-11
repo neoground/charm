@@ -383,8 +383,8 @@ class Smtp implements MailmanDriverInterface
         // Init PHPMailer and set config values
         try {
             $mail = new PHPMailer(true);
-            $mail->CharSet = 'UTF-8';
-            $mail->XMailer = 'Charm';
+            $mail->CharSet = C::Config()->get($configspace . '.charset', 'UTF-8');
+            $mail->XMailer = C::Config()->get($configspace . '.xmailer', 'Charm');
 
             $type = C::Config()->get($configspace . '.type', 'smtp');
 

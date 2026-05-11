@@ -10,11 +10,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### ✨ Added
 
-- Support for multiple database connections and connection specific migrations
+- Support for multiple database connections and connection-specific migrations
+- Config options charset and xmailer for email connections
 
 ### 🔧 Changed
 
-- When generating the appstorage cache file the destination dir will now be created if it's missing
+- When generating the appstorage cache file, the destination dir will now be created if it's missing
 
 ### 🐞 Fixed
 
