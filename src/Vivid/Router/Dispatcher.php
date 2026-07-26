@@ -73,7 +73,7 @@ class Dispatcher
         $all_routes = C::AppStorage()->get('Routes', 'RoutesData');
         foreach ($all_routes as $route) {
             if (trim($route['call_class'], "\\") == trim($handler[0], "\\")
-                && $route['call_method'] == $handler[1]) {
+                && $route['call_method'] == $handler[1] && str_starts_with($route['url'], $uri)) {
                 $route_name = $route['name'];
                 break;
             }
