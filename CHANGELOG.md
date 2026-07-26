@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Support for multiple database connections and connection-specific migrations
 - Config options charset and xmailer for email connections
+- Multiple route attributes can now be used for the same method
 
 ### 🔧 Changed
 
