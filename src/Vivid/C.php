@@ -60,7 +60,7 @@ use Charm\Vivid\Kernel\Interfaces\ModuleInterface;
 class C
 {
     /** @var string the version of charm */
-    public const string VERSION = "3.8.4";
+    public const string VERSION = "3.9";
 
     /**
      * Get a loaded module
