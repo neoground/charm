@@ -6,25 +6,39 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## [3.9] - In Development
+## [3.10] - In Development
 
 ### ✨ Added
 
-- Support for multiple database connections and connection-specific migrations
-- Config options charset and xmailer for email connections
-- Multiple route attributes can now be used for the same method
+-
 
 ### 🔧 Changed
 
-- When generating the appstorage cache file, the destination dir will now be created if it's missing
+-
 
 ### 🐞 Fixed
 
-- A bug that prevented the model cache from being cleared correctly on save
-
-### 🔥 Removed
-
 -
+
+---
+
+## [3.9] - 13 August 2026
+
+### ✨ Added
+
+- Support for multiple database connections and connection-specific migrations.
+- Config options charset and xmailer for email connections.
+- Multiple route attributes can now be used for the same method.
+
+### 🔧 Changed
+
+- When generating the appstorage cache file, the destination dir will now be created if it's missing.
+- Update composer packages.
+
+### 🐞 Fixed
+
+- A bug that prevented the model cache from being cleared correctly on save.
+- A rare routing bug on routes with nested variables.
 
 ---
 

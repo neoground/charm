@@ -450,21 +450,38 @@ class Collector implements RouteDataProviderInterface
         $routeMap = [];
         $regexes = [];
         $numGroups = 0;
+
         foreach ($regexToRoutesMap as $regex => $routes) {
             $firstRoute = reset($routes);
             $numVariables = count($firstRoute[2]);
-            $numGroups = max($numGroups, $numVariables);
 
-            $regexes[] = $regex . str_repeat('()', $numGroups - $numVariables);
+            /*
+             * Every alternative needs a unique trailing capture group.
+             *
+             * preg_match() omits trailing unmatched optional captures by
+             * default. The dispatcher identifies the matched alternative
+             * using count($matches), so without a mandatory trailing group
+             * routes containing optional parameters can resolve to an
+             * earlier routeMap entry.
+             */
+            $numGroups = max($numGroups, $numVariables);
+            $numGroups++;
+
+            $regexes[] = $regex . str_repeat(
+                    '()',
+                    $numGroups - $numVariables
+                );
 
             foreach ($routes as $httpMethod => $route) {
                 $routeMap[$numGroups + 1][$httpMethod] = $route;
             }
-
-            $numGroups++;
         }
 
         $regex = '~^(?|' . implode('|', $regexes) . ')$~';
-        return ['regex' => $regex, 'routeMap' => $routeMap];
+
+        return [
+            'regex' => $regex,
+            'routeMap' => $routeMap,
+        ];
     }
 }
