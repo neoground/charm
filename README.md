@@ -1,175 +1,332 @@
 # Charm Framework
 
-![Header Banner](https://neoground.com/data/projects/charm/assets/banner.jpg)
+![Charm Framework](https://neoground.com/content/open-source/charm/cover-2x.webp)
 
----
+[![GitHub release](https://img.shields.io/github/v/release/neoground/charm?sort=semver)](https://github.com/neoground/charm/releases)
+[![License](https://img.shields.io/github/license/neoground/charm)](LICENSE.md)
+[![Packagist Downloads](https://img.shields.io/packagist/dt/neoground/charm)](https://packagist.org/packages/neoground/charm)
+[![GitHub issues](https://img.shields.io/github/issues/neoground/charm)](https://github.com/neoground/charm/issues)
+[![GitHub stars](https://img.shields.io/github/stars/neoground/charm?style=social)](https://github.com/neoground/charm)
 
-![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/neoground/charm?sort=semver)
-![GitHub license](https://img.shields.io/github/license/neoground/charm)
-![Packagist Downloads](https://img.shields.io/packagist/dt/neoground/charm)
-![GitHub issues](https://img.shields.io/github/issues/neoground/charm)
-![GitHub stars](https://img.shields.io/github/stars/neoground/charm?style=social)
+**A fast, modular PHP framework for ambitious web applications, APIs and SaaS.**  
+Developed and used in production by [Neoground](https://neoground.com).
 
-## A performant, modern PHP Framework
+Charm is a full-stack PHP framework built around a straightforward idea: provide the infrastructure a serious
+application repeatedly needs, while keeping the execution model compact, predictable and easy to reason about.
 
-A lightweight, fast, modular PHP framework – the foundation for ambitious apps and SaaS.
-Crafted and used in production by Neoground.
+It combines a conventional MVC application structure with attribute-based routing, Twig, Eloquent, YAML configuration,
+authentication, caching, queues, scheduling, events, storage, HTTP tooling and a modular application system.
+Applications can stay small, grow into substantial monoliths, or be divided into explicit modules without changing the
+underlying programming model.
 
-Charm is a **modern PHP framework** optimized for **PHP 8.5**, performance, and clean architecture.  
-It powers Neoground’s own projects and SaaS products and is designed as a solid, composable foundation for:
+Charm is deliberately **compact, not minimal**. It is intended for developers who want an integrated framework without
+making framework machinery the dominant complexity of the application.
 
-- APIs and backends
+## What Charm is built for
+
+Charm is a practical foundation for:
+
 - SaaS and business applications
-- Hybrid/web apps with modern frontends
+- APIs and application backends
+- server-rendered websites with Twig
+- hybrid applications with modern JavaScript frontends
+- internal tools and operational platforms
+- modular monoliths and reusable application modules
 
-Version 4 of this framework is a major rewrite with breaking changes.
-It is our goal to have a solid foundation for all kind of webapps and websites for many years.
+Neoground uses Charm as the foundation for its own web platforms, products and client systems. The framework therefore
+prioritizes maintainability, operational usefulness and predictable application architecture over abstraction for its
+own sake.
 
-Below you find the legacy Readme.
+## Design principles
 
-## 🚀 A Galactic Adventure in PHP Web Development
+### Direct by default
 
-In a galaxy far, far away, there was a PHP web framework that 
-changed the way developers explored the vast universe of web development.
-The Charm Framework brings balance to the Force, combining power, performance, 
-and a touch of artistry to create an extraordinary tool for your 
-intergalactic adventures in web development.
+Charm keeps common application operations close to the code that uses them. Routes can live directly on controller
+methods, table definitions can live with models, configuration is accessed through a consistent API, and initialized
+framework modules are available through `C::`.
 
-Programming is not just about writing lines of code; it's an art form that 
-requires creativity, passion, and the courage to explore uncharted territories. 
-With the Charm Framework, you'll embark on an epic journey through the cosmos of 
-web development, discovering new ways to create and innovate while having fun along the way.
+```php
+use Charm\Vivid\C;
 
-We've infused the Charm Framework with the spirit of Sci-Fi, timeless tales of 
-heroes and villains, triumph and tragedy, that has captured the hearts of millions across the galaxy. 
-Our goal is to bring the magic and excitement of this beloved saga to the world of PHP web development, 
-inspiring you to embrace your inner Jedi and become a true master of your craft.
+$term = C::Request()->get('term');
+$hostname = C::Config()->get('connections:database.hostname');
+$queue = C::Queue();
+```
 
-As you delve into the Charm Framework, 
-you'll encounter a rich and diverse ecosystem of tools and features designed to help you build powerful, 
-high-performance web applications that can stand the test of time. With the wisdom of Yoda, 
-the tenacity of Luke Skywalker, and the grace of Princess Leia, 
-the Charm Framework will guide you on your path to web development mastery.
+The same module model extends to custom modules. Charm does not require deep service graphs or runtime
+controller-parameter resolution for ordinary application code.
 
-So strap in, grab your lightsaber, and prepare to embark on an unforgettable 
-journey through the world of PHP web development. Together, we'll conquer even the most daunting 
-coding challenges, unlocking the full potential of the Charm Framework and paving the way 
-for a brighter future in the galaxy of web development.
+### Full-stack without unnecessary ceremony
 
-May the Force be with you, always.
+The framework includes the recurring systems needed by production applications rather than leaving every project to
+assemble them independently. That includes routing, requests and responses, views, database access, auth, queues,
+scheduling, events, cache, storage, mail, validation, logging and development tooling.
 
+The goal is not to hide PHP behind a large abstraction layer. The goal is to remove repetitive infrastructure while
+keeping application flow visible.
 
-## 🌐 About
+### Modular when the application needs it
 
-Charm is a blazing-fast PHP framework optimized for building business web 
-applications and APIs. With its lightweight design and fast router, 
-Charm is optimized for high-performance, making it a powerful tool for 
-developers who need to build applications that can handle heavy loads with ease.
+A Charm application can remain one coherent codebase or be split into modules with their own namespaces, configuration
+and application structure. Modules are registered through `modules.yaml` and participate in the same initialization and
+runtime model as the framework itself.
 
-Charm provides its own Twig views, but it can also easily be used with a 
-single-page JS app. The framework is built using a combination of popular libraries 
-and slim, optimized solutions, including the Eloquent ORM for database tasks, 
-Redis caching for high performance, and a built-in user and auth system.
+This makes it possible to structure a larger application by domain without prematurely turning it into a distributed
+system.
 
-Charm also includes many convenience functionalities without overloading it, 
-such as Cron and Queue systems for scheduling tasks, and a great debugging help with Kint,
-Whoops, and Debugbar. All app init data can be stored in a single file to increase boot 
-up even more, and config files are in YAML. Modules and own packages based on this 
-framework are easily possible and integrated into other projects in seconds.
+### Optimized initialization
 
-But Charm is more than just a fast and powerful PHP framework. We've designed our 
-documentation to be engaging and enjoyable to read. 
-We believe that learning a new technology 
-should be a fun and rewarding experience, and our documentation reflects that 
-commitment to making the learning process as enjoyable as possible.
+Charm initializes its modules into a shared application context and uses `AppStorage` for frequently accessed
+lightweight runtime data such as configuration and routing metadata.
 
-Whether you're a seasoned developer or just getting started with PHP, 
-Charm is the perfect tool for building high-performance web applications and APIs. 
-With its slim, optimized design and powerful features, 
-Charm is the ideal choice for developers who want to build fast, 
-scalable, and maintainable applications with ease.
+For production environments, stable initialization data can be generated into an AppStorage cache. This avoids repeating
+work that does not need to be rediscovered on every request and keeps framework bootstrapping lean.
 
+## Core capabilities
 
-##  🎉 Getting Started
+| Area                      | Included                                                                                   |
+|---------------------------|--------------------------------------------------------------------------------------------|
+| **Application structure** | MVC foundation, controllers and models with subdirectory support, modular applications     |
+| **Routing**               | Attribute-based routes, named routes, groups, filters and module routes                    |
+| **Views**                 | Twig templates, layouts, includes, framework helpers and custom responses                  |
+| **Database**              | Eloquent ORM, multiple SQL database engines, model-based table definitions and migrations  |
+| **Configuration**         | YAML configuration, environment-specific overrides, translations and cached initialization |
+| **Modules**               | Built-in and custom modules exposed through the same `C::Module()` interface               |
+| **Authentication**        | Web authentication, guards, sessions and token-based API authentication                    |
+| **Background work**       | Queue system and scheduled jobs                                                            |
+| **Application services**  | Events, caching, Redis, HTTP client, mail, validation, logging and file storage            |
+| **Developer tooling**     | Bob CLI, debug mode, exception handling, Debug Bar and Kint integration                    |
 
-Please see our [official documentation](https://neoground.com/docs/charm/index)
-and its included [Getting Started Guide](https://neoground.com/docs/charm/start.installation).
+Charm uses established libraries where they solve a problem well—including Twig, Eloquent, Symfony components,
+Flysystem, Guzzle and Monolog—while providing a coherent Charm application layer around them.
 
-### Requirements: Fuel for Your Galactic Adventure
+## A small Charm application
 
-To ensure a smooth journey with the Charm Framework, make sure your system meets the following requirements:
+A controller route can be defined directly where its behavior lives:
 
-- PHP 8.3 or later (ideally with Redis module)
-  - PHP installation needs basic extensions. Make sure you don't have "php-psr" installed, since this
-    conflicts with Monolog's Logging engine.
+```php
+namespace App\Controllers;
+
+use Charm\Vivid\C;
+use Charm\Vivid\Controller;
+use Charm\Vivid\Kernel\Output\View;
+use Charm\Vivid\Router\Attributes\Route;
+
+class WelcomeController extends Controller
+{
+    #[Route('GET', '/hello', 'welcome.hello')]
+    public function hello()
+    {
+        $name = C::Request()->get('name', 'World');
+
+        return View::make('welcome')->with([
+            'name' => $name,
+        ]);
+    }
+}
+```
+
+The corresponding Twig view can stay equally direct:
+
+```twig
+{% extends "_base/main.twig" %}
+
+{% block content %}
+    <h1>Hello {{ name }}</h1>
+    <p>{{ c('Config').get('user:site_name') }}</p>
+{% endblock %}
+```
+
+Models are based on Eloquent and can keep their basic table definition close to the model when that is the clearest
+representation of the application:
+
+```php
+namespace App\Models;
+
+use Charm\Vivid\Model;
+use Illuminate\Database\Schema\Blueprint;
+
+class Project extends Model
+{
+    protected $table = 'projects';
+
+    protected $fillable = [
+        'name',
+        'status',
+    ];
+
+    public static function getTableStructure(): \Closure
+    {
+        return function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('status')->default('active');
+            $table->timestamps();
+        };
+    }
+}
+```
+
+Traditional migrations remain available when a project benefits from a separate migration history.
+
+## Requirements
+
+- PHP **8.4 or later**
 - Composer
-- Depending on your app:
-    - Database: MariaDB, MySQL, SQLite, PostgreSQL or SQL Server
+- required PHP extensions:
+    - JSON
+    - Fileinfo
+    - OpenSSL
+- optional, depending on the application:
+    - MariaDB, MySQL, SQLite, PostgreSQL or SQL Server
     - Redis
+    - `ext-pcntl` for the built-in cron daemon
 
-### Installation: As Easy as the Kessel Run
+Charm is developed for current PHP versions and makes use of modern PHP language features.
 
-To install the Charm Framework, you first need to install Bob toolkit on your machine.
+## Getting started
 
-In a galaxy not so far away, Bob (short for Binary Operations Butler) was created
-to serve as the ultimate command-line companion for Charm Framework developers.
+The recommended way to create a Charm application is with **Bob**, the Charm command-line toolkit, and the official
+**Charm Wireframe** project template.
 
-Run the following command to install Bob:
+### 1. Install Bob
 
 ```bash
-curl -fSsL -o bob https://raw.githubusercontent.com/neoground/charm-toolkit/main/bob && chmod +x bob
+curl -fSsL -o bob https://raw.githubusercontent.com/neoground/charm-toolkit/main/bob \
+    && chmod +x bob
 sudo mv bob /usr/local/bin/bob
 ```
 
-For more information on this, see the [Bob documentation](https://github.com/neoground/charm-toolkit).
+See the [Charm Toolkit repository](https://github.com/neoground/charm-toolkit) for Bob documentation.
 
-Once installed, run the following command to create a new project:
+### 2. Create a project
 
 ```bash
-bob new GalacticArchive
+bob new AcmePortal
 ```
 
-This command will generate a new project called `GalacticArchive` based on the [charm-wireframe](https://github.com/neoground/charm-wireframe)
-template and put it in the new created directory `GalacticArchive`. The wireframe serves as
-a foundation for all Charm Framework applications, empowering you to build incredible
-web applications in the universe.
+Bob creates a new application from [charm-wireframe](https://github.com/neoground/charm-wireframe) and guides you
+through the initial setup.
 
-The setup assistant then guides you through the process.
+### 3. Configure the application
 
-### Configuration: Fine-Tuning the Hyperdrive
+Global configuration lives in:
 
-Now that your project is set up, you can check and adjust the global configuration
-by navigating to the `app/Config` directory. For environment-specific settings,
-explore the `app/Config/Environments/Local` directory.
+```text
+app/Config/
+```
 
-The active environment is determined by the `app/app.env` file, which contains
-the name of the environment in use, e.g. `ENVIRONMENT=Prod`. The auto setup process takes care of this for you.
+Environment-specific overrides live below:
 
-### Web Server Setup: Powering Up the Millennium Falcon
+```text
+app/Config/Environments/<Environment>/
+```
 
-To get your web server up and running, you might need to adjust its configuration.
-The charm-wireframe comes with a sample `.htaccess` and `nginx.conf` file to help you get started.
+The active environment is selected through `app/app.env`.
 
-For a local development server, simply type `bob serve` in the project directory, and you'll be good to go!
+Typical configuration files include:
 
-May the Force guide you, young Jedi!
+```text
+main.yaml
+connections.yaml
+modules.yaml
+```
 
+### 4. Run the development server
 
-## 🚧 Beta Notice
+```bash
+bob serve
+```
 
-Please note that Charm is currently in beta.
-We are hard at work on version 4.0, which will be the first full stable release. 
+The Wireframe also includes example configuration for Nginx and Apache deployments.
 
-Starting at version 3.7, charm is in a stable beta. We didn't experience bigger bugs in the
-last few months, and it runs very well on our production apps. Huge, breaking changes are unlikely from now on.
+## Application structure
 
-## ☕ Support Charm's Development
+A conventional Charm project keeps the important parts easy to locate:
 
-We're committed to making Charm the best PHP framework out there, 
-and we could use your help! By becoming a sponsor or making a donation, 
-you can help us accelerate the development process and bring Charm 4.0 to life. 
-Your support allows us to dedicate more time and resources to the project, 
-ensuring that Charm continues to evolve and improve.
+```text
+app/
+├── Config/
+├── Controllers/
+├── Models/
+├── Views/
+└── ...
+```
 
-To make a donation or become a sponsor, check out our [official documentation](https://neoground.com/docs/charm/index).
-Thank you for your support and for helping us make Charm even better!
+As the project grows, controllers and models can be grouped into subdirectories or application domains can be promoted
+into dedicated Charm modules. The framework does not require a change of architectural style simply because the codebase
+becomes larger.
+
+## Modules and `C::`
+
+Framework services and loaded application modules share one access pattern:
+
+```php
+C::Config();
+C::Request();
+C::Cache();
+C::Queue();
+C::Storage();
+```
+
+A custom module follows the same model:
+
+```php
+C::Billing()->createInvoice($order);
+```
+
+This gives applications a small and consistent surface area while keeping modules independently structured and reusable.
+
+`Charm::` is available as the long-form alias of `C::`.
+
+## Production use
+
+Charm is maintained alongside the systems Neoground builds and operates, and its architecture is shaped by production
+requirements.
+
+Production deployments can generate the AppStorage cache so stable initialization data is loaded directly rather than
+rebuilt on each request:
+
+```bash
+php bob.php appstorage:generate
+```
+
+The framework also provides integrated logging, caching, queues, scheduled tasks, storage abstraction and debug tooling
+for the operational lifecycle around an application.
+
+## Charm 4
+
+Charm 4 is a substantial architectural revision and introduces breaking changes from the 3.x line. Its purpose is to
+establish a cleaner long-term foundation for Neoground's applications and for external projects building on Charm.
+
+Charm is already used in production, but projects tracking the development line should expect APIs to continue evolving
+until the 4.0 stable release.
+
+## Documentation
+
+- [Charm documentation](https://neoground.com/en/docs/charm)
+- [Installation guide](https://neoground.com/en/docs/charm/start/installation)
+- [Charm Wireframe](https://github.com/neoground/charm-wireframe)
+- [Bob / Charm Toolkit](https://github.com/neoground/charm-toolkit)
+
+The documentation is being revised alongside Charm 4. Some sections may still describe earlier framework versions or
+terminology.
+
+## Contributing
+
+Issues, bug reports and focused pull requests are welcome through GitHub.
+
+If you are planning a larger contribution or architectural change, opening an issue first helps keep the work aligned
+with the framework's direction.
+
+## License
+
+Charm is open source software released under the [MIT License](LICENSE.md).
+
+## About Neoground
+
+Charm is developed and maintained by [Neoground GmbH](https://neoground.com), a German technology company working across
+strategic technology advisory, software systems and digital infrastructure.
+
+We build Charm because we use it: as a durable, understandable foundation for software that has to work beyond the
+prototype stage.
