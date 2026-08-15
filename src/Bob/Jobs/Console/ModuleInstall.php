@@ -21,7 +21,7 @@ class ModuleInstall extends Command
     /**
      * The configuration
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("c:mod")
             ->setDescription("Install / uninstall a charm module")

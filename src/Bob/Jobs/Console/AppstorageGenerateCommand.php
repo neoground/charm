@@ -23,7 +23,7 @@ class AppstorageGenerateCommand extends Command
     /**
      * The configuration
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("appstorage:generate")
             ->setDescription("Generate and replace the AppStorage cache");

@@ -20,7 +20,7 @@ class CreateEnvironment extends Command
     /**
      * The configuration
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("c:env")
             ->setDescription("Creating a new config environment")

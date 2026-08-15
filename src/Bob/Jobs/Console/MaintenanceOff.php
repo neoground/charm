@@ -21,7 +21,7 @@ class MaintenanceOff extends Command
     /**
      * The configuration
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("c:up")
             ->setDescription("Deactivates the maintenance mode")

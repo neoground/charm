@@ -278,7 +278,7 @@ class Handler
             $class = $namespace . "\\" . $pathinfo['filename'];
 
             if (class_exists($class)) {
-                $app->add(new $class);
+                $app->addCommand(new $class);
             }
         }
     }

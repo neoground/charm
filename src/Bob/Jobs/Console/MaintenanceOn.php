@@ -21,7 +21,7 @@ class MaintenanceOn extends Command
     /**
      * The configuration
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("c:down")
             ->setDescription("Enables the maintenance mode")

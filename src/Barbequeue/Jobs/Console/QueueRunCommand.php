@@ -22,7 +22,7 @@ class QueueRunCommand extends Command
     /**
      * The configuration
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("queue:run")
             ->setDescription("Running the queue. Should be called every 5 or 10 minutes")

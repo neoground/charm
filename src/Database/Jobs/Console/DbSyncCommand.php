@@ -22,7 +22,7 @@ class DbSyncCommand extends Command
     /**
      * The configuration
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("db:sync")
             ->setDescription("Sync the database tables of all modules")

@@ -22,7 +22,7 @@ class SysInfo extends Command
     /**
      * The configuration
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("c:sys")
             ->setDescription("Infos about the system and management tools")

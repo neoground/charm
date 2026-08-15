@@ -22,7 +22,7 @@ class QueueClearCommand extends Command
     /**
      * The configuration
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("queue:clear")
             ->setDescription("Clearing the queue")

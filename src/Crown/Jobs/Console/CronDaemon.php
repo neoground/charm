@@ -31,7 +31,7 @@ class CronDaemon extends Command
     /**
      * The configuration
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("cron:daemon")
             ->setDescription('Starts or stops the cron daemon')

@@ -31,7 +31,7 @@ class QueueDaemon extends Command
     /**
      * The configuration
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("queue:daemon")
             ->setDescription('Starts or stops the queue daemon')

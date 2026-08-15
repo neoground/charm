@@ -24,7 +24,7 @@ class CronInfo extends Command
     /**
      * The configuration
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("cron:info")
             ->setDescription("Info about cron jobs and system integration")

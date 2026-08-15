@@ -23,7 +23,7 @@ class DbMigrateCommand extends Command
     /**
      * The configuration
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("db:migrate")
             ->setDescription("Migrate the database tables")

@@ -21,7 +21,7 @@ class CronRunCommand extends Command
     /**
      * The configuration
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("cron:run")
             ->setDescription("Running the cron jobs. Should be called every minute")

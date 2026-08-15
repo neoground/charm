@@ -21,7 +21,7 @@ class AppstorageClearCommand extends Command
     /**
      * The configuration
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("appstorage:clear")
             ->setDescription("Clear the AppStorage cache");
