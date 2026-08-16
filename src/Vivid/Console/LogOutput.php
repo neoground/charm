@@ -227,5 +227,8 @@ class LogOutput implements OutputInterface
         return false;
     }
 
-
+    public function isSilent(): bool
+    {
+        return false;
+    }
 }
